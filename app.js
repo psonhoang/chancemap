@@ -18,7 +18,9 @@ mongoose.connect(config.database);
 app.set('view engine', 'ejs');
 app.set('views', [path.join(__dirname, 'views'),
                   path.join(__dirname, 'views/pages'),
-                  path.join(__dirname, 'views/partials')]);
+                  path.join(__dirname, 'views/partials'),
+                  path.join(__dirname, 'views/defaultLayouts')]);
+app.engine('ejs', require('express-ejs-extend'));
 
 // Body-parser
 app.use(bodyParser.json()); // Parse json data for web forms
@@ -72,8 +74,11 @@ app.use(passport.session());
 
 // Home routes
 app.get('/', (req, res) => {
-  if(!req.isAuthenticated()) res.redirect('/login');
-	res.send('Hi there, ' + req.user.username);
+  if(!req.isAuthenticated()) {
+    res.redirect('/login');
+  } else {
+    res.send('Hi there, ' + req.user.username);
+  }
 });
 
 // Route controllers

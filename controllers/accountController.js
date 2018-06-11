@@ -11,7 +11,7 @@ const Org = require('../models/org');
 
 // Login
 router.get('/login', (req, res) => {
-	res.render('login');
+	res.render('login', {title: "Code Dao | Login"});
 });
 
 router.post('/login', (req, res, next) => {
@@ -24,7 +24,7 @@ router.post('/login', (req, res, next) => {
 
 // Register
 router.get('/register', (req, res) => {
-	res.render('register');
+	res.render('register', {title: "Code Dao | Sign up"});
 });
 
 router.post('/register', (req, res) => {
@@ -36,10 +36,12 @@ router.post('/register', (req, res) => {
 		if(data.org_acc) { acc_type = 1; }
 		if(acc_type == 0) {
 			res.render('regUser', {
+				title: 'Code Dao | User Sign Up',
 				user: data // username, email, password
 			});
 		} else {
 			res.render('regOrg', {
+				title: 'Code Dao | Org Sign Up',
 				org: data
 			});
 		}

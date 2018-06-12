@@ -22,6 +22,12 @@ router.post('/login', (req, res, next) => {
   })(req, res, next);
 });
 
+// logout
+router.get('/logout', (req, res) => {
+	req.logout();
+	res.redirect('/login');
+});
+
 // Register
 router.get('/register', (req, res) => {
 	res.render('register', {title: "Code Dao | Sign up"});

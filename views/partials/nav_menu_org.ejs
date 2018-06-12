@@ -1,31 +1,51 @@
 <div data-scroll-to-active="true" class="main-menu menu-fixed menu-light menu-accordion menu-shadow">
   <div class="main-menu-content ps-container ps-theme-dark ps-active-y" data-ps-id="a0cf5723-e682-b9c3-b228-6640b1cf55c0" style="height: 753px;">
     <ul id="main-menu-navigation" data-menu="menu-navigation" class="navigation navigation-main">
-      <li class="navigation-header"><span>General</span>
+      <li class="navigation-header">
+        <i class="ft-edit"></i>
+        <div class="text-xs-center">
+          <div class="card-block">
+            <img id="avatar" src="https://cdn0.iconfinder.com/data/icons/users-android-l-lollipop-icon-pack/24/group2-512.png" class="card-header rounded-square width-100 height-100" alt="Card image">
+            <br>
+            <span class="caption"><%= currentAcc.name; %></span>
+          </div>
+        </div>
         <%# <i data-toggle="tooltip" data-placement="right" data-original-title="General" class=" ft-minus"></i> %>
       </li>
-      <li class="nav-item has-sub"><a href="index.html"><i class="ft-home"></i><span data-i18n="" class="menu-title">Dashboard</span><span class="tag tag tag-primary tag-pill float-xs-right mr-2">3</span></a>
+      <li class="nav-item"><a href="/"><i class="ft-home"></i><span data-i18n="" class="menu-title">Home</span></a>
+      </li>
+      <li class="nav-item has-sub"><a href=""><i class="ft-sidebar"></i><span data-i18n="" class="menu-title">Dashboard</span><%#<span class="tag tag tag-primary tag-pill float-xs-right mr-2">3</span>%></a>
         <ul class="menu-content">
-          <li><a href="dashboard-ecommerce.html" class="menu-item">eCommerce</a>
+          <li><a href="" class="menu-item"><i class="ft-calendar"></i>Events</a>
           </li>
-          <li><a href="dashboard-analytics.html" class="menu-item">Analytics</a>
+          <li><a href="" class="menu-item"><i class="ft-clipboard"></i>Jobs</a>
           </li>
-          <li><a href="dashboard-fitness.html" class="menu-item">Fitness</a>
+          <li><a href="" class="menu-item"><i class="ft-users"></i>Orgs</a>
           </li>
         </ul>
       </li>
-      <li class=" navigation-header"><span>Apps</span>
+      <li class="nav-item has-sub"><a href=""><i class="ft-folder"></i><span data-i18n="" class="menu-title">Manage</span></a>
+        <ul class="menu-content">
+          <li><a href="" class="menu-item"><i class="ft-calendar"></i>My Events</a>
+          </li>
+          <li><a href="" class="menu-item"><i class="ft-clipboard"></i>My Jobs</a>
+          </li>
+          <li><a href="" class="menu-item"><i class="ft-users"></i>My Orgs</a>
+          </li>
+        </ul>
+      </li>
+      <li class="navigation-header"><span>More</span>
         <%# <i data-toggle="tooltip" data-placement="right" data-original-title="Apps" class=" ft-minus"></i> %>
       </li>
-      <li class=" nav-item"><a href="email-application.html"><i class="ft-mail"></i><span data-i18n="" class="menu-title">Email Application</span></a>
+      <li class=" nav-item"><a href=""><i class="ft-users"></i><span data-i18n="" class="menu-title">Org profile</span></a>
       </li>
-      <li class=" nav-item"><a href="chat-application.html"><i class="ft-message-square"></i><span data-i18n="" class="menu-title">Chat Application</span></a>
+      <li class=" nav-item"><a href=""><i class="ft-user-check"></i><span data-i18n="" class="menu-title">Followers</span></a>
       </li>
-      <li class=" nav-item"><a href="project-summary.html"><i class="ft-airplay"></i><span data-i18n="" class="menu-title">Project Summary</span></a>
+      <li class=" nav-item"><a href=""><i class="ft-settings"></i><span data-i18n="" class="menu-title">Settings</span></a>
       </li>
-      <li class=" nav-item"><a href="invoice-template.html"><i class="ft-printer"></i><span data-i18n="" class="menu-title">Invoice Template</span></a>
+      <li class=" nav-item"><a href="/logout"><i class="ft-log-out"></i><span data-i18n="" class="menu-title">Logout</span></a>
       </li>
-      <li class="nav-item has-sub"><a href="#"><i class="ft-user"></i><span data-i18n="" class="menu-title">Users</span></a>
+      <%# <li class="nav-item has-sub"><a href="#"><i class="ft-user"></i><span data-i18n="" class="menu-title">Users</span></a>
         <ul class="menu-content">
           <li><a href="user-profile.html" class="menu-item">Users Profile</a>
           </li>
@@ -46,7 +66,7 @@
           <li><a href="error-500.html" class="menu-item">Error 500</a>
           </li>
         </ul>
-      </li>
+      </li> %>
     </ul>
     <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 3px;">
       <div class="ps-scrollbar-x" tabindex="0" style="left: 0px; width: 0px;"></div>

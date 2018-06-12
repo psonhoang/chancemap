@@ -10,7 +10,7 @@ window.onload = function() {
 		}
 	});
 
-	$('#checkbox2'). click(() => {
+	$('#checkbox2').click(() => {
 		if(is_org_acc) {
 			is_org_acc = false;
 		}

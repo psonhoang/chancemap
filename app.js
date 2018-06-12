@@ -112,7 +112,5 @@ app.get('/', (req, res) => {
 let accRoutes = require('./controllers/accountController');
 app.use('/', accRoutes);
 
-
-
 // Export
 module.exports = app;

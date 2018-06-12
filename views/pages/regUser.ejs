@@ -1,0 +1,181 @@
+<% extend('../defaultLayouts/authLayout'); %>
+
+<div class="app-content content container-fluid">
+  <div class="content-wrapper">
+    <div class="content-header row">
+    </div>
+    <div class="content-body">
+      <section class="flexbox-container">
+        <div style="margin-top: 540px; margin-bottom: 30px; min-width: 45%;" class="col-md-4 offset-md-4 col-xs-10 offset-xs-1 box-shadow-2 p-0 mx-auto">
+          <div class="card border-grey border-lighten-3 px-1 py-1 m-0">
+            <div class="card-header no-border pb-0">
+              <div class="card-title text-xs-center">
+                <img src="../../../app-assets/images/logo/stack-logo-dark.png" alt="branding logo">
+              </div>
+              <h6 class="card-subtitle line-on-side text-muted text-xs-center font-small-3 pt-2"><span>Sign Up | User </span></h6>
+            </div>
+            <div class="card-body collapse in">
+              <!-- <div class="text-xs-center">
+                    <a href="#" class="btn btn-social-icon mr-1 mb-1 btn-outline-facebook"><span class="fa fa-facebook"></span></a>
+                    <a href="#" class="btn btn-social-icon mr-1 mb-1 btn-outline-twitter"><span class="fa fa-twitter"></span></a>
+                    <a href="#" class="btn btn-social-icon mr-1 mb-1 btn-outline-linkedin"><span class="fa fa-linkedin font-medium-4"></span></a>
+                    <a href="#" class="btn btn-social-icon mr-1 mb-1 btn-outline-github"><span class="fa fa-github font-medium-4"></span></a>
+                </div> -->
+              <!-- <p class="card-subtitle line-on-side text-muted text-xs-center font-small-3 mx-2 my-1"><span>Sign Up</span></p> -->
+              <div class="card-block">
+                <form class="form-horizontal" action="/register/user" method="POST">
+                  <!-- Avatar -->
+                  <fieldset>
+                    <div class="text-xs-center">
+                      <div class="card-block">
+                        <img id="ava_preview" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Antu_im-invisible-user.svg/2000px-Antu_im-invisible-user.svg.png" class="card-header rounded-square width-250 height-250" alt="Card image">
+                        <br>
+                        <input id="avatar" type="file" accept="image/*" name="avatar" onchange="previewImage(event)">
+                      </div>
+                    </div>
+                  </fieldset><br>
+                  <!-- Name -->
+                  <fieldset class="form-group position-relative has-icon-left">
+                    <label class="col-md-2 label-control" for="name">Name</label>
+                    <div class="col-md-10">
+                      <input type="text" class="form-control" id="user-name" name="name" placeholder="Name" required>
+                      <div class="form-control-position">
+                        <i class="ft-user"></i>
+                      </div>
+                    </div>
+                  </fieldset>
+                  <!-- Interests-->
+                  <fieldset class="form-group position-relative has-icon-left">
+                    <label class="col-md-2 label-control" for="interests">Interests</label>
+                    <div class="col-md-10">
+                      <div class="edit-on-delete form-control tagging" data-tags-input-name="interests">
+                        <div id="interest-example">Type interests in keywords and 'Enter' (delete this pls)</div>
+                        <input id="interests-input" class="type-zone form-control" name="interests" placeholder="Interests" contenteditable="true" required>
+                      </div>
+                      <div class="form-control-position">
+                        <i class="ft-user"></i>
+                      </div>
+                    </div>
+                  </fieldset>
+                  <!-- Skills -->
+                  <fieldset class="form-group position-relative has-icon-left">
+                    <label class="col-md-2 label-control" for="interests">Skills</label>
+                    <div class="col-md-10">
+                      <div class="edit-on-delete form-control tagging" data-tags-input-name="skills">
+                        <div id="skill-example">Type your skills in keywords and 'Enter' (delete this pls)</div>
+                        <input id="skills-input" class="type-zone form-control" name="skills" placeholder="Skills" contenteditable="true" required>
+                      </div>
+                      <div class="form-control-position">
+                        <i class="ft-user"></i>
+                      </div>
+                    </div>
+                  </fieldset>
+                  <!-- Resume -->
+                  <fieldset class="form-group position-relative has-icon-left">
+                    <label class="col-md-2 label-control" for="resume_file">Resúme (optional)</label>
+                    <div class="col-md-10">
+                      <input type="file" accept=".doc, .docx, .pdf" class="form-control" id="user-name" name="resume_file" placeholder="Your resúme file (optional)">
+                      <div class="form-control-position">
+                        <i class="fa-file-text"></i>
+                      </div>
+                    </div>
+                  </fieldset>
+                  <!-- School -->
+                  <fieldset class="form-group position-relative has-icon-left">
+                    <label class="col-md-2 label-control" for="school">School</label>
+                    <div class="col-md-10">
+                      <input type="text" class="form-control" id="user-name" name="school" placeholder="School (optional)">
+                      <div class="form-control-position">
+                        <i class="fa-graduation-cap"></i>
+                      </div>
+                    </div>
+                  </fieldset>
+                  <!-- Self intro -->
+                  <fieldset class="form-group position-relative has-icon-left">
+                    <label class="col-md-2 label-control" for="intro">Bio</label>
+                    <div class="col-md-10">
+                      <input type="text" class="form-control" id="user-name" name="intro" placeholder="Your bio">
+                      <div class="form-control-position">
+                        <i class="ft-user"></i>
+                      </div>
+                    </div>
+                  </fieldset>
+                  <!-- Facebook -->
+                  <fieldset class="form-group position-relative has-icon-left">
+                    <label class="col-md-2 label-control" for="facebook">Facebook</label>
+                    <div class="col-md-10">
+                      <input type="url" class="form-control" id="user-name" name="facebook" placeholder="Your Facebook profile url (optional)">
+                      <div class="form-control-position">
+                        <i class="fa-facebook-official"></i>
+                      </div>
+                    </div>
+                  </fieldset>
+                  <!-- Website -->
+                  <fieldset class="form-group position-relative has-icon-left">
+                    <label class="col-md-2 label-control" for="website">Website</label>
+                    <div class="col-md-10">
+                      <input type="url" class="form-control" id="user-name" name="webstie" placeholder="Your website url (optional)">
+                      <div class="form-control-position">
+                        <i class="ft-user"></i>
+                      </div>
+                    </div>
+                  </fieldset>
+
+                  <!-- Hidden fields -->
+                  <fieldset class="hidden form-group position-relative has-icon-left">
+                    <input type="hidden" class="form-control" id="user-name" name="username" value="<%= user.username; %>" required>
+                    <div class="form-control-position">
+                      <i class="ft-user"></i>
+                    </div>
+                  </fieldset>
+                  <fieldset class="hidden form-group position-relative has-icon-left">
+                    <input type="hidden" class="form-control" id="user-email" name="email" value="<%= user.email; %>" required>
+                    <div class="form-control-position">
+                      <i class="ft-mail"></i>
+                    </div>
+                  </fieldset>
+                  <fieldset class="hidden form-group position-relative has-icon-left">
+                    <input type="hidden" class="form-control" id="user-password" name="password" value="<%= user.password; %>" required>
+                    <div class="form-control-position">
+                      <i class="fa fa-key"></i>
+                    </div>
+                  </fieldset>
+                  <!-- END -->
+
+                  <!-- <fieldset class="form-group row">
+                            <div class="col-md-6 col-xs-12 text-xs-center text-sm-left">
+                                <fieldset>
+                                    <input type="checkbox" id="remember-me" class="chk-remember">
+                                    <label for="remember-me"> Remember Me</label>
+                                </fieldset>
+                            </div>
+                            <div class="col-md-6 col-xs-12 float-sm-left text-xs-center text-sm-right"><a href="recover-password.html" class="card-link">Forgot Password?</a></div>
+                        </fieldset> -->
+                  <br>
+                  <button type="submit" class="btn btn-outline-primary btn-block"><i class="ft-user"></i> Register</button>
+                </form>
+              </div>
+              <div class="card-block">
+                <a href="/login" class="btn btn-outline-danger btn-block"><i class="ft-unlock"></i> Login</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- BEGIN CODEDAO SCRIPT -->
+<script src="/scripts/register.js" type="text/javascript"></script>
+<script>
+  function previewImage(event) {
+    let reader = new FileReader();
+    reader.onload = function() {
+      let output = document.getElementById('ava_preview');
+      output.src = reader.result;
+    }
+    reader.readAsDataURL(event.target.files[0]);
+  }
+</script>
+<!-- END -->

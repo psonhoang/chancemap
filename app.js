@@ -112,5 +112,8 @@ app.get('/', (req, res) => {
 let accRoutes = require('./controllers/accountController');
 app.use('/', accRoutes);
 
+let eventRoutes = require('./controllers/eventController');
+app.use('/events', eventRoutes);
+
 // Export
 module.exports = app;

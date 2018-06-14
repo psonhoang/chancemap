@@ -1,6 +1,5 @@
 ### About
 
-=> Website build for CodeDao project: a project to connect students with the student-led organizations & extracurricular activities
-community.
+=> Website build for CodeDao project: a project to connect students with the student-led organizations & extracurricular activities community.
 
 const founders = ['Pham Son Hoang', 'Nguyen Minh Dang', 'Dang Hoang Long'];

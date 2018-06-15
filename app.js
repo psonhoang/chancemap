@@ -114,21 +114,11 @@ app.get('/', (req, res) => {
       });
     } else {
       Org.findOne({'_id': account_id}, (err, org) => {
-        // res.send(org);
-        gfs.files.findOne({filename: org.avatar}, (err, file) => {
-          // Check if file
-          let hasAvatar = true;
-          if (!file || file.length === 0) {
-            hasAvatar = false;
-          }
-          // File exists
-          res.render('index', {
-            title: 'App Dao | Dashboard',
-            account_type: account_type,
-            account_id: account_id,
-            currentAcc: org,
-            hasAvatar: hasAvatar
-          });
+        res.render('index', {
+          title: 'App Dao | Dashboard',
+          account_type: account_type,
+          account_id: account_id,
+          currentAcc: org
         });
       });
     }

@@ -245,4 +245,36 @@ router.post('/register/org', upload.single('avatar'), (req, res) => {
   });
 });
 
+
+// @route GET 
+// @desc view  & edit current account's profile
+router.get('/profile', (req, res) => {
+	if(!req.isAuthenticated()) {
+    res.redirect('/login');
+  } else {
+    let account_type = req.user.account_type;
+    let account_id = req.user.account_id;
+    if(account_type == 0) {
+      User.findOne({'_id': account_id}, (err, user) => {
+        res.render('profile', {
+          title: 'App Dao | My Profile',
+          account_type: account_type,
+          account_id: account_id,
+          currentAcc: user
+        });
+      });
+    } else {
+      Org.findOne({'_id': account_id}, (err, org) => {
+          res.render('profile', {
+            title: 'App Dao | My Profile',
+            account_type: account_type,
+            account_id: account_id,
+            currentAcc: org,
+          });
+      });
+    }
+  }
+});
+
+// Exports
 module.exports = router;

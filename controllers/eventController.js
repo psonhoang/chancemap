@@ -21,6 +21,7 @@ router.post('/new', (req, res) => {
     let address = data.address;
     let reg_form = data.reg_form;
     let reg_deadline = data.reg_deadline;
+    let date = data.date;
     let start_time = data.start_time;
     let end_time = data.end_time;
     let facebook = data.facebook;
@@ -43,26 +44,14 @@ router.post('/new', (req, res) => {
         website: website,
         eventImage: eventImage
     });
-    newUser.save((err, user) => {
+    newEvent.save((err, event) => {
         if(err) {
             console.log(err);
             return
         }
-        console.log(user);
+        console.log(event);
     });
 });
-
-// viewing events
-router.get('/view', (req, res) => {
-    res.render('view', {title: "Code Dao | View Event"});
-});
-
-// delete button
-router.post('/view', (req, res) => {
-
-})
-
-// editing events
 
 
 

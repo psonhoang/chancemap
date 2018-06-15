@@ -5,7 +5,7 @@ const Grid = require('gridfs-stream');
 
 const Event = require('../models/event');
 
-// creating a new event
+// creating a new-event page
 router.get('/new', (req, res) => {
     res.render('new', {title: "Code Dao | New Event"});
 });

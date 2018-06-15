@@ -1,16 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const path = require('path');
 const Grid = require('gridfs-stream');
 
 const Event = require('../models/event');
 
 // creating a new-event page
-router.get('/new', (req, res) => {
-    res.render('new', {title: "Code Dao | New Event"});
+router.get('/events', (req, res) => {
+    res.render('create', {title: "Code Dao | New Event"});
 });
 
-router.post('/new', (req, res) => {
+router.post('/events', (req, res) => {
     console.log(req.body);
 
     let data = req.body;

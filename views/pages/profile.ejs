@@ -1,3 +1,7 @@
 <% extend('../defaultLayouts/defaultLayout'); %>
 
-<%- include('users/edit'); %>
+<% if(account_type === 0) { %>
+  <%- include('users/edit'); %>
+<% } else { %>
+  <%- include('orgs/edit'); %>
+<% } %>

@@ -1,4 +1,4 @@
-<div class="card-block" style="margin-right: 20px; margin-left: 20px">
+<div class="card-block" style="margin-right: 20%; margin-left: 20%">
   <form enctype="multipart/form-data" class="form-horizontal" action="/register/user" method="POST">
     <!-- Avatar -->
     <fieldset>
@@ -30,6 +30,7 @@
         <div class="form-control-position">
           <i class="ft-heart"></i>
         </div>
+          <span style="font-style: italic" class="small">Enter your interests in keywords (ex: charity) and 'Enter'</span>
       </div>
     </fieldset>
     <!-- Skills -->
@@ -42,17 +43,22 @@
         <div class="form-control-position">
           <i class="ft-zap"></i>
         </div>
+        <span style="font-style: italic" class="small">Enter your skills in keywords (ex: designer) and 'Enter'</span>
       </div>
     </fieldset>
     <!-- Resume -->
     <fieldset class="form-group position-relative has-icon-left">
-      <label class="col-md-2 label-control" for="resume_file">Resúme (optional)</label>
+      <label class="col-md-2 label-control" for="resume_file">Resúme</label>
       <div class="col-md-10">
-        <input type="file" accept=".doc, .docx, .pdf" class="form-control" id="user-name" name="resume_file" placeholder="Your resúme file (optional)">
+        <input type="file" accept=".doc, .docx, .pdf" class="form-control"
+        name="resume_file" value="<%= currentAcc.resume_file %>" id="user-name" placeholder="Your resúme file (optional)">
+        <br>
+        <button class="btn btn-outline-warning">View current resume</button>
         <div class="form-control-position">
           <i class="ft-file-text"></i>
         </div>
       </div>
+
     </fieldset>
     <!-- School -->
     <fieldset class="form-group position-relative has-icon-left">
@@ -115,6 +121,12 @@
       </div>
     </fieldset>
 
+    <div class="form-actions center">
+      <button type="submit" class="btn btn-lg btn-outline-info">Submit</button>
+    </div>
+  </form>
+</div>
+
 <!-- BEGIN CODEDAO SCRIPT -->
 <script>
   function previewImage(event) {
@@ -126,15 +138,18 @@
     reader.readAsDataURL(event.target.files[0]);
   }
 
-  // $(document).ready(function() {
-  //   let interests = <%= JSON.parse('[' + currentAcc.interests.toString() + ']'); %>
-  //   interests.forEach(interest => {
-  //     $('#interests-input').tagging('add', interest);
-  //   });
-  //   let skills = <%= JSON.parse('[' + currentAcc.skills.toString() + ']'); %>
-  //   skills.forEach(skill => {
-  //     $('#skills-input').tagging('add', skill);
-  //   });
-  // });
+  $(document).ready(function() {
+    let interests = <%- JSON.stringify(currentAcc.interests) %>;
+    $('#interests-input').tagging('removeAll');
+    interests.forEach(interest => {
+      $('#interests-input').tagging('add', interest);
+    });
+
+    let skills = <%- JSON.stringify(currentAcc.skills) %>;
+    $('#skills-input').tagging('removeAll');
+    skills.forEach(skill => {
+      $('#skills-input').tagging('add', skill);
+    });
+  });
 </script>
 <!-- END -->

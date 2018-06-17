@@ -30,15 +30,17 @@ router.get('/:filename', (req, res) => {
     }
 
     // Check if image
-    if (file.contentType === 'image/jpeg' || file.contentType === 'image/png') {
-      // Read output to browser
-      const readstream = gfs.createReadStream(file.filename);
-      readstream.pipe(res);
-    } else {
-      res.status(404).json({
-        err: 'Not an image'
-      });
-    }
+    // if (file.contentType === 'image/jpeg' || file.contentType === 'image/png') {
+    //   // Read output to browser
+    //   const readstream = gfs.createReadStream(file.filename);
+    //   readstream.pipe(res);
+    // } else {
+    //   res.status(404).json({
+    //     err: 'Not an image'
+    //   });
+    // }
+		const readstream = gfs.createReadStream(file.filename);
+		readstream.pipe(res);
   });
 });
 

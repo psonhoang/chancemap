@@ -48,13 +48,13 @@
                   <fieldset class="form-group position-relative has-icon-left">
                     <label class="col-md-2 label-control" for="interests">#About</label>
                     <div class="col-md-10">
-                      <div class="edit-on-delete form-control tagging" data-tags-input-name="interests">
-                        <div id="interest-example">Type in keywords about your org and 'Enter' (delete this pls)</div>
+                      <div id="hashtags-input" class="edit-on-delete form-control tagging" data-tags-input-name="interests">
                         <input class="type-zone form-control" name="hashtags" contenteditable="true" required>
                       </div>
                       <div class="form-control-position">
                         <i class="ft-hash"></i>
                       </div>
+                      <span style="font-style: italic" class="small">Enter your hashtags in keywords (ex: youth) and 'Enter'</span>
                     </div>
                   </fieldset>
                   <!-- Description -->
@@ -145,5 +145,9 @@
     }
     reader.readAsDataURL(event.target.files[0]);
   }
+
+  $(document).ready(function() {
+    $('#hashtags-input').tagging('removeAll');
+  });
 </script>
 <!-- END -->

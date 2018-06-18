@@ -1,0 +1,155 @@
+<div class="card-block" style="margin-right: 20%; margin-left: 20%">
+  <form enctype="multipart/form-data" class="form-horizontal" action="/register/user" method="POST">
+    <!-- Avatar -->
+    <fieldset>
+      <div class="text-xs-center">
+        <div class="card-block">
+          <img id="ava_preview" src="<%= currentAcc.avatar; %>" class="rounded-circle width-200 height-200" alt="Card image">
+          <br><br>
+          <input id="avatar" type="file" accept="image/*" name="avatar" onchange="previewImage(event)">
+        </div>
+      </div>
+    </fieldset><br>
+    <!-- Name -->
+    <fieldset class="form-group position-relative has-icon-left">
+      <label class="col-md-2 label-control" for="name">Name</label>
+      <div class="col-md-10">
+        <input type="text" class="form-control" id="user-name" name="name" value="<%= currentAcc.name; %>" placeholder="Name" required>
+        <div class="form-control-position">
+          <i class="ft-user"></i>
+        </div>
+      </div>
+    </fieldset>
+    <!-- Interests-->
+    <fieldset class="form-group position-relative has-icon-left">
+      <label class="col-md-2 label-control" for="interests">Interests</label>
+      <div class="col-md-10">
+        <div id="interests-input" class="edit-on-delete form-control tagging" data-tags-input-name="interests">
+          <input class="type-zone form-control" name="interests" placeholder="Interests" contenteditable="true" required>
+        </div>
+        <div class="form-control-position">
+          <i class="ft-heart"></i>
+        </div>
+          <span style="font-style: italic" class="small">Enter your interests in keywords (ex: charity) and 'Enter'</span>
+      </div>
+    </fieldset>
+    <!-- Skills -->
+    <fieldset class="form-group position-relative has-icon-left">
+      <label class="col-md-2 label-control" for="interests">Skills</label>
+      <div class="col-md-10">
+        <div id="skills-input" class="edit-on-delete form-control tagging" data-tags-input-name="skills">
+          <input class="type-zone form-control" name="skills" placeholder="Skills" contenteditable="true" required>
+        </div>
+        <div class="form-control-position">
+          <i class="ft-zap"></i>
+        </div>
+        <span style="font-style: italic" class="small">Enter your skills in keywords (ex: designer) and 'Enter'</span>
+      </div>
+    </fieldset>
+    <!-- Resume -->
+    <fieldset class="form-group position-relative has-icon-left">
+      <label class="col-md-2 label-control" for="resume_file">Resúme</label>
+      <div class="col-md-10">
+        <input type="file" accept=".doc, .docx, .pdf" class="form-control"
+        name="resume_file" value="<%= currentAcc.resume_file %>" id="user-name" placeholder="Your resúme file (optional)">
+        <br>
+        <button class="btn btn-outline-warning">View current resume</button>
+        <div class="form-control-position">
+          <i class="ft-file-text"></i>
+        </div>
+      </div>
+
+    </fieldset>
+    <!-- School -->
+    <fieldset class="form-group position-relative has-icon-left">
+      <label class="col-md-2 label-control" for="school">School</label>
+      <div class="col-md-10">
+        <input type="text" class="form-control" id="user-name" name="school" value="<%= currentAcc.school; %>" placeholder="School (optional)">
+        <div class="form-control-position">
+          <i class="ft-award"></i>
+        </div>
+      </div>
+    </fieldset>
+    <!-- Self intro -->
+    <fieldset class="form-group position-relative has-icon-left">
+      <label class="col-md-2 label-control" for="intro">Bio</label>
+      <div class="col-md-10">
+        <input type="text" class="form-control" id="user-name" name="intro" value="<%= currentAcc.intro; %>" placeholder="Your bio">
+        <div class="form-control-position">
+          <i class="ft-info"></i>
+        </div>
+      </div>
+    </fieldset>
+    <!-- Facebook -->
+    <fieldset class="form-group position-relative has-icon-left">
+      <label class="col-md-2 label-control" for="facebook">Facebook</label>
+      <div class="col-md-10">
+        <input type="url" class="form-control" id="user-name" name="facebook" value="<%= currentAcc.facebook; %>" placeholder="Your Facebook profile url (optional)">
+        <div class="form-control-position">
+          <i class="ft-facebook"></i>
+        </div>
+      </div>
+    </fieldset>
+    <!-- Website -->
+    <fieldset class="form-group position-relative has-icon-left">
+      <label class="col-md-2 label-control" for="website">Website</label>
+      <div class="col-md-10">
+        <input type="url" class="form-control" id="user-name" name="webstie" value="<%= currentAcc.website; %>" placeholder="Your website url (optional)">
+        <div class="form-control-position">
+          <i class="ft-globe"></i>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- Hidden fields -->
+    <fieldset class="hidden form-group position-relative has-icon-left">
+      <input type="hidden" class="form-control" id="user-name" name="username" value="<%= currentAcc.username; %>" required>
+      <div class="form-control-position">
+        <i class="ft-user"></i>
+      </div>
+    </fieldset>
+    <fieldset class="hidden form-group position-relative has-icon-left">
+      <input type="hidden" class="form-control" id="user-email" name="email" value="<%= currentAcc.email; %>" required>
+      <div class="form-control-position">
+        <i class="ft-mail"></i>
+      </div>
+    </fieldset>
+    <fieldset class="hidden form-group position-relative has-icon-left">
+      <input type="hidden" class="form-control" id="user-password" name="password" value="<%= currentAcc.password; %>" required>
+      <div class="form-control-position">
+        <i class="fa fa-key"></i>
+      </div>
+    </fieldset>
+
+    <div class="form-actions center">
+      <button type="submit" class="btn btn-lg btn-outline-info">Submit</button>
+    </div>
+  </form>
+</div>
+
+<!-- BEGIN CODEDAO SCRIPT -->
+<script>
+  function previewImage(event) {
+    let reader = new FileReader();
+    reader.onload = function() {
+      let output = document.getElementById('ava_preview');
+      output.src = reader.result;
+    }
+    reader.readAsDataURL(event.target.files[0]);
+  }
+
+  $(document).ready(function() {
+    let interests = <%- JSON.stringify(currentAcc.interests) %>;
+    $('#interests-input').tagging('removeAll');
+    interests.forEach(interest => {
+      $('#interests-input').tagging('add', interest);
+    });
+
+    let skills = <%- JSON.stringify(currentAcc.skills) %>;
+    $('#skills-input').tagging('removeAll');
+    skills.forEach(skill => {
+      $('#skills-input').tagging('add', skill);
+    });
+  });
+</script>
+<!-- END -->

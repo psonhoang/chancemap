@@ -187,7 +187,9 @@ router.post('/register/org', upload.single('avatar'), (req, res) => {
 	let email = data.email;
 	let password = data.password;
 	let hashtags = data.hashtags;
+	console.log(hashtags);
 	let desc = data.desc;
+	console.log(desc);
 	let facebook = data.facebook;
 	let website = data.website;
 	let avatar = "https://cdn0.iconfinder.com/data/icons/users-android-l-lollipop-icon-pack/24/group2-512.png";
@@ -246,8 +248,8 @@ router.post('/register/org', upload.single('avatar'), (req, res) => {
 });
 
 
-// @route GET 
-// @desc view  & edit current account's profile
+// @route GET
+// @desc edit current account's profile
 router.get('/profile', (req, res) => {
 	if(!req.isAuthenticated()) {
     res.redirect('/login');
@@ -274,6 +276,105 @@ router.get('/profile', (req, res) => {
       });
     }
   }
+});
+
+// @route POST
+// @desc save edits to current user account's profile
+router.post('/profile/user', upload.fields([{name: 'avatar', maxCount: 1}, {name: 'resume_file', maxCount: 1}]),
+	(req, res) => {
+	let data = req.body;
+	const currentAcc = req.user;
+	User.findOne({'username': currentAcc.username}, (err, user) => {
+		if(err) {
+			res.send('Database error...');
+			console.log(err);
+			return;
+		}
+		console.log(user.avatar);
+		if(req.files['avatar'] && user.avatar != 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Antu_im-invisible-user.svg/2000px-Antu_im-invisible-user.svg.png') {
+			// delete existing avatar file
+			gfs.remove({filename: user.avatar.split('files/')[1], root: 'uploads'}, (err, result) => {
+				if(err) {
+					console.log(err);
+				} else {
+					console.log(result);
+				}
+			});
+		}
+		if(req.files['avatar']) {
+			user.avatar = 'files/' + req.files['avatar'][0].filename;
+		}
+		user.name = data.name;
+		user.email = data.email;
+		user.interests = data.interests;
+		user.skills = data.skills;
+		if(req.files['resume_file'] && !user.resume_file) {
+			// delete existing resume file
+			gfs.remove({filename: user.resume_file.split('files/')[1], root: 'uploads'}, (err, res) => {
+				if(err) {
+					return res.status(404).json({
+						err: err
+					});
+				} else {
+					console.log(res);
+				}
+			});
+			user.resume_file = 'files/' + req.files['resume_file'][0].filename;
+		}
+		user.school = data.school;
+		user.intro = data.intro;
+		user.facebook = data.facebook;
+		user.website = data.website;
+
+		user.save().then(result => {
+			console.log(result);
+			res.redirect('/profile');
+		}).catch(err => {
+			res.send(err);
+		});
+	});
+});
+
+// @route POST
+// @desc save edits to current org account's profile
+router.post('/profile/org', upload.single('avatar'), (req, res) => {
+	let data = req.body;
+	const currentAcc = req.user;
+	Org.findOne({'username': currentAcc.username}, (err, org) => {
+		if(err) {
+			res.send('Database error...');
+			console.log(err);
+			return;
+		}
+		console.log(org);
+		if(req.file &&
+		org.avatar != 'https://cdn0.iconfinder.com/data/icons/users-android-l-lollipop-icon-pack/24/group2-512.png') {
+			// delete existing avatar file
+			gfs.remove({filename: org.avatar.split('files/')[1], root: 'uploads'}, (err, result) => {
+				if(err) {
+					console.log(err);
+				} else {
+					console.log(result);
+				}
+			});
+		}
+		if (req.file) {
+			org.avatar = 'files/' + req.file.filename;
+		}
+		org.name = data.name;
+		org.email = data.email;
+		org.hashtags = data.hashtags;
+		org.desc = data.desc;
+		org.facebook = data.facebook;
+		org.website = data.website;
+
+		org.save().then(result => {
+			console.log(result);
+			res.redirect('/profile');
+		}).catch(err => {
+			res.send(err);
+		});
+	});
 });
 
 // Exports

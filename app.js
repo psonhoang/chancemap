@@ -18,7 +18,12 @@ const Grid = require('gridfs-stream');
 
 // Database
 const mongoose = require('mongoose');
-mongoose.connect(config.database);
+mongoose.connect(config.database, {
+  connectTimeoutMS: 120000
+}).then().catch(err => {
+  console.error('App starting error:', err.stack);
+  process.exit(1);
+});
 const connection = mongoose.connection;
 
 // Models

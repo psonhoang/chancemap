@@ -139,9 +139,6 @@ app.use('/events', eventRoutes);
 // @File ROUTES
 let fileRoutes = require('./controllers/fileController');
 app.use('/files', fileRoutes);
-//event routes
-let eventRoutes = require('./controllers/eventController');
-app.use('/', eventRoutes);
 
 // Export
 module.exports = app;

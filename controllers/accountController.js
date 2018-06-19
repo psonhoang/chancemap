@@ -114,6 +114,7 @@ router.post('/register/user', upload.fields([{name: 'avatar', maxCount: 1}, {nam
 	if(req.files['resume_file']) {
 		resume_file = 'files/' + req.files['resume_file'][0].filename;
 	}
+	console.log(resume_file);
 	let school = data.school;
 	let intro = data.intro;
 	let facebook = data.facebook;
@@ -291,34 +292,36 @@ router.post('/profile/user', upload.fields([{name: 'avatar', maxCount: 1}, {name
 			return;
 		}
 		console.log(user.avatar);
-		if(req.files['avatar'] && user.avatar != 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Antu_im-invisible-user.svg/2000px-Antu_im-invisible-user.svg.png') {
-			// delete existing avatar file
-			gfs.remove({filename: user.avatar.split('files/')[1], root: 'uploads'}, (err, result) => {
-				if(err) {
-					console.log(err);
-				} else {
-					console.log(result);
-				}
-			});
-		}
 		if(req.files['avatar']) {
+			if(user.avatar != 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Antu_im-invisible-user.svg/2000px-Antu_im-invisible-user.svg.png') {
+				gfs.remove({filename: user.avatar.split('files/')[1], root: 'uploads'}, (err, result) => {
+					if(err) {
+						console.log(err);
+					} else {
+						console.log(result);
+					}
+				});
+			}
+			// delete existing avatar file
 			user.avatar = 'files/' + req.files['avatar'][0].filename;
 		}
 		user.name = data.name;
 		user.email = data.email;
 		user.interests = data.interests;
 		user.skills = data.skills;
-		if(req.files['resume_file'] && !user.resume_file) {
-			// delete existing resume file
-			gfs.remove({filename: user.resume_file.split('files/')[1], root: 'uploads'}, (err, res) => {
-				if(err) {
-					return res.status(404).json({
-						err: err
-					});
-				} else {
-					console.log(res);
-				}
-			});
+		if(req.files['resume_file']) {
+			if(user.resume_file) {
+				// delete existing resume file
+				gfs.remove({filename: user.resume_file.split('files/')[1], root: 'uploads'}, (err, res) => {
+					if(err) {
+						return res.status(404).json({
+							err: err
+						});
+					} else {
+						console.log(res);
+					}
+				});
+			}
 			user.resume_file = 'files/' + req.files['resume_file'][0].filename;
 		}
 		user.school = data.school;
@@ -347,19 +350,18 @@ router.post('/profile/org', upload.single('avatar'), (req, res) => {
 			return;
 		}
 		console.log(org);
-		if(req.file &&
-		org.avatar != 'https://cdn0.iconfinder.com/data/icons/users-android-l-lollipop-icon-pack/24/group2-512.png') {
-			// delete existing avatar file
-			gfs.remove({filename: org.avatar.split('files/')[1], root: 'uploads'}, (err, result) => {
-				if(err) {
-					console.log(err);
-				} else {
-					console.log(result);
-				}
-			});
-		}
-		if (req.file) {
-			org.avatar = 'files/' + req.file.filename;
+		if(req.file) {
+			if(	org.avatar != 'https://cdn0.iconfinder.com/data/icons/users-android-l-lollipop-icon-pack/24/group2-512.png') {
+				// delete existing avatar file
+				gfs.remove({filename: org.avatar.split('files/')[1], root: 'uploads'}, (err, result) => {
+					if(err) {
+						console.log(err);
+					} else {
+						console.log(result);
+					}
+				});
+			}
+ 			org.avatar = 'files/' + req.file.filename;
 		}
 		org.name = data.name;
 		org.email = data.email;

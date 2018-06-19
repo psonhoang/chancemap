@@ -18,7 +18,12 @@ const Grid = require('gridfs-stream');
 
 // Database
 const mongoose = require('mongoose');
-mongoose.connect(config.database);
+mongoose.connect(config.database, {
+  connectTimeoutMS: 120000
+}).then().catch(err => {
+  console.error('App starting error:', err.stack);
+  process.exit(1);
+});
 const connection = mongoose.connection;
 
 // Models
@@ -129,6 +134,8 @@ app.get('/', (req, res) => {
 // Route controllers
 let accRoutes = require('./controllers/accountController');
 app.use('/', accRoutes);
+let eventRoutes = require('./controllers/eventController');
+app.use('/events', eventRoutes);
 // @File ROUTES
 let fileRoutes = require('./controllers/fileController');
 app.use('/files', fileRoutes);

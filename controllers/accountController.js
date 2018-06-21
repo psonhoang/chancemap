@@ -51,14 +51,14 @@ const upload = multer({ storage });
 // ***** ROUTES *****
 // Login
 router.get('/login', (req, res) => {
-	res.render('login', {title: "Code Dao | Login"});
+	res.render('login', {title: "Code Dao | Login", message: req.flash('error')});
 });
 
 router.post('/login', (req, res, next) => {
   passport.authenticate('local', {
     successRedirect: '/',
     failureRedirect: '/login',
-    failureFlash: 'Invalid username or password',
+    failureFlash: true,
   })(req, res, next);
 });
 

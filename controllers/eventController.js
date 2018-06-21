@@ -9,20 +9,12 @@ const Org = require('../models/org');
 const User = require('../models/user');
 
 // creating a new-event page
-<<<<<<< HEAD
-router.get('/events/create', (req, res) => {
-=======
 router.get('/create', (req, res) => {
->>>>>>> 789de54b14497ac4db7730acbf4f1d904a98a207
     let account_type = req.user.account_type;
     let account_id = req.user.account_id;
-    if(account_type == 1) {    
+    if(account_type == 1) {
         Org.findOne({'_id': account_id}, (err, org) => {
-<<<<<<< HEAD
-            res.render('Events/Org/create', {
-=======
             res.render('events/orgs/create', {
->>>>>>> 789de54b14497ac4db7730acbf4f1d904a98a207
                 title: 'App Dao | Create Event',
                 account_type: account_type,
                 account_id: account_id,
@@ -33,8 +25,7 @@ router.get('/create', (req, res) => {
 });
 
 // viewing my own events
-<<<<<<< HEAD
-router.get('/events/view', (req, res) => {
+router.get('/:id/view', (req, res) => {
     let account_type = req.user.account_type;
     let account_id = req.user.account_id;
     if(account_type == 0) {
@@ -59,8 +50,6 @@ router.get('/events/view', (req, res) => {
 });
 
 // viewing others' events
-router.get('events/', (req, res) => {
-=======
 router.get('/manage', (req, res) => {
     let account_type = req.user.account_type;
     let account_id = req.user.account_id;
@@ -75,17 +64,12 @@ router.get('/manage', (req, res) => {
 });
 
 // viewing others' events
-router.get('events', (req, res) => {
->>>>>>> 789de54b14497ac4db7730acbf4f1d904a98a207
+router.get('/', (req, res) => {
     let account_type = req.user.account_type;
     let account_id = req.user.account_id;
     if(account_type == 0) {
         User.findOne({'_id': account_id}, (err, user) => {
-<<<<<<< HEAD
-            res.render('pages/index', {
-=======
             res.render('index', {
->>>>>>> 789de54b14497ac4db7730acbf4f1d904a98a207
                 title: 'App Dao | View Event',
                 account_type: account_type,
                 account_id: account_id,
@@ -94,11 +78,7 @@ router.get('events', (req, res) => {
         });
     } else {
         Org.findOne({'_id': account_id}, (err, org) => {
-<<<<<<< HEAD
-            res.render('pages/index', {
-=======
             res.render('index', {
->>>>>>> 789de54b14497ac4db7730acbf4f1d904a98a207
                 title: 'App Dao | Create Event',
                 account_type: account_type,
                 account_id: account_id,
@@ -108,20 +88,12 @@ router.get('events', (req, res) => {
     }
 })
 
-<<<<<<< HEAD
-router.post('/', (req, res) => {
-=======
 router.post('/create', (req, res) => {
->>>>>>> 789de54b14497ac4db7730acbf4f1d904a98a207
     console.log(req.body);
 
     let data = req.body;
     let name = data.name;
-<<<<<<< HEAD
-    let org_id = currentAcc._id;
-=======
     let org_id = req.user.account_id;
->>>>>>> 789de54b14497ac4db7730acbf4f1d904a98a207
     let org_name = data.org_name;
     let desc = data.desc;
     let hashtags = data.hashtags;
@@ -153,22 +125,11 @@ router.post('/create', (req, res) => {
     newEvent.save((err, event) => {
         if(err) {
             console.log(err);
-            return
+            return;
         }
-<<<<<<< HEAD
-=======
         console.log('new event created!');
->>>>>>> 789de54b14497ac4db7730acbf4f1d904a98a207
         console.log(event);
     });
 });
 
 module.exports = router;
-
-
-
-
-
-
-
-

@@ -29,6 +29,7 @@ const connection = mongoose.connection;
 // Models
 const User = require('./models/user');
 const Org = require('./models/org');
+const Account = require('./models/account');
 
 // View engine
 app.set('view engine', 'ejs');
@@ -133,6 +134,8 @@ app.get('/', (req, res) => {
 // Route controllers
 let accRoutes = require('./controllers/accountController');
 app.use('/', accRoutes);
+let eventRoutes = require('./controllers/eventController');
+app.use('/events', eventRoutes);
 // @File ROUTES
 let fileRoutes = require('./controllers/fileController');
 app.use('/files', fileRoutes);

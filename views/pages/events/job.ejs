@@ -1,0 +1,140 @@
+<% extend('../defaultLayouts/defaultLayout') %>
+   
+   <div class="app-content content container-fluid">
+        <div class="content-wrapper">
+          <div class="content-header row">
+            <div class="content-header-left col-md-6 col-xs-12 mb-2">
+              <h3 class="content-header-title mb-0">Jobs</h3>
+              <div class="row breadcrumbs-top">
+                <div class="breadcrumb-wrapper col-xs-12">
+                  <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="/job">Manage</a>
+                    </li>
+                    <li class="breadcrumb-item active">JOB
+                    </li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+          <div class="content-body">
+  
+<!-- card actions section start -->
+<section id="card-actions">
+	<div class= "row"></div>
+		<div class="col-md-6 col-sm-12">
+			<div class="card">
+				<div class="card-header">
+					<h4 class="card-title">Job Example 4</h4>
+					<a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i><i class="fa fa-ellipsis-v font-medium-3"></i><i class="fa fa-ellipsis-v font-medium-3"></i></a>
+					<div class="heading-elements">
+						<ul class="list-inline mb-0">
+							<li><a data-action="collapse"><i class="ft-minus"></i></a></li>
+							<li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
+							<li><a data-action="expand"><i class="ft-maximize"></i></a></li>								
+						</ul>
+					</div>
+				</div>
+				<div class="card-body collapse in">
+					<div class="card-block">
+						<p>Job's title</p>
+						<p>Job's Org</p>
+						<p>Job's small Description</p>
+						<p>Job's Edit button</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<div class="card">
+				<div class="card-header">
+					<h4 class="card-title">Job Example 4</h4>
+					<a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i><i class="fa fa-ellipsis-v font-medium-3"></i><i class="fa fa-ellipsis-v font-medium-3"></i></a>
+					<div class="heading-elements">
+						<ul class="list-inline mb-0">
+							<li><a data-action="collapse"><i class="ft-minus"></i></a></li>
+							<li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
+							<li><a data-action="expand"><i class="ft-maximize"></i></a></li>								
+						</ul>
+					</div>
+				</div>
+				<div class="card-body collapse in">
+					<div class="card-block">
+						<p>Job's title</p>
+						<p>Job's Org</p>
+						<p>Job's small Description</p>
+						<p>Job's Edit button</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class= "row"></div>
+		<div class="col-md-6 col-sm-12">
+			<div class="card">
+				<div class="card-header">
+					<h4 class="card-title">Job Example 4</h4>
+					<a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i><i class="fa fa-ellipsis-v font-medium-3"></i><i class="fa fa-ellipsis-v font-medium-3"></i></a>
+					<div class="heading-elements">
+						<ul class="list-inline mb-0">
+							<li><a data-action="collapse"><i class="ft-minus"></i></a></li>
+							<li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
+							<li><a data-action="expand"><i class="ft-maximize"></i></a></li>								
+						</ul>
+					</div>
+				</div>
+				<div class="card-body collapse in">
+					<div class="card-block">
+						<p>Job's title</p>
+						<p>Job's Org</p>
+						<p>Job's small Description</p>
+						<p>Job's Edit button</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6 col-sm-12">
+				<div class="card">
+					<div class="card-header">
+						<h4 class="card-title">Job Example 4</h4>
+						<a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i><i class="fa fa-ellipsis-v font-medium-3"></i><i class="fa fa-ellipsis-v font-medium-3"></i></a>
+						<div class="heading-elements">
+							<ul class="list-inline mb-0">
+								<li><a data-action="collapse"><i class="ft-minus"></i></a></li>
+								<li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
+								<li><a data-action="expand"><i class="ft-maximize"></i></a></li>								
+							</ul>
+						</div>
+					</div>
+					<div class="card-body collapse in">
+						<div class="card-block">
+							<p>Job's title</p>
+							<p>Job's Org</p>
+							<p>Job's small Description</p>
+							<p>Job's Edit button</p>
+						</div>
+					</div>
+				</div>
+		</div>
+</section>
+<!-- // card-actions section end -->
+        </div>
+      </div>
+	</div>
+	
+<!-- Submit resume, edit job and add jobs button script-->
+<div class="row col-xs-12">
+		<div role="group" class="btn-group float-md-right">
+		<div role="group" class="btn-group">
+			<% if (account_type == 1) {%>	
+				<button id="btnGroupDrop1" type="button" class="btn btn-outline-primary"><i class="ft-edit icon-left"></i><a href="" class="card-link">Edit</a></button>
+				<button id="btnGroupDrop2" type="button" class="btn btn-outline-primary"><a href="/job/add" class="card-link">Add</a></button>
+			<% } else { %>
+				<button id="btnGroupDrop1" type="button" class="btn btn-outline-primary"><i class="ft-edit icon-left"></i>Send Resume</button>
+			<% } %>
+		</div>
+		</div>
+</div>

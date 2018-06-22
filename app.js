@@ -18,12 +18,18 @@ const Grid = require('gridfs-stream');
 
 // Database
 const mongoose = require('mongoose');
-mongoose.connect(config.database);
+mongoose.connect(config.database, {
+  connectTimeoutMS: 120000
+}).then().catch(err => {
+  console.error('App starting error:', err.stack);
+  process.exit(1);
+});
 const connection = mongoose.connection;
 
 // Models
 const User = require('./models/user');
 const Org = require('./models/org');
+const Account = require('./models/account');
 
 // View engine
 app.set('view engine', 'ejs');
@@ -62,11 +68,11 @@ app.use(session({
 }));
 
 // Express Messages Middleware
-app.use(require('connect-flash')());
-app.use(function (req, res, next) {
-  res.locals.messages = require('express-messages')(req, res);
-  next();
-});
+app.use(flash());
+// app.use(function (req, res, next) {
+//   res.locals.messages = require('express-messages')(req, res);
+//   next();
+// });
 
 // Express Validator Middleware
 app.use(expressValidator({
@@ -114,21 +120,11 @@ app.get('/', (req, res) => {
       });
     } else {
       Org.findOne({'_id': account_id}, (err, org) => {
-        // res.send(org);
-        gfs.files.findOne({filename: org.avatar}, (err, file) => {
-          // Check if file
-          let hasAvatar = true;
-          if (!file || file.length === 0) {
-            hasAvatar = false;
-          }
-          // File exists
-          res.render('index', {
-            title: 'App Dao | Dashboard',
-            account_type: account_type,
-            account_id: account_id,
-            currentAcc: org,
-            hasAvatar: hasAvatar
-          });
+        res.render('index', {
+          title: 'App Dao | Dashboard',
+          account_type: account_type,
+          account_id: account_id,
+          currentAcc: org
         });
       });
     }
@@ -138,6 +134,8 @@ app.get('/', (req, res) => {
 // Route controllers
 let accRoutes = require('./controllers/accountController');
 app.use('/', accRoutes);
+let eventRoutes = require('./controllers/eventController');
+app.use('/events', eventRoutes);
 // @File ROUTES
 let fileRoutes = require('./controllers/fileController');
 app.use('/files', fileRoutes);

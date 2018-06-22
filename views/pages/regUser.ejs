@@ -48,26 +48,26 @@
                   <fieldset class="form-group position-relative has-icon-left">
                     <label class="col-md-2 label-control" for="interests">Interests</label>
                     <div class="col-md-10">
-                      <div class="edit-on-delete form-control tagging" data-tags-input-name="interests">
-                        <div id="interest-example">Type interests in keywords and 'Enter' (delete this pls)</div>
-                        <input id="interests-input" class="type-zone form-control" name="interests" placeholder="Interests" contenteditable="true" required>
+                      <div id="interests-input" placeholder="Interests" class="edit-on-delete form-control tagging" data-tags-input-name="interests">
+                        <input class="type-zone form-control" name="interests" placeholder="Interests" contenteditable="true" required>
                       </div>
                       <div class="form-control-position">
                         <i class="ft-heart"></i>
                       </div>
+                      <span style="font-style: italic" class="small">Enter your interests in keywords (ex: charity) and 'Enter'</span>
                     </div>
                   </fieldset>
                   <!-- Skills -->
                   <fieldset class="form-group position-relative has-icon-left">
                     <label class="col-md-2 label-control" for="interests">Skills</label>
                     <div class="col-md-10">
-                      <div class="edit-on-delete form-control tagging" data-tags-input-name="skills">
-                        <div id="skill-example">Type your skills in keywords and 'Enter' (delete this pls)</div>
-                        <input id="skills-input" class="type-zone form-control" name="skills" placeholder="Skills" contenteditable="true" required>
+                      <div id="skills-input" placeholder="Skills" class="edit-on-delete form-control tagging" data-tags-input-name="skills">
+                        <input class="type-zone form-control" name="skills" placeholder="Skills" contenteditable="true" required>
                       </div>
                       <div class="form-control-position">
                         <i class="ft-zap"></i>
                       </div>
+                      <span style="font-style: italic" class="small">Enter your skills in keywords (ex: designer) and 'Enter'</span>
                     </div>
                   </fieldset>
                   <!-- Resume -->
@@ -78,6 +78,7 @@
                       <div class="form-control-position">
                         <i class="ft-file-text"></i>
                       </div>
+                      <span style="font-style: italic" class="small">Upload your resume here (docx, pdf,...)</span>
                     </div>
                   </fieldset>
                   <!-- School -->
@@ -114,7 +115,7 @@
                   <fieldset class="form-group position-relative has-icon-left">
                     <label class="col-md-2 label-control" for="website">Website</label>
                     <div class="col-md-10">
-                      <input type="url" class="form-control" id="user-name" name="webstie" placeholder="Your website url (optional)">
+                      <input type="url" class="form-control" id="user-name" name="website" placeholder="Your website url (optional)">
                       <div class="form-control-position">
                         <i class="ft-globe"></i>
                       </div>
@@ -177,5 +178,10 @@
     }
     reader.readAsDataURL(event.target.files[0]);
   }
+
+  $(document).ready(function() {
+    $('#interests-input').tagging('removeAll');
+    $('#skills-input').tagging('removeAll');
+  });
 </script>
 <!-- END -->

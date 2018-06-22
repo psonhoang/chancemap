@@ -7,7 +7,7 @@
           <div class="card-block">
             <img id="avatar" src='<%= currentAcc.avatar; %>' class="rounded-circle width-100 height-100" alt="Card image">
             <br><br>
-            <span class="card-subtitle"><%= currentAcc.name; %></span>
+            <a href="/profile"><span class="card-subtitle"><%= currentAcc.name; %></span></a>
           </div>
         </div>
         <%# <i data-toggle="tooltip" data-placement="right" data-original-title="General" class=" ft-minus"></i> %>
@@ -26,16 +26,16 @@
       </li>
       <li class="nav-item has-sub"><a href=""><i class="ft-folder"></i><span data-i18n="" class="menu-title">Manage</span></a>
         <ul class="menu-content">
-          <li><a href="" class="menu-item"><i class="ft-calendar"></i>My Events</a>
+          <li><a href="" class="menu-item"><i class="ft-clipboard"></i>My Events</a>
           </li>
           <li><a href="" class="menu-item"><i class="ft-clipboard"></i>My Jobs</a>
           <li><a href="/job" class="menu-item"><i class="ft-clipboard"></i>My Jobs</a>
           </li>
         </ul>
       </li>
-      <li class=" nav-item"><a href=""><i class="ft-users"></i><span data-i18n="" class="menu-title">Org profile</span></a>
+      <li class="nav-item"><a href="/profile"><i class="ft-users"></i><span data-i18n="" class="menu-title">Org profile</span></a>
       </li>
-      <li class=" nav-item"><a href=""><i class="ft-user-check"></i><span data-i18n="" class="menu-title">Followers</span></a>
+      <li class="nav-item"><a href=""><i class="ft-user-check"></i><span data-i18n="" class="menu-title">Followers</span></a>
       <li class="navigation-header"><span>More</span>
         <%# <i data-toggle="tooltip" data-placement="right" data-original-title="Apps" class=" ft-minus"></i> %>
       </li>

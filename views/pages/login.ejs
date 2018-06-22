@@ -15,8 +15,10 @@
               <h6 class="card-subtitle line-on-side text-muted text-xs-center font-small-3 pt-2"><span>LOGIN</span></h6>
             </div>
             <div class="card-body collapse in">
+              <% if(message != '') { %>
+                <div style="margin-left: 20px; margin-right: 20px" class="alert alert-danger text-center"><%= message %></div>
+              <% } %>
               <div class="card-block">
-                <% messages('message', locals); %>
                   <form class="form-horizontal form-simple" action="/login" method="POST">
                     <fieldset class="form-group position-relative has-icon-left mb-0">
                       <input type="text" class="form-control form-control-lg input-lg" id="user-name" name="username" placeholder="Your Username" required>
@@ -46,8 +48,7 @@
             </div>
             <div class="card-footer">
               <div class="">
-                <p class="float-sm-left text-xs-center m-0"><a href="recover-password.html" class="card-link">Recover password</a></p>
-                <p class="float-sm-right text-xs-center m-0">New here? <a href="/register" class="card-link">Sign Up</a></p>
+                <p class="text-xs-center m-0">New here? <a href="/register" class="card-link">Sign Up</a></p>
               </div>
             </div>
           </div>

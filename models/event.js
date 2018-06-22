@@ -11,6 +11,7 @@ const eventSchema = mongoose.Schema({
 	address: {type: String, required: true},
 	reg_form: String,
 	reg_deadline: {type: Date, required: true},
+	date: {type: Date, required: true},
 	start_time: {type: Date, required: true},
 	end_time: {type: Date, required: true},
 	facebook: String,

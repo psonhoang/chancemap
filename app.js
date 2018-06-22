@@ -142,5 +142,8 @@ app.use('/', accRoutes);
 let fileRoutes = require('./controllers/fileController');
 app.use('/files', fileRoutes);
 
+//@jobs ROUTES
+let jobRoutes = require('./controllers/jobController');
+app.use('/', jobRoutes);
 // Export
 module.exports = app;

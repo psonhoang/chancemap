@@ -134,11 +134,17 @@ app.get('/', (req, res) => {
 // Route controllers
 let accRoutes = require('./controllers/accountController');
 app.use('/', accRoutes);
+
+// Event ROUTES
 let eventRoutes = require('./controllers/eventController');
 app.use('/events', eventRoutes);
 // @File ROUTES
 let fileRoutes = require('./controllers/fileController');
 app.use('/files', fileRoutes);
+
+// Job ROUTES
+let jobRoutes = require('./controllers/jobController');
+app.use('/job', jobRoutes);
 
 // Export
 module.exports = app;

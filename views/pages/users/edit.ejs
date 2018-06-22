@@ -130,13 +130,13 @@
   }
 
   $(document).ready(function() {
-    let interests = <%- JSON.stringify(currentAcc.interests) %>;
+    let interests = JSON.stringify(currentAcc.interests);
     $('#interests-input').tagging('removeAll');
     interests.forEach(interest => {
       $('#interests-input').tagging('add', interest);
     });
 
-    let skills = <%- JSON.stringify(currentAcc.skills) %>;
+    let skills = JSON.stringify(currentAcc.skills);
     $('#skills-input').tagging('removeAll');
     skills.forEach(skill => {
       $('#skills-input').tagging('add', skill);

@@ -1,0 +1,54 @@
+<% extend('../../../defaultLayouts/defaultLayout') %>
+   
+   <div class="app-content content container-fluid">
+        <div class="content-wrapper">
+          <div class="content-header row">
+            <div class="content-header-left col-md-6 col-xs-12 mb-2">
+              <h3 class="content-header-title mb-0">Jobs</h3>
+              <div class="row breadcrumbs-top">
+                <div class="breadcrumb-wrapper col-xs-12">
+                  <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="/job">Manage</a>
+                    </li>
+                    <li class="breadcrumb-item active">JOB
+                    </li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+          <div class="content-body">
+  
+<!-- card actions section start -->
+<section id="card-actions">
+<div class='row'></div>
+<%  var jobCounts = 0; %>
+<%  jobs.forEach(function(job){ %>
+<%  if (jobCounts >= 2) { %>
+        <div class='row'></div>
+<%      jobCounts = 0; %>
+<%  } %>
+<%- include('card', { cardTitle: job.name, cardElement1: job.org_name, cardElement2: job.desc, cardElement3: job.hashtags, cardElement4: job.app_deadline}); %>
+<%  jobCounts += 1; %>
+<%  }) %>
+</section>
+<!-- // card-actions section end -->
+        </div>
+	  </div>
+	
+<!-- Submit resume, edit job and add jobs button script-->
+<div class="row col-xs-12">
+		<div role="group" class="btn-group float-md-right">
+		<div role="group" class="btn-group">
+			<% if (account_type == 1) {%>	
+				<button id="btnGroupDrop1" type="button" class="btn btn-outline-primary"><i class="ft-edit icon-left"></i><a href="" class="card-link">Edit</a></button>
+				<button id="btnGroupDrop2" type="button" class="btn btn-outline-primary"><a href="/job/add" class="card-link">Add</a></button>
+			<% } else { %>
+				<button id="btnGroupDrop1" type="button" class="btn btn-outline-primary"><i class="ft-edit icon-left"></i>Send Resume</button>
+			<% } %>
+		</div>
+		</div>
+</div>

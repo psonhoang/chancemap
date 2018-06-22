@@ -30,7 +30,7 @@ router.get('/:id/view', (req, res) => {
     let account_id = req.user.account_id;
     if(account_type == 0) {
         User.findOne({'_id': account_id}, (err, user) => {
-            res.render('Events/User/view', {
+            res.render('events/users/view', {
                 title: 'App Dao | View Event',
                 account_type: account_type,
                 account_id: account_id,

@@ -17,14 +17,14 @@
 	            <div class="card-body collapse in">
 	                <div class="card-block">    
 
-	                    <form class="form" method="POST" action="/events/manage/create">
+	                    <form class="form" method="POST" action="/events/manage/edit">
 	                    	<div class="form-body">
 								<!-- event name -->
 	                    		<div class="row">
 	                    			<div class="form-group col-xs-12 mb-2">
 			                            <label for="timesheetinput1">Event Name</label>
 			                            <div class="position-relative has-icon-left">
-			                            	<input type="text" id="timesheetinput1" class="form-control" name="name" required>
+			                            	<input type="text" value="<%= currentEvent.name %>" id="timesheetinput1" class="form-control" name="name" required>
 				                            <div class="form-control-position">
 				                                <i class="ft-user"></i>
 				                            </div>
@@ -36,7 +36,7 @@
 	                    			<div class="form-group col-xs-12 mb-2">
 			                            <label for="timesheetinput1">Organisation Name</label>
 			                            <div class="position-relative has-icon-left">
-			                            	<input readonly type="text" value="<%= currentAcc.name %>" class="form-control" name="org_name">
+			                            	<input readonly type="text" value="" class="form-control" name="org_name">
 				                            <div class="form-control-position">
 				                                <i class="ft-user"></i>
 				                            </div>
@@ -49,7 +49,7 @@
 			                            <label for="timesheetinput1">Hashtags</label>
 										<label class="col-md-0 label-control" for="hashtags"></label>
 										<div class="edit-on-delete form-control tagging" data-tags-input-name="hashtags">
-											<input id="hashtags-input" class="type-zone form-control" name="hashtags" contenteditable="true" required>
+											<input id="hashtags-input" value="<%= currentEvent.hashtags %>" class="type-zone form-control" name="hashtags" contenteditable="true" required>
 										</div>
 			                        </div>
 	                    		</div>
@@ -58,7 +58,7 @@
 	                    			<div class="form-group col-xs-12 mb-2">
 			                            <label for="timesheetinput1">Address</label>
 			                            <div class="position-relative has-icon-left">
-			                            	<input type="text" id="timesheetinput1" class="form-control" name="address">
+			                            	<input type="text" value="<%= currentEvent.address %>" id="timesheetinput1" class="form-control" name="address">
 				                            <div class="form-control-position">
 				                                <i class="ft-user"></i>
 				                            </div>
@@ -70,7 +70,7 @@
 	                    			<div class="form-group col-xs-12 mb-2">
 			                            <label for="timesheetinput1">Registration Form</label>
 			                            <div class="position-relative has-icon-left">
-			                            	<input type="text" id="timesheetinput1" class="form-control" name="reg_form">
+			                            	<input type="text" value="<%= currentEvent.reg_form %>" id="timesheetinput1" class="form-control" name="reg_form">
 				                            <div class="form-control-position">
 				                                <i class="ft-user"></i>
 				                            </div>
@@ -82,7 +82,7 @@
 			                        <div class="form-group col-xs-12 mb-2">
 			                        	<label for="timesheetinput3">Registration Deadline</label>
 			                            <div class="position-relative has-icon-left">
-			                            	<input type="date" id="timesheetinput3" class="form-control" name="reg_deadline">
+			                            	<input type="date" value="<%= currentEvent.reg_deadline %>" id="timesheetinput3" class="form-control" name="reg_deadline">
 				                            <div class="form-control-position">
 				                                <i class="ft-message-square"></i>
 				                            </div>
@@ -94,7 +94,7 @@
 			                        <div class="form-group col-md-6 mb-2">
 			                        	<label for="timesheetinput3">Start Date</label>
 			                            <div class="position-relative has-icon-left">
-			                            	<input type="date" id="timesheetinput3" class="form-control" name="start_date">
+			                            	<input type="date" value="<%= currentEvent.start_date %>" id="timesheetinput3" class="form-control" name="start_date">
 				                            <div class="form-control-position">
 				                                <i class="ft-message-square"></i>
 				                            </div>
@@ -103,7 +103,7 @@
 									<div class="form-group col-md-6 mb-2">
 			                            <label for="timesheetinput5">Start Time</label>
 			                            <div class="position-relative has-icon-left">
-			                            	<input type="time" id="timesheetinput5" class="form-control" name="start_time">
+			                            	<input type="time" value="<%= currentEvent.start_time %>" id="timesheetinput5" class="form-control" name="start_time">
 				                            <div class="form-control-position">
 				                                <i class="ft-clock"></i>
 				                            </div>
@@ -115,7 +115,7 @@
 									<div class="form-group col-md-6 mb-2">
 			                        	<label for="timesheetinput3">End Date</label>
 			                            <div class="position-relative has-icon-left">
-			                            	<input type="date" id="timesheetinput3" class="form-control" name="end_date">
+			                            	<input type="date" value="<%= currentEvent.end_date %>" id="timesheetinput3" class="form-control" name="end_date">
 				                            <div class="form-control-position">
 				                                <i class="ft-message-square"></i>
 				                            </div>
@@ -124,7 +124,7 @@
 			                        <div class="form-group col-md-6 mb-2">
 			                            <label for="timesheetinput6">End Time</label>
 			                            <div class="position-relative has-icon-left">
-			                            	<input type="time" id="timesheetinput6" class="form-control" name="end_time">
+			                            	<input type="time" value="<%= currentEvent.end_time %>" id="timesheetinput6" class="form-control" name="end_time">
 				                            <div class="form-control-position">
 				                                <i class="ft-clock"></i>
 				                            </div>
@@ -136,7 +136,7 @@
 	                    			<div class="form-group col-xs-12 mb-2">
 			                            <label for="timesheetinput1">Facebook</label>
 			                            <div class="position-relative has-icon-left">
-			                            	<input type="text" id="timesheetinput1" class="form-control" name="facebook">
+			                            	<input type="text" value="<%= currentEvent.facebook %>" id="timesheetinput1" class="form-control" name="facebook">
 				                            <div class="form-control-position">
 				                                <i class="ft-user"></i>
 				                            </div>
@@ -148,7 +148,7 @@
 	                    			<div class="form-group col-xs-12 mb-2">
 			                            <label for="timesheetinput1">Website</label>
 			                            <div class="position-relative has-icon-left">
-			                            	<input type="text" id="timesheetinput1" class="form-control" name="website">
+			                            	<input type="text" value="<%= currentEvent.website %>" id="timesheetinput1" class="form-control" name="website">
 				                            <div class="form-control-position">
 				                                <i class="ft-user"></i>
 				                            </div>
@@ -160,7 +160,7 @@
 									<div class="form-group col-xs-12 mb-2">
 										<label for="timesheetinput7">Description</label>
 										<div class="position-relative has-icon-left">
-			                            	<input type="text" id="timesheetinput7" rows="5" class="form-control" name="desc" placeholder="Description">
+			                            	<input type="text" value="<%= currentEvent.desc %>" id="timesheetinput7" rows="5" class="form-control" name="desc" placeholder="Description">
 				                            <div class="form-control-position">
 				                                <i class="ft-file"></i>
 				                            </div>

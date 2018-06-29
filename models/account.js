@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 // Account Schema
 const accountSchema = mongoose.Schema({
 	_id: mongoose.Schema.Types.ObjectId,
+	created_at: {type: Date, required: true},
+	updated_at: {type: Date, required: true},
 	email: {type: String, required: true},
 	username: {type: String, required: true},
 	password: {type: String, required: true},

@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 // Event Schema
 const eventSchema = mongoose.Schema({
 	_id: mongoose.Schema.Types.ObjectId,
+	created_at: {type: Date, required: true},
+	updated_at: {type: Date, required: true},
 	name: {type: String, required: true},
 	org_id: {type: mongoose.Schema.Types.ObjectId, required: true},
 	org_name: {type: String, required: true},

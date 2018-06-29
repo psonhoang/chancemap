@@ -133,6 +133,56 @@ app.get('/', (req, res) => {
             if(account_type == 0) {
               User.findOne({'_id': account_id}, (err, user) => {
                 // res.send(user);
+                let criteriaList = user.interests.concat(user.skills);
+                // orgs sort
+                orgs.forEach(org => {
+                  org.matches = 0;
+                  org.hashtags.forEach(hashtag => {
+                    criteriaList.forEach(criteria => {
+                      if(hashtag.includes(criteria)) {
+                        org.matches++;
+                      }
+                    });
+                  });
+                });
+                orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+                // events sort
+                events.forEach(event => {
+                  event.matches = 0;
+                  event.hashtags.forEach(hashtag => {
+                    criteriaList.forEach(criteria => {
+                      if(hashtag.includes(criteria)) {
+                        event.matches++;
+                      }
+                    });
+                  });
+                });
+                events.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+                // jobs sort
+                jobs.forEach(job => {
+                  job.matches = 0;
+                  job.hashtags.forEach(hashtag => {
+                    criteriaList.forEach(criteria => {
+                      if(hashtag.includes(criteria)) {
+                        job.matches++;
+                      }
+                    });
+                  });
+                });
+                jobs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+                // users sort
+                users.forEach(user => {
+                  user.matches = 0;
+                  let userHashtags = user.interests.concat(user.skills);
+                  userHashtags.forEach(hashtag => {
+                    criteriaList.forEach(criteria => {
+                      if(hashtag.includes(criteria)) {
+                        user.matches++;
+                      }
+                    });
+                  });
+                });
+                users.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
                 res.render('index', {
                   title: 'App Dao | Home',
                   account_type: account_type,
@@ -142,11 +192,61 @@ app.get('/', (req, res) => {
                   jobs: jobs,
                   orgs: orgs,
                   users: users,
-                  criteriaList: user.interests.concat(user.skills)
+                  criteriaList: criteriaList
                 });
               });
             } else {
               Org.findOne({'_id': account_id}, (err, org) => {
+                let criteriaList = org.hashtags;
+                // orgs sort
+                orgs.forEach(org => {
+                  org.matches = 0;
+                  org.hashtags.forEach(hashtag => {
+                    criteriaList.forEach(criteria => {
+                      if(hashtag.includes(criteria)) {
+                        org.matches++;
+                      }
+                    });
+                  });
+                });
+                orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+                // events sort
+                events.forEach(event => {
+                  event.matches = 0;
+                  event.hashtags.forEach(hashtag => {
+                    criteriaList.forEach(criteria => {
+                      if(hashtag.includes(criteria)) {
+                        event.matches++;
+                      }
+                    });
+                  });
+                });
+                events.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+                // jobs sort
+                jobs.forEach(job => {
+                  job.matches = 0;
+                  job.hashtags.forEach(hashtag => {
+                    criteriaList.forEach(criteria => {
+                      if(hashtag.includes(criteria)) {
+                        job.matches++;
+                      }
+                    });
+                  });
+                });
+                jobs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+                // users sort
+                users.forEach(user => {
+                  user.matches = 0;
+                  let userHashtags = user.interests.concat(user.skills);
+                  userHashtags.forEach(hashtag => {
+                    criteriaList.forEach(criteria => {
+                      if(hashtag.includes(criteria)) {
+                        user.matches++;
+                      }
+                    });
+                  });
+                });
+                users.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
                 res.render('index', {
                   title: 'App Dao | Home',
                   account_type: account_type,
@@ -172,6 +272,8 @@ let accRoutes = require('./controllers/accountController');
 app.use('/', accRoutes);
 let eventRoutes = require('./controllers/eventController');
 app.use('/events', eventRoutes);
+let jobRoutes = require('./controllers/jobController');
+app.use('/jobs', jobRoutes);
 // @File ROUTES
 let fileRoutes = require('./controllers/fileController');
 app.use('/files', fileRoutes);

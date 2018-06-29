@@ -5,7 +5,7 @@
         <i class="ft-edit"></i>
         <div class="text-xs-center">
           <div class="card-block">
-            <img id="avatar" src='<%= currentAcc.avatar; %>' class="rounded-circle width-100 height-100" alt="Card image">
+            <img id="avatar" src='/<%= currentAcc.avatar; %>' class="rounded-circle width-100 height-100" alt="Card image">
             <br><br>
             <a href="/profile"><span class="card-subtitle"><%= currentAcc.name; %></span></a>
           </div>
@@ -28,7 +28,7 @@
         <ul class="menu-content">
           <li><a href="/events/create" class="menu-item"><i class="ft-clipboard"></i>My Events</a>
           </li>
-          <li><a href="" class="menu-item"><i class="ft-clipboard"></i>My Jobs</a>
+          <li><a href="/jobs/manage" class="menu-item"><i class="ft-clipboard"></i>My Jobs</a>
           </li>
         </ul>
       </li>

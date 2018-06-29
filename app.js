@@ -30,6 +30,8 @@ const connection = mongoose.connection;
 const User = require('./models/user');
 const Org = require('./models/org');
 const Account = require('./models/account');
+const Event = require('./models/event');
+const Job = require('./models/job');
 
 // View engine
 app.set('view engine', 'ejs');
@@ -108,26 +110,60 @@ app.get('/', (req, res) => {
     // res.send('Hi there, ' + req.user.username + '; Your account type is: ' + req.user.account_type);
     let account_type = req.user.account_type;
     let account_id = req.user.account_id;
-    if(account_type == 0) {
-      User.findOne({'_id': account_id}, (err, user) => {
-        // res.send(user);
-        res.render('index', {
-          title: 'App Dao | Dashboard',
-          account_type: account_type,
-          account_id: account_id,
-          currentAcc: user
+    Event.find((err, events) => {
+      if(err) {
+        console.log(err);
+        return;
+      }
+      Job.find((err, jobs) => {
+        if(err) {
+          console.log(err);
+          return;
+        }
+        Org.find((err, orgs) => {
+          if(err) {
+            console.log(err);
+            return;
+          }
+          User.find((err, users) => {
+            if(err) {
+              console.log(err);
+              return;
+            }
+            if(account_type == 0) {
+              User.findOne({'_id': account_id}, (err, user) => {
+                // res.send(user);
+                res.render('index', {
+                  title: 'App Dao | Home',
+                  account_type: account_type,
+                  account_id: account_id,
+                  currentAcc: user,
+                  events: events,
+                  jobs: jobs,
+                  orgs: orgs,
+                  users: users,
+                  criteriaList: user.interests.concat(user.skills)
+                });
+              });
+            } else {
+              Org.findOne({'_id': account_id}, (err, org) => {
+                res.render('index', {
+                  title: 'App Dao | Home',
+                  account_type: account_type,
+                  account_id: account_id,
+                  currentAcc: org,
+                  events: events,
+                  jobs: jobs,
+                  orgs: orgs,
+                  users: users,
+                  criteriaList: org.hashtags
+                });
+              });
+            }
+          });
         });
       });
-    } else {
-      Org.findOne({'_id': account_id}, (err, org) => {
-        res.render('index', {
-          title: 'App Dao | Dashboard',
-          account_type: account_type,
-          account_id: account_id,
-          currentAcc: org
-        });
-      });
-    }
+    });
   }
 });
 

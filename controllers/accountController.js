@@ -312,13 +312,12 @@ router.post('/profile/user', upload.fields([{name: 'avatar', maxCount: 1}, {name
 		if(req.files['resume_file']) {
 			if(user.resume_file) {
 				// delete existing resume file
-				gfs.remove({filename: user.resume_file.split('files/')[1], root: 'uploads'}, (err, res) => {
+				gfs.remove({filename: user.resume_file.split('files/')[1], root: 'uploads'}, (err, result) => {
 					if(err) {
-						return res.status(404).json({
-							err: err
-						});
+						console.log(err);
+						return;
 					} else {
-						console.log(res);
+						console.log(result);
 					}
 				});
 			}

@@ -11,7 +11,7 @@ module.exports = function(passport) {
     Account.findOne(query, (err, account) => {
       if (err) throw err;
       if(!account) {
-        return done(null, false, {message: 'No user found!'});
+        return done(null, false, {message: 'No account found with username: '+ username});
       }
 
       // Match password
@@ -22,7 +22,7 @@ module.exports = function(passport) {
           return done(null, account);
         } else {
           console.log("Wrong pass!");
-          return done(null, false, {message: 'Wrong password!'});
+          return done(null, false, {message: 'Wrong password for ' + username});
         }
       });
     });

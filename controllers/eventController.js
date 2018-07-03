@@ -59,35 +59,23 @@ router.get('/edit/:id', (req, res) => {
 })
 
 // viewing my own events
-router.get('/view', (req, res) => {
+router.get('/manage', (req, res) => {
     let account_type = req.user.account_type;
     let account_id = req.user.account_id;
-    Event.find((err, events) => {
+    Event.find({org_id: account_id}, (err, events) => {
         if(err) {
           console.log(err);
           return;
         }
-        if(account_type == 0) {
-            User.findOne({'_id': account_id}, (err, user) => {
-                res.render('events/users/view_cards', {
-                    title: 'App Dao | My Events',
-                    account_type: account_type,
-                    account_id: account_id,
-                    currentAcc: user,
-                    events: events
-                });
+        Org.findOne({'_id': account_id}, (err, org) => {
+            res.render('events/orgs/manage', {
+                title: 'App Dao | My Events',
+                account_type: account_type,
+                account_id: account_id,
+                currentAcc: org,
+                events: events
             });
-        } else {
-            Org.findOne({'_id': account_id}, (err, org) => {
-                res.render('events/users/view_cards', {
-                    title: 'App Dao | My Events',
-                    account_type: account_type,
-                    account_id: account_id,
-                    currentAcc: org,
-                    events: events
-                });
-            });
-        }  
+        });  
     }) 
 });
 
@@ -111,6 +99,8 @@ router.post('/create', (req, res) => {
 
     var newEvent = new Event({
         _id: new mongoose.Types.ObjectId(),
+        created_at: new Date(),
+        updated_at: new Date(),
         name: name,
         org_id: org_id,
         org_name: org_name,
@@ -134,7 +124,7 @@ router.post('/create', (req, res) => {
         }
         console.log('new event created!');
         console.log(event);
-        res.redirect('/events/create')
+        res.redirect('/events/manage')
     });
 });
 
@@ -149,6 +139,10 @@ router.post('/edit/:id', (req, res) => {
 			return;
         }
         console.log(event);
+        if(!event.created_at) {
+            event.created_at = new Date();
+        }
+        event.updated_at = new Date();
         event.name = data.name;
         event.desc = data.desc;
         event.hashtags = data.hashtags;
@@ -165,7 +159,7 @@ router.post('/edit/:id', (req, res) => {
 
         event.save().then(result => {
             console.log(result);
-            res.redirect('/events');
+            res.redirect('/events/manage');
         }).catch(err => {
             res.send(err);
         });

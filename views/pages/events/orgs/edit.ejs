@@ -15,7 +15,7 @@
 	                </div>
 	            </div>
 	            <div class="card-body collapse in">
-	                <div class="card-block">    
+	                <div class="card-block">
 
 	                    <form class="form" method="POST" action="/events/edit/<%= event._id %>">
 	                    	<div class="form-body">
@@ -82,7 +82,7 @@
 			                        <div class="form-group col-xs-12 mb-2">
 			                        	<label for="timesheetinput3">Registration Deadline</label>
 			                            <div class="position-relative has-icon-left">
-			                            	<input type="date" value="<%= event.reg_deadline %>" id="timesheetinput3" class="form-control" name="reg_deadline">
+			                            	<input id="regDeadline" type="date" class="form-control" name="reg_deadline">
 				                            <div class="form-control-position">
 				                                <i class="ft-message-square"></i>
 				                            </div>
@@ -94,7 +94,7 @@
 			                        <div class="form-group col-md-6 mb-2">
 			                        	<label for="timesheetinput3">Start Date</label>
 			                            <div class="position-relative has-icon-left">
-			                            	<input type="date" value="<%= event.start_date %>" id="timesheetinput3" class="form-control" name="start_date">
+			                            	<input type="date" id="startDate" class="form-control" name="start_date">
 				                            <div class="form-control-position">
 				                                <i class="ft-message-square"></i>
 				                            </div>
@@ -115,7 +115,7 @@
 									<div class="form-group col-md-6 mb-2">
 			                        	<label for="timesheetinput3">End Date</label>
 			                            <div class="position-relative has-icon-left">
-			                            	<input type="date" value="<%= event.end_date %>" id="timesheetinput3" class="form-control" name="end_date">
+			                            	<input type="date" id="endDate" class="form-control" name="end_date">
 				                            <div class="form-control-position">
 				                                <i class="ft-message-square"></i>
 				                            </div>
@@ -131,7 +131,7 @@
 			                            </div>
 			                        </div>
 								</div>
-								<!-- facebook -->								
+								<!-- facebook -->
                                 <div class="row">
 	                    			<div class="form-group col-xs-12 mb-2">
 			                            <label for="timesheetinput1">Facebook</label>
@@ -154,7 +154,7 @@
 				                            </div>
 			                            </div>
 			                        </div>
-	                    		</div>	
+	                    		</div>
 								<!-- event description -->
 								<div class="row">
 									<div class="form-group col-xs-12 mb-2">
@@ -186,7 +186,7 @@
 	                            <button type="submit" class="btn btn-primary">
 	                                <i class="fa fa-check-square-o"></i> Save
 	                            </button>
-	                        </div>  
+	                        </div>
 	                    </form>
 	                </div>
 	            </div>
@@ -203,6 +203,25 @@ $(document).ready(function() {
     hashtags.forEach(hashtag => {
       $('#hashtags-input').tagging('add', hashtag);
     });
-  });
+
+		let reg_deadline = formatDate(new Date(<%- JSON.stringify(event.reg_deadline) %>));
+		let start_date = formatDate(new Date(<%- JSON.stringify(event.start_date) %>));
+		let end_date = formatDate(new Date(<%- JSON.stringify(event.end_date) %>));
+		document.getElementById('regDeadline').defaultValue = reg_deadline;
+		document.getElementById('startDate').defaultValue = start_date;
+		document.getElementById('endDate').defaultValue = end_date;
+
+});
+
+function formatDate(d) {
+    var month = '' + (d.getMonth() + 1);
+    var day = '' + d.getDate();
+    var year = d.getFullYear()
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+}
 </script>
 <!-- END -->

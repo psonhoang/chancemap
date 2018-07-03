@@ -1,0 +1,67 @@
+<% extend('../../../defaultLayouts/defaultLayout.ejs'); %>
+
+   <div class="app-content content container-fluid">
+        <div class="content-wrapper">
+          <div class="content-header row">
+            <div class="content-header-left col-md-6 col-xs-12 mb-2">
+              <h3 class="content-header-title mb-0">Events</h3>
+              <div class="row breadcrumbs-top">
+                <div class="breadcrumb-wrapper col-xs-12">
+                  <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a>Home</a>
+                    </li>
+                    <li class="breadcrumb-item"><a>Events</a>
+                    </li>
+                    <li class="breadcrumb-item active">VIEW
+                    </li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+          <div class="content-body">
+
+<!-- card actions section start -->
+<section id="card-actions">
+<div class='row'></div>
+<%  var eventCounts = 0; %>
+<%  events.forEach(event => { %>
+<%  if (eventCounts >= 2) { %>
+        <div class='row'></div>
+<%      eventCounts = 0; %>
+<%  } %>
+<%- include('eventCard', {
+    eventId: event._id, 
+    cardTitle: event.name, 
+    cardElement1: event.org_name, 
+    cardElement2: event.hashtags, 
+    cardElement3: event.address, 
+    cardElement4: event.start_date, 
+    cardElement5: event.start_time, 
+    cardElement6: event.end_date, 
+    cardElement7: event.end_time, 
+    cardElement8: event.desc}); %>
+<%  eventCounts += 1; %>
+<%  }); %>
+</section>
+<!-- // card-actions section end -->
+        </div>
+	  </div>
+
+<!-- Submit resume, edit job and add jobs button script-->
+<div class="row col-xs-12">
+    <div role="group" class="btn-group float-md-right">
+        <div role="group" class="btn-group">
+            <% if (account_type == 1) {%>
+                <button id="btnGroupDrop2" type="button" class="btn btn-outline-primary"><a href="/events/create" class="card-link">Add</a></button>
+            <% }  %>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+

@@ -115,6 +115,8 @@ router.post('/add', (req, res) => {
 
 	var newJob = new Job({
 		_id: new mongoose.Types.ObjectId(),
+		created_at: new Date(),
+		updated_at: new Date(),
 		name: name,
 		org_id: org_id,
 		org_name: org_name,

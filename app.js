@@ -277,6 +277,8 @@ app.use('/jobs', jobRoutes);
 // @File ROUTES
 let fileRoutes = require('./controllers/fileController');
 app.use('/files', fileRoutes);
-
+// @API ROUTES
+let apiRoutes = require('./controllers/apiController');
+app.use('/api', apiRoutes);
 // Export
 module.exports = app;

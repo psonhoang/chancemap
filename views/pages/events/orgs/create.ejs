@@ -1,196 +1,203 @@
 <% extend('../../../defaultLayouts/defaultLayout'); %>
 
-	    <div class="col-md-7 offset-md-3 col-xs-10 offset-xs-1 box-shadow-2 p-0">
-	        <div class="card">
-	            <div class="card-header">
-	                <h4 class="card-title" id="from-actions-top-bottom-right">Event Creator</h4>
-	                <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
-        			<div class="heading-elements">
-	                    <ul class="list-inline mb-0">
-	                        <li><a data-action="collapse"><i class="ft-minus"></i></a></li>
-	                        <li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
-	                        <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
-	                        <li><a data-action="close"><i class="ft-x"></i></a></li>
-	                    </ul>
-	                </div>
-	            </div>
-	            <div class="card-body collapse in">
-	                <div class="card-block">    
+<div class="col-md-7 offset-md-3 col-xs-10 offset-xs-1 box-shadow-2 p-0">
+	<div class="card">
+		<div class="card-header">
+			<h4 class="card-title" id="from-actions-top-bottom-right">Event Creator</h4>
+			<a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
+			<div class="heading-elements">
+				<ul class="list-inline mb-0">
+					<li><a data-action="collapse"><i class="ft-minus"></i></a></li>
+					<li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
+					<li><a data-action="expand"><i class="ft-maximize"></i></a></li>
+					<li><a data-action="close"><i class="ft-x"></i></a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="card-body collapse in">
+			<div class="card-block">    
 
-	                    <form class="form" method="POST" action="/events/manage/create">
-	                    	<div class="form-body">
-								<!-- event name -->
-	                    		<div class="row">
-	                    			<div class="form-group col-xs-12 mb-2">
-			                            <label for="timesheetinput1">Event Name</label>
-			                            <div class="position-relative has-icon-left">
-			                            	<input type="text" id="timesheetinput1" class="form-control" name="name" required>
-				                            <div class="form-control-position">
-				                                <i class="ft-user"></i>
-				                            </div>
-			                            </div>
-			                        </div>
-	                    		</div>
-                                <!-- org name -->
-								<div class="row">
-	                    			<div class="form-group col-xs-12 mb-2">
-			                            <label for="timesheetinput1">Organisation Name</label>
-			                            <div class="position-relative has-icon-left">
-			                            	<input readonly type="text" value="<%= currentAcc.name %>" class="form-control" name="org_name">
-				                            <div class="form-control-position">
-				                                <i class="ft-user"></i>
-				                            </div>
-			                            </div>
-			                        </div>
-	                    		</div>
-								<!-- hashtags -->
-                                <div class="row">
-	                    			<div class="form-group col-xs-12 mb-2">
-			                            <label for="timesheetinput1">Hashtags</label>
-										<label class="col-md-0 label-control" for="hashtags"></label>
-										<div class="edit-on-delete form-control tagging" data-tags-input-name="hashtags">
-											<input id="hashtags-input" class="type-zone form-control" name="hashtags" contenteditable="true" required>
-										</div>
-			                        </div>
-	                    		</div>
-								<!-- address -->
-                                <div class="row">
-	                    			<div class="form-group col-xs-12 mb-2">
-			                            <label for="timesheetinput1">Address</label>
-			                            <div class="position-relative has-icon-left">
-			                            	<input type="text" id="timesheetinput1" class="form-control" name="address">
-				                            <div class="form-control-position">
-				                                <i class="ft-user"></i>
-				                            </div>
-			                            </div>
-			                        </div>
-	                    		</div>
-								<!-- reg form -->
-                                <div class="row">
-	                    			<div class="form-group col-xs-12 mb-2">
-			                            <label for="timesheetinput1">Registration Form</label>
-			                            <div class="position-relative has-icon-left">
-			                            	<input type="text" id="timesheetinput1" class="form-control" name="reg_form">
-				                            <div class="form-control-position">
-				                                <i class="ft-user"></i>
-				                            </div>
-			                            </div>
-			                        </div>
-	                    		</div>
-                                <!-- registration deadline -->
-								<div class="row">
-			                        <div class="form-group col-xs-12 mb-2">
-			                        	<label for="timesheetinput3">Registration Deadline</label>
-			                            <div class="position-relative has-icon-left">
-			                            	<input type="date" id="timesheetinput3" class="form-control" name="reg_deadline">
-				                            <div class="form-control-position">
-				                                <i class="ft-message-square"></i>
-				                            </div>
-			                            </div>
-			                        </div>
-			                    </div>
-								<!-- event date -->
-                                <div class="row">
-			                        <div class="form-group col-md-6 mb-2">
-			                        	<label for="timesheetinput3">Start Date</label>
-			                            <div class="position-relative has-icon-left">
-			                            	<input type="date" id="timesheetinput3" class="form-control" name="start_date">
-				                            <div class="form-control-position">
-				                                <i class="ft-message-square"></i>
-				                            </div>
-			                            </div>
-			                        </div>
-									<div class="form-group col-md-6 mb-2">
-			                            <label for="timesheetinput5">Start Time</label>
-			                            <div class="position-relative has-icon-left">
-			                            	<input type="time" id="timesheetinput5" class="form-control" name="start_time">
-				                            <div class="form-control-position">
-				                                <i class="ft-clock"></i>
-				                            </div>
-			                            </div>
-			                        </div>
-			                    </div>
-								<!-- event time -->
-								<div class="row">
-									<div class="form-group col-md-6 mb-2">
-			                        	<label for="timesheetinput3">End Date</label>
-			                            <div class="position-relative has-icon-left">
-			                            	<input type="date" id="timesheetinput3" class="form-control" name="end_date">
-				                            <div class="form-control-position">
-				                                <i class="ft-message-square"></i>
-				                            </div>
-			                            </div>
-			                        </div>
-			                        <div class="form-group col-md-6 mb-2">
-			                            <label for="timesheetinput6">End Time</label>
-			                            <div class="position-relative has-icon-left">
-			                            	<input type="time" id="timesheetinput6" class="form-control" name="end_time">
-				                            <div class="form-control-position">
-				                                <i class="ft-clock"></i>
-				                            </div>
-			                            </div>
-			                        </div>
-								</div>
-								<!-- facebook -->								
-                                <div class="row">
-	                    			<div class="form-group col-xs-12 mb-2">
-			                            <label for="timesheetinput1">Facebook</label>
-			                            <div class="position-relative has-icon-left">
-			                            	<input type="text" id="timesheetinput1" class="form-control" name="facebook">
-				                            <div class="form-control-position">
-				                                <i class="ft-user"></i>
-				                            </div>
-			                            </div>
-			                        </div>
-	                    		</div>
-								<!-- website -->
-                                <div class="row">
-	                    			<div class="form-group col-xs-12 mb-2">
-			                            <label for="timesheetinput1">Website</label>
-			                            <div class="position-relative has-icon-left">
-			                            	<input type="text" id="timesheetinput1" class="form-control" name="website">
-				                            <div class="form-control-position">
-				                                <i class="ft-user"></i>
-				                            </div>
-			                            </div>
-			                        </div>
-	                    		</div>	
-								<!-- event description -->
-								<div class="row">
-									<div class="form-group col-xs-12 mb-2">
-										<label for="timesheetinput7">Description</label>
-										<div class="position-relative has-icon-left">
-			                            	<input type="text" id="timesheetinput7" rows="5" class="form-control" name="desc" placeholder="Description">
-				                            <div class="form-control-position">
-				                                <i class="ft-file"></i>
-				                            </div>
-			                            </div>
+				<form class="form" method="POST" action="/events/create">
+					<div class="form-body">
+						<!-- event name -->
+						<div class="row">
+							<div class="form-group col-xs-12 mb-2">
+								<label for="timesheetinput1">Event Name</label>
+								<div class="position-relative has-icon-left">
+									<input type="text" id="timesheetinput1" class="form-control" name="name" required>
+									<div class="form-control-position">
+										<i class="ft-user"></i>
 									</div>
 								</div>
 							</div>
-                            <!-- select image -->
-                            <div class="row">
-									<div class="form-group col-xs-12 mb-2">
-										<label>Select File</label>
-										<label id="projectinput8" class="file center-block">
-											<input type="file" id="file">
-											<span class="file-custom"></span>
-										</label>
+						</div>
+						<!-- org name -->
+						<div class="row">
+							<div class="form-group col-xs-12 mb-2">
+								<label for="timesheetinput1">Organisation Name</label>
+								<div class="position-relative has-icon-left">
+									<input readonly type="text" value="<%= currentAcc.name %>" class="form-control" name="org_name">
+									<div class="form-control-position">
+										<i class="ft-user"></i>
 									</div>
+								</div>
 							</div>
-							<!-- buttons -->
-	                        <div class="form-actions right">
-	                            <button type="button" class="btn btn-warning mr-1">
-	                            	<i class="ft-x"></i> Cancel
-	                            </button>
-	                            <button type="submit" class="btn btn-primary">
-	                                <i class="fa fa-check-square-o"></i> Save
-	                            </button>
-	                        </div>  
-	                    </form>
-	                </div>
-	            </div>
-	        </div>
-	    </div>
+						</div>
+						<!-- hashtags -->
+						<div class="row">
+							<div class="form-group col-xs-12 mb-2">
+								<label for="timesheetinput1">Hashtags</label>
+								<label class="col-md-0 label-control" for="hashtags"></label>
+								<div id="hashtags-input" class="edit-on-delete form-control tagging" data-tags-input-name="hashtags">
+									<input class="type-zone form-control" name="hashtags" contenteditable="true" required>
+								</div>
+							</div>
+						</div>
+						<!-- address -->
+						<div class="row">
+							<div class="form-group col-xs-12 mb-2">
+								<label for="timesheetinput1">Address</label>
+								<div class="position-relative has-icon-left">
+									<input type="text" id="timesheetinput1" class="form-control" name="address">
+									<div class="form-control-position">
+										<i class="ft-user"></i>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- reg form -->
+						<div class="row">
+							<div class="form-group col-xs-12 mb-2">
+								<label for="timesheetinput1">Registration Form</label>
+								<div class="position-relative has-icon-left">
+									<input type="text" id="timesheetinput1" class="form-control" name="reg_form">
+									<div class="form-control-position">
+										<i class="ft-user"></i>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- registration deadline -->
+						<div class="row">
+							<div class="form-group col-xs-12 mb-2">
+								<label for="timesheetinput3">Registration Deadline</label>
+								<div class="position-relative has-icon-left">
+									<input type="date" id="timesheetinput3" class="form-control" name="reg_deadline">
+									<div class="form-control-position">
+										<i class="ft-message-square"></i>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- event date -->
+						<div class="row">
+							<div class="form-group col-md-6 mb-2">
+								<label for="timesheetinput3">Start Date</label>
+								<div class="position-relative has-icon-left">
+									<input type="date" id="timesheetinput3" class="form-control" name="start_date">
+									<div class="form-control-position">
+										<i class="ft-message-square"></i>
+									</div>
+								</div>
+							</div>
+							<div class="form-group col-md-6 mb-2">
+								<label for="timesheetinput5">Start Time</label>
+								<div class="position-relative has-icon-left">
+									<input type="time" id="timesheetinput5" class="form-control" name="start_time">
+									<div class="form-control-position">
+										<i class="ft-clock"></i>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- event time -->
+						<div class="row">
+							<div class="form-group col-md-6 mb-2">
+								<label for="timesheetinput3">End Date</label>
+								<div class="position-relative has-icon-left">
+									<input type="date" id="timesheetinput3" class="form-control" name="end_date">
+									<div class="form-control-position">
+										<i class="ft-message-square"></i>
+									</div>
+								</div>
+							</div>
+							<div class="form-group col-md-6 mb-2">
+								<label for="timesheetinput6">End Time</label>
+								<div class="position-relative has-icon-left">
+									<input type="time" id="timesheetinput6" class="form-control" name="end_time">
+									<div class="form-control-position">
+										<i class="ft-clock"></i>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- facebook -->								
+						<div class="row">
+							<div class="form-group col-xs-12 mb-2">
+								<label for="timesheetinput1">Facebook</label>
+								<div class="position-relative has-icon-left">
+									<input type="text" id="timesheetinput1" class="form-control" name="facebook">
+									<div class="form-control-position">
+										<i class="ft-user"></i>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- website -->
+						<div class="row">
+							<div class="form-group col-xs-12 mb-2">
+								<label for="timesheetinput1">Website</label>
+								<div class="position-relative has-icon-left">
+									<input type="text" id="timesheetinput1" class="form-control" name="website">
+									<div class="form-control-position">
+										<i class="ft-user"></i>
+									</div>
+								</div>
+							</div>
+						</div>	
+						<!-- event description -->
+						<div class="row">
+							<div class="form-group col-xs-12 mb-2">
+								<label for="timesheetinput7">Description</label>
+								<div class="position-relative has-icon-left">
+									<input type="text" id="timesheetinput7" rows="5" class="form-control" name="desc" placeholder="Description">
+									<div class="form-control-position">
+										<i class="ft-file"></i>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- select image -->
+					<div class="row">
+							<div class="form-group col-xs-12 mb-2">
+								<label>Select File</label>
+								<label id="projectinput8" class="file center-block">
+									<input type="file" id="file">
+									<span class="file-custom"></span>
+								</label>
+							</div>
+					</div>
+					<!-- buttons -->
+					<div class="form-actions right">
+						<button type="button" class="btn btn-warning mr-1">
+							<i class="ft-x"></i> Cancel
+						</button>
+						<button type="submit" class="btn btn-primary">
+							<i class="fa fa-check-square-o"></i> Save
+						</button>
+					</div>  
+				</form>
+			</div>
+		</div>
 	</div>
+</div>
+</div>
 
+<!-- BEGIN CODEDAO SCRIPT -->
+<script>
+$(document).ready(function() {
+    $('#hashtags-input').tagging('removeAll');
+  });
+</script>
+<!-- END -->

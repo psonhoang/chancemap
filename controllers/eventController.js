@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const path = require('path');
 const config = require('../config/database.js');
+const bodyParser = require('body-parser');
 
 const Event = require('../models/event');
 const Org = require('../models/org');
@@ -28,52 +29,69 @@ router.get('/create', (req, res) => {
 });
 
 // editing existing events 
-router.get('/edit', (req, res) => {
-	if(!req.isAuthenticated()) {
-    res.redirect('/login');
-  } else {
+router.get('/edit/:id', (req, res) => {
     let account_type = req.user.account_type;
     let account_id = req.user.account_id;
-    let event_id = req.event.event_id;
     if(account_type == 1) {
-        Event.findOne({'_id': event_id}, (err, event) => {
-            res.render('events/orgs/edit', {
-                title: 'App Dao | Edit Event',
-                account_type: account_type,
-                account_id: account_id,
-                currentEvent: event,
-            }); 
-        });
+        let event_id = req.params.id;
+        Event.findOne({_id: event_id}, (err, event) => {
+            if(err) {
+                console.log(err);
+                return;
+            }
+            if(account_type == 1) {
+                Org.findOne({'_id': account_id}, (err, org) => {
+                    res.render('events/orgs/edit', {
+                        title: 'App Dao | My Events',
+                        account_type: account_type,
+                        account_id: account_id,
+                        currentAcc: org,
+                        event: event
+                    })
+                })
+            } else {
+                res.redirect('/');
+            }        
+        })  
+    } else {
+        res.redirect('/');
     }
-  }
-});
+})
 
 // viewing my own events
-router.get('/:id/view', (req, res) => {
+router.get('/view', (req, res) => {
     let account_type = req.user.account_type;
     let account_id = req.user.account_id;
-    if(account_type == 0) {
-        User.findOne({'_id': account_id}, (err, user) => {
-            res.render('events/users/view', {
-                title: 'App Dao | My Events',
-                account_type: account_type,
-                account_id: account_id,
-                currentAcc: user
+    Event.find((err, events) => {
+        if(err) {
+          console.log(err);
+          return;
+        }
+        if(account_type == 0) {
+            User.findOne({'_id': account_id}, (err, user) => {
+                res.render('events/users/view_cards', {
+                    title: 'App Dao | My Events',
+                    account_type: account_type,
+                    account_id: account_id,
+                    currentAcc: user,
+                    events: events
+                });
             });
-        });
-    } else {
-        Org.findOne({'_id': account_id}, (err, org) => {
-            res.render('events/users/view', {
-                title: 'App Dao | My Events',
-                account_type: account_type,
-                account_id: account_id,
-                currentAcc: org
+        } else {
+            Org.findOne({'_id': account_id}, (err, org) => {
+                res.render('events/users/view_cards', {
+                    title: 'App Dao | My Events',
+                    account_type: account_type,
+                    account_id: account_id,
+                    currentAcc: org,
+                    events: events
+                });
             });
-        });
-    }
+        }  
+    }) 
 });
 
-router.post('/manage/create', (req, res) => {
+router.post('/create', (req, res) => {
     let data = req.body;
     let name = data.name;
     let org_id = req.user.account_id;
@@ -114,18 +132,17 @@ router.post('/manage/create', (req, res) => {
             console.log(err);
             return;
         }
-        const currentEvent = event;
         console.log('new event created!');
         console.log(event);
-        res.redirect('/events/manage/create')
+        res.redirect('/events/create')
     });
 });
 
 // editing existing events
-router.post('/manage/edit', (req, res) => {
+router.post('/edit/:id', (req, res) => {
     let data = req.body;
-    var currentEvent = req.event;
-    Event.findOne({'name': currentEvent.name}, (err, event) => {
+    let event_id = req.params.id;
+    Event.findOne({_id: event_id}, (err, event) => {
 		if(err) {
 			res.send('Database error...');
 			console.log(err);
@@ -148,7 +165,7 @@ router.post('/manage/edit', (req, res) => {
 
         event.save().then(result => {
             console.log(result);
-            res.redirect('/events/manage/edit');
+            res.redirect('/events');
         }).catch(err => {
             res.send(err);
         });

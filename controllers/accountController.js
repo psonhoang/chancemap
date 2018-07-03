@@ -126,6 +126,8 @@ router.post('/register/user', upload.fields([{name: 'avatar', maxCount: 1}, {nam
 
 	var newUser = new User({
 		_id: new mongoose.Types.ObjectId(),
+		created_at: new Date(),
+		updated_at: new Date(),
 		name: name,
 		email: email,
 		username: username,
@@ -151,6 +153,8 @@ router.post('/register/user', upload.fields([{name: 'avatar', maxCount: 1}, {nam
 
 	var newAccount = new Account({
 		_id: new mongoose.Types.ObjectId(),
+		created_at: new Date(),
+		updated_at: new Date(),
 		email: email,
 		username: username,
 		password: password,
@@ -200,6 +204,8 @@ router.post('/register/org', upload.single('avatar'), (req, res) => {
 
 	var newOrg = new Org({
 		_id: new mongoose.Types.ObjectId(),
+		created_at: new Date(),
+		updated_at: new Date(),
 		name: name,
 		email: email,
 		username: username,
@@ -223,6 +229,8 @@ router.post('/register/org', upload.single('avatar'), (req, res) => {
 
 	var newAccount = new Account({
 		_id: new mongoose.Types.ObjectId(),
+		created_at: new Date(),
+		updated_at: new Date(),
 		email: email,
 		username: username,
 		password: password,
@@ -327,6 +335,7 @@ router.post('/profile/user', upload.fields([{name: 'avatar', maxCount: 1}, {name
 		user.intro = data.intro;
 		user.facebook = data.facebook;
 		user.website = data.website;
+		user.updated_at = new Date();
 
 		user.save().then(result => {
 			console.log(result);
@@ -368,6 +377,7 @@ router.post('/profile/org', upload.single('avatar'), (req, res) => {
 		org.desc = data.desc;
 		org.facebook = data.facebook;
 		org.website = data.website;
+		org.updated_at = new Date();
 
 		org.save().then(result => {
 			console.log(result);

@@ -280,9 +280,7 @@ app.use('/orgs', orgRoutes);
 let fileRoutes = require('./controllers/fileController');
 app.use('/files', fileRoutes);
 // @API ROUTES
-let apiRoutes = require('./controllers/apiController');
-app.use('/api', apiRoutes);
-
-
+let searchRoutes = require('./controllers/searchController');
+app.use('/search', searchRoutes);
 // Export
 module.exports = app;

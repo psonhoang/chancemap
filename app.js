@@ -274,11 +274,13 @@ let eventRoutes = require('./controllers/eventController');
 app.use('/events', eventRoutes);
 let jobRoutes = require('./controllers/jobController');
 app.use('/jobs', jobRoutes);
+let orgRoutes = require('./controllers/orgController');
+app.use('/orgs', orgRoutes);
 // @File ROUTES
 let fileRoutes = require('./controllers/fileController');
 app.use('/files', fileRoutes);
 // @API ROUTES
-let apiRoutes = require('./controllers/apiController');
-app.use('/api', apiRoutes);
+let searchRoutes = require('./controllers/searchController');
+app.use('/search', searchRoutes);
 // Export
 module.exports = app;

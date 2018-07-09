@@ -247,7 +247,7 @@
     // alert(criteriaList);
     $.ajax({
       async: true,
-      url: '/api/search',
+      url: '/search',
       method: 'GET',
       beforeSend: (req) => {
         $.blockUI();
@@ -256,14 +256,11 @@
         criteriaList: criteriaList
       },
       success: (data) => {
-        let events = data.events;
-        let jobs = data.jobs;
-        let orgs = data.orgs;
-        let users =  data.users;
-        console.log(events);
-        console.log(jobs);
-        alert("Search complete!");
-      
+        console.log(typeof(data));
+        document.open();
+        document.write(data);
+        document.close();
+        alert("Search complete");
         $.unblockUI();
       }
     });

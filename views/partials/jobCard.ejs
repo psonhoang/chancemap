@@ -1,22 +1,28 @@
 <div class="col-md-6 col-sm-12">
-    <div class="card">
-        <div class="card-header">
-            <h4 class="card-title"><%= cardTitle %></h4>
+    <% let cardId = job._id; %>
+    <div class="card" id="<%= cardId %>">
+        <div style="color: white" class="card-header bg-cyan bg-lighten-1">
+            <h4 class="card-title"><%= job.name %></h4>
             <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i><i class="fa fa-ellipsis-v font-medium-3"></i><i class="fa fa-ellipsis-v font-medium-3"></i></a>
             <div class="heading-elements">
                 <ul class="list-inline mb-0">
                     <li><a data-action="collapse"><i class="ft-minus"></i></a></li>
-                    <li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
-                    <li><a data-action="expand"><i class="ft-maximize"></i></a></li>								
+                    <% if (admin == true) { %>
+                    <li><a href="/jobs/manage/edit/<%= cardId %>"><i class="ft-edit-2"></i></a></li>                        
+                    <li><a onclick="DeleteJob('<%= cardId %>')"><i class="ft-x"></i></a></li>	
+                    <% } %>							
                 </ul>
             </div>
         </div>
         <div class="card-body collapse in">
             <div class="card-block">
-                <p><%= cardElement1 %></p>
-                <p><%= cardElement2 %></p>
-                <p><%= cardElement3 %></p>
-                <p><%= cardElement4 %></p>
+                <p style="font: italic"><lable>Organsiation's Name: </lable><b><%= job.org_name %></b></p>
+                <p><lable>Job's Description: </lable><b><%= job.desc %></b></p>
+                <% job.hashtags.forEach(function(tag) { %> 
+                <p style="font-size: 13px" class="tag tag-pill tag-info"><%= tag; %></p>
+                <% }); %>
+                <p><label>Application Form: </label><b> <%= job.app_form %></b></p>
+                <p><lable>Application Deadline: </lable><b><%= months[job.app_deadline.getMonth()] + ' ' + job.app_deadline.getDate() + ', ' + job.app_deadline.getFullYear() %></b></p>
             </div>
         </div>
     </div>

@@ -1,30 +1,43 @@
 <% extend('../../../defaultLayouts/defaultLayout.ejs'); %>
-
-   <div class="app-content content container-fluid">
-        <div class="content-wrapper">
-          <div class="content-header row">
-            <div class="content-header-left col-md-6 col-xs-12 mb-2">
-              <h3 class="content-header-title mb-0">Events</h3>
-              <div class="row breadcrumbs-top">
-                <div class="breadcrumb-wrapper col-xs-12">
-                  <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href='/'>Home</a>
-                    </li>
-                    <li class="breadcrumb-item"><a>Manage</a>
-                    </li>
-                    <li class="breadcrumb-item active">My Events
-                    </li>
-                  </ol>
-                </div>
-              </div>
-            </div>
-            </div>
+<% var months = ["January", "February", "March", "April", "May", "June", "July","August", "September", "October","November", "December"]; %>
+<div class="app-content content container-fluid">
+  <div class="content-wrapper">
+    <div class="content-header row col-xs-10">
+      <div class="content-header-left col-md-6 col-xs-12 mb-2">
+        <h3 class="content-header-title mb-0">Events</h3>
+        <div class="row breadcrumbs-top">
+          <div class="breadcrumb-wrapper col-xs-12">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href='/'>Home</a>
+              </li>
+              <li class="breadcrumb-item"><a>Manage</a>
+              </li>
+              <li class="breadcrumb-item active">My Events
+              </li>
+            </ol>
           </div>
-          <div class="content-body">
+        </div>
+      </div>
+    </div>
+  </div>
+<div class="content-body">
+
+<!-- Submit resume, edit job and add jobs button script-->
+<div class="row col-xs-12">
+		<div role="group" class="btn-group float-md-right">
+      <div role="group" class="btn-group">
+        <% if (account_type == 1) {%>
+          <button type="button" class="btn btn-outline-primary"><a class="ft-plus" href="/events/create"></a></button>
+        <% } %>
+      </div>
+		</div>
+</div>
+
+
+<div class='row col-xs-12'><br></div>
 
 <!-- card actions section start -->
 <section id="card-actions">
-<div class='row'></div>
 <%  var eventCounts = 0; %>
 <%  events.forEach(event => { %>
 <%  if (eventCounts >= 2) { %>
@@ -32,33 +45,24 @@
 <%      eventCounts = 0; %>
 <%  } %>
 <%- include('eventCard', {
-    eventId: event._id, 
+    event_id: event._id, 
     cardTitle: event.name, 
-    cardElement1: event.org_name, 
-    cardElement2: event.hashtags, 
+    cardElement1: event.org_name,
+    hashtags: event.hashtags,
     cardElement3: event.address, 
-    cardElement4: event.start_date, 
+    cardElement4: months[event.start_date.getMonth()] + ' ' + event.start_date.getDate() + ', ' + event.start_date.getFullYear(), 
     cardElement5: event.start_time, 
-    cardElement6: event.end_date, 
-    cardElement7: event.end_time, 
-    cardElement8: event.desc}); %>
+    cardElement6: months[event.end_date.getMonth()] + ' ' + event.end_date.getDate() + ', ' + event.end_date.getFullYear(), 
+    cardElement7: event.end_time, }); %>
 <%  eventCounts += 1; %>
 <%  }); %>
 </section>
 <!-- // card-actions section end -->
-        </div>
-	  </div>
 
-<!-- Submit resume, edit job and add jobs button script-->
-<div class="row col-xs-12">
-    <div role="group" class="btn-group float-md-right">
-        <div role="group" class="btn-group">
-            <% if (account_type == 1) {%>
-                <button id="btnGroupDrop2" type="button" class="btn btn-outline-primary"><a href="/events/create" class="card-link">Add</a></button>
-            <% }  %>
-        </div>
-    </div>
-</div>
+
+
+
+
 
 
 

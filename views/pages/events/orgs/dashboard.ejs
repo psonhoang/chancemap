@@ -1,0 +1,136 @@
+<% extend('../../../defaultLayouts/defaultLayout'); %>
+<% var months = ["January", "February", "March", "April", "May", "June", "July","August", "September", "October","November", "December"]; %>
+<div class="app-content content container-fluid">
+    <div class="content-wrapper">
+        <div class="row">
+            <!-- Events -->
+            <div class="card">
+                <div style="color: white" class="card-header bg-amber bg-darken-3">
+                <h4 class="card-title"><i class="ft-calendar"></i> Events</h4>
+                <a class="heading-elements-toggle">
+                    <i class="fa fa-ellipsis-v font-medium-3"></i>
+                </a>
+                </div>
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <tbody style="color: white" class="thead bg-blue-grey bg-darken-3">  
+                                <th width="197px">Deadline</th>
+                                <th width="365px">Event</th>
+                                <th>Hashtags</th>     
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">        
+                            <tbody id="eventsBody">
+                                <% events.forEach(event => { %>
+                                <tr class="btn btn-secondary col-lg-12" data-toggle="modal" data-target="#myModal">
+                                    <% if(event.reg_deadline) { %>
+                                    <th scope="row"><%= months[event.reg_deadline.getMonth()] + ' ' + event.reg_deadline.getDate() + ', ' + event.reg_deadline.getFullYear() %></th>
+                                    <% } else { %>
+                                    <th width="141px" scope="row">N/A</th>
+                                    <% } %>
+                                    <td width="400px">
+                                    <ul align="left">
+                                        <li style="font-size: 16px"><strong><%= event.name %></strong></li>
+                                        <li style="font-style: italic"><%= event.org_name %></li>
+                                        <% if(event.start_date) { %>
+                                        <li style="font-size: small">Date: <%= months[event.start_date.getMonth()] + ' ' + event.start_date.getDate() + ', ' + event.start_date.getFullYear() %></li>
+                                        <% } %>
+                                        <li style="font-size: small">At: <%= event.address %></li>
+                                    </ul>
+                                    </td>
+                                    <td>
+                                    <% event.hashtags.forEach(hashtag => { %>
+                                        <% var isMatch = false; %>
+                                        <% criteriaList.forEach(criteria => { %>
+                                        <% if (hashtag.includes(criteria) && !isMatch) { %>
+                                            <% isMatch = true; %>
+                                            <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
+                                        <% } %>
+                                        <% }); %>
+                                        <% if (!isMatch) { %>
+                                        <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
+                                        <% } %>
+                                    <% }); %>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>    
+
+<!-- BEGIN MODAL SCRIPT -->
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <section id="card-actions">
+    <%  var eventCounts = 0; %>
+    <%  events.forEach(event => { %>
+    <%  if (eventCounts >= 2) { %>
+            <div class='row'></div>
+    <%      eventCounts = 0; %>
+    <%  } %>
+    <%- include('eventCardModal', {
+        event_id: event._id, 
+        cardTitle: event.name, 
+        cardElement1: event.org_name,
+        hashtags: event.hashtags,
+        cardElement3: event.address, 
+        cardElement4: months[event.start_date.getMonth()] + ' ' + event.start_date.getDate() + ', ' + event.start_date.getFullYear(), 
+        cardElement5: event.start_time, 
+        cardElement6: months[event.end_date.getMonth()] + ' ' + event.end_date.getDate() + ', ' + event.end_date.getFullYear(), 
+        cardElement7: event.end_time, }); %>
+    <%  eventCounts += 1; %>
+    <%  }); %>
+    </section>
+
+  </div>
+</div>
+<!-- END -->
+
+<!--  BEGIN CODEDAO SCRIPT -->
+<script>
+  $(document).ready(function() {
+    $('#search-input').tagging('removeAll');
+  });
+
+  function search() {
+    let x = document.getElementById('search-input');
+    let tags = x.getElementsByTagName('div');
+    let criteriaList = [];
+    let inputValue;
+    for (var i = 0; i < tags.length; i++) {
+      inputValue = tags[i].getElementsByTagName('input')[0].value;
+      criteriaList.push(inputValue);
+    }
+    // alert(criteriaList);
+    $.ajax({
+      async: true,
+      url: '/api/search',
+      method: 'GET',
+      beforeSend: (req) => {
+        $.blockUI();
+      },
+      data: {
+        criteriaList: criteriaList
+      },
+      success: (data) => {
+        let events = data.events;
+        console.log(events);
+        alert("Search complete!");
+      
+        $.unblockUI();
+      }
+    });
+  }
+</script>
+<!-- END -->

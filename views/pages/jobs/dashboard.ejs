@@ -1,0 +1,100 @@
+<% extend('../../defaultLayouts/defaultLayout') %>
+<% var months = ["January", "February", "March", "April", "May", "June", "July","August", "September", "October","November", "December"]; %>
+
+<div class="app-content content container-fluid">
+        <div class="content-wrapper">
+          <div class="content-header row">
+            <div class="content-header-left col-md-6 col-xs-12 mb-2">
+              <h3 class="content-header-title mb-0">Jobs</h3>
+              <div class="row breadcrumbs-top">
+                <div class="breadcrumb-wrapper col-xs-12">
+                  <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="/jobs">DASHBOARD</a>
+                    </li>
+                    <li class="breadcrumb-item active">JOB
+                    </li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+          <div class="content-body">
+
+<!-- card actions section start -->
+<div class="col-md-12">
+    <div class="card">
+      <div style="color: white" class="card-header bg-blue bg-accent-2">
+        <h4 class="card-title"><i class="ft-clipboard"></i> Jobs</h4>
+        <a class="heading-elements-toggle">
+          <i class="fa fa-ellipsis-v font-medium-3"></i>
+        </a>
+      </div>
+      <div class="card-body collapse-in">
+      <% var index = 0; %>
+        <% jobs.forEach(job => { %>
+          <div style="margin: 5px; padding: 10px; border-bottom: 2px solid #92a8d1" class="container-fluid" id="<%= index %>">
+            <h4><strong><a onclick="viewjob('<%= index %>')"><%= job.name %></a></strong></h4>
+            <h5 style="font-style: italic"><%= job.org_name %>-</h5>
+            <h6>Deadline: <%= months[job.app_deadline.getMonth()] + ' ' + job.app_deadline.getDate() + ', ' + job.app_deadline.getFullYear() %></h6>
+            <% job.hashtags.forEach(hashtag => { %>
+              <% var isMatch = false; %>
+              <% criteriaList.forEach((criteria) => { %>
+                <% if (hashtag.includes(criteria) && !isMatch) { %>
+                  <% isMatch = true; %>
+                  <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
+                <% } %>
+              <% }); %>
+              <% if (!isMatch) { %>
+                <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
+              <% } %>
+            <% }); %>
+          </div> 
+          <div class="jobModal" id='<%="jobModal" + index %>'>
+            <div class="jobModalContent content">
+                <%- include('jobCardview', { job: job, admin: false, months: months}); %>             
+            </div>
+          </div>
+          <% index += 1; %>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- // card-actions section end -->
+</div>
+
+<!-- CODE DAO SCRIPTS START HERE -->
+<script>
+
+  function viewjob (index) {
+    console.log("click!");
+    let modal = document.getElementById("jobModal" + index);
+    modal.style.display = "block";
+  }
+
+  var spans = document.getElementsByClassName("jobModalClose");
+  var i;
+  for (i = 0; i < spans.length; i++) {
+    spans[i].onclick = function() {
+      let jobModal = document.getElementById("jobModal" + i);
+      jobModal.style.display = "none";
+    }
+  }
+  
+
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+    let i;
+    let modals = document.getElementsByClassName("jobModalContent");
+    for (i = 0; i < modals.length; i++) {
+      if (event.target == modals[i]) {
+        let jobModal = document.getElementById("jobModal" + i);
+        jobModal.style.display = "none";
+      }
+    };
+  }
+</script>
+<!-- ENDS -->

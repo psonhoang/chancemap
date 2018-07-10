@@ -32,33 +32,88 @@ router.get('/create', (req, res) => {
 router.get('/edit/:id', (req, res) => {
     let account_type = req.user.account_type;
     let account_id = req.user.account_id;
-    if(account_type == 1) {
-        let event_id = req.params.id;
-        Event.findOne({_id: event_id}, (err, event) => {
-            if(err) {
-                console.log(err);
-                return;
-            }
-            if(account_type == 1) {
-                Org.findOne({'_id': account_id}, (err, org) => {
-                    res.render('events/orgs/edit', {
-                        title: 'App Dao | My Events',
-                        account_type: account_type,
-                        account_id: account_id,
-                        currentAcc: org,
-                        event: event
-                    })
+    let event_id = req.params.id;
+    Event.findOne({_id: event_id}, (err, event) => {
+        if(err) {
+            console.log(err);
+            return;
+        }
+        if(account_type == 1) {
+            Org.findOne({'_id': account_id}, (err, org) => {
+                res.render('events/orgs/edit', {
+                    title: 'App Dao | My Events',
+                    account_type: account_type,
+                    account_id: account_id,
+                    currentAcc: org,
+                    event: event
                 })
-            } else {
-                res.redirect('/');
-            }        
-        })  
-    } else {
-        res.redirect('/');
-    }
+            })
+        } else {
+            res.redirect('/');
+        }        
+    }) 
 })
 
-// viewing my own events
+// events dashboard
+router.get('/', (req, res) => {
+    let account_type = req.user.account_type;
+    let account_id = req.user.account_id;
+    Event.find((err, events) => {
+        if(err) {
+          console.log(err);
+          return;
+        }
+        if(account_type == 1) {
+            Org.findOne({'_id': account_id}, (err, org) => {
+                let criteriaList = org.hashtags;
+                events.forEach(event => {
+                    event.matches = 0;
+                    event.hashtags.forEach(hashtag => {
+                        criteriaList.forEach(criteria => {
+                            if(hashtag.includes(criteria)) {
+                            event.matches++;
+                            }
+                        });
+                    });
+                });
+                events.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+                res.render('events/orgs/dashboard', {
+                    title: 'App Dao | My Events',
+                    account_type: account_type,
+                    account_id: account_id,
+                    currentAcc: org,
+                    events: events,
+                    criteriaList: criteriaList
+                });
+            })
+        } else {
+            User.findOne({'_id': account_id}, (err, user) => {
+                let criteriaList = user.interests.concat(user.skills);
+                events.forEach(event => {
+                    event.matches = 0;
+                    event.hashtags.forEach(hashtag => {
+                        criteriaList.forEach(criteria => {
+                            if(hashtag.includes(criteria)) {
+                            event.matches++;
+                            }
+                        });
+                    });
+                });
+                events.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+                res.render('events/users/dashboard', {
+                    title: 'App Dao | My Events',
+                    account_type: account_type,
+                    account_id: account_id,
+                    currentAcc: user,
+                    events: events,
+                    criteriaList: criteriaList
+                });
+            })
+        }
+    })
+})
+
+// viewing my own events (orgs)
 router.get('/manage', (req, res) => {
     let account_type = req.user.account_type;
     let account_id = req.user.account_id;
@@ -73,11 +128,48 @@ router.get('/manage', (req, res) => {
                 account_type: account_type,
                 account_id: account_id,
                 currentAcc: org,
-                events: events
+                events: events,
             });
         });  
     }) 
 });
+
+// deleting events (orgs)
+router.get('/delete/:id', (req, res) => {
+    let event_id = req.params.id;
+    let account_id = req.user.account_id;
+    let account_type = req.user.account_type;
+    if(account_type == 1) {
+        Event.findOneAndRemove({_id: event_id}, (err, event) => {
+            if(err) {
+                console.log(err);
+            } else {
+                console.log(event);
+                res.status(204);
+            }
+        });
+        Event.find((err, events) => {
+            if(err) {
+                console.log(err);
+                return;
+            } else {
+                Org.findOne({'_id': account_id}, (err, org) => {
+                    res.render('events/orgs/manage', {
+                        title: 'App Dao | My Events',
+                        account_type: account_type,
+                        account_id: account_id,
+                        currentAcc: org,
+                        events: events
+                    });
+                });      
+            }
+            res.redirect('/events/manage');
+        });
+    } else {
+        res.redirect('/');
+    }
+});
+  
 
 router.post('/create', (req, res) => {
     let data = req.body;

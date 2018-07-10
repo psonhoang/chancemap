@@ -53,11 +53,11 @@ const upload = multer({ storage });
 router.get('/manage', (req, res) => {
 	if (req.user.account_type == 1)
 	{
-		Job.find({'org_id': req.user.account_id}, (err, jobs) => {
+		Job.find({org_id: req.user.account_id}, (err, jobs) => {
 			//console.log(jobs);
 			Org.findOne({_id: req.user.account_id}, (err, org) => {
 				res.render('jobs/orgs/manage', {
-					title: 'CodeDao | Jobs',
+					title: 'CodeDao | Manage Jobs',
 					account_type: req.user.account_type,
 					account_id: req.user.account_id,
 					currentAcc: org,
@@ -66,30 +66,54 @@ router.get('/manage', (req, res) => {
 			});
 		});
 	}
-	// else
-	// {
-	// 	User.findOne({'_id': req.user.account_id}, (err, theuser) => {
-	// 		Job.find({'_id': theuser.jobs}, (err, jobs) => {
-	// 			//console.log(jobs);
-	// 			res.render('jobs/users/job', {
-	// 				title: 'CodeDao | Jobs',
-	// 				account_type: req.user.account_type,
-	// 				account_id: req.user.account_id,
-	// 				currentAcc: req.user,
-	// 				jobs: jobs
-	// 			});
-	// 		});
-	// 	});
-	// }
+	else 
+	{
+		res.redirect("/");
+	}
 });
 
-router.get('/add', (req, res) => {
+// job dashboard - view all jobs except yours
+router.get('/', (req, res) => {
+	if (req.user.account_type == 1) 
+	{
+		Job.find({org_id : {$ne: req.user.account_id}}, (err, jobs) => {
+			Org.findOne({_id: req.user.account_id}, (err, org) => {
+				res.render('jobs/dashboard', {
+					title: 'CodeDao | Jobs',
+					account_type: req.user.account_type,
+					account_id: req.user.account_id,
+					currentAcc: org,
+					criteriaList: org.hashtags,
+					jobs: jobs
+				}); 
+			});
+		});
+	}	
+	else
+	{
+		Job.find({}, (err, jobs) => {
+			User.findOne({_id: req.user.account_id}, (err, user) => {
+				res.render('jobs/dashboard', {
+					title: 'CodeDao | Jobs',
+					account_type: req.user.account_type,
+					account_id: req.user.account_id,
+					currentAcc: user,
+					criteriaList: user.interests.concat(user.skills),
+					jobs: jobs
+				}); 
+			});
+		});
+	}
+});
+
+// create new job
+router.get('/create', (req, res) => {
 	if (req.user.account_type != 1)
 		res.redirect('/');
 	else
 		Org.findOne({_id: req.user.account_id}, (err, org) => {
-			res.render('jobs/orgs/add', {
-				title: 'CodeDao | Add A New Job',
+			res.render('jobs/orgs/create', {
+				title: 'CodeDao | Create A New Job',
 				account_type: req.user.account_type,
 				account_id: req.user.account_id,
 				currentAcc: org
@@ -97,8 +121,7 @@ router.get('/add', (req, res) => {
 		});
 });
 
-//create new job
-router.post('/add', (req, res) => {
+router.post('/create', (req, res) => {
 	//console.log(req.body);
 
 	let data = req.body;
@@ -137,7 +160,74 @@ router.post('/add', (req, res) => {
 		  console.log(jobs);
 	});
 
-	res.redirect('/');
+	res.redirect('/jobs/manage');
 });
+
+// edit an existing job
+router.get('/manage/edit/:ID', (req, res) => {
+	Job.findOne({_id: req.params.ID}, (err, job) => {
+		Org.findOne({_id: req.user.account_id}, (err, org) => {
+			res.render('jobs/orgs/edit', {
+				title: 'CodeDao | Edit your Job',
+				account_type: req.user.account_type,
+				account_id: req.user.account_id,
+				currentAcc: org,
+				job: job
+			});
+		});
+	});
+});
+
+router.post('/edit', (req, res) => {
+		//console.log(req.body);
+
+		let data = req.body;
+		let name = data.name;
+		let org_id = req.user.account_id;
+		let org_name = data.org_name;
+		let desc = data.desc;
+		let hashtags = data.hashtags;
+		let app_form = data.app_form;
+		let app_deadline = data.app_deadline;
+		let facebook = data.facebook;
+		let website = data.website;
+		let jobImage = data.jobImage;
+	
+		var newJob = new Job({
+			_id: req.jobId,
+			created_at: new Date(),
+			updated_at: new Date(),
+			name: name,
+			org_id: org_id,
+			org_name: org_name,
+			desc: desc,
+			hashtags: hashtags,
+			app_form: app_form,
+			app_deadline: app_deadline,
+			facebook: facebook,
+			website: website,
+			jobImage: jobImage
+		});
+	
+		newJob.save((err, jobs) => {
+			if(err) {
+				console.log(err);
+				return;
+			  }
+			  console.log(jobs);
+		});
+	
+		res.redirect('/');
+});
+
+//delete a job when requested
+router.post('/delete', (req, res) => {
+	console.log("DELETE!");
+	if (req.body.JobID != undefined) {
+		Job.findOneAndRemove({_id: req.body.JobID}, (err, job) => {});
+	}
+	res.redirect("/jobs/manage");
+});
+
 
 module.exports = router;

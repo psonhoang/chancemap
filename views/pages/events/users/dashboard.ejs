@@ -11,35 +11,30 @@
                     <i class="fa fa-ellipsis-v font-medium-3"></i>
                 </a>
                 </div>
-                <div class="card">
+                <div class="card">                    
                     <div class="table-responsive">
                         <table class="table">
                             <tbody style="color: white" class="thead bg-blue-grey bg-darken-3">  
-                                <th width="197px">Deadline</th>
-                                <th width="365px">Event</th>
+                                <th>Deadline</th>
+                                <th>Event</th>
                                 <th>Hashtags</th>     
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table">        
+                            </tbody>        
                             <tbody id="eventsBody">
                                 <% events.forEach(event => { %>
-                                <tr class="btn btn-secondary col-lg-12" data-toggle="modal" data-target="#myModal">
+                                <% cardId = event._id; %>
+                                <tr class="btn-secondary" style="border: 0" data-toggle="modal" data-target="#<%= cardId %>">
                                     <% if(event.reg_deadline) { %>
                                     <th scope="row"><%= months[event.reg_deadline.getMonth()] + ' ' + event.reg_deadline.getDate() + ', ' + event.reg_deadline.getFullYear() %></th>
                                     <% } else { %>
-                                    <th width="141px" scope="row">N/A</th>
+                                    <th scope="row">N/A</th>
                                     <% } %>
-                                    <td width="400px">
-                                    <ul align="left">
+                                    <td>          
                                         <li style="font-size: 16px"><strong><%= event.name %></strong></li>
                                         <li style="font-style: italic"><%= event.org_name %></li>
                                         <% if(event.start_date) { %>
                                         <li style="font-size: small">Date: <%= months[event.start_date.getMonth()] + ' ' + event.start_date.getDate() + ', ' + event.start_date.getFullYear() %></li>
                                         <% } %>
                                         <li style="font-size: small">At: <%= event.address %></li>
-                                    </ul>
                                     </td>
                                     <td>
                                     <% event.hashtags.forEach(hashtag => { %>
@@ -55,7 +50,8 @@
                                         <% } %>
                                     <% }); %>
                                     </td>
-                                </tr>
+                                </tr>  
+                                <%- include('eventCardModal', {event: event, months: months}); %>             
                                 <% }); %>
                             </tbody>
                         </table>
@@ -66,26 +62,7 @@
     </div>
 </div>    
 
-<!-- BEGIN MODAL SCRIPT -->
-<!-- Modal -->
-<div id="myModal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Modal Header</h4>
-      </div>
-      <div class="modal-body">
-        <p>Some text in the modal.</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- END -->
+
 
 <!--  BEGIN CODEDAO SCRIPT -->
 <script>
@@ -124,3 +101,4 @@
   }
 </script>
 <!-- END -->
+

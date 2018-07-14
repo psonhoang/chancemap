@@ -1,8 +1,34 @@
-<% extend('../../../defaultLayouts/defaultLayout'); %>
+<% extend('../../defaultLayouts/defaultLayout'); %>
 <% var months = ["January", "February", "March", "April", "May", "June", "July","August", "September", "October","November", "December"]; %>
 <div class="app-content content container-fluid">
     <div class="content-wrapper">
+        <div class="content-header row">
+            <div class="content-header-left col-md-6 col-xs-12 mb-2">
+              <h3 class="content-header-title mb-0">Events</h3>
+              <div class="row breadcrumbs-top">
+                <div class="breadcrumb-wrapper col-xs-12">
+                  <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="/jobs">DASHBOARD</a>
+                    </li>
+                    <li class="breadcrumb-item active">EVENTS
+                    </li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+        </div>
         <div class="row">
+            <div style="margin-bottom: 20px" class="container-fluid">
+                <button onclick="search()" class="col-xl-1 col-lg-2 btn btn-info" type="button"><i class="ft-search font-md-4"></i> Search</button>
+                <div class="col-xl-11 col-lg-10">
+                  <div id="search-input" class="edit-on-delete form-control tagging" data-tags-input-name="add-box">
+                    <input class="type-zone" contenteditable="true">
+                  </div>
+                  <p class="text-muted">Search for events with keywords (Ex: charity, design, culture,...)</p>
+              </div>
+            </div>
             <!-- Events -->
             <div class="card">
                 <div style="color: white" class="card-header bg-amber bg-darken-3">
@@ -82,7 +108,7 @@
     // alert(criteriaList);
     $.ajax({
       async: true,
-      url: '/api/search',
+      url: '/search/events',
       method: 'GET',
       beforeSend: (req) => {
         $.blockUI();
@@ -91,10 +117,10 @@
         criteriaList: criteriaList
       },
       success: (data) => {
-        let events = data.events;
-        console.log(events);
-        alert("Search complete!");
-      
+        console.log(typeof(data));
+        document.open();
+        document.write(data);
+        document.close();
         $.unblockUI();
       }
     });

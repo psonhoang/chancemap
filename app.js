@@ -184,7 +184,7 @@ app.get('/', (req, res) => {
                 });
                 users.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
                 res.render('index', {
-                  title: 'App Dao | Home',
+                  title: 'Colligo | Home',
                   account_type: account_type,
                   account_id: account_id,
                   currentAcc: user,
@@ -248,7 +248,7 @@ app.get('/', (req, res) => {
                 });
                 users.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
                 res.render('index', {
-                  title: 'App Dao | Home',
+                  title: 'Colligo | Home',
                   account_type: account_type,
                   account_id: account_id,
                   currentAcc: org,
@@ -267,65 +267,6 @@ app.get('/', (req, res) => {
   }
 });
 
-app.get('/users', (req, res) => {
-  let account_id = req.user.account_id;
-  let account_type = req.user.account_type;
-  User.find((err, users) => {
-    if(err) {
-      console.log(err);
-      return;
-    }
-    if(account_type == 1) {
-        Org.findOne({'_id': account_id}, (err, org) => {
-            let criteriaList = org.hashtags;           
-            users.forEach(user => {
-                let userHashtags = user.interests.concat(user.skills);
-                user.matches = 0;
-                userHashtags.forEach(hashtag => {
-                    criteriaList.forEach(criteria => {
-                        if(hashtag.includes(criteria)) {
-                        user.matches++;
-                        }
-                    });
-                });
-            });
-            users.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-            res.render('users/dashboard', {
-                title: 'App Dao | Users',
-                account_type: account_type,
-                account_id: account_id,
-                currentAcc: org,
-                users: users,
-                criteriaList: criteriaList
-            });
-        })
-    } else {
-        User.findOne({'_id': account_id}, (err, user) => {
-            let criteriaList = user.interests.concat(user.skills);            
-            users.forEach(user => {
-                let userHashtags = user.interests.concat(user.skills);  
-                user.matches = 0;
-                userHashtags.forEach(hashtag => {
-                    criteriaList.forEach(criteria => {
-                        if(hashtag.includes(criteria)) {
-                        user.matches++;
-                        }
-                    });
-                });
-            });
-            users.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-            res.render('users/dashboard', {
-                title: 'App Dao | Users',
-                account_type: account_type,
-                account_id: account_id,
-                currentAcc: user,
-                users: users,
-                criteriaList: criteriaList
-            });
-        })
-    }
-  })
-})
 
 // Route controllers
 let accRoutes = require('./controllers/accountController');
@@ -334,6 +275,8 @@ let eventRoutes = require('./controllers/eventController');
 app.use('/events', eventRoutes);
 let jobRoutes = require('./controllers/jobController');
 app.use('/jobs', jobRoutes);
+let userRoutes = require('./controllers/userController');
+app.use('/users', userRoutes);
 let orgRoutes = require('./controllers/orgController');
 app.use('/orgs', orgRoutes);
 // @File ROUTES
@@ -343,4 +286,4 @@ app.use('/files', fileRoutes);
 let searchRoutes = require('./controllers/searchController');
 app.use('/search', searchRoutes);
 // Export
-module.exports = app;
+module.exports = app

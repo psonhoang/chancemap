@@ -335,6 +335,9 @@ router.post('/profile/user', upload.fields([{name: 'avatar', maxCount: 1}, {name
 		user.intro = data.intro;
 		user.facebook = data.facebook;
 		user.website = data.website;
+		if(!user.created_at) {
+			user.created_at = new Date();
+		}
 		user.updated_at = new Date();
 
 		user.save().then(result => {
@@ -377,6 +380,9 @@ router.post('/profile/org', upload.single('avatar'), (req, res) => {
 		org.desc = data.desc;
 		org.facebook = data.facebook;
 		org.website = data.website;
+		if(!org.created_at) {
+			org.created_at = new Date();
+		}
 		org.updated_at = new Date();
 
 		org.save().then(result => {

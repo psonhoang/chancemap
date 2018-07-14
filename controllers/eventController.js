@@ -77,8 +77,8 @@ router.get('/', (req, res) => {
                     });
                 });
                 events.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-                res.render('events/orgs/dashboard', {
-                    title: 'App Dao | My Events',
+                res.render('events/dashboard', {
+                    title: 'App Dao | Events',
                     account_type: account_type,
                     account_id: account_id,
                     currentAcc: org,
@@ -100,8 +100,8 @@ router.get('/', (req, res) => {
                     });
                 });
                 events.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-                res.render('events/users/dashboard', {
-                    title: 'App Dao | My Events',
+                res.render('events/dashboard', {
+                    title: 'App Dao | Events',
                     account_type: account_type,
                     account_id: account_id,
                     currentAcc: user,

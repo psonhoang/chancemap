@@ -52,6 +52,269 @@ const upload = multer({ storage });
 
 // *** ROUTES ***
 
+// @Routes: /search/orgs
+router.get('/orgs', (req, res) => {
+	console.log(req.query.criteriaList);
+	let criteriaList = req.query.criteriaList;
+	let currentAcc = req.user;
+	console.log(currentAcc);
+	Org.find((err, orgs) => {
+		if(err) {
+			console.log(err);
+			return;
+		}
+		console.log("Orgs: " + orgs.length);
+		var sortedOrgs = [];
+		orgs.forEach(org => {
+			org.matches = 0;
+			org.hashtags.forEach(hashtag => {
+				criteriaList.forEach(criteria => {
+					if(hashtag.includes(criteria)) {
+						org.matches++;
+					}
+				});
+			});
+			if(org.matches > 0) {
+				sortedOrgs.push(org);
+			}
+			console.log(org.matches);
+		});
+		sortedOrgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+		if(currentAcc.account_type == 1) {
+			Org.findOne({'_id': currentAcc.account_id}, (err, org) => {
+				if(err) {
+					console.log(err);
+				}
+				console.log(org);
+				res.render('orgs/dashboard', {
+					title: 'App Dao | Search Orgs',
+					orgs: sortedOrgs,
+					criteriaList: criteriaList,
+					account_type: currentAcc.acount_type,
+					account_id: currentAcc.account_id,
+					currentAcc: org
+				});
+			});
+		} else {
+			User.findOne({'_id': currentAcc.account_id}, (err, user) => {
+				if(err) {
+					console.log(err);
+				}
+				console.log(user);
+				res.render('orgs/dashboard', {
+					title: 'App Dao | Search Orgs',
+					orgs: sortedOrgs,
+					criteriaList: criteriaList,
+					account_type: currentAcc.acount_type,
+					account_id: currentAcc.account_id,
+					currentAcc: user
+				});
+			});
+		}
+	});
+});
+
+// @Routes: /search/users
+router.get('/users', (req, res) => {
+	console.log(req.query.criteriaList);
+	let criteriaList = req.query.criteriaList;
+	let currentAcc = req.user;
+	console.log(currentAcc);
+	User.find((err, users) => {
+		if(err) {
+			console.log(err);
+			return;
+		}
+		console.log("Users: " + users.length);
+		var sortedUsers = [];
+		users.forEach(user => {
+			user.matches = 0;
+			let hashtags = user.interests.concat(user.skills);
+			hashtags.forEach(hashtag => {
+				criteriaList.forEach(criteria => {
+					if(hashtag.includes(criteria)) {
+						user.matches++;
+					}
+				});
+			});
+			if(user.matches > 0) {
+				// let index = users.indexOf(user);
+				// if(index != -1) {
+				// 	users.splice(user, 1);
+
+				// }
+				sortedUsers.push(user);
+			}
+			console.log(user.matches);
+		});
+		sortedUsers.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+		if(currentAcc.account_type == 1) {
+			Org.findOne({'_id': currentAcc.account_id}, (err, org) => {
+				if(err) {
+					console.log(err);
+				}
+				console.log(org);
+				res.render('users/dashboard', {
+					title: 'App Dao | Search Users',
+					users: sortedUsers,
+					criteriaList: criteriaList,
+					account_type: currentAcc.acount_type,
+					account_id: currentAcc.account_id,
+					currentAcc: org
+				});
+			});
+		} else {
+			User.findOne({'_id': currentAcc.account_id}, (err, user) => {
+				if(err) {
+					console.log(err);
+				}
+				console.log(user);
+				res.render('users/dashboard', {
+					title: 'App Dao | Search Users',
+					users: sortedUsers,
+					criteriaList: criteriaList,
+					account_type: currentAcc.acount_type,
+					account_id: currentAcc.account_id,
+					currentAcc: user
+				});
+			});
+		}
+	});
+});
+
+// @Routes: /search/jobs
+router.get('/jobs', (req, res) => {
+	console.log(req.query.criteriaList);
+	let criteriaList = req.query.criteriaList;
+	let currentAcc = req.user;
+	console.log(currentAcc);
+	Job.find((err, jobs) => {
+		if(err) {
+			console.log(err);
+			return;
+		}
+		console.log("Jobs: " + jobs.length);
+		var sortedJobs = [];
+		jobs.forEach(job => {
+			job.matches = 0;
+			job.hashtags.forEach(hashtag => {
+				criteriaList.forEach(criteria => {
+					if(hashtag.includes(criteria)) {
+						job.matches++;
+					}
+				});
+			});
+			if(job.matches > 0) {
+				// let index = jobs.indexOf(job);
+				// if(index != -1) {
+				// 	jobs.splice(index, 1);
+				// }
+				sortedJobs.push(job);
+			}
+			console.log(job.matches);
+		});
+		sortedJobs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+		if(currentAcc.account_type == 1) {
+			Org.findOne({'_id': currentAcc.account_id}, (err, org) => {
+				if(err) {
+					console.log(err);
+				}
+				console.log(org);
+				res.render('jobs/dashboard', {
+					title: 'App Dao | Search',
+					jobs: sortedJobs,
+					criteriaList: criteriaList,
+					account_type: currentAcc.acount_type,
+					account_id: currentAcc.account_id,
+					currentAcc: org
+				});
+			});
+		} else {
+			User.findOne({'_id': currentAcc.account_id}, (err, user) => {
+				if(err) {
+					console.log(err);
+				}
+				console.log(user);
+				res.render('jobs/dashboard', {
+					title: 'App Dao | Search',
+					jobs: sortedJobs,
+					criteriaList: criteriaList,
+					account_type: currentAcc.acount_type,
+					account_id: currentAcc.account_id,
+					currentAcc: user
+				});
+			});
+		}
+	});
+});
+
+// @Routes: /search/events
+router.get('/events', (req, res) => {
+	console.log(req.query.criteriaList);
+	let criteriaList = req.query.criteriaList;
+	let currentAcc = req.user;
+	console.log(currentAcc);
+	Event.find((err, events) => {
+		if(err) {
+			console.log(err);
+			return;
+		}
+		console.log("Events: " + events.length);
+		var sortedEvents = [];
+		events.forEach(event => {
+			event.matches = 0;
+			event.hashtags.forEach(hashtag => {
+				criteriaList.forEach(criteria => {
+					if(hashtag.includes(criteria)) {
+						event.matches++;
+					}
+				});
+			});
+			if(event.matches > 0) {
+				// let index = events.indexOf(event);
+				// if(index != -1) {
+				// 	events.splice(index, 1);
+				// }
+				sortedEvents.push(event);
+			}
+			console.log(event.matches);
+		});
+		sortedEvents.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+		if(currentAcc.account_type == 1) {
+			Org.findOne({'_id': currentAcc.account_id}, (err, org) => {
+				if(err) {
+					console.log(err);
+				}
+				console.log(org);
+				res.render('events/dashboard', {
+					title: 'App Dao | Search Jobs',
+					events: sortedEvents,
+					criteriaList: criteriaList,
+					account_type: currentAcc.acount_type,
+					account_id: currentAcc.account_id,
+					currentAcc: org
+				});
+			});
+		} else {
+			User.findOne({'_id': currentAcc.account_id}, (err, user) => {
+				if(err) {
+					console.log(err);
+				}
+				console.log(user);
+				res.render('events/dashboard', {
+					title: 'App Dao | Search Events',
+					events: sortedEvents,
+					criteriaList: criteriaList,
+					account_type: currentAcc.acount_type,
+					account_id: currentAcc.account_id,
+					currentAcc: user
+				});
+			});
+		}
+	});
+});
+
+// @Routes /search/
 router.get('/', (req, res) => {
   	console.log(req.query.criteriaList);
 	let criteriaList = req.query.criteriaList;

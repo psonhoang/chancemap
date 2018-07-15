@@ -1,0 +1,49 @@
+<div class="col-md-4 col-sm-6">
+    <% let cardId = org._id; %>
+    <div class="card" id="<%= cardId %>">
+        <div style="color: white" class="card-header bg-teal bg-lighten-1">
+            <h4 class="card-title"><%= org.name %></h4>
+            <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i><i class="fa fa-ellipsis-v font-medium-3"></i><i class="fa fa-ellipsis-v font-medium-3"></i></a>
+            <div class="heading-elements">
+                <ul class="list-inline mb-0">		
+                </ul>
+            </div>
+        </div>
+        <div class="card-body collapse in">
+            <div class="card-block">
+                <p><lable>Organisation's Description: </lable><b><%= org.desc %></b></p>
+                <% org.hashtags.forEach(function(tag) { %> 
+                <p style="font-size: 13px" class="tag tag-pill tag-info"><%= tag; %></p>
+                <% }); %>
+                <p><label>Organisation's Facebook: </label>
+                    <b>
+                    <% if (org.facebook != undefined) { %>
+                        <%= org.facebook %>
+                    <% } else { %>
+                        We will update real quick ^^
+                    <% } %>
+                    </b>
+                </p>
+                <p><label>Organisation's Website: </label>
+                    <b>
+                        <% if (org.website != undefined) { %>
+                            <%= org.website %>
+                        <% } else { %>
+                            We will update real quick ^^
+                        <% } %>             
+                    </b>
+                </p>
+                <p><label>Organisation's Email: </label>
+                    <b>
+                        <% if (org.email != undefined) { %>
+                            <%= org.email %>
+                        <% } else { %>
+                            We will update real quick ^^
+                        <% } %>             
+                    </b>
+                </p>            
+            </div>
+        </div>
+    </div>
+</div>
+        

@@ -15,6 +15,7 @@ const Account = require('../models/account');
 const User = require('../models/user');
 const Job = require('../models/job');
 const Org = require('../models/org');
+const Event = require('../models/event');
 
 // Database connection
 const connection = mongoose.connection;
@@ -73,13 +74,20 @@ router.get('/', (req, res) => {
           });
         });
         orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-        res.render('orgs/dashboard', {
-          title: 'App Dao | Dashboard | Orgs',
-          account_type: account_type,
-          account_id: account_id,
-          currentAcc: org,
-          orgs: orgs,
-          criteriaList: criteriaList
+
+        Job.find({'org_id': org._id}, (err, jobs) => {
+          Event.find({'org_id': org._id}, (err, events) => {
+            res.render('orgs/dashboard', {
+              title: 'App Dao | Dashboard | Orgs',
+              account_type: account_type,
+              account_id: account_id,
+              currentAcc: org,
+              orgs: orgs,
+              jobs: jobs,
+              events: events,
+              criteriaList: criteriaList
+            });
+          });
         });
       });
     } else {
@@ -96,13 +104,20 @@ router.get('/', (req, res) => {
           });
         });
         orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-        res.render('orgs/dashboard', {
-          title: 'App Dao | Dashboard | Orgs',
-          account_type: account_type,
-          account_id: account_id,
-          currentAcc: user,
-          orgs: orgs,
-          criteriaList: criteriaList
+
+        Job.find({}, (err, jobs) => {
+          Event.find({}, (err, events) => {
+            res.render('orgs/dashboard', {
+              title: 'App Dao | Dashboard | Orgs',
+              account_type: account_type,
+              account_id: account_id,
+              currentAcc: user,
+              orgs: orgs,
+              events: events,
+              jobs: jobs,
+              criteriaList: criteriaList
+            });
+          });
         });
       });
     }

@@ -15,7 +15,6 @@ const Account = require('../models/account');
 const User = require('../models/user');
 const Job = require('../models/job');
 const Org = require('../models/org');
-const Event = require('../models/event');
 
 // Database connection
 const connection = mongoose.connection;
@@ -52,76 +51,66 @@ const upload = multer({ storage });
 
 // @Routes
 router.get('/', (req, res) => {
-  let account_type = req.user.account_type;
-  let account_id = req.user.account_id;
-  let criteriaList;
-  Org.find((err, orgs) => {
-    if(err) {
-      console.log(err);
-      return;
-    }
-    if(account_type == 1) {
-      Org.findOne({'_id': account_id}, (err, org) => {
-        criteriaList = org.hashtags;
-        orgs.forEach(org => {
-          org.matches = 0;
-          org.hashtags.forEach(hashtag => {
-            criteriaList.forEach(criteria => {
-              if(hashtag.includes(criteria)) {
-                org.matches++;
-              }
-            });
-          });
-        });
-        orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-
-        Job.find({'org_id': org._id}, (err, jobs) => {
-          Event.find({'org_id': org._id}, (err, events) => {
-            res.render('orgs/dashboard', {
-              title: 'App Dao | Dashboard | Orgs',
-              account_type: account_type,
-              account_id: account_id,
-              currentAcc: org,
-              orgs: orgs,
-              jobs: jobs,
-              events: events,
-              criteriaList: criteriaList
-            });
-          });
-        });
-      });
-    } else {
-      User.findOne({'_id': account_id}, (err, user) => {
-        criteriaList = user.interests.concat(user.skills);
-        orgs.forEach(org => {
-          org.matches = 0;
-          org.hashtags.forEach(hashtag => {
-            criteriaList.forEach(criteria => {
-              if(hashtag.includes(criteria)) {
-                org.matches++;
-              }
-            });
-          });
-        });
-        orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-
-        Job.find({}, (err, jobs) => {
-          Event.find({}, (err, events) => {
-            res.render('orgs/dashboard', {
-              title: 'App Dao | Dashboard | Orgs',
-              account_type: account_type,
-              account_id: account_id,
-              currentAcc: user,
-              orgs: orgs,
-              events: events,
-              jobs: jobs,
-              criteriaList: criteriaList
-            });
-          });
-        });
-      });
-    }
-  });
+	if(!req.isAuthenticated()) {
+		res.redirect('/login');
+	} else {
+		let account_type = req.user.account_type;
+	  let account_id = req.user.account_id;
+	  let criteriaList;
+	  Org.find((err, orgs) => {
+	    if(err) {
+	      console.log(err);
+	      return;
+	    }
+	    if(account_type == 1) {
+	      Org.findOne({'_id': account_id}, (err, org) => {
+	        criteriaList = org.hashtags;
+	        orgs.forEach(org => {
+	          org.matches = 0;
+	          org.hashtags.forEach(hashtag => {
+	            criteriaList.forEach(criteria => {
+	              if(hashtag.includes(criteria)) {
+	                org.matches++;
+	              }
+	            });
+	          });
+	        });
+	        orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+	        res.render('orgs/dashboard', {
+	          title: 'App Dao | Dashboard | Orgs',
+	          account_type: account_type,
+	          account_id: account_id,
+	          currentAcc: org,
+	          orgs: orgs,
+	          criteriaList: criteriaList
+	        });
+	      });
+	    } else {
+	      User.findOne({'_id': account_id}, (err, user) => {
+	        criteriaList = user.interests.concat(user.skills);
+	        orgs.forEach(org => {
+	          org.matches = 0;
+	          org.hashtags.forEach(hashtag => {
+	            criteriaList.forEach(criteria => {
+	              if(hashtag.includes(criteria)) {
+	                org.matches++;
+	              }
+	            });
+	          });
+	        });
+	        orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+	        res.render('orgs/dashboard', {
+	          title: 'App Dao | Dashboard | Orgs',
+	          account_type: account_type,
+	          account_id: account_id,
+	          currentAcc: user,
+	          orgs: orgs,
+	          criteriaList: criteriaList
+	        });
+	      });
+	    }
+	  });
+	}
 });
 
 // Exports

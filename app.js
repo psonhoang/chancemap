@@ -184,7 +184,7 @@ app.get('/', (req, res) => {
                 });
                 users.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
                 res.render('index', {
-                  title: 'App Dao | Home',
+                  title: 'Colligo | Home',
                   account_type: account_type,
                   account_id: account_id,
                   currentAcc: user,
@@ -248,7 +248,7 @@ app.get('/', (req, res) => {
                 });
                 users.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
                 res.render('index', {
-                  title: 'App Dao | Home',
+                  title: 'Colligo | Home',
                   account_type: account_type,
                   account_id: account_id,
                   currentAcc: org,
@@ -267,6 +267,7 @@ app.get('/', (req, res) => {
   }
 });
 
+
 // Route controllers
 let accRoutes = require('./controllers/accountController');
 app.use('/', accRoutes);
@@ -274,6 +275,8 @@ let eventRoutes = require('./controllers/eventController');
 app.use('/events', eventRoutes);
 let jobRoutes = require('./controllers/jobController');
 app.use('/jobs', jobRoutes);
+let userRoutes = require('./controllers/userController');
+app.use('/users', userRoutes);
 let orgRoutes = require('./controllers/orgController');
 app.use('/orgs', orgRoutes);
 // @File ROUTES
@@ -283,4 +286,4 @@ app.use('/files', fileRoutes);
 let searchRoutes = require('./controllers/searchController');
 app.use('/search', searchRoutes);
 // Export
-module.exports = app;
+module.exports = app

@@ -1,20 +1,26 @@
 <div class="col-md-6 col-sm-12">
-    <div class="card">
-        <a href="/events/edit/<%= eventId; %>">
-            <div style="color: white" class="card-header bg-amber bg-darken-3">
-                <h4 class="card-title"><%= cardTitle %></h4>
-            </div>
-        </a>
+	<div class="card">
+		<div class="card-header bg-amber bg-darken-3" style="color: white">
+			<h4 class="card-title" id="from-actions-top-bottom-right"><i class="ft-calendar"></i> <%= cardTitle %></h4>
+			<div class="heading-elements">
+				<ul class="list-inline mb-0 ">
+					<li><a href="/events/edit/<%= event_id; %>"><i class="ft-edit" style="color: white"></i></a></li>
+                    <li><a href="/events/delete/<%= event_id; %>"><i class="ft-trash" style="color: white"></i></a></li>
+				</ul>
+			</div>
+		</div>
         <div class="card-body collapse in">
             <div class="card-block">
-                <p><label>Organisation name:</label>  <%= cardElement1 %></p>
-                <p><label>Hashtags:</label>  <%= cardElement2 %></p>
-                <p><label>Address:</label>  <%= cardElement3 %></p>
-                <p><label>Start date:</label>  <%= cardElement4 %></p>
-                <p><label>Start time:</label>  <%= cardElement5 %></p>
-                <p><label>End date:</label>  <%= cardElement6 %></p>
-                <p><label>End time:</label>  <%= cardElement7 %></p>
-                <p><label>Description:</label>  <%= cardElement8 %></p>
+                <p><label>Organisation name:</label>  <strong><%= cardElement1 %></strong></p>
+                <label>Hashtags:</label>
+                <% hashtags.forEach(function(tag) { %> 
+                <p style="font-size: 13px" class="tag tag-pill tag-warning"><%= tag; %></p>
+                <% }); %>  
+                <p><label>Address:</label>  <strong><%= cardElement3 %></strong></p>
+                <p><label>Start date:</label>  <strong><%= cardElement4 %></strong></p>
+                <p><label>Start time:</label>  <strong><%= cardElement5 %></strong></p>
+                <p><label>End date:</label>  <strong><%= cardElement6 %></strong></p>
+                <p><label>End time:</label>  <strong><%= cardElement7 %></strong></p>
             </div>
         </div>
     </div>

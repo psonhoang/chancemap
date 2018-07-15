@@ -1,14 +1,4 @@
 <% extend('../../defaultLayouts/defaultLayout.ejs'); %>
-<% var months = ["January", "February", "March", "April", "May", "June", "July","August", "September", "October","November", "December"]; %>
-
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0';
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
 
 <div class="app-content content container-fluid">
 	<div class="content-wrapper">
@@ -20,20 +10,31 @@
 	          <ol class="breadcrumb">
 	            <li class="breadcrumb-item"><a href="/">Home</a>
 	            </li>
-	            <li class="breadcrumb-item"><a href="/orgs">Dashboard</a>
+	            <li class="breadcrumb-item"><a href="/job">Dashboard</a>
 	            </li>
-	            <li class="breadcrumb-item active">ORGS
+	            <li class="breadcrumb-item active">Orgs
 	            </li>
 	          </ol>
 	        </div>
 	      </div>
 	    </div>
-		</div>
-	</div>
+	   </div>
+	   <div class="row">
+		   	<div class="container-fluid">
+	          <button onclick="search()" class="col-xl-1 col-lg-2 btn btn-info" type="button"><i class="ft-search font-md-4"></i> Search</button>
+	          <div class="col-xl-11 col-lg-10">
+	              <div id="search-input" class="edit-on-delete form-control tagging" data-tags-input-name="add-box">
+	                <input class="type-zone" contenteditable="true">
+	              </div>
+	              <p class="text-muted">Search for organizations with keywords (Ex: charity, design, culture,...)</p>
+	          </div>
+	        </div>
+	   </div>
+	  </div>
  	<div class="content-body">
-	 	<div class="row">
+	 	<div class="col-md-12">
 	        <!-- Orgs -->
-	        <div class="col-lg-12">
+	        <div style="margin-left: 5px; margin-right: 5px">
 	          <div class="card">
 	              <div style="color: white" class="card-header bg-teal">
 	                <h4 class="card-title"><i class="ft-users"></i> Organizations</h4>
@@ -52,14 +53,13 @@
 	                      </tr>
 	                    </thead>
 	                    <tbody id="orgsBody">
-											<% var index = 0; %>
-												<% orgs.forEach(org => { %>
+	                      <% orgs.forEach(org => { %>
 	                        <% if (org.username != currentAcc.username) { %>
 	                          <tr>
 	                            <td><img src="<%= org.avatar; %>" class="rounded-circle width-100 height-100" alt="org avatar"></td>
 	                            <td>
 	                              <ul>
-	                                <li style="font-size: 16px"><strong><a onclick="vieworg('<%= index %>')"><%= org.name %></a></strong></li>
+	                                <li style="font-size: 16px"><strong><%= org.name %></strong></li>
 	                                <li style="font-style: italic">@<%= org.username %></li>
 	                                <% if (org.facebook) { %>
 	                                  <li style="font-style: small"><i class="ft-facebook"></i> <%= org.facebook %></li>
@@ -87,162 +87,53 @@
 	                                <% } %>
 	                              <% }); %>
 	                            </td>
-														</tr>
-														<% index += 1; %>
-													<% } %>
+	                          </tr>
+	                        <% } %>
 	                      <% }); %>
 	                    </tbody>
 	                  </table>
 	                </div>
 	              </div>
-						</div>
-					</div>		
-		</div>
-		<section>
-			<% index = 0; %>
-				<% orgs.forEach(org => { %>
-					<% if (org.username != currentAcc.username) { %>
-						<div class="orgModal col-md-12" id='<%="orgModal" + index %>'>
-								<div class="orgModalContent content">
-									<div class="row">
-										<div class="fb-page" data-width='500px' data-height="500px" data-href="<%= org.facebook %>" data-tabs="timeline, events" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="<%= org.facebook %>" class="fb-xfbml-parse-ignore"><a href="<%= org.facebook %>"><%= org.name %></a></blockquote></div>
-										<%- include('orgCard', {org: org}); %>
-									</div>
-									<br>
-									<div class="row">
-										<!-- Jobs -->
-										<div class="col-xl-4 col-lg-12">
-													<div class="card">
-														<div style="color: white" class="card-header bg-blue bg-accent-2">
-															<h4 class="card-title"><i class="ft-clipboard"></i> Jobs</h4>
-															<a class="heading-elements-toggle">
-																<i class="fa fa-ellipsis-v font-medium-3"></i>
-															</a>
-														</div>
-														<div class="card-body collapse-in" id="jobsBody">
-															<% jobs.forEach(job => { %>
-																<% if(job.org_name == org.name) { %>
-																<div style="margin: 5px; padding: 10px; border-bottom: 2px solid #92a8d1" class="container-fluid">
-																	<h4><strong><%= job.name %></strong></h4>
-																	<h5 style="font-style: italic">-<%= job.org_name %>-</h5>
-																	<h6>Deadline: <%= months[job.app_deadline.getMonth()] + ' ' + job.app_deadline.getDate() + ', ' + job.app_deadline.getFullYear() %></h6>
-																	<% job.hashtags.forEach(hashtag => { %>
-																		<% var isMatch = false; %>
-																		<% criteriaList.forEach(criteria => { %>
-																			<% if (hashtag.includes(criteria) && !isMatch) { %>
-																				<% isMatch = true; %>
-																				<span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
-																			<% } %>
-																		<% }); %>
-																		<% if (!isMatch) { %>
-																			<span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
-																		<% } %>
-																	<% }); %>
-																</div>
-																<% } %>
-															<% }); %>
-														</div>
-													</div>
-										</div>	
-										<!-- Events -->		
-										<div class="col-xl-5 col-lg-12">
-												<div class="card">
-													<div style="color: white" class="card-header bg-amber bg-darken-3">
-														<h4 class="card-title"><i class="ft-calendar"></i> Events</h4>
-														<a class="heading-elements-toggle">
-															<i class="fa fa-ellipsis-v font-medium-3"></i>
-														</a>
-													</div>
-													<div class="card-body collapse-in">
-														<div class="table-responsive">
-															<table class="table">
-																<thead style="color: white" class="thead bg-blue-grey bg-darken-3">
-																	<tr>
-																		<th>Deadline</th>
-																		<th style="text-align: center">Event</th> <!-- Includes info: event name, org, location, time, tags -->
-																		<th>#</th>
-																	</tr>
-																</thead>
-																<tbody id="eventsBody">
-																	<% events.forEach(event => { %>
-																		<% if (event.org_name == org.name) { %> 
-																		<tr>
-																			<% if(event.reg_deadline) { %>
-																				<th scope="row"><%= months[event.reg_deadline.getMonth()] + ' ' + event.reg_deadline.getDate() + ', ' + event.reg_deadline.getFullYear() %></th>
-																			<% } else { %>
-																				<th scope="row">N/A</th>
-																			<% } %>
-																			<td>
-																				<ul
-																					<li style="font-size: 16px"><strong><%= event.name %></strong></li>
-																					<li style="font-style: italic"><%= event.org_name %></li>
-																					<% if(event.start_date) { %>
-																					<li style="font-size: small">Date: <%= months[event.start_date.getMonth()] + ' ' + event.start_date.getDate() + ', ' + event.start_date.getFullYear() %></li>
-																					<% } %>
-																					<li style="font-size: small">At: <%= event.address %></li>
-																				</ul>
-																			</td>
-																			<td>
-																				<% event.hashtags.forEach(hashtag => { %>
-																					<% var isMatch = false; %>
-																					<% criteriaList.forEach(criteria => { %>
-																						<% if (hashtag.includes(criteria) && !isMatch) { %>
-																							<% isMatch = true; %>
-																							<span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
-																						<% } %>
-																					<% }); %>
-																					<% if (!isMatch) { %>
-																						<span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
-																					<% } %>
-																				<% }); %>
-																			</td>
-																		</tr>
-																		<% } %>
-																	<% }); %>
-																</tbody>
-															</table>	
-														</div>														 
-													</div>
-												</div>
-										</div>													
-									</div>
-								</div>
-						</div>
-						<% index += 1; %>
-					<% } %>
-				<% }); %>	
-		</section>
-	</div>
+	          </div>
+	        </div>		
+	 	</div>
 </div>
-<!-- CODE DAO SCRIPT STARTS HERE -->
+
+<!--  BEGIN CODEDAO SCRIPT -->
 <script>
-function vieworg (index) {
-	console.log("click!");
-	let modal = document.getElementById("orgModal" + index);
-	modal.style.display = "block";
-}
+  $(document).ready(function() {
+    $('#search-input').tagging('removeAll');
+  });
 
-var spans = document.getElementsByClassName("orgModalClose");
-var i;
-for (i = 0; i < spans.length; i++) {
-	spans[i].onclick = function() {
-		let orgModal = document.getElementById("orgModal" + i);
-		orgModal.style.display = "none";
-	}
-}
-
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-	let i,j;
-	let modals = document.getElementsByClassName("orgModal");
-	let modalsContent = document.getElementsByClassName("orgModalContent");
-	for (i = 0; i < modals.length; i++) {
-		if (event.target == modals[i] || event.target.parentNode == modals[i] || event.target.parentNode == modalsContent[i]) {
-			let orgModal = document.getElementById("orgModal" + i);
-			orgModal.style.display = "none";
-		}
-	};
-}
+  function search() {
+    let x = document.getElementById('search-input');
+    let tags = x.getElementsByTagName('div');
+    let criteriaList = [];
+    let inputValue;
+    for (var i = 0; i < tags.length; i++) {
+      inputValue = tags[i].getElementsByTagName('input')[0].value;
+      criteriaList.push(inputValue);
+    }
+    // alert(criteriaList);
+    $.ajax({
+      async: true,
+      url: '/search/orgs',
+      method: 'GET',
+      beforeSend: (req) => {
+        $.blockUI();
+      },
+      data: {
+        criteriaList: criteriaList
+      },
+      success: (data) => {
+        console.log(typeof(data));
+        document.open();
+        document.write(data);
+        document.close();
+        $.unblockUI();
+      }
+    });
+  }
 </script>
-<!-- ENDS -->
+<!-- END -->
+

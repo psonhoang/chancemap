@@ -51,62 +51,66 @@ const upload = multer({ storage });
 
 // @Routes
 router.get('/', (req, res) => {
-  let account_type = req.user.account_type;
-  let account_id = req.user.account_id;
-  let criteriaList;
-  Org.find((err, orgs) => {
-    if(err) {
-      console.log(err);
-      return;
-    }
-    if(account_type == 1) {
-      Org.findOne({'_id': account_id}, (err, org) => {
-        criteriaList = org.hashtags;
-        orgs.forEach(org => {
-          org.matches = 0;
-          org.hashtags.forEach(hashtag => {
-            criteriaList.forEach(criteria => {
-              if(hashtag.includes(criteria)) {
-                org.matches++;
-              }
-            });
-          });
-        });
-        orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-        res.render('orgs/dashboard', {
-          title: 'App Dao | Dashboard | Orgs',
-          account_type: account_type,
-          account_id: account_id,
-          currentAcc: org,
-          orgs: orgs,
-          criteriaList: criteriaList
-        });
-      });
-    } else {
-      User.findOne({'_id': account_id}, (err, user) => {
-        criteriaList = user.interests.concat(user.skills);
-        orgs.forEach(org => {
-          org.matches = 0;
-          org.hashtags.forEach(hashtag => {
-            criteriaList.forEach(criteria => {
-              if(hashtag.includes(criteria)) {
-                org.matches++;
-              }
-            });
-          });
-        });
-        orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-        res.render('orgs/dashboard', {
-          title: 'App Dao | Dashboard | Orgs',
-          account_type: account_type,
-          account_id: account_id,
-          currentAcc: user,
-          orgs: orgs,
-          criteriaList: criteriaList
-        });
-      });
-    }
-  });
+	if(!req.isAuthenticated()) {
+		res.redirect('/login');
+	} else {
+		let account_type = req.user.account_type;
+	  let account_id = req.user.account_id;
+	  let criteriaList;
+	  Org.find((err, orgs) => {
+	    if(err) {
+	      console.log(err);
+	      return;
+	    }
+	    if(account_type == 1) {
+	      Org.findOne({'_id': account_id}, (err, org) => {
+	        criteriaList = org.hashtags;
+	        orgs.forEach(org => {
+	          org.matches = 0;
+	          org.hashtags.forEach(hashtag => {
+	            criteriaList.forEach(criteria => {
+	              if(hashtag.includes(criteria)) {
+	                org.matches++;
+	              }
+	            });
+	          });
+	        });
+	        orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+	        res.render('orgs/dashboard', {
+	          title: 'App Dao | Dashboard | Orgs',
+	          account_type: account_type,
+	          account_id: account_id,
+	          currentAcc: org,
+	          orgs: orgs,
+	          criteriaList: criteriaList
+	        });
+	      });
+	    } else {
+	      User.findOne({'_id': account_id}, (err, user) => {
+	        criteriaList = user.interests.concat(user.skills);
+	        orgs.forEach(org => {
+	          org.matches = 0;
+	          org.hashtags.forEach(hashtag => {
+	            criteriaList.forEach(criteria => {
+	              if(hashtag.includes(criteria)) {
+	                org.matches++;
+	              }
+	            });
+	          });
+	        });
+	        orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+	        res.render('orgs/dashboard', {
+	          title: 'App Dao | Dashboard | Orgs',
+	          account_type: account_type,
+	          account_id: account_id,
+	          currentAcc: user,
+	          orgs: orgs,
+	          criteriaList: criteriaList
+	        });
+	      });
+	    }
+	  });
+	}
 });
 
 // Exports

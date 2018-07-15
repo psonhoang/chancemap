@@ -12,6 +12,7 @@ const Grid = require('gridfs-stream');
 
 // Models
 const Account = require('../models/account');
+const Event = require('../models/event');
 const User = require('../models/user');
 const Job = require('../models/job');
 const Org = require('../models/org');
@@ -75,14 +76,20 @@ router.get('/', (req, res) => {
 	            });
 	          });
 	        });
-	        orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-	        res.render('orgs/dashboard', {
-	          title: 'App Dao | Dashboard | Orgs',
-	          account_type: account_type,
-	          account_id: account_id,
-	          currentAcc: org,
-	          orgs: orgs,
-	          criteriaList: criteriaList
+					orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+					Job.find({'org_id': {$ne: account_id}}, (err, jobs) => {
+						Event.find({'org_id': {$ne: account_id}}, (err, events) => {
+							res.render('orgs/dashboard', {
+								title: 'App Dao | Dashboard | Orgs',
+								account_type: account_type,
+								account_id: account_id,
+								currentAcc: org,
+								orgs: orgs,
+								jobs: jobs,
+								events: events,
+								criteriaList: criteriaList
+							});
+						});
 	        });
 	      });
 	    } else {
@@ -98,14 +105,20 @@ router.get('/', (req, res) => {
 	            });
 	          });
 	        });
-	        orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-	        res.render('orgs/dashboard', {
-	          title: 'App Dao | Dashboard | Orgs',
-	          account_type: account_type,
-	          account_id: account_id,
-	          currentAcc: user,
-	          orgs: orgs,
-	          criteriaList: criteriaList
+					orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+					Job.find({}, (err, jobs) => {
+						Event.find({'org_id': {$ne: account_id}}, (err, events) => {
+							res.render('orgs/dashboard', {
+								title: 'App Dao | Dashboard | Orgs',
+								account_type: account_type,
+								account_id: account_id,
+								currentAcc: org,
+								orgs: orgs,
+								jobs: jobs,
+								events: events,
+								criteriaList: criteriaList
+							});
+						});
 	        });
 	      });
 	    }

@@ -55,7 +55,7 @@ router.get('/', (req, res) => {
 	if(!req.isAuthenticated()) {
 		res.redirect('/login');
 	} else {
-		let account_type = req.user.account_type;
+	  let account_type = req.user.account_type;
 	  let account_id = req.user.account_id;
 	  let criteriaList;
 	  Org.find((err, orgs) => {
@@ -105,20 +105,20 @@ router.get('/', (req, res) => {
 	            });
 	          });
 	        });
-					orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-					Job.find({}, (err, jobs) => {
-						Event.find({'org_id': {$ne: account_id}}, (err, events) => {
-							res.render('orgs/dashboard', {
-								title: 'App Dao | Dashboard | Orgs',
-								account_type: account_type,
-								account_id: account_id,
-								currentAcc: org,
-								orgs: orgs,
-								jobs: jobs,
-								events: events,
-								criteriaList: criteriaList
-							});
-						});
+			orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+			Job.find({}, (err, jobs) => {
+				Event.find({'org_id': {$ne: account_id}}, (err, events) => {
+					res.render('orgs/dashboard', {
+						title: 'App Dao | Dashboard | Orgs',
+						account_type: account_type,
+						account_id: account_id,
+						currentAcc: user,
+						orgs: orgs,
+						jobs: jobs,
+						events: events,
+						criteriaList: criteriaList
+					});
+				});
 	        });
 	      });
 	    }

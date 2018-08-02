@@ -21,60 +21,58 @@
         <!-- Events -->
         <div class="col-xl-8 col-lg-12">
           <div class="card">
-              <div style="color: white" class="card-header bg-amber bg-darken-3">
-                <h4 class="card-title"><a href="/events/" style="color: white"><i class="ft-calendar"></i> Events</a></h4>
+                <div style="color: white" class="card-header bg-amber bg-darken-3">
+                <h4 class="card-title"><i class="ft-calendar"></i> Events</h4>
                 <a class="heading-elements-toggle">
-                  <i class="fa fa-ellipsis-v font-medium-3"></i>
+                    <i class="fa fa-ellipsis-v font-medium-3"></i>
                 </a>
-              </div>
-              <div class="card-body collapse-in">
-                <div class="table-responsive">
-                  <table class="table">
-                    <thead style="color: white" class="thead bg-blue-grey bg-darken-3">
-                      <tr>
-                        <th>Deadline</th>
-                        <th style="text-align: center">Event</th> <!-- Includes info: event name, org, location, time, tags -->
-                        <th>#</th>
-                      </tr>
-                    </thead>
-                    <tbody id="eventsBody">
-                      <% events.forEach(event => { %>
-                        <tr>
-                          <% if(event.reg_deadline) { %>
-                            <th scope="row"><%= months[event.reg_deadline.getMonth()] + ' ' + event.reg_deadline.getDate() + ', ' + event.reg_deadline.getFullYear() %></th>
-                          <% } else { %>
-                            <th scope="row">N/A</th>
-                          <% } %>
-                          <td>
-                            <ul
-                              <li style="font-size: 16px"><strong><%= event.name %></strong></li>
-                              <li style="font-style: italic"><%= event.org_name %></li>
-                              <% if(event.start_date) { %>
-                              <li style="font-size: small">Date: <%= months[event.start_date.getMonth()] + ' ' + event.start_date.getDate() + ', ' + event.start_date.getFullYear() %></li>
-                              <% } %>
-                              <li style="font-size: small">At: <%= event.address %></li>
-                            </ul>
-                          </td>
-                          <td>
-                            <% event.hashtags.forEach(hashtag => { %>
-                              <% var isMatch = false; %>
-                              <% criteriaList.forEach(criteria => { %>
-                                <% if (hashtag.includes(criteria) && !isMatch) { %>
-                                  <% isMatch = true; %>
-                                  <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
-                                <% } %>
-                              <% }); %>
-                              <% if (!isMatch) { %>
-                                <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
-                              <% } %>
-                            <% }); %>
-                          </td>
-                        </tr>
-                      <% }); %>
-                    </tbody>
-                  </table>
                 </div>
-              </div>
+                <div class="card">                    
+                    <div class="table-responsive">
+                        <table class="table">
+                            <tbody style="color: white" class="thead bg-blue-grey bg-darken-3">  
+                                <th>Deadline</th>
+                                <th>Event</th>
+                                <th>Hashtags</th>     
+                            </tbody>        
+                            <tbody id="eventsBody">
+                                <% events.forEach(event => { %>
+                                <% cardId = event._id; %>
+                                <tr class="btn-secondary" style="border: 0" data-toggle="modal" data-target="#<%= cardId %>">
+                                    <% if(event.reg_deadline) { %>
+                                    <th scope="row"><%= months[event.reg_deadline.getMonth()] + ' ' + event.reg_deadline.getDate() + ', ' + event.reg_deadline.getFullYear() %></th>
+                                    <% } else { %>
+                                    <th scope="row">N/A</th>
+                                    <% } %>
+                                    <td>          
+                                        <li style="font-size: 16px"><strong><%= event.name %></strong></li>
+                                        <li style="font-style: italic"><%= event.org_name %></li>
+                                        <% if(event.start_date) { %>
+                                        <li style="font-size: small">Date: <%= months[event.start_date.getMonth()] + ' ' + event.start_date.getDate() + ', ' + event.start_date.getFullYear() %></li>
+                                        <% } %>
+                                        <li style="font-size: small">At: <%= event.address %></li>
+                                    </td>
+                                    <td>
+                                    <% event.hashtags.forEach(hashtag => { %>
+                                        <% var isMatch = false; %>
+                                        <% criteriaList.forEach(criteria => { %>
+                                        <% if (hashtag.includes(criteria) && !isMatch) { %>
+                                            <% isMatch = true; %>
+                                            <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
+                                        <% } %>
+                                        <% }); %>
+                                        <% if (!isMatch) { %>
+                                        <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
+                                        <% } %>
+                                    <% }); %>
+                                    </td>
+                                </tr>  
+                                <%- include('eventCardModal', {event: event, months: months}); %>             
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
           </div>
         </div>
         <!-- Jobs -->
@@ -125,7 +123,7 @@
                   <table class="table">
                     <thead style="color: white" class="thead bg-blue-grey bg-darken-3">
                       <tr>
-                        <th>Avatar</th>
+                        <th style="">Avatar</th>
                         <th style="text-align: center">Organization</th> <!-- Includes info: event name, org, location, time, tags -->
                         <th>#</th>
                       </tr>
@@ -182,7 +180,7 @@
               </div>
           </div>
         </div>
-        
+
         <!-- Users -->
         <div class="col-xl-4 col-lg-12">
           <div class="card">
@@ -194,6 +192,7 @@
             </div>
             <div class="card-body collapse-in" id="usersBody">
               <% users.forEach( user => { %>
+              <% cardId = user._id; %>
                 <% if(currentAcc.username != user.username) { %>
                   <div style="margin: 5px; padding: 10px; border-bottom: 2px solid #F06292" class="container-fluid">
                     <div style="margin-bottom: 10px; width: 33%; display: flex; align-items: center" class="user-wrap">
@@ -230,6 +229,7 @@
             </div>
           </div>
         </div>
+
       </div>
     </div>
   </div>

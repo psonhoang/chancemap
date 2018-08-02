@@ -90,7 +90,7 @@ router.get('/orgs', (req, res) => {
 					title: 'App Dao | Search Orgs',
 					orgs: sortedOrgs,
 					criteriaList: criteriaList,
-					account_type: currentAcc.acount_type,
+					account_type: currentAcc.account_type,
 					account_id: currentAcc.account_id,
 					currentAcc: org
 				});
@@ -105,7 +105,7 @@ router.get('/orgs', (req, res) => {
 					title: 'App Dao | Search Orgs',
 					orgs: sortedOrgs,
 					criteriaList: criteriaList,
-					account_type: currentAcc.acount_type,
+					account_type: currentAcc.account_type,
 					account_id: currentAcc.account_id,
 					currentAcc: user
 				});
@@ -158,7 +158,7 @@ router.get('/users', (req, res) => {
 					title: 'App Dao | Search Users',
 					users: sortedUsers,
 					criteriaList: criteriaList,
-					account_type: currentAcc.acount_type,
+					account_type: currentAcc.account_type,
 					account_id: currentAcc.account_id,
 					currentAcc: org
 				});
@@ -173,7 +173,7 @@ router.get('/users', (req, res) => {
 					title: 'App Dao | Search Users',
 					users: sortedUsers,
 					criteriaList: criteriaList,
-					account_type: currentAcc.acount_type,
+					account_type: currentAcc.account_type,
 					account_id: currentAcc.account_id,
 					currentAcc: user
 				});
@@ -224,7 +224,7 @@ router.get('/jobs', (req, res) => {
 					title: 'App Dao | Search',
 					jobs: sortedJobs,
 					criteriaList: criteriaList,
-					account_type: currentAcc.acount_type,
+					account_type: currentAcc.account_type,
 					account_id: currentAcc.account_id,
 					currentAcc: org
 				});
@@ -239,7 +239,7 @@ router.get('/jobs', (req, res) => {
 					title: 'App Dao | Search',
 					jobs: sortedJobs,
 					criteriaList: criteriaList,
-					account_type: currentAcc.acount_type,
+					account_type: currentAcc.account_type,
 					account_id: currentAcc.account_id,
 					currentAcc: user
 				});
@@ -290,7 +290,7 @@ router.get('/events', (req, res) => {
 					title: 'App Dao | Search Jobs',
 					events: sortedEvents,
 					criteriaList: criteriaList,
-					account_type: currentAcc.acount_type,
+					account_type: currentAcc.account_type,
 					account_id: currentAcc.account_id,
 					currentAcc: org
 				});
@@ -305,7 +305,7 @@ router.get('/events', (req, res) => {
 					title: 'App Dao | Search Events',
 					events: sortedEvents,
 					criteriaList: criteriaList,
-					account_type: currentAcc.acount_type,
+					account_type: currentAcc.account_type,
 					account_id: currentAcc.account_id,
 					currentAcc: user
 				});
@@ -439,7 +439,7 @@ router.get('/', (req, res) => {
 								orgs: sortedOrgs,
 								users: sortedUsers,
 								criteriaList: criteriaList,
-								account_type: currentAcc.acount_type,
+								account_type: currentAcc.account_type,
 								account_id: currentAcc.account_id,
 								currentAcc: org
 							});
@@ -457,7 +457,7 @@ router.get('/', (req, res) => {
 								orgs: sortedOrgs,
 								users: sortedUsers,
 								criteriaList: criteriaList,
-								account_type: currentAcc.acount_type,
+								account_type: currentAcc.account_type,
 								account_id: currentAcc.account_id,
 								currentAcc: user
 							});

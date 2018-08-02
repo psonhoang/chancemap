@@ -1,5 +1,6 @@
 <% extend('../defaultLayouts/defaultLayout') %>
 <% var months = ["January", "February", "March", "April", "May", "June", "July","August", "September", "October","November", "December"]; %>
+
 <div class="app-content content container-fluid">
   <div class="content-wrapper">
     <div class="content-header-row">
@@ -67,8 +68,10 @@
                                     <% }); %>
                                     </td>
                                 </tr>  
+                                <!-- Event Modal Starts -->
                                 <%- include('eventCardModal', {event: event, months: months}); %>             
                                 <% }); %>
+                                <!-- Event Modal Ends-->
                             </tbody>
                         </table>
                     </div>
@@ -86,7 +89,8 @@
             </div>
             <div class="card-body collapse-in" id="jobsBody">
               <% jobs.forEach(job => { %>
-                <div style="margin: 5px; padding: 10px; border-bottom: 2px solid #92a8d1" class="container-fluid">
+                <% cardId = job._id; %>
+                <div style="padding: 10px; border-bottom: 2px solid #92a8d1" class="container-fluid btn-secondary" data-toggle="modal" data-target="#<%= cardId %>">
                   <h4><strong><%= job.name %></strong></h4>
                   <h5 style="font-style: italic">-<%= job.org_name %>-</h5>
                   <h6>Deadline: <%= months[job.app_deadline.getMonth()] + ' ' + job.app_deadline.getDate() + ', ' + job.app_deadline.getFullYear() %></h6>
@@ -103,6 +107,9 @@
                     <% } %>
                   <% }); %>
                 </div>
+                <!-- Job Modal Starts -->
+                <%- include('jobCardModal', { job: job, admin: false, months: months, cardId: cardId }); %>
+                <!-- Job Modal Ends -->
               <% }); %>
             </div>
           </div>
@@ -131,7 +138,8 @@
                     <tbody id="orgsBody">
                       <% orgs.forEach(org => { %>
                         <% if (org.username != currentAcc.username) { %>
-                          <tr>
+                          <% cardId = org._id; %>
+                          <tr class="btn-secondary" data-toggle="modal" data-target="#<%= cardId %>">
                             <td>
                               <div class="card">
                                 <img src="<%= org.avatar; %>" class="rounded-circle width-100 height-100" alt="org avatar">
@@ -177,6 +185,13 @@
                     </tbody>
                   </table>
                 </div>
+                <!-- Org Modal Starts -->
+                <% orgs.forEach(org => { %>
+                  <% if (org.username != currentAcc.username) { %>
+                    <%- include('orgCardModal', {org: org, jobs: jobs, events: events}); %>
+                  <% } %>
+                <% }); %>                
+                <!-- Org Modal Ends -->
               </div>
           </div>
         </div>
@@ -226,12 +241,14 @@
                   </div>
                 <% } %>
               <% }); %>
+              <!-- User Modal Starts -->
               <% users.forEach( user => { %>
                 <% cardId = user._id; %>
                 <% if (currentAcc.username != user.username) { %>
-                <%- include('userCardModal', {user: user}); %> 
+                  <%- include('userCardModal', {user: user}); %> 
                 <% } %>
               <% }); %>
+              <!-- User Modal Ends -->
             </div>
           </div>
         </div>
@@ -241,6 +258,15 @@
   </div>
 </div>
 
+<!-- Facebook Embedding Script -->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0';
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 
 <!--  BEGIN CODEDAO SCRIPT -->
 <script>

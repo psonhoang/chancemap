@@ -1,26 +1,40 @@
 <% extend('../../../defaultLayouts/defaultLayout') %>
 <% var months = ["January", "February", "March", "April", "May", "June", "July","August", "September", "October","November", "December"]; %>
-   <div class="app-content content container-fluid">
-        <div class="content-wrapper">
-          <div class="content-header row">
-            <div class="content-header-left col-md-6 col-xs-12 mb-2">
-              <h3 class="content-header-title mb-0">Jobs</h3>
-              <div class="row breadcrumbs-top">
-                <div class="breadcrumb-wrapper col-xs-12">
-                  <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/">Home</a>
-                    </li>
-                    <li class="breadcrumb-item"><a href="/job">Manage</a>
-                    </li>
-                    <li class="breadcrumb-item active">JOB
-                    </li>
-                  </ol>
-                </div>
-              </div>
-            </div>
-            </div>
+
+<div class="app-content content container-fluid">
+  <div class="content-wrapper">
+    <div class="content-header row">
+      <div class="content-header-left col-md-6 col-xs-12 mb-2">
+        <h3 class="content-header-title mb-0">Jobs</h3>
+        <div class="row breadcrumbs-top">
+          <div class="breadcrumb-wrapper col-xs-12">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="/">Home</a>
+              </li>
+              <li class="breadcrumb-item"><a href="/job">Manage</a>
+              </li>
+              <li class="breadcrumb-item active">JOB
+              </li>
+            </ol>
           </div>
-          <div class="content-body">
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="content-body">
+
+<!-- Submit resume, edit job and add jobs button script-->
+<div class="row col-xs-12">
+  <div role="group" class="btn-group float-md-right">
+    <div role="group" class="btn-group float-md-right" style="margin: 5px">
+      <% if (account_type == 1) {%>
+        <button type="button" onclick="location.href='/jobs/create'" class="btn btn-outline-primary"><i class="ft-plus"></i></button>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<div class='row col-xs-12'><br></div>
 
 <!-- card actions section start -->
 <section id="card-actions">
@@ -37,21 +51,12 @@
 </section>
 <!-- // card-actions section end -->
         </div>
-	  </div>
-
-<!-- Submit resume, edit job and add jobs button script-->
-<div class="row col-xs-12">
-		<div role="group" class="btn-group float-md-right">
-	  	<div role="group" class="btn-group">
-	     	<button id="btnGroupDrop2" type="button" class="btn btn-outline-primary"><a href="/jobs/create" class="card-link">CREATE NEW JOB</a></button>
-		  </div>
-		</div>
-</div>
-
+    </div>
+    
 <!-- BEGIN CODE DAO SCRIPTS -->
 <script>
   function DeleteJob(Id) {
-    var confirm = window.confirm("Do you want to delete this job?");
+    var confirm = window.confirm("Do you want to delete this job? This action can not be undone.");
     if (confirm == true)
     {
       //create a form that submits the id of the deleted job:

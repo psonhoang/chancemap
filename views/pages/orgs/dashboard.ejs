@@ -116,7 +116,8 @@
 		<section>
 		<% orgs.forEach(org => { %>
 			<% if (org.username != currentAcc.username) { %>
-				<%- include('orgCardModal', {org: org, jobs: jobs, events: events}); %>
+				<% cardId = org._id; %>
+				<%- include('orgCardModal', {org: org, jobs: jobs, events: events, cardId: cardId}); %>
 			<% } %>
 		<% }); %>
 		</section>

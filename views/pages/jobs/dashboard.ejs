@@ -45,6 +45,7 @@
       </div>
       <div class="card-body collapse-in">
       <% var index = 0; %>
+      <!-- for each job create a job modal -->
         <% jobs.forEach(job => { %>
           <div style="margin: 5px; padding: 10px; border-bottom: 2px solid #92a8d1" class="container-fluid" id="<%= index %>">
             <h4><strong><a onclick="viewjob('<%= index %>')"><%= job.name %></a></strong></h4>
@@ -63,9 +64,9 @@
               <% } %>
             <% }); %>
           </div> 
-          <div class="jobModal" id='<%="jobModal" + index %>'>
+          <div class="modal" id='<%="jobModal" + index %>'>
             <div class="jobModalContent content">
-                <%- include('jobCardview', { job: job, admin: false, months: months}); %>             
+                <%- include('jobCardview', { job: job, admin: false, months: months}); %>
             </div>
           </div>
           <% index += 1; %>

@@ -193,8 +193,8 @@
             <div class="card-body collapse-in" id="usersBody">
               <% users.forEach( user => { %>
               <% cardId = user._id; %>
-                <% if(currentAcc.username != user.username) { %>
-                  <div style="margin: 5px; padding: 10px; border-bottom: 2px solid #F06292" class="container-fluid">
+                <% if (currentAcc.username != user.username) { %>
+                  <div style="margin: 5px; padding: 10px; border-bottom: 2px solid #F06292" class="container-fluid btn-secondary" style="border: 0" data-toggle="modal" data-target="#<%= cardId %>">
                     <div style="margin-bottom: 10px; width: 33%; display: flex; align-items: center" class="user-wrap">
                       <div class="user-avatar">
                         <a href="#">
@@ -224,6 +224,12 @@
                       <% } %>
                     <% }); %>
                   </div>
+                <% } %>
+              <% }); %>
+              <% users.forEach( user => { %>
+                <% cardId = user._id; %>
+                <% if (currentAcc.username != user.username) { %>
+                <%- include('userCardModal', {user: user}); %> 
                 <% } %>
               <% }); %>
             </div>

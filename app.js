@@ -184,7 +184,7 @@ app.get('/', (req, res) => {
                 });
                 users.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
                 res.render('index', {
-                  title: 'ChanceMap | Take Risk Take Charge',
+                  title: 'ChanceMap | Home',
                   account_type: account_type,
                   account_id: account_id,
                   currentAcc: user,
@@ -248,7 +248,7 @@ app.get('/', (req, res) => {
                 });
                 users.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
                 res.render('index', {
-                  title: 'ChanceMap | Take Risk Take Charge',
+                  title: 'ChanceMap | Take Home',
                   account_type: account_type,
                   account_id: account_id,
                   currentAcc: org,

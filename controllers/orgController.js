@@ -80,7 +80,7 @@ router.get('/', (req, res) => {
 					Job.find({'org_id': {$ne: account_id}}, (err, jobs) => {
 						Event.find({'org_id': {$ne: account_id}}, (err, events) => {
 							res.render('orgs/dashboard', {
-								title: 'App Dao | Dashboard | Orgs',
+								title: 'ChanceMap | Orgs',
 								account_type: account_type,
 								account_id: account_id,
 								currentAcc: org,
@@ -109,7 +109,7 @@ router.get('/', (req, res) => {
 			Job.find({}, (err, jobs) => {
 				Event.find({'org_id': {$ne: account_id}}, (err, events) => {
 					res.render('orgs/dashboard', {
-						title: 'App Dao | Dashboard | Orgs',
+						title: 'ChanceMap | Orgs',
 						account_type: account_type,
 						account_id: account_id,
 						currentAcc: user,

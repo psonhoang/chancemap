@@ -60,7 +60,7 @@ router.get('/manage', (req, res) => {
 				//console.log(jobs);
 				Org.findOne({_id: req.user.account_id}, (err, org) => {
 					res.render('jobs/orgs/manage', {
-						title: 'CodeDao | Manage Jobs',
+						title: 'ChanceMap | My Jobs',
 						account_type: req.user.account_type,
 						account_id: req.user.account_id,
 						currentAcc: org,
@@ -86,7 +86,7 @@ router.get('/', (req, res) => {
 			Job.find({org_id : {$ne: req.user.account_id}}, (err, jobs) => {
 				Org.findOne({_id: req.user.account_id}, (err, org) => {
 					res.render('jobs/dashboard', {
-						title: 'CodeDao | Jobs',
+						title: 'ChanceMap | Jobs',
 						account_type: req.user.account_type,
 						account_id: req.user.account_id,
 						currentAcc: org,
@@ -101,7 +101,7 @@ router.get('/', (req, res) => {
 			Job.find({}, (err, jobs) => {
 				User.findOne({_id: req.user.account_id}, (err, user) => {
 					res.render('jobs/dashboard', {
-						title: 'CodeDao | Jobs',
+						title: 'ChanceMap | Jobs',
 						account_type: req.user.account_type,
 						account_id: req.user.account_id,
 						currentAcc: user,
@@ -124,7 +124,7 @@ router.get('/create', (req, res) => {
 		else
 			Org.findOne({_id: req.user.account_id}, (err, org) => {
 				res.render('jobs/orgs/create', {
-					title: 'CodeDao | Create A New Job',
+					title: 'ChanceMap | Add a new Job',
 					account_type: req.user.account_type,
 					account_id: req.user.account_id,
 					currentAcc: org
@@ -186,7 +186,7 @@ router.get('/manage/edit/:ID', (req, res) => {
 		Job.findOne({_id: req.params.ID}, (err, job) => {
 			Org.findOne({_id: req.user.account_id}, (err, org) => {
 				res.render('jobs/orgs/edit', {
-					title: 'CodeDao | Edit your Job',
+					title: 'ChanceMap | Edit Job',
 					account_type: req.user.account_type,
 					account_id: req.user.account_id,
 					currentAcc: org,

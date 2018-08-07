@@ -33,7 +33,7 @@ router.get('/', (req, res) => {
               });
               users.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
               res.render('users/dashboard', {
-                  title: 'Colligo | Users',
+                  title: 'ChanceMap | Users',
                   account_type: account_type,
                   account_id: account_id,
                   currentAcc: org,
@@ -57,7 +57,7 @@ router.get('/', (req, res) => {
               });
               users.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
               res.render('users/dashboard', {
-                  title: 'Colligo | Users',
+                  title: 'ChanceMap | Users',
                   account_type: account_type,
                   account_id: account_id,
                   currentAcc: user,

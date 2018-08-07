@@ -22,7 +22,7 @@ router.get('/create', (req, res) => {
     if(account_type == 1) {
         Org.findOne({'_id': account_id}, (err, org) => {
             res.render('events/orgs/create', {
-                title: 'App Dao | Create Event',
+                title: 'ChanceMap | Add a new Event',
                 account_type: account_type,
                 account_id: account_id,
                 currentAcc: org
@@ -48,7 +48,7 @@ router.get('/edit/:id', (req, res) => {
           if(account_type == 1) {
               Org.findOne({'_id': account_id}, (err, org) => {
                   res.render('events/orgs/edit', {
-                      title: 'App Dao | My Events',
+                      title: 'ChanceMap | My Events',
                       account_type: account_type,
                       account_id: account_id,
                       currentAcc: org,
@@ -89,7 +89,7 @@ router.get('/', (req, res) => {
                 });
                 events.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
                 res.render('events/dashboard', {
-                    title: 'App Dao | Events',
+                    title: 'ChanceMap | Events',
                     account_type: account_type,
                     account_id: account_id,
                     currentAcc: org,
@@ -112,7 +112,7 @@ router.get('/', (req, res) => {
                 });
                 events.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
                 res.render('events/dashboard', {
-                    title: 'App Dao | Events',
+                    title: 'ChanceMap | Events',
                     account_type: account_type,
                     account_id: account_id,
                     currentAcc: user,
@@ -139,7 +139,7 @@ router.get('/manage', (req, res) => {
         }
         Org.findOne({'_id': account_id}, (err, org) => {
             res.render('events/orgs/manage', {
-                title: 'App Dao | My Events',
+                title: 'ChanceMap | My Events',
                 account_type: account_type,
                 account_id: account_id,
                 currentAcc: org,
@@ -174,7 +174,7 @@ router.get('/delete/:id', (req, res) => {
             } else {
                 Org.findOne({'_id': account_id}, (err, org) => {
                     res.render('events/orgs/manage', {
-                        title: 'App Dao | My Events',
+                        title: 'ChanceMap | My Events',
                         account_type: account_type,
                         account_id: account_id,
                         currentAcc: org,

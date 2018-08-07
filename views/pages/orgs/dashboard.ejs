@@ -68,10 +68,17 @@
 	                    <tbody id="orgsBody">
 											<% var index = 0; %>
 	                      <% orgs.forEach(org => { %>
-													<% if (org.username != currentAcc.username) { %>
-														<% let cardId = org._id; %>
-	                          <tr class="btn-secondary" style="border: 0" data-toggle="modal" data-target="#<%= cardId %>">
-	                            <td><img src="<%= org.avatar; %>" class="rounded-circle width-100 height-100" alt="org avatar"></td>
+							<% if (org.username != currentAcc.username) { %>
+								<% let cardId = org._id; %>
+	                          	<tr class="btn-secondary" style="border: 0" data-toggle="modal" data-target="#<%= cardId %>">
+	                            <td>
+	                            	<img src="<%= org.avatar; %>" class="rounded-circle width-100 height-100" alt="org avatar">
+									<% if(account_type == 0) { %>
+		                                <br><br>
+		                                <buton id="<%= org._id %>" onclick="follow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>)" class="btn btn-info"><i class="fa fa-eye"></i> Follow</buton>
+		                             <% } %>
+	                            </td>
+	                    
 	                            <td>
 	                              <ul>
 	                                <li style="font-size: 16px"><strong><%= org.name %></strong></li>
@@ -102,8 +109,8 @@
 	                                <% } %>
 	                              <% }); %>
 	                            </td>
-														</tr>
-														<% index += 1; %>
+								</tr>
+								<% index += 1; %>
 	                        <% } %>
 	                      <% }); %>
 	                    </tbody>
@@ -148,6 +155,14 @@
   $(document).ready(function() {
     $('#search-input').tagging('removeAll');
   });
+
+  function follow(user_id, org_id) {
+    let button_id = '#' + org_id;
+    $(button_id).removeClass('btn-info');
+    $(button_id).addClass('btn-success');
+    $(button_id).html('<i class="fa fa-check"></i> Followed');
+    // alert('user: ' + user_id + '; org: ' + org_id);
+  }
 
   function search() {
     let x = document.getElementById('search-input');

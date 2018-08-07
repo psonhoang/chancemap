@@ -87,7 +87,7 @@ router.get('/orgs', (req, res) => {
 				}
 				console.log(org);
 				res.render('orgs/dashboard', {
-					title: 'App Dao | Search Orgs',
+					title: 'ChanceMap | Orgs',
 					orgs: sortedOrgs,
 					criteriaList: criteriaList,
 					account_type: currentAcc.account_type,
@@ -102,7 +102,7 @@ router.get('/orgs', (req, res) => {
 				}
 				console.log(user);
 				res.render('orgs/dashboard', {
-					title: 'App Dao | Search Orgs',
+					title: 'ChanceMap | Orgs',
 					orgs: sortedOrgs,
 					criteriaList: criteriaList,
 					account_type: currentAcc.account_type,
@@ -155,7 +155,7 @@ router.get('/users', (req, res) => {
 				}
 				console.log(org);
 				res.render('users/dashboard', {
-					title: 'App Dao | Search Users',
+					title: 'ChanceMap | Users',
 					users: sortedUsers,
 					criteriaList: criteriaList,
 					account_type: currentAcc.account_type,
@@ -170,7 +170,7 @@ router.get('/users', (req, res) => {
 				}
 				console.log(user);
 				res.render('users/dashboard', {
-					title: 'App Dao | Search Users',
+					title: 'ChanceMap | Users',
 					users: sortedUsers,
 					criteriaList: criteriaList,
 					account_type: currentAcc.account_type,
@@ -221,7 +221,7 @@ router.get('/jobs', (req, res) => {
 				}
 				console.log(org);
 				res.render('jobs/dashboard', {
-					title: 'App Dao | Search',
+					title: 'ChanceMap | Jobs',
 					jobs: sortedJobs,
 					criteriaList: criteriaList,
 					account_type: currentAcc.account_type,
@@ -236,7 +236,7 @@ router.get('/jobs', (req, res) => {
 				}
 				console.log(user);
 				res.render('jobs/dashboard', {
-					title: 'App Dao | Search',
+					title: 'ChanceMap | Jobs',
 					jobs: sortedJobs,
 					criteriaList: criteriaList,
 					account_type: currentAcc.account_type,
@@ -287,7 +287,7 @@ router.get('/events', (req, res) => {
 				}
 				console.log(org);
 				res.render('events/dashboard', {
-					title: 'App Dao | Search Jobs',
+					title: 'ChanceMap | Events',
 					events: sortedEvents,
 					criteriaList: criteriaList,
 					account_type: currentAcc.account_type,
@@ -302,7 +302,7 @@ router.get('/events', (req, res) => {
 				}
 				console.log(user);
 				res.render('events/dashboard', {
-					title: 'App Dao | Search Events',
+					title: 'ChanceMap | Events',
 					events: sortedEvents,
 					criteriaList: criteriaList,
 					account_type: currentAcc.account_type,
@@ -433,7 +433,7 @@ router.get('/', (req, res) => {
 							}
 							console.log(org);
 							res.render('index', {
-								title: 'App Dao | Search',
+								title: 'ChanceMap | Home',
 								events: sortedEvents,
 								jobs: sortedJobs,
 								orgs: sortedOrgs,
@@ -451,7 +451,7 @@ router.get('/', (req, res) => {
 							}
 							console.log(user);
 							res.render('index', {
-								title: 'App Dao | Search',
+								title: 'ChanceMap | Home',
 								events: sortedEvents,
 								jobs: sortedJobs,
 								orgs: sortedOrgs,

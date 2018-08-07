@@ -51,7 +51,7 @@ const upload = multer({ storage });
 // ***** ROUTES *****
 // Login
 router.get('/login', (req, res) => {
-	res.render('login', {title: "Code Dao | Login", message: req.flash('error')});
+	res.render('login', {title: "ChanceMap | Login", message: req.flash('error')});
 });
 
 router.post('/login', (req, res, next) => {
@@ -84,12 +84,12 @@ router.post('/register', (req, res) => {
 		if(data.org_acc) { acc_type = 1; }
 		if(acc_type == 0) {
 			res.render('regUser', {
-				title: 'Code Dao | User Sign Up',
+				title: 'ChanceMap | Sign Up',
 				user: data // username, email, password
 			});
 		} else {
 			res.render('regOrg', {
-				title: 'Code Dao | Org Sign Up',
+				title: 'ChanceMap | Sign Up',
 				org: data
 			});
 		}
@@ -268,7 +268,7 @@ router.get('/profile', (req, res) => {
     if(account_type == 0) {
       User.findOne({'_id': account_id}, (err, user) => {
         res.render('profile', {
-          title: 'App Dao | My Profile',
+          title: 'ChanceMap | My Profile',
           account_type: account_type,
           account_id: account_id,
           currentAcc: user
@@ -277,7 +277,7 @@ router.get('/profile', (req, res) => {
     } else {
       Org.findOne({'_id': account_id}, (err, org) => {
           res.render('profile', {
-            title: 'App Dao | My Profile',
+            title: 'ChanceMap | My Profile',
             account_type: account_type,
             account_id: account_id,
             currentAcc: org,

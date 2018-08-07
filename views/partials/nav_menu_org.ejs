@@ -1,17 +1,16 @@
 <div data-scroll-to-active="true" class="main-menu menu-fixed menu-light menu-accordion menu-shadow">
   <div class="main-menu-content ps-container ps-theme-dark ps-active-y" data-ps-id="a0cf5723-e682-b9c3-b228-6640b1cf55c0" style="height: 753px;">
     <ul id="main-menu-navigation" data-menu="menu-navigation" class="navigation navigation-main">
-      <li class="navigation-header">
+      <a href="/profile"><li class="navigation-header">
         <i class="ft-edit"></i>
         <div class="text-xs-center">
           <div class="card-block">
-            <img id="avatar" src='<%= currentAcc.avatar; %>' class="rounded-circle width-100 height-100" alt="Card image">
+            <img id="avatar" src='<%= currentAcc.avatar; %>' class="hidden rounded-circle width-100 height-100" alt="Card image">
             <br><br>
-            <a href="/profile"><span class="card-subtitle"><%= currentAcc.name; %></span></a>
+            <span class="card-subtitle"><%= currentAcc.name; %></span>
           </div>
         </div>
-        <%# <i data-toggle="tooltip" data-placement="right" data-original-title="General" class=" ft-minus"></i> %>
-      </li>
+      </li></a>
       <li class="nav-item"><a href="/"><i class="ft-home"></i><span data-i18n="" class="menu-title">Home</span></a>
       </li>
       <li class="nav-item has-sub"><a><i class="ft-sidebar"></i><span data-i18n="" class="menu-title">Dashboard</span><%#<span class="tag tag tag-primary tag-pill float-xs-right mr-2">3</span>%></a>

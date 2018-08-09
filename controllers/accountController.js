@@ -398,8 +398,11 @@ router.post('/profile/org', upload.single('avatar'), (req, res) => {
 //@desc Follower/Following func
 router.post('/follow', (req, res) => {
 	let org_id = req.body.org_id;
-	const userAcc = req.body.user_id;
-	User.findOne({'_id': userAcc}, (err, user) => {
+	let user_id = req.body.user_id;
+	console.log(req);
+	console.log(org_id);
+	console.log(user_id);
+	User.findOne({'_id': user_id}, (err, user) => {
 		if(err) {
 			res.send("Database error!");
 			console.log(err);
@@ -419,7 +422,7 @@ router.post('/follow', (req, res) => {
 				org.updated_at = new Date();
 				org.save().then(result => {
 					console.log(result);
-					res.send('Success');
+					res.end();
 				}).catch(err => {
 					res.send(err);
 				});

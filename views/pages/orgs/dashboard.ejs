@@ -67,17 +67,17 @@
 	                    </thead>
 	                    <tbody id="orgsBody">
 	                      <% orgs.forEach(org => { %>
-													<% if (org.username != currentAcc.username) { %>
-														<% let cardId = org._id; %>
-														<tr>
+							<% if (org.username != currentAcc.username) { %>
+								<% let cardId = org._id; %>
+								<tr style="border: 0">
 	                            <td>
-	                            	<img src="<%= org.avatar; %>" class="rounded-circle width-100 height-100" alt="org avatar">
-																<% if(account_type == 0) { %>
+	                            	<img onclick="window.location.href='orgs/<%= org._id %>'" src="<%= org.avatar %>" class="btn-secondary rounded-circle width-100 height-100" alt="org avatar">
+									<% if(account_type == 0) { %>
 		                                <br><br>
-		                                <buton id="<%= org._id %>" onclick="follow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>)" class="btn btn-info"><i class="fa fa-eye"></i> Follow</buton>
+		                                <buton id="<%= org._id %>" onclick="follow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)" class="btn btn-info"><i class="fa fa-eye"></i> Follow</buton>
 		                            <% } %>
 	                            </td>          
-	                            <td class="btn-secondary" style="border: 0" onclick="window.location.href='orgs/<%= org._id %>'">
+	                            <td>
 	                              <ul>
 	                                <li style="font-size: 16px"><strong><%= org.name %></strong></li>
 	                                <li style="font-style: italic">@<%= org.username %></li>
@@ -147,30 +147,45 @@
     $('#search-input').tagging('removeAll');
   });
 
-  function follow(user_id, org_id) {
+  function follow(user_id, org_id, org_username) {
     let button_id = '#' + org_id;
     $(button_id).removeClass('btn-info');
     $(button_id).addClass('btn-success');
     $(button_id).html('<i class="fa fa-check"></i> Followed');
-		// alert('user: ' + user_id + '; org: ' + org_id);
-		let form = document.createElement('form');
-		form.setAttribute("method", 'POST');
-		form.setAttribute("action", '/follow');
-		
-		let idField = document.createElement('input');
-		idField.setAttribute("type", "hidden");
-		idField.setAttribute("name", 'org_id');
-		idField.setAttribute("value", org_id);
+	// let form = document.createElement('form');
+	// form.setAttribute("method", 'POST');
+	// form.setAttribute("action", '/follow');
+	
+	// let idField = document.createElement('input');
+	// idField.setAttribute("type", "hidden");
+	// idField.setAttribute("name", 'org_id');
+	// idField.setAttribute("value", org_id);
 
-		let userField = document.createElement('input');
-		userField.setAttribute("type", "hidden");
-		userField.setAttribute("name", 'user_id');
-		userField.setAttribute("value", user_id);
+	// let userField = document.createElement('input');
+	// userField.setAttribute("type", "hidden");
+	// userField.setAttribute("name", 'user_id');
+	// userField.setAttribute("value", user_id);
 
-		form.appendChild(idField);
-		form.appendChild(userField);
-		document.body.appendChild(form);
-		form.submit();
+	// form.appendChild(idField);
+	// form.appendChild(userField);
+	// document.body.appendChild(form);
+	// form.submit();
+
+	let formData = new FormData();
+	formData.append("org_id", org_id);
+	formData.append("user_id", user_id);
+
+	$.ajax({
+		async: true,
+		url: '/follow',
+		method: 'POST',
+		processData: false,
+  		contentType: false,
+		data: formData,
+		success: (data) => {
+			toastr.success('You started following ' + org_username, 'Followed!');
+		}
+	});
   }
 
   function search() {

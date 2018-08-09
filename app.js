@@ -47,6 +47,9 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
+// Multer
+app.use(multer().single());
+
 // method-override
 // app.use(methodOverride('_method'));
 

@@ -139,12 +139,12 @@
                       <% orgs.forEach(org => { %>
                         <% if (org.username != currentAcc.username) { %>
                           <% cardId = org._id; %>
-                          <tr class="btn-secondary" style="border: 0px" data-toggle="modal" data-target="#org<%= cardId %>">
+                          <tr style="border: 0px">
                             <td>
-                              <img src="<%= org.avatar; %>" class="rounded-circle width-100 height-100" alt="org avatar">
+                              <img data-toggle="modal" data-target="#org<%= cardId %>" src="<%= org.avatar; %>" class="btn-secondary rounded-circle width-100 height-100" alt="org avatar">
                               <% if(account_type == 0) { %>
                                 <br><br>
-                                <buton id="<%= org._id %>" onclick="follow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>)" class="btn btn-info"><i class="fa fa-eye"></i> Follow</buton>
+                                <buton id="<%= org._id %>" onclick="follow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)" class="btn btn-info"><i class="fa fa-eye"></i> Follow</buton>
                               <% } %>
                             </td>
                             <td>
@@ -274,24 +274,25 @@
     toastr.info("You're logged in as " + <%- JSON.stringify(currentAcc.username) %>, 'Welcome!', {positionClass: 'toast-top-center', containerId: 'toast-top-center'});
   });
 
-  function follow(user_id, org_id) {
+  function follow(user_id, org_id, org_username) {
     let button_id = '#' + org_id;
     $(button_id).removeClass('btn-info');
     $(button_id).addClass('btn-success');
     $(button_id).html('<i class="fa fa-check"></i> Followed');
+
+    let formData = new FormData();
+    formData.append("org_id", org_id);
+    formData.append("user_id", user_id);
+
     $.ajax({
       async: true,
       url: '/follow',
       method: 'POST',
-      beforeSend: (req) => {
-        $.blockUI();
-      },
-      data: {
-        org_username: org_username
-      },
+      processData: false,
+        contentType: false,
+      data: formData,
       success: (data) => {
-        $.unblockUI();
-        toastr.warning("You started following " + org_username "!", 'Followed!', {positionClass: 'toast-top-center', containerId: 'toast-top-center'});
+        toastr.success('You started following ' + org_username, 'Followed!');
       }
     });
   }

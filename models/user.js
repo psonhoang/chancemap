@@ -16,7 +16,7 @@ const userSchema = mongoose.Schema({
 	jobs: [mongoose.Schema.Types.ObjectId],
 	facebook: String,
 	website: String,
-	following: [mongoose.Schema.Types.ObjectId], // contain org_ids
+	following: [String], // contain org's usernames
 	avatar: String
 });
 

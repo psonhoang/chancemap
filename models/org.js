@@ -11,7 +11,7 @@ const orgSchema = mongoose.Schema({
 	hashtags: {type: [String], required: true},
 	events: [mongoose.Schema.Types.ObjectId], // contain events' _ids
 	jobs: [mongoose.Schema.Types.ObjectId], // contain jobs' _ids
-	followers: [mongoose.Schema.Types.ObjectId], // contain users' _ids
+	followers: [String], // contain users' usernames
 	desc: {type: String, required: true},
 	facebook: String,
 	website: String,

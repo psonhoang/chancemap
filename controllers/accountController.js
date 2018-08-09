@@ -394,5 +394,42 @@ router.post('/profile/org', upload.single('avatar'), (req, res) => {
 	});
 });
 
+//@route POST
+//@desc Follower/Following func
+router.post('/follow', (req, res) => {
+	let org_username = req.query.org_username;
+	const userAcc = req.user;
+	User.findOne({'username': currentAcc.username}, (err, user) => {
+		if(err) {
+			res.send("Database error!");
+			console.log(err);
+			return;
+		}
+		user.following.push(org_username);
+		user.updated_at = new Date();
+		user.save().then(result => {
+			console.log(result);
+			Org.findOne('username': org_username, (err, org) => {
+				if(err) {
+					res.send('Database error!');
+					console.log(err);
+					return;
+				}
+				org.followers.push(user.username);
+				org.updated_at = new Date();
+				org.save().then(result => {
+					console.log(result);
+					res.send('Success');
+				}).catch(err => {
+					res.send(err);
+				});
+			});
+		}).catch(err => {
+			res.send(err);
+		});
+	});
+});
+
+
 // Exports
 module.exports = router;

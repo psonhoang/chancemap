@@ -397,24 +397,24 @@ router.post('/profile/org', upload.single('avatar'), (req, res) => {
 //@route POST
 //@desc Follower/Following func
 router.post('/follow', (req, res) => {
-	let org_username = req.query.org_username;
-	const userAcc = req.user;
-	User.findOne({'username': currentAcc.username}, (err, user) => {
+	let org_id = req.body.org_id;
+	const userAcc = req.body.user_id;
+	User.findOne({'_id': userAcc}, (err, user) => {
 		if(err) {
 			res.send("Database error!");
 			console.log(err);
 			return;
 		}
-		user.following.push(org_username);
-		user.updated_at = new Date();
-		user.save().then(result => {
-			console.log(result);
-			Org.findOne('username': org_username, (err, org) => {
-				if(err) {
-					res.send('Database error!');
-					console.log(err);
-					return;
-				}
+		Org.findOne({'_id': org_id}, (err, org) => {
+			if(err) {
+				res.send('Database error!');
+				console.log(err);
+				return;
+			}				
+			user.following.push(org.username);
+			user.updated_at = new Date();
+			user.save().then(result => {
+				console.log(result);
 				org.followers.push(user.username);
 				org.updated_at = new Date();
 				org.save().then(result => {

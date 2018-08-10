@@ -3,6 +3,15 @@
 		<div class="card">
 			<div style="color: white" class="card-header bg-cyan bg-lighten-1">
 				<h4 class="card-title" id="from-actions-top-bottom-right">Job Editor</h4>
+				<a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
+                <div class="heading-elements">
+                    <ul class="list-inline mb-0">
+                        <li><a data-action="collapse"><i class="ft-minus" style="color: white"></i></a></li>
+                        <li><a data-action="reload"><i class="ft-rotate-cw" style="color: white"></i></a></li>
+                        <li><a data-action="expand"><i class="ft-maximize" style="color: white"></i></a></li>
+                        <li><a href="/jobs/manage" data-action="close"><i class="ft-x" style="color: white"></i></a></li>
+                    </ul>
+                </div>
 			</div>
 			<div class="card-body collapse in">
 				<div class="card-block">
@@ -114,9 +123,9 @@
 						</div>
 						<!-- buttons -->
 						<div class="form-actions right">
-							<button type="button" class="btn btn-warning mr-1">
-								<i class="ft-x"></i> Cancel
-							</button>
+							<button onclick="location.href='/jobs/manage'" type="button" class="btn btn-warning mr-1">
+	                            	<i class="ft-x"></i> Cancel
+	                            </button>
 							<button type="submit" class="btn btn-primary">
 								<i class="fa fa-check-square-o"></i> Save
 							</button>

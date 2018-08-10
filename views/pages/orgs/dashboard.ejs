@@ -82,19 +82,19 @@
 	                            </td>
 	                            <td>
 	                              <ul>
-	                                <li style="font-size: 16px"><strong><%= org.name %></strong></li>
-	                                <li style="font-style: italic">@<%= org.username %></li>
-	                                <% if (org.facebook) { %>
-	                                  <li style="font-style: small"><i class="ft-facebook"></i> <%= org.facebook %></li>
-	                                <% } %>
-	                                <% if (org.email) { %>
-	                                  <li style="font-size: small;"><i class="ft-mail"></i> <%= org.email %></li>
-	                                <% } %>
-	                                <% if (org.website) { %>
-	                                  <li style="font-size: small"><i class="ft-globe"></i> <%= org.website %></li>
-	                                <% } %>
-	                                <li style="font-size: small">About: <%= org.desc %></li>
-	                              </ul>
+		                                <li style="font-size: 16px"><strong><%= org.name %></strong></li>
+		                                <li style="font-style: italic">@<%= org.username %></li>
+		                                <% if (org.facebook) { %>
+		                                  <li style="font-style: small"><a href="<%= org.facebook %>"><i class="ft-facebook"></i></a></li>
+		                                <% } %>
+		                                <% if (org.email) { %>
+		                                  <li style="font-size: small;"><i class="ft-mail"></i> <%= org.email %></li>
+		                                <% } %>
+		                                <% if (org.website) { %>
+		                                  <li style="font-size: small"><i class="ft-globe"></i> <%= org.website %></li>
+		                                <% } %>
+		                                <li style="font-size: small"><i class="ft-info"></i> <strong>About:</strong> <%= org.desc %></li>
+                              		</ul>
 	                            </td>
 	                            <td>
 	                              <% org.hashtags.forEach(hashtag => { %>

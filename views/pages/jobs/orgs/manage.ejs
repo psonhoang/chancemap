@@ -25,12 +25,10 @@
 
 <!-- Submit resume, edit job and add jobs button script-->
 <div class="row col-xs-12">
-  <div role="group" class="btn-group float-md-right">
-    <div role="group" class="btn-group float-md-right" style="margin: 5px">
-      <% if (account_type == 1) {%>
-        <button type="button" onclick="location.href='/jobs/create'" class="btn btn-outline-primary"><i class="ft-plus"></i></button>
-      <% } %>
-    </div>
+  <div role="group" class="btn-group float-md-left" style="margin-left: 25px">
+    <% if (account_type == 1) {%>
+      <button type="button" onclick="location.href='/jobs/create'" class="btn btn-outline-primary"><i class="ft-plus"></i></button>
+    <% } %>
   </div>
 </div>
 

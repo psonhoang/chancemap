@@ -142,17 +142,20 @@
                           <tr style="border: 0px">
                             <td>
                               <img data-toggle="modal" data-target="#org<%= cardId %>" src="<%= org.avatar; %>" class="btn-secondary rounded-circle width-100 height-100" alt="org avatar">
-                              <% if(account_type == 0) { %>
-                                <br><br>
-                                <buton id="<%= org._id %>" onclick="follow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)" class="btn btn-info"><i class="fa fa-eye"></i> Follow</buton>
-                              <% } %>
+                              <% if(account_type == 0 && (currentAcc.following.indexOf(org.username) < 0)) { %>
+                                    <br><br>
+                                    <buton id="<%= org._id %>" onclick="follow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)" class="btn btn-info"><i class="fa fa-eye"></i> Follow</buton>
+                                <% } else if (account_type == 0 && (currentAcc.following.indexOf(org.username) >= 0)) { %>
+                                    <br><br>
+                                    <buton id="<%= org._id %>" onclick="unfollow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)"class="btn btn-success"><i class="fa fa-check"></i> Followed</buton>
+                                <% } %>
                             </td>
                             <td>
                               <ul>
                                 <li style="font-size: 16px"><strong><%= org.name %></strong></li>
                                 <li style="font-style: italic">@<%= org.username %></li>
                                 <% if (org.facebook) { %>
-                                  <li style="font-style: small"><i class="ft-facebook"></i> <%= org.facebook %></li>
+                                  <li style="font-style: small"><a href="<%= org.facebook %>"><i class="ft-facebook"></i></a></li>
                                 <% } %>
                                 <% if (org.email) { %>
                                   <li style="font-size: small;"><i class="ft-mail"></i> <%= org.email %></li>
@@ -160,7 +163,7 @@
                                 <% if (org.website) { %>
                                   <li style="font-size: small"><i class="ft-globe"></i> <%= org.website %></li>
                                 <% } %>
-                                <li style="font-size: small">About: <%= org.desc %></li>
+                                <li style="font-size: small"><i class="ft-info"></i> <strong>About:</strong> <%= org.desc %></li>
                               </ul>
                             </td>
                             <td>
@@ -221,7 +224,7 @@
                       </div>
                     </div>
                     <% if (user.facebook) { %>
-                      <h6><i class="ft-facebook"></i> <%= user.facebook; %></h6>
+                      <h6><a href="<%= user.facebook; %>"><i class="ft-facebook"></i></a></h6>
                     <% } %>
                     <h6><i class="ft-mail"></i> <%= user.email; %></h6>
                     <% var hashtags = user.interests.concat(user.skills); %>
@@ -292,7 +295,7 @@
       method: 'POST',
       processData: false,
       contentType: false,
-      data: formData,
+      data: forimData,
       success: (data) => {
         toastr.success('You started following ' + org_username, 'Followed!');
       }

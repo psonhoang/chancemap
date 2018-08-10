@@ -77,9 +77,9 @@
 		                                <buton id="<%= org._id %>" onclick="follow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)" class="btn btn-info"><i class="fa fa-eye"></i> Follow</buton>
 																<% } else if (account_type == 0 && (currentAcc.following.indexOf(org.username) >= 0)) { %>
 																		<br><br>
-																		<buton id="<%= org._id %>" onclick="unfollow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)"class="btn btn-success"><i class="fa fa-check"></i> Followed</buton>																	
+																		<buton id="<%= org._id %>" onclick="unfollow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)"class="btn btn-success"><i class="fa fa-check"></i> Followed</buton>
 																<% } %>
-	                            </td>          
+	                            </td>
 	                            <td>
 	                              <ul>
 	                                <li style="font-size: 16px"><strong><%= org.name %></strong></li>
@@ -118,7 +118,7 @@
 	                </div>
 	              </div>
 	          </div>
-	        </div>		
+	        </div>
 		</div>
 	</div>
 </div>
@@ -142,28 +142,28 @@
 		let formData = new FormData();
 		formData.append("org_id", org_id);
 		formData.append("user_id", user_id);
-		formData.append('follow', "true")
+		formData.append('follow', "true");
 
 		$.ajax({
 			async: true,
 			url: '/follow',
 			method: 'POST',
 			processData: false,
-				contentType: false,
+			contentType: false,
 			data: formData,
 			success: (data) => {
 				toastr.success('You started following ' + org_username, 'Followed!');
 			}
 		});
 	}
-	
+
 	function unfollow(user_id, org_id, org_username) {
 		let button_id = '#' + org_id;
     $(button_id).removeClass('btn-success');
     $(button_id).addClass('btn-info');
 		$(button_id).html('<i class="fa fa-eye"></i> Follow');
 		$(button_id).attr('onclick', 'follow("' + user_id + '","' + org_id +'","' + org_username +'")');
-		
+
 		let formData = new FormData();
 		formData.append("org_id", org_id);
 		formData.append("user_id", user_id);
@@ -174,12 +174,12 @@
 			url: '/follow',
 			method: 'POST',
 			processData: false,
-				contentType: false,
+			contentType: false,
 			data: formData,
 			success: (data) => {
 				toastr.warning('You have unfollowed ' + org_username, 'Unfollowed!');
 			}
-		});	
+		});
 	}
 
   function search() {
@@ -217,4 +217,3 @@
   }
 </script>
 <!-- END -->
-

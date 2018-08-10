@@ -399,38 +399,84 @@ router.post('/profile/org', upload.single('avatar'), (req, res) => {
 router.post('/follow', (req, res) => {
 	let org_id = req.body.org_id;
 	let user_id = req.body.user_id;
-	console.log(req);
-	console.log(org_id);
-	console.log(user_id);
-	User.findOne({'_id': user_id}, (err, user) => {
-		if(err) {
-			res.send("Database error!");
-			console.log(err);
-			return;
-		}
-		Org.findOne({'_id': org_id}, (err, org) => {
+	let follow = req.body.follow;
+	console.log(follow);
+	if (follow == "true")
+	{
+			User.findOne({'_id': user_id}, (err, user) => {
 			if(err) {
-				res.send('Database error!');
+				res.send("Database error!");
 				console.log(err);
 				return;
-			}				
-			user.following.push(org.username);
-			user.updated_at = new Date();
-			user.save().then(result => {
-				console.log(result);
-				org.followers.push(user.username);
-				org.updated_at = new Date();
-				org.save().then(result => {
-					console.log(result);
-					res.end();
-				}).catch(err => {
-					res.send(err);
-				});
+			}
+			Org.findOne({'_id': org_id}, (err, org) => {
+				if(err) {
+					res.send('Database error!');
+					console.log(err);
+					return;
+				}			
+				if (user.following.indexOf(org.username) < 0)
+				{
+					user.following.push(org.username);
+					user.updated_at = new Date();
+					user.save().then(result => {
+						console.log("Successfully follow!");
+						org.followers.push(user.username);
+						org.updated_at = new Date();
+						org.save().then(result => {
+							console.log("Successfully Add follower!");
+							res.end();
+						}).catch(err => {
+							res.send(err);
+						});
+					});
+				}	
+				else
+				{
+					res.send("Unexpected Error!")
+				}
+			}).catch(err => {
+				res.send(err);
 			});
-		}).catch(err => {
-			res.send(err);
 		});
-	});
+	}	
+	else if (follow == "false") 
+	{
+		User.findOne({'_id': user_id}, (err, user) => {
+			if(err) {
+				res.send("Database error!");
+				console.log(err);
+				return;
+			}
+			Org.findOne({'_id': org_id}, (err, org) => {
+				if(err) {
+					res.send('Database error!');
+					console.log(err);
+					return;
+				}		
+				if (user.following.indexOf(org.username) > -1)
+				{
+					let i = user.following.indexOf(org.username);	
+					user.following.splice(i, 1);
+					user.updated_at = new Date();
+					user.save().then(result => {
+						console.log("Successfully unfollow");
+						let i = org.followers.indexOf(user.username);
+						org.followers.splice(i, 1);
+						org.updated_at = new Date();
+						org.save().then(result => {
+							console.log("Successfully remove follower!");
+							res.end();
+						}).catch(err => {
+							res.send(err);
+						});
+					});
+				}
+			}).catch(err => {
+				res.send(err);
+			});
+		});		
+	}
 });
 
 

@@ -67,15 +67,18 @@
 	                    </thead>
 	                    <tbody id="orgsBody">
 	                      <% orgs.forEach(org => { %>
-							<% if (org.username != currentAcc.username) { %>
-								<% let cardId = org._id; %>
-								<tr style="border: 0">
+													<% if (org.username != currentAcc.username) { %>
+														<% let cardId = org._id; %>
+														<tr style="border: 0">
 	                            <td>
 	                            	<img onclick="window.location.href='orgs/<%= org._id %>'" src="<%= org.avatar %>" class="btn-secondary rounded-circle width-100 height-100" alt="org avatar">
-									<% if(account_type == 0) { %>
+																<% if(account_type == 0 && (currentAcc.following.indexOf(org.username) < 0)) { %>
 		                                <br><br>
 		                                <buton id="<%= org._id %>" onclick="follow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)" class="btn btn-info"><i class="fa fa-eye"></i> Follow</buton>
-		                            <% } %>
+																<% } else if (account_type == 0 && (currentAcc.following.indexOf(org.username) >= 0)) { %>
+																		<br><br>
+																		<buton id="<%= org._id %>" onclick="unfollow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)"class="btn btn-success"><i class="fa fa-check"></i> Followed</buton>																	
+																<% } %>
 	                            </td>          
 	                            <td>
 	                              <ul>
@@ -118,31 +121,13 @@
 	        </div>		
 		</div>
 	</div>
-
 </div>
+<!-- Modal Space starts -->
+
+<!-- Modal Space end-->
 
 <!--  BEGIN CODEDAO SCRIPT -->
 <script>
-
-	// function vieworg (index) {
-	// console.log("click!");
-	// let modal = document.getElementById("orgModal" + index);
-	// modal.style.display = "block";
-	// }
-
-	// When the user clicks anywhere outside of the modal, close it
-	// window.onclick = function(event) {
-	// 	let i,j;
-	// 	let modals = document.getElementsByClassName("orgModal");
-	// 	let modalsContent = document.getElementsByClassName("orgModalContent");
-	// 	for (i = 0; i < modals.length; i++) {
-	// 		if (event.target == modals[i] || event.target.parentNode == modals[i] || event.target.parentNode == modalsContent[i]) {
-	// 			let orgModal = document.getElementById("orgModal" + i);
-	// 			orgModal.style.display = "none";
-	// 		}
-	// 	};
-	// }
-
   $(document).ready(function() {
     $('#search-input').tagging('removeAll');
   });
@@ -151,42 +136,51 @@
     let button_id = '#' + org_id;
     $(button_id).removeClass('btn-info');
     $(button_id).addClass('btn-success');
-    $(button_id).html('<i class="fa fa-check"></i> Followed');
-	// let form = document.createElement('form');
-	// form.setAttribute("method", 'POST');
-	// form.setAttribute("action", '/follow');
+		$(button_id).html('<i class="fa fa-check"></i> Followed');
+		$(button_id).attr('onclick', 'unfollow("'+ user_id + '","' + org_id +'","' + org_username +'")');
+
+		let formData = new FormData();
+		formData.append("org_id", org_id);
+		formData.append("user_id", user_id);
+		formData.append('follow', "true")
+
+		$.ajax({
+			async: true,
+			url: '/follow',
+			method: 'POST',
+			processData: false,
+				contentType: false,
+			data: formData,
+			success: (data) => {
+				toastr.success('You started following ' + org_username, 'Followed!');
+			}
+		});
+	}
 	
-	// let idField = document.createElement('input');
-	// idField.setAttribute("type", "hidden");
-	// idField.setAttribute("name", 'org_id');
-	// idField.setAttribute("value", org_id);
+	function unfollow(user_id, org_id, org_username) {
+		let button_id = '#' + org_id;
+    $(button_id).removeClass('btn-success');
+    $(button_id).addClass('btn-info');
+		$(button_id).html('<i class="fa fa-eye"></i> Follow');
+		$(button_id).attr('onclick', 'follow("' + user_id + '","' + org_id +'","' + org_username +'")');
+		
+		let formData = new FormData();
+		formData.append("org_id", org_id);
+		formData.append("user_id", user_id);
+		formData.append("follow", 'false');
 
-	// let userField = document.createElement('input');
-	// userField.setAttribute("type", "hidden");
-	// userField.setAttribute("name", 'user_id');
-	// userField.setAttribute("value", user_id);
-
-	// form.appendChild(idField);
-	// form.appendChild(userField);
-	// document.body.appendChild(form);
-	// form.submit();
-
-	let formData = new FormData();
-	formData.append("org_id", org_id);
-	formData.append("user_id", user_id);
-
-	$.ajax({
-		async: true,
-		url: '/follow',
-		method: 'POST',
-		processData: false,
-  		contentType: false,
-		data: formData,
-		success: (data) => {
-			toastr.success('You started following ' + org_username, 'Followed!');
-		}
-	});
-  }
+		$.ajax({
+			async: true,
+			url: '/follow',
+			method: 'POST',
+			processData: false,
+				contentType: false,
+			data: formData,
+			success: (data) => {
+				toastr.warning('You have unfollowed ' + org_username, 'Unfollowed!');
+			}
+		});	
+	}
 
   function search() {
     let x = document.getElementById('search-input');

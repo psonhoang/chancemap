@@ -112,7 +112,7 @@ router.post('/register/user', upload.fields([{name: 'avatar', maxCount: 1}, {nam
 	let skills = data.skills;
 	let resume_file = data.resume_file;
 	if(req.files['resume_file']) {
-		resume_file = 'files/' + req.files['resume_file'][0].filename;
+		resume_file = '/files/' + req.files['resume_file'][0].filename;
 	}
 	console.log(resume_file);
 	let school = data.school;
@@ -121,7 +121,7 @@ router.post('/register/user', upload.fields([{name: 'avatar', maxCount: 1}, {nam
 	let website = data.website;
 	let avatar = "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Antu_im-invisible-user.svg/2000px-Antu_im-invisible-user.svg.png";
 	if(req.files['avatar']) {
-		avatar = 'files/' + req.files['avatar'][0].filename;
+		avatar = '/files/' + req.files['avatar'][0].filename;
 	}
 
 	var newUser = new User({
@@ -199,7 +199,7 @@ router.post('/register/org', upload.single('avatar'), (req, res) => {
 	let website = data.website;
 	let avatar = "https://cdn0.iconfinder.com/data/icons/users-android-l-lollipop-icon-pack/24/group2-512.png";
 	if(req.file) {
-		avatar = 'files/' + req.file.filename;
+		avatar = '/files/' + req.file.filename;
 	}
 
 	var newOrg = new Org({
@@ -311,7 +311,7 @@ router.post('/profile/user', upload.fields([{name: 'avatar', maxCount: 1}, {name
 				});
 			}
 			// delete existing avatar file
-			user.avatar = 'files/' + req.files['avatar'][0].filename;
+			user.avatar = '/files/' + req.files['avatar'][0].filename;
 		}
 		user.name = data.name;
 		user.email = data.email;
@@ -329,7 +329,7 @@ router.post('/profile/user', upload.fields([{name: 'avatar', maxCount: 1}, {name
 					}
 				});
 			}
-			user.resume_file = 'files/' + req.files['resume_file'][0].filename;
+			user.resume_file = '/files/' + req.files['resume_file'][0].filename;
 		}
 		user.school = data.school;
 		user.intro = data.intro;
@@ -372,7 +372,7 @@ router.post('/profile/org', upload.single('avatar'), (req, res) => {
 					}
 				});
 			}
- 			org.avatar = 'files/' + req.file.filename;
+ 			org.avatar = '/files/' + req.file.filename;
 		}
 		org.name = data.name;
 		org.email = data.email;
@@ -403,7 +403,7 @@ router.post('/follow', (req, res) => {
 	let org_id = req.body.org_id;
 	let user_id = req.body.user_id;
 	let follow = req.body.follow;
-	console.log(follow);
+	console.log(req.body);
 	if (follow == "true")
 	{
 			User.findOne({'_id': user_id}, (err, user) => {

@@ -28,14 +28,14 @@
                     <i class="fa fa-ellipsis-v font-medium-3"></i>
                 </a>
                 </div>
-                <div class="card">                    
+                <div class="card">
                     <div class="table-responsive">
                         <table class="table">
-                            <tbody style="color: white" class="thead bg-blue-grey bg-darken-3">  
+                            <tbody style="color: white" class="thead bg-blue-grey bg-darken-3">
                                 <th>Deadline</th>
                                 <th>Event</th>
-                                <th>Hashtags</th>     
-                            </tbody>        
+                                <th>Hashtags</th>
+                            </tbody>
                             <tbody id="eventsBody">
                                 <% events.forEach(event => { %>
                                 <% cardId = event._id; %>
@@ -45,7 +45,7 @@
                                     <% } else { %>
                                     <th scope="row">N/A</th>
                                     <% } %>
-                                    <td>          
+                                    <td>
                                         <li style="font-size: 16px"><strong><%= event.name %></strong></li>
                                         <li style="font-style: italic"><%= event.org_name %></li>
                                         <% if(event.start_date) { %>
@@ -67,9 +67,9 @@
                                         <% } %>
                                     <% }); %>
                                     </td>
-                                </tr>  
+                                </tr>
                                 <!-- Event Modal Starts -->
-                                <%- include('eventCardModal', {event: event, months: months}); %>             
+                                <%- include('eventCardModal', {event: event, months: months}); %>
                                 <% }); %>
                                 <!-- Event Modal Ends-->
                             </tbody>
@@ -188,7 +188,7 @@
                       <% cardId = "org" + org._id%>
                       <%- include('orgCardModal', {org: org, jobs: jobs, events: events, cardId: cardId}); %>
                     <% } %>
-                  <% }); %>                
+                  <% }); %>
                   <!-- Org Modal Ends -->
                 </div>
               </div>
@@ -244,7 +244,7 @@
               <% users.forEach( user => { %>
                 <% cardId = user._id; %>
                 <% if (currentAcc.username != user.username) { %>
-                  <%- include('userCardModal', {user: user}); %> 
+                  <%- include('userCardModal', {user: user}); %>
                 <% } %>
               <% }); %>
               <!-- User Modal Ends -->
@@ -279,20 +279,47 @@
     $(button_id).removeClass('btn-info');
     $(button_id).addClass('btn-success');
     $(button_id).html('<i class="fa fa-check"></i> Followed');
+    $(button_id).attr('onclick', 'unfollow("'+ user_id + '","' + org_id +'","' + org_username +'")');
 
     let formData = new FormData();
     formData.append("org_id", org_id);
     formData.append("user_id", user_id);
+    formData.append('follow', true);
 
     $.ajax({
       async: true,
       url: '/follow',
       method: 'POST',
       processData: false,
-        contentType: false,
+      contentType: false,
       data: formData,
       success: (data) => {
         toastr.success('You started following ' + org_username, 'Followed!');
+      }
+    });
+  }
+
+  function unfollow(user_id, org_id, org_username) {
+    let button_id = '#' + org_id;
+    $(button_id).removeClass('btn-success');
+    $(button_id).addClass('btn-info');
+    $(button_id).html('<i class="fa fa-eye"></i> Follow');
+    $(button_id).attr('onclick', 'follow("' + user_id + '","' + org_id +'","' + org_username +'")');
+
+    let formData = new FormData();
+    formData.append("org_id", org_id);
+    formData.append("user_id", user_id);
+    formData.append("follow", false);
+
+    $.ajax({
+      async: true,
+      url: '/follow',
+      method: 'POST',
+      processData: false,
+      contentType: false,
+      data: formData,
+      success: (data) => {
+        toastr.warning('You have unfollowed ' + org_username, 'Unfollowed!');
       }
     });
   }

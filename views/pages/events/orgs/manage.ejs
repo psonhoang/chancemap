@@ -26,9 +26,7 @@
 <div class="row col-xs-12">
 		<div role="group" class="btn-group float-md-right">
       <div role="group" class="btn-group">
-        <% if (account_type == 1) {%>
           <button type="button" onclick="location.href='/events/create'" class="btn btn-outline-primary"><i class="ft-plus"></i></button>
-        <% } %>
       </div>
 		</div>
 </div>
@@ -45,27 +43,18 @@
 <%      eventCounts = 0; %>
 <%  } %>
 <%- include('eventCard', {
-    event_id: event._id, 
-    cardTitle: event.name, 
+    event_id: event._id,
+    cardTitle: event.name,
     cardElement1: event.org_name,
     hashtags: event.hashtags,
-    cardElement3: event.address, 
-    cardElement4: months[event.start_date.getMonth()] + ' ' + event.start_date.getDate() + ', ' + event.start_date.getFullYear(), 
-    cardElement5: event.start_time, 
-    cardElement6: months[event.end_date.getMonth()] + ' ' + event.end_date.getDate() + ', ' + event.end_date.getFullYear(), 
+    regForm: event.reg_form,
+    deadline: event.reg_deadline,
+    cardElement3: event.address,
+    cardElement4: months[event.start_date.getMonth()] + ' ' + event.start_date.getDate() + ', ' + event.start_date.getFullYear(),
+    cardElement5: event.start_time,
+    cardElement6: months[event.end_date.getMonth()] + ' ' + event.end_date.getDate() + ', ' + event.end_date.getFullYear(),
     cardElement7: event.end_time, }); %>
 <%  eventCounts += 1; %>
 <%  }); %>
 </section>
 <!-- // card-actions section end -->
-
-
-
-
-
-
-
-
-
-
-

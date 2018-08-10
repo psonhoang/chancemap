@@ -394,6 +394,9 @@ router.post('/profile/org', upload.single('avatar'), (req, res) => {
 	});
 });
 
+// Multer
+router.use(multer().single());
+
 //@route POST
 //@desc Follower/Following func
 router.post('/follow', (req, res) => {
@@ -414,7 +417,7 @@ router.post('/follow', (req, res) => {
 					res.send('Database error!');
 					console.log(err);
 					return;
-				}			
+				}
 				if (user.following.indexOf(org.username) < 0)
 				{
 					user.following.push(org.username);
@@ -430,7 +433,7 @@ router.post('/follow', (req, res) => {
 							res.send(err);
 						});
 					});
-				}	
+				}
 				else
 				{
 					res.send("Unexpected Error!")
@@ -439,8 +442,8 @@ router.post('/follow', (req, res) => {
 				res.send(err);
 			});
 		});
-	}	
-	else if (follow == "false") 
+	}
+	else if (follow == "false")
 	{
 		User.findOne({'_id': user_id}, (err, user) => {
 			if(err) {
@@ -453,10 +456,10 @@ router.post('/follow', (req, res) => {
 					res.send('Database error!');
 					console.log(err);
 					return;
-				}		
+				}
 				if (user.following.indexOf(org.username) > -1)
 				{
-					let i = user.following.indexOf(org.username);	
+					let i = user.following.indexOf(org.username);
 					user.following.splice(i, 1);
 					user.updated_at = new Date();
 					user.save().then(result => {
@@ -475,7 +478,7 @@ router.post('/follow', (req, res) => {
 			}).catch(err => {
 				res.send(err);
 			});
-		});		
+		});
 	}
 });
 

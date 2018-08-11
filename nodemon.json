@@ -2,5 +2,18 @@
 	"env": { 
 		"DB_PASS": "jwtpass",
 		"PORT": 3000
+	},
+
+	"string": {
+		"home_title": "ChanceMap | Home",
+		"login_title": "ChanceMap | Login",
+		"signup_title": "ChanceMap | Sign Up",
+		"dashboard_orgs": "ChanceMap | Orgs",
+		"dashboard_users": "ChanceMap | Users",
+		"dashboard_jobs": "ChanecMap | Jobs",
+		"dashboard_events": "ChanceMap | Events",
+		"manage_jobs": "ChanceMap | Manage | My Jobs",
+		"manage_events": "ChanceMap | Manage | My Events",
+		"profile_title": "ChanceMap | My Profile"
 	}
 }

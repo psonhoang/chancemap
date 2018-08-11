@@ -57,19 +57,19 @@
                                                 </div>
                                             </th>
                                             <td width="400px">
-                                            <ul align="left">
-                                                <li style="font-size: 16px"><strong><%= user.name %></strong></li>
-                                                <li style="font-style: italic">
-                                                  @<%= user.username %>
-                                                  <% if (user.facebook) { %>
-                                                    <a href="<%= user.facebook; %>"><i class="ft-facebook"></i></a>
+                                              <ul align="left">
+                                                  <li style="font-size: 16px"><strong><%= user.name %></strong></li>
+                                                  <li style="font-style: italic">
+                                                    @<%= user.username %>
+                                                    <% if (user.facebook) { %>
+                                                      <a href="<%= user.facebook; %>"><i class="ft-facebook"></i></a>
+                                                    <% } %>
+                                                  </li>
+                                                  <li style="font-style: italic"><i class="ft-mail"></i><%= user.email %></li>
+                                                  <% if (user.website) { %>
+                                                    <li style="font-style: italic"><i class="ft-globe"></i><%= user.website %></li>
                                                   <% } %>
-                                                </li>
-                                                <li style="font-style: italic"><i class="ft-mail"></i><%= user.email %></li>
-                                                <% if (user.website) { %>
-                                                  <li style="font-style: italic"><i class="ft-globe"></i><%= user.website %></li>
-                                                <% } %>
-                                            </ul>
+                                              </ul>
                                             </td>
                                             <td>
                                             <% var hashtags = user.interests.concat(user.skills); %>

@@ -83,7 +83,7 @@ router.get('/', (req, res) => {
 	} else {
 		if (req.user.account_type == 1)
 		{
-			Job.find({org_id : {$ne: req.user.account_id}}, (err, jobs) => {
+			Job.find({org_id :  req.user.account_id}, (err, jobs) => {
 				Org.findOne({_id: req.user.account_id}, (err, org) => {
 					res.render('jobs/dashboard', {
 						title: 'ChanceMap | Jobs',

@@ -10,7 +10,7 @@
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="/">Home</a>
               </li>
-              <li class="breadcrumb-item"><a href="/job">Dashboard</a>
+              <li class="breadcrumb-item"><a>Dashboard</a>
               </li>
               <li class="breadcrumb-item active">Users
               </li>
@@ -43,25 +43,32 @@
                 </div>
                 <div class="card">
                     <div class="table-responsive">
-                        <table class="table">        
+                        <table class="table">
                             <tbody id="usersBody">
                                 <% users.forEach(user => { %>
                                     <% cardId = user._id; %>
                                     <% if(currentAcc.username != user.username) { %>
-                                        <tr class="btn-secondary" style="border: 0" data-toggle="modal" data-target="#<%= cardId %>">    
+                                        <tr class="btn-secondary" style="border: 0" data-toggle="modal" data-target="#<%= cardId %>">
                                             <th scope="row">
                                                 <div class="user-avatar">
                                                     <a href="#">
                                                     <img src="<%= user.avatar; %>" class="rounded-circle width-50 height-50" alt="org avatar">
                                                     </a>
                                                 </div>
-                                            </th>     
+                                            </th>
                                             <td width="400px">
                                             <ul align="left">
                                                 <li style="font-size: 16px"><strong><%= user.name %></strong></li>
-                                                <li style="font-style: italic">@<%= user.username %></li>
-                                                <li style="font-style: italic"><%= user.facebook %></li>
-                                                <li style="font-style: italic"><%= user.email %></li>
+                                                <li style="font-style: italic">
+                                                  @<%= user.username %>
+                                                  <% if (user.facebook) { %>
+                                                    <a href="<%= user.facebook; %>"><i class="ft-facebook"></i></a>
+                                                  <% } %>
+                                                </li>
+                                                <li style="font-style: italic"><i class="ft-mail"></i><%= user.email %></li>
+                                                <% if (user.website) { %>
+                                                  <li style="font-style: italic"><i class="ft-globe"></i><%= user.website %></li>
+                                                <% } %>
                                             </ul>
                                             </td>
                                             <td>
@@ -80,7 +87,7 @@
                                             <% }); %>
                                             </td>
                                         </tr>
-                                        <%- include('userCardModal', {user: user}); %> 
+                                        <%- include('userCardModal', {user: user}); %>
                                     <% } %>
                                 <% }); %>
                             </tbody>
@@ -135,4 +142,3 @@
   }
 </script>
 <!-- END -->
-

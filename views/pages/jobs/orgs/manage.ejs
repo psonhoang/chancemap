@@ -11,9 +11,9 @@
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="/">Home</a>
               </li>
-              <li class="breadcrumb-item"><a href="/job">Manage</a>
+              <li class="breadcrumb-item"><a>Manage</a>
               </li>
-              <li class="breadcrumb-item active">JOB
+              <li class="breadcrumb-item active">My Jobs
               </li>
             </ol>
           </div>
@@ -50,7 +50,7 @@
 <!-- // card-actions section end -->
         </div>
     </div>
-    
+
 <!-- BEGIN CODE DAO SCRIPTS -->
 <script>
   function DeleteJob(Id) {
@@ -61,7 +61,7 @@
       var form = document.createElement("form");
       form.method = "POST";
       form.action = "/jobs/delete";
-      
+
       var input = document.createElement("input");
       input.value = Id;
       input.name = "JobID";

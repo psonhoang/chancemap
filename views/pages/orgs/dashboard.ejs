@@ -62,7 +62,7 @@
 	                      <tr>
 	                        <th>Avatar</th>
 	                        <th style="text-align: center">Organization</th> <!-- Includes info: event name, org, location, time, tags -->
-	                        <th>#</th>
+	                        <th style="text-align: center">#</th>
 	                      </tr>
 	                    </thead>
 	                    <tbody id="orgsBody">
@@ -83,15 +83,17 @@
 	                            <td>
 	                              <ul>
 		                                <li style="font-size: 16px"><strong><%= org.name %></strong></li>
-		                                <li style="font-style: italic">@<%= org.username %></li>
-		                                <% if (org.facebook) { %>
-		                                  <li style="font-style: small"><a href="<%= org.facebook %>"><i class="ft-facebook"></i></a></li>
-		                                <% } %>
+		                                <li style="margin-bottom: 10px; font-style: italic">
+                                      @<%= org.username %>
+                                      <% if (org.facebook) { %>
+  		                                  <a style="font-style: small" href="<%= org.facebook %>"><i class="ft-facebook"></i></a>
+  		                                <% } %>
+                                    </li>
 		                                <% if (org.email) { %>
-		                                  <li style="font-size: small;"><i class="ft-mail"></i> <%= org.email %></li>
+		                                  <li style="margin-bottom: 3px; font-size: small;"><i class="ft-mail"></i> <%= org.email %></li>
 		                                <% } %>
 		                                <% if (org.website) { %>
-		                                  <li style="font-size: small"><i class="ft-globe"></i> <%= org.website %></li>
+		                                  <li style="margin-bottom: 3px; font-size: small"><i class="ft-globe"></i> <%= org.website %></li>
 		                                <% } %>
 		                                <li style="font-size: small"><i class="ft-info"></i> <strong>About:</strong> <%= org.desc %></li>
                               		</ul>

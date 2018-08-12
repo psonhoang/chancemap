@@ -1,1 +1,1 @@
-web: nodemon nodemon ./bin/www
+web: nodemon ./bin/www

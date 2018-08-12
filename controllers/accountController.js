@@ -482,6 +482,72 @@ router.post('/follow', (req, res) => {
 	}
 });
 
+//view followers/following orgs
+router.get('/:username/following', (req, res) => {
+	let account_type = req.user.account_type;
+	let account_id = req.user.account_id;
+	let username = req.params.username;
+	if (account_type == 0) 
+	{
+			User.findOne({'username': username}, (err, user) => {
+					if (err) {
+							res.redirect('/');
+							console.log(err);
+					}
+					Org.find({'username': {$in: user.following}}, (err, orgs) => {
+							if (err) {
+									res.redirect('/');
+									console.log(err);
+							}
+							res.render('follow', {
+									title: user.username + ' | Following',
+									currentAcc: user,
+									account_type: account_type,
+									account_id: account_id,
+									criteriaList: user.interests.concat(user.skills),
+									orgs: orgs
+							});
+					});
+			});
+	}
+	else 
+	{
+			res.redirect('/');
+	}
+});
+
+router.get('/:orgname/followers', (req, res) => {
+	let account_type = req.user.account_type;
+	let account_id = req.user.account_id;
+	let orgname = req.params.orgname;
+	if (account_type == 1) 
+	{
+			Org.findOne({'username': orgname}, (err, org) => {
+					if (err) {
+							res.redirect('/');
+							console.log(err);
+					}
+					User.find({'username': {$in: org.followers}}, (err, users) => {
+							if (err) {
+									res.redirect('/');
+									console.log(err);
+							}
+							res.render('follow', {
+									title: org.username + ' | Followers',
+									currentAcc: org,
+									account_type: account_type,
+									account_id: account_id,
+									criteriaList: org.hashtags,
+									users: users
+							});
+					});
+			});
+	}
+	else 
+	{
+			res.redirect('/');
+	}
+});
 
 // Exports
 module.exports = router;

@@ -130,9 +130,9 @@
                   <table class="table">
                     <thead style="color: white" class="thead bg-blue-grey bg-darken-3">
                       <tr>
-                        <th style="">Avatar</th>
-                        <th style="text-align: center">Organization</th> <!-- Includes info: event name, org, location, time, tags -->
-                        <th>#</th>
+                        <th style="width: 10%; text-align: center">Avatar</th>
+                        <th style="width: 50%; text-align: center">Organization</th> <!-- Includes info: event name, org, location, time, tags -->
+                        <th style="width: 40%; text-align: center">#</th>
                       </tr>
                     </thead>
                     <tbody id="orgsBody">
@@ -142,25 +142,30 @@
                           <tr style="border: 0px">
                             <td>
                               <img data-toggle="modal" data-target="#org<%= cardId %>" src="<%= org.avatar; %>" class="btn-secondary rounded-circle width-100 height-100" alt="org avatar">
-                              <% if(account_type == 0) { %>
-                                <br><br>
-                                <buton id="<%= org._id %>" onclick="follow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)" class="btn btn-info"><i class="fa fa-eye"></i> Follow</buton>
-                              <% } %>
+                              <% if(account_type == 0 && (currentAcc.following.indexOf(org.username) < 0)) { %>
+                                    <br><br>
+                                    <buton id="<%= org._id %>" onclick="follow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)" class="btn btn-info"><i class="fa fa-eye"></i> Follow</buton>
+                                <% } else if (account_type == 0 && (currentAcc.following.indexOf(org.username) >= 0)) { %>
+                                    <br><br>
+                                    <buton id="<%= org._id %>" onclick="unfollow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)"class="btn btn-success"><i class="fa fa-check"></i> Followed</buton>
+                                <% } %>
                             </td>
                             <td>
                               <ul>
                                 <li style="font-size: 16px"><strong><%= org.name %></strong></li>
-                                <li style="font-style: italic">@<%= org.username %></li>
-                                <% if (org.facebook) { %>
-                                  <li style="font-style: small"><i class="ft-facebook"></i> <%= org.facebook %></li>
-                                <% } %>
+                                <li style="margin-bottom: 10px; font-style: italic">
+                                  @<%= org.username %>
+                                  <% if (org.facebook) { %>
+                                    <a style="font-size: small" href="<%= org.facebook %>"><i class="ft-facebook"></i></a>
+                                  <% } %>
+                                </li>
                                 <% if (org.email) { %>
-                                  <li style="font-size: small;"><i class="ft-mail"></i> <%= org.email %></li>
+                                  <li style="margin-bottom: 3px; font-size: small;"><i class="ft-mail"></i> <%= org.email %></li>
                                 <% } %>
                                 <% if (org.website) { %>
-                                  <li style="font-size: small"><i class="ft-globe"></i> <%= org.website %></li>
+                                  <li style="margin-bottom: 3px; font-size: small"><i class="ft-globe"></i> <%= org.website %></li>
                                 <% } %>
-                                <li style="font-size: small">About: <%= org.desc %></li>
+                                <li style="font-size: small"><i class="ft-info"></i> <strong>About:</strong> <%= org.desc %></li>
                               </ul>
                             </td>
                             <td>
@@ -209,21 +214,24 @@
               <% cardId = user._id; %>
                 <% if (currentAcc.username != user.username) { %>
                   <div style="padding: 10px; border-bottom: 2px solid #F06292" class="container-fluid btn-secondary" style="border: 0" data-toggle="modal" data-target="#<%= cardId %>">
-                    <div style="margin-bottom: 10px; width: 33%; display: flex; align-items: center" class="user-wrap">
-                      <div class="user-avatar">
-                        <a href="#">
-                          <img src="<%= user.avatar; %>" class="rounded-circle width-50 height-50" alt="org avatar">
-                        </a>
+                    <div style="margin-bottom: 20px;" class="media">
+                      <div class="media-left">
+                        <img src="<%= user.avatar; %>" class="media-object rounded-circle width-50 height-50" alt="org avatar">
                       </div>
-                      <div class="container-fluid">
-                        <p style="font-size: 16px; margin: 0"><strong><%= user.name; %></strong></p>
-                        <h5 style="font-style: italic">@<%= user.username; %></h5>
+                      <div class="media-body">
+                        <p class="list-group-item-heading" style="font-size: 16px;"><strong><%= user.name; %></strong></p>
+                        <h6 class="list-group-item-text" style="font-style: italic">
+                          @<%= user.username; %>
+                          <% if (user.facebook) { %>
+                            <a href="<%= user.facebook; %>"><i class="ft-facebook"></i></a>
+                          <% } %>
+                        </h6>
                       </div>
                     </div>
-                    <% if (user.facebook) { %>
-                      <h6><i class="ft-facebook"></i> <%= user.facebook; %></h6>
+                    <h6 style="margin-bottom: 10px"><i class="ft-mail"></i> <%= user.email; %></h6>
+                    <% if (user.website) { %>
+                      <h6 style="margin-bottom: 10px"><i class="ft-globe"></i> <%= user.website; %></h6>
                     <% } %>
-                    <h6><i class="ft-mail"></i> <%= user.email; %></h6>
                     <% var hashtags = user.interests.concat(user.skills); %>
                     <% hashtags.forEach (hashtag => { %>
                       <% var isMatch = false; %>
@@ -251,7 +259,6 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </div>

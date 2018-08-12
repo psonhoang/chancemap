@@ -11,9 +11,9 @@
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="/">Home</a>
               </li>
-              <li class="breadcrumb-item"><a href="/job">Manage</a>
+              <li class="breadcrumb-item"><a>Manage</a>
               </li>
-              <li class="breadcrumb-item active">JOB
+              <li class="breadcrumb-item active">My Jobs
               </li>
             </ol>
           </div>
@@ -25,12 +25,10 @@
 
 <!-- Submit resume, edit job and add jobs button script-->
 <div class="row col-xs-12">
-  <div role="group" class="btn-group float-md-right">
-    <div role="group" class="btn-group float-md-right" style="margin: 5px">
-      <% if (account_type == 1) {%>
-        <button type="button" onclick="location.href='/jobs/create'" class="btn btn-outline-primary"><i class="ft-plus"></i></button>
-      <% } %>
-    </div>
+  <div role="group" class="btn-group float-md-left" style="margin-left: 25px">
+    <% if (account_type == 1) {%>
+      <button type="button" onclick="location.href='/jobs/create'" class="btn btn-outline-primary"><i class="ft-plus"></i></button>
+    <% } %>
   </div>
 </div>
 
@@ -52,7 +50,7 @@
 <!-- // card-actions section end -->
         </div>
     </div>
-    
+
 <!-- BEGIN CODE DAO SCRIPTS -->
 <script>
   function DeleteJob(Id) {
@@ -63,7 +61,7 @@
       var form = document.createElement("form");
       form.method = "POST";
       form.action = "/jobs/delete";
-      
+
       var input = document.createElement("input");
       input.value = Id;
       input.name = "JobID";

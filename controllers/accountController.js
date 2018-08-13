@@ -499,8 +499,8 @@ router.get('/:username/following', (req, res) => {
 									res.redirect('/');
 									console.log(err);
 							}
-							res.render('follow', {
-									title: user.username + ' | Following',
+							res.render('following', {
+									title: 'ChanceMap | Following',
 									currentAcc: user,
 									account_type: account_type,
 									account_id: account_id,
@@ -532,8 +532,8 @@ router.get('/:orgname/followers', (req, res) => {
 									res.redirect('/');
 									console.log(err);
 							}
-							res.render('follow', {
-									title: org.username + ' | Followers',
+							res.render('followers', {
+									title: 'ChanceMap | Followers',
 									currentAcc: org,
 									account_type: account_type,
 									account_id: account_id,

@@ -101,14 +101,26 @@ router.get('/orgs', (req, res) => {
 					console.log(err);
 				}
 				console.log(user);
-				res.render('orgs/dashboard', {
-					title: 'ChanceMap | Orgs',
-					orgs: sortedOrgs,
-					criteriaList: criteriaList,
-					account_type: currentAcc.account_type,
-					account_id: currentAcc.account_id,
-					currentAcc: user
-				});
+				if(req.query.isFollowing) {
+					let following = sortedOrgs.filter(org => user.following.indexOf(org.username) >= 0);
+					res.render('following', {
+						title: 'ChanceMap | Following',
+						orgs: following,
+						criteriaList: criteriaList,
+						account_type: currentAcc.account_type,
+						account_id: currentAcc.account_id,
+						currentAcc: user
+					});
+				} else {
+					res.render('orgs/dashboard', {
+						title: 'ChanceMap | Orgs',
+						orgs: sortedOrgs,
+						criteriaList: criteriaList,
+						account_type: currentAcc.account_type,
+						account_id: currentAcc.account_id,
+						currentAcc: user
+					});
+				}
 			});
 		}
 	});
@@ -154,14 +166,26 @@ router.get('/users', (req, res) => {
 					console.log(err);
 				}
 				console.log(org);
-				res.render('users/dashboard', {
-					title: 'ChanceMap | Users',
-					users: sortedUsers,
-					criteriaList: criteriaList,
-					account_type: currentAcc.account_type,
-					account_id: currentAcc.account_id,
-					currentAcc: org
-				});
+				if (req.query.isFollower) {
+					let followers = sortedUsers.filter(user => org.followers.indexOf(user.username) >= 0);
+					res.render('followers', {
+						title: 'ChanceMap | Followers',
+						users: followers,
+						criteriaList: criteriaList,
+						account_type: currentAcc.account_type,
+						account_id: currentAcc.account_id,
+						currentAcc: org
+					});
+				} else {
+					res.render('users/dashboard', {
+						title: 'ChanceMap | Users',
+						users: sortedUsers,
+						criteriaList: criteriaList,
+						account_type: currentAcc.account_type,
+						account_id: currentAcc.account_id,
+						currentAcc: org
+					});
+				}
 			});
 		} else {
 			User.findOne({'_id': currentAcc.account_id}, (err, user) => {

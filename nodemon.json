@@ -1,7 +1,6 @@
 {
 	"env": { 
 		"DB_PASS": "jwtpass",
-		"PORT": 3000
 	},
 
 	"string": {

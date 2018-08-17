@@ -9,6 +9,7 @@ const flash = require('connect-flash');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
+// const forceSsl = require('force-ssl-heroku');
 // For file uploading
 const crypto = require('crypto');
 const multer = require('multer');
@@ -40,6 +41,9 @@ app.set('views', [path.join(__dirname, 'views'),
                   path.join(__dirname, 'views/partials'),
                   path.join(__dirname, 'views/defaultLayouts')]);
 app.engine('ejs', require('express-ejs-extend'));
+
+// SSL
+// app.use(forceSsl);
 
 // Body-parser
 app.use(bodyParser.json()); // Parse json data for web forms

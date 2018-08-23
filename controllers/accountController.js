@@ -487,7 +487,7 @@ router.get('/:username/following', (req, res) => {
 	let account_type = req.user.account_type;
 	let account_id = req.user.account_id;
 	let username = req.params.username;
-	if (account_type == 0) 
+	if (account_type == 0 && username == req.user.username) 
 	{
 			User.findOne({'username': username}, (err, user) => {
 					if (err) {
@@ -520,7 +520,7 @@ router.get('/:orgname/followers', (req, res) => {
 	let account_type = req.user.account_type;
 	let account_id = req.user.account_id;
 	let orgname = req.params.orgname;
-	if (account_type == 1) 
+	if (account_type == 1 && username == req.user.username) 
 	{
 			Org.findOne({'username': orgname}, (err, org) => {
 					if (err) {

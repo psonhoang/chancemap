@@ -60,7 +60,7 @@ router.get('/edit/:id', (req, res) => {
           }
       });
     }
-})
+});
 
 // events dashboard
 router.get('/', (req, res) => {
@@ -172,17 +172,8 @@ router.get('/delete/:id', (req, res) => {
                 console.log(err);
                 return;
             } else {
-                Org.findOne({'_id': account_id}, (err, org) => {
-                    res.render('events/orgs/manage', {
-                        title: 'ChanceMap | My Events',
-                        account_type: account_type,
-                        account_id: account_id,
-                        currentAcc: org,
-                        events: events
-                    });
-                });
+                res.redirect('/events/manage');
             }
-            res.redirect('/events/manage');
         });
     } else {
         res.redirect('/');
@@ -236,7 +227,13 @@ router.post('/create', (req, res) => {
         }
         console.log('new event created!');
         console.log(event);
-        res.redirect('/events/manage')
+        if(req.io) {
+            console.log('Accessible');
+        } else {
+            console.log('No io object found');
+        }
+        req.io.emit('echo', "A new event was created!");
+        res.redirect('/events/manage');
     });
 });
 

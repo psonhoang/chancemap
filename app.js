@@ -9,13 +9,10 @@ const flash = require('connect-flash');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
-// const forceSsl = require('force-ssl-heroku');
 // For file uploading
 const crypto = require('crypto');
 const multer = require('multer');
-// const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
-// const methodOverride  = require('method-override');
 
 // Database
 const mongoose = require('mongoose');
@@ -42,8 +39,6 @@ app.set('views', [path.join(__dirname, 'views'),
                   path.join(__dirname, 'views/defaultLayouts')]);
 app.engine('ejs', require('express-ejs-extend'));
 
-// SSL
-// app.use(forceSsl);
 
 // Body-parser
 app.use(bodyParser.json()); // Parse json data for web forms
@@ -51,8 +46,6 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-// method-override
-// app.use(methodOverride('_method'));
 
 // Init gfs
 let gfs;
@@ -104,7 +97,35 @@ require('./config/passport')(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
-// ***** Routes *****
+// Socket.IO
+const http = require('http');
+const server = http.Server(app);
+const socketIO = require('socket.io');
+const io = socketIO(server);
+
+io.on('connection', (socket) => {
+  console.log('a user connected');
+  
+  socket.on('echo', (msg) => {
+    console.log(msg);
+  });
+
+  socket.on('testing', (msg) => {
+    console.log(msg);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('a user disconected');
+  });
+});
+
+// Make io accessible to our router
+app.use((req,res,next) => {
+    req.io = io;
+    next();
+});
+
+/* ***** Routes ***** */
 
 // Home routes
 app.get('/', (req, res) => {
@@ -290,4 +311,4 @@ app.use('/files', fileRoutes);
 let searchRoutes = require('./controllers/searchController');
 app.use('/search', searchRoutes);
 // Export
-module.exports = app
+module.exports = server;

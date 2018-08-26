@@ -64,7 +64,8 @@ router.get('/manage', (req, res) => {
 						account_type: req.user.account_type,
 						account_id: req.user.account_id,
 						currentAcc: org,
-						jobs: jobs
+						jobs: jobs,
+						notis: req.notis
 					});
 				});
 			});
@@ -91,7 +92,8 @@ router.get('/', (req, res) => {
 						account_id: req.user.account_id,
 						currentAcc: org,
 						criteriaList: org.hashtags,
-						jobs: jobs
+						jobs: jobs,
+						notis: req.notis
 					});
 				});
 			});
@@ -106,7 +108,8 @@ router.get('/', (req, res) => {
 						account_id: req.user.account_id,
 						currentAcc: user,
 						criteriaList: user.interests.concat(user.skills),
-						jobs: jobs
+						jobs: jobs,
+						notis: req.notis
 					});
 				});
 			});
@@ -127,7 +130,8 @@ router.get('/create', (req, res) => {
 					title: 'ChanceMap | Add a new Job',
 					account_type: req.user.account_type,
 					account_id: req.user.account_id,
-					currentAcc: org
+					currentAcc: org,
+					notis: req.notis
 				});
 			});
 	}
@@ -190,7 +194,8 @@ router.get('/manage/edit/:ID', (req, res) => {
 					account_type: req.user.account_type,
 					account_id: req.user.account_id,
 					currentAcc: org,
-					job: job
+					job: job,
+					notis: req.notis
 				});
 			});
 		});

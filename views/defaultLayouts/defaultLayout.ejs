@@ -65,13 +65,41 @@
           <li class="nav-item hidden-sm-down"><a href="#" class="nav-link nav-link-expand"><i class="ficon ft-maximize"></i></a></li>
         </ul>
         <ul style="margin-right: 50px" class="nav navbar-nav float-xs-right">
-          <li class="dropdown dropdown-notification nav-item"><a href="#" data-toggle="dropdown" class="nav-link nav-link-label"><i class="ficon ft-bell"></i><span class="tag tag-pill tag-default tag-danger tag-default tag-up">5</span></a>
+          <li class="dropdown dropdown-notification nav-item"><a href="#" data-toggle="dropdown" class="nav-link nav-link-label"><i class="ficon ft-bell"></i><span class="noti_count tag tag-pill tag-default tag-danger tag-default tag-up">
+            <% if (currentAcc.new_notis) { %>
+              <%= currentAcc.new_notis.length %>
+            <% }  else { %>
+              0
+            <% } %>  
+            </span></a>
             <ul class="dropdown-menu dropdown-menu-media dropdown-menu-right">
               <li class="dropdown-menu-header">
-                <h6 class="dropdown-header m-0"><span class="grey darken-2">Notifications</span><span class="notification-tag tag tag-default tag-danger float-xs-right m-0">5 New</span></h6>
+                <h6 class="dropdown-header m-0"><span class="grey darken-2">Notifications</span><span class="notification-tag tag tag-default tag-danger float-xs-right m-0 noti_count">
+                  <% if (currentAcc.new_notis) { %>
+              <%= currentAcc.new_notis.length %>
+            <% }  else { %>
+              0
+            <% } %> new</span></span></h6>
               </li>
-              <li class="list-group scrollable-container ps-container ps-theme-dark ps-active-y" data-ps-id="f63177ae-103d-18cc-b7ba-6373aaa089ef">
-                <a href="javascript:void(0)" class="list-group-item">
+              <li id="noti" class="list-group scrollable-container ps-container ps-theme-dark ps-active-y" data-ps-id="f63177ae-103d-18cc-b7ba-6373aaa089ef">
+                <% notis.forEach(noti => { %>
+                  <a href="javascript:void(0)" class="list-group-item">
+                    <div class="media">
+                      <div class="media-left valign-middle">
+                        <% if(noti.image == 'event') { %>
+                          <i class="ft-calendar icon-bg-circle bg-amber"></i>
+                        <% } else { %>
+                          <i class="ft-clipboard icon-bg-circle bg-cyan"></i>
+                        <% } %>
+                      </div>
+                      <div class="media-body">
+                        <h6 class="media-heading"><%= noti.title %></h6>
+                        <p class="notification-text font-small-3 text-muted"><%= noti.body %></p>
+                      </div>
+                    </div>
+                  </a>
+                <%});%>
+                <!-- <a href="javascript:void(0)" class="list-group-item">
                   <div class="media">
                     <div class="media-left valign-middle"><i class="ft-plus-square icon-bg-circle bg-cyan"></i></div>
                     <div class="media-body">
@@ -118,7 +146,7 @@
                             <time datetime="2015-06-11T18:29:20+08:00" class="media-meta text-muted">Last month</time></small>
                     </div>
                   </div>
-                </a>
+                </a> -->
                 <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 3px;">
                   <div class="ps-scrollbar-x" tabindex="0" style="left: 0px; width: 0px;"></div>
                 </div>
@@ -126,7 +154,7 @@
                   <div class="ps-scrollbar-y" tabindex="0" style="top: 0px; height: 167px;"></div>
                 </div>
               </li>
-              <li class="dropdown-menu-footer"><a href="javascript:void(0)" class="dropdown-item text-muted text-xs-center">Read all notifications</a></li>
+              <li class="dropdown-menu-footer"><a href="/notifications" class="dropdown-item text-muted text-xs-center">Read all notifications</a></li>
             </ul>
           </li>
 
@@ -136,8 +164,8 @@
               <i></i>
             </span>
             <span class="user-name"><%= currentAcc.username; %></span></a>
-            <div class="dropdown-menu dropdown-menu-right"><a href="#" class="dropdown-item"><i class="ft-user"></i> Edit Profile</a><a href="#" class="dropdown-item"><i class="ft-mail"></i> My Inbox</a><a href="#" class="dropdown-item"><i class="ft-check-square"></i> Task</a><a href="#" class="dropdown-item"><i class="ft-message-square"></i> Chats</a>
-              <div class="dropdown-divider"></div><a href="/login" class="dropdown-item"><i class="ft-power"></i> Logout</a>
+            <div class="dropdown-menu dropdown-menu-right"><a href="#" class="dropdown-item"><i class="ft-user"></i> Edit Profile</a><a href="/notifications" class="dropdown-item"><i class="ft-bell"></i> Notifications</a>
+              <div class="dropdown-divider"></div><a href="/logout" class="dropdown-item"><i class="ft-power"></i> Logout</a>
             </div>
           </li>
         </ul>
@@ -181,14 +209,48 @@
 <script src="/scripts/defaultLayout.js" type="text/javascript"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-  $(function () {
+  $(document).ready(function () {
+    $.blockUI({ overlayCSS: { opacity: 0 }, message: '' });
+    setTimeout(() => {
+      $.unblockUI();
+    }, 1500);
     var socket = io();
-
-    socket.on('echo', (msg) => {
-      alert(msg);
+    socket.on('connect', () => {
+      if(<%- JSON.stringify(account_type) %> == 0) {
+        let rooms = <%- JSON.stringify(currentAcc.following) %> + "";
+        socket.emit('rooms', rooms);
+      } else {
+        let room = <%- JSON.stringify(currentAcc.username) %>;
+        socket.emit('room', room);
+        console.log('this is an org');
+      }
     });
 
-    socket.emit('testing', "Test");
+    socket.on('event', (noti) => {
+      console.log(noti);
+      if(noti.image == 'event') {
+        $('#noti').append('<a href="javascript:void(0)" class="list-group-item">\
+                    <div class="media">\
+                      <div class="media-left valign-middle"><i class="ft-calendar icon-bg-circle bg-amber"></i></div>\
+                      <div class="media-body">\
+                        <h6 class="media-heading">' + noti.title + '</h6>\
+                        <p class="notification-text font-small-3 text-muted">' + noti.body + '</p><small>\
+                      </div>\
+                    </div>\
+                  </a>');
+      } else if (noti.image == 'job') {
+        $('#noti').append('<a href="javascript:void(0)" class="list-group-item">\
+                    <div class="media">\
+                      <div class="media-left valign-middle"><i class="ft-clipboard icon-bg-circle bg-cyan"></i></div>\
+                      <div class="media-body">\
+                        <h6 class="media-heading">' + noti.title + '</h6>\
+                        <p class="notification-text font-small-3 text-muted">' + noti.body + '</p><small>\
+                      </div>\
+                    </div>\
+                  </a>');
+      }
+      $('.noti_count').html(parseInt($('.noti_count').html()) + 1);
+    });
   });
 </script> 
 <!-- END -->

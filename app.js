@@ -30,6 +30,7 @@ const Org = require('./models/org');
 const Account = require('./models/account');
 const Event = require('./models/event');
 const Job = require('./models/job');
+const Notification = require('./models/notification');
 
 // View engine
 app.set('view engine', 'ejs');
@@ -102,30 +103,61 @@ const http = require('http');
 const server = http.Server(app);
 const socketIO = require('socket.io');
 const io = socketIO(server);
+var mSocket;
+var mAccountType;
 
 io.on('connection', (socket) => {
   console.log('a user connected');
   
-  socket.on('echo', (msg) => {
-    console.log(msg);
+  mSocket = socket;
+
+  // For orgs
+  socket.on('room', (room) => {
+    console.log(room);
+    socket.join(room);
   });
 
-  socket.on('testing', (msg) => {
-    console.log(msg);
+  // For users
+  socket.on('rooms', (rooms) => {
+    let noti_rooms = rooms.split(',');
+    console.log(noti_rooms);
+    socket.join(noti_rooms);
   });
 
+  socket.on('event', (msg) => {
+    console.log(msg);
+  });
+  
+  // Disconnect
   socket.on('disconnect', () => {
     console.log('a user disconected');
   });
 });
 
 // Make io accessible to our router
-app.use((req,res,next) => {
-    req.io = io;
-    next();
+app.use((req,res,next)  => {
+  req.socket = mSocket;
+  next();
 });
 
 /* ***** Routes ***** */
+
+// Get notifications numbers
+app.use((req, res, next) => {
+  if(req.isAuthenticated()) {
+    Notification.find({'accounts': req.user.username}, (err, notis) => {
+      if(err) {
+        console.log(err);
+        return;
+      }
+      req.notis = [];
+      if(notis.length > 0) {
+        req.notis = notis;
+      }
+    });
+  }
+  next();
+});
 
 // Home routes
 app.get('/', (req, res) => {
@@ -217,7 +249,8 @@ app.get('/', (req, res) => {
                   jobs: jobs,
                   orgs: orgs,
                   users: users,
-                  criteriaList: criteriaList
+                  criteriaList: criteriaList,
+                  notis: req.notis
                 });
               });
             } else {
@@ -273,7 +306,7 @@ app.get('/', (req, res) => {
                 });
                 users.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
                 res.render('index', {
-                  title: 'ChanceMap | Take Home',
+                  title: 'ChanceMap | Home',
                   account_type: account_type,
                   account_id: account_id,
                   currentAcc: org,
@@ -281,7 +314,8 @@ app.get('/', (req, res) => {
                   jobs: jobs,
                   orgs: orgs,
                   users: users,
-                  criteriaList: org.hashtags
+                  criteriaList: org.hashtags,
+                  notis: req.notis
                 });
               });
             }
@@ -310,5 +344,6 @@ app.use('/files', fileRoutes);
 // @API ROUTES
 let searchRoutes = require('./controllers/searchController');
 app.use('/search', searchRoutes);
+
 // Export
 module.exports = server;

@@ -52,7 +52,7 @@
     cardElement3: event.address,
     cardElement4: months[event.start_date.getMonth()] + ' ' + event.start_date.getDate() + ', ' + event.start_date.getFullYear(),
     cardElement5: event.start_time,
-    cardElement6: months[event.end_date.getMonth()] + ' ' + event.end_date.getDate() + ', ' + event.end_date.getFullYear(),
+    cardElement6: event.end_date ? months[event.end_date.getMonth()] + ' ' + event.end_date.getDate() + ', ' + event.end_date.getFullYear() : null,
     cardElement7: event.end_time, }); %>
 <%  eventCounts += 1; %>
 <%  }); %>

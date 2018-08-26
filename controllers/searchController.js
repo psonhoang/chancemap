@@ -92,7 +92,8 @@ router.get('/orgs', (req, res) => {
 					criteriaList: criteriaList,
 					account_type: currentAcc.account_type,
 					account_id: currentAcc.account_id,
-					currentAcc: org
+					currentAcc: org,
+					notis: req.notis
 				});
 			});
 		} else {
@@ -118,7 +119,8 @@ router.get('/orgs', (req, res) => {
 						criteriaList: criteriaList,
 						account_type: currentAcc.account_type,
 						account_id: currentAcc.account_id,
-						currentAcc: user
+						currentAcc: user,
+						notis: req.notis
 					});
 				}
 			});
@@ -174,7 +176,8 @@ router.get('/users', (req, res) => {
 						criteriaList: criteriaList,
 						account_type: currentAcc.account_type,
 						account_id: currentAcc.account_id,
-						currentAcc: org
+						currentAcc: org,
+						notis: req.notis
 					});
 				} else {
 					res.render('users/dashboard', {
@@ -183,7 +186,8 @@ router.get('/users', (req, res) => {
 						criteriaList: criteriaList,
 						account_type: currentAcc.account_type,
 						account_id: currentAcc.account_id,
-						currentAcc: org
+						currentAcc: org,
+						notis: req.notis
 					});
 				}
 			});
@@ -199,7 +203,8 @@ router.get('/users', (req, res) => {
 					criteriaList: criteriaList,
 					account_type: currentAcc.account_type,
 					account_id: currentAcc.account_id,
-					currentAcc: user
+					currentAcc: user,
+					notis: req.notis
 				});
 			});
 		}
@@ -250,7 +255,8 @@ router.get('/jobs', (req, res) => {
 					criteriaList: criteriaList,
 					account_type: currentAcc.account_type,
 					account_id: currentAcc.account_id,
-					currentAcc: org
+					currentAcc: org,
+					notis: req.notis
 				});
 			});
 		} else {
@@ -265,7 +271,8 @@ router.get('/jobs', (req, res) => {
 					criteriaList: criteriaList,
 					account_type: currentAcc.account_type,
 					account_id: currentAcc.account_id,
-					currentAcc: user
+					currentAcc: user,
+					notis: req.notis
 				});
 			});
 		}
@@ -316,7 +323,8 @@ router.get('/events', (req, res) => {
 					criteriaList: criteriaList,
 					account_type: currentAcc.account_type,
 					account_id: currentAcc.account_id,
-					currentAcc: org
+					currentAcc: org,
+					notis: req.notis
 				});
 			});
 		} else {
@@ -331,7 +339,8 @@ router.get('/events', (req, res) => {
 					criteriaList: criteriaList,
 					account_type: currentAcc.account_type,
 					account_id: currentAcc.account_id,
-					currentAcc: user
+					currentAcc: user,
+					notis: req.notis
 				});
 			});
 		}
@@ -465,7 +474,8 @@ router.get('/', (req, res) => {
 								criteriaList: criteriaList,
 								account_type: currentAcc.account_type,
 								account_id: currentAcc.account_id,
-								currentAcc: org
+								currentAcc: org,
+								notis: req.notis
 							});
 						});
 					} else {
@@ -483,7 +493,8 @@ router.get('/', (req, res) => {
 								criteriaList: criteriaList,
 								account_type: currentAcc.account_type,
 								account_id: currentAcc.account_id,
-								currentAcc: user
+								currentAcc: user,
+								notis: req.notis
 							});
 						});
 					}

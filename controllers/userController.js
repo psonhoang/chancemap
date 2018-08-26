@@ -38,7 +38,8 @@ router.get('/', (req, res) => {
                   account_id: account_id,
                   currentAcc: org,
                   users: users,
-                  criteriaList: criteriaList
+                  criteriaList: criteriaList,
+                  notis: req.notis
               });
           })
       } else {
@@ -62,7 +63,8 @@ router.get('/', (req, res) => {
                   account_id: account_id,
                   currentAcc: user,
                   users: users,
-                  criteriaList: criteriaList
+                  criteriaList: criteriaList,
+                  notis: req.notis
               });
           });
       }

@@ -31,11 +31,21 @@
                         <strong>N/A</strong>
                         <% } %></p>
                         <p><label>Start date:</label>  <strong><%= months[event.start_date.getMonth()] + ' ' + event.start_date.getDate() + ', ' + event.start_date.getFullYear(), %></strong></p>
-                        <p><label>Start time:</label>  <strong><%= event.start_time %></strong></p>
-                        <p><label>End date:</label>  <strong><%= months[event.end_date.getMonth()] + ' ' + event.end_date.getDate() + ', ' + event.end_date.getFullYear(), %></strong></p>
-                        <p><label>End time:</label>  <strong><%= event.end_time %></strong></p>
-                        <p><label>Facebook:</label>  <strong><%= event.facebook %></strong></p>
-                        <p><label>Website:</label>  <strong><%= event.website %></strong></p>
+                        <% if(event.end_date) { %>
+                            <p><label>End date:</label>  <strong><%= months[event.end_date.getMonth()] + ' ' + event.end_date.getDate() + ', ' + event.end_date.getFullYear(), %></strong></p>
+                        <% } %>
+                        <% if(event.start_time) { %>
+                            <p><label>Start time:</label>  <strong><%= event.start_time %></strong></p>
+                        <%} %>
+                        <% if(event.end_time) { %>
+                            <p><label>End time:</label>  <strong><%= event.end_time %></strong></p>
+                        <% } %>
+                        <% if(event.facebook) { %>
+                            <p><label>Facebook:</label>  <strong><%= event.facebook %></strong></p>
+                        <% } %>
+                        <% if(event.website) { %>
+                            <p><label>Website:</label>  <strong><%= event.website %></strong></p>
+                        <% } %>
                     </div>
                 </div>
             </div>

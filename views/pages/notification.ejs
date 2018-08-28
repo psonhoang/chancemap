@@ -27,7 +27,7 @@
 		<div class="row">
 			<div class='col-md-12'>
 				<div class='list-group scrollable-container ps-container ps-theme-dark ps-active-y'>
-					<% notis.forEach(noti => { %>
+					<% notis.reverse().forEach(noti => { %>
 	                  <a href="javascript:void(0)" class="list-group-item">
 	                    <div class="media">
 	                      <div class="media-left valign-middle">
@@ -40,7 +40,8 @@
 	                      <div class="media-body">
 	                        <h6 class="media-heading"><%= noti.title %>
 	                        	<% if(currentAcc.new_notis) { %>
-									<% if (currentAcc.new_notis.includes(noti._id)) { %>
+	                        		<%- console.log(typeof(noti._id));%>
+									<% if (currentAcc.new_notis.indexOf(noti._id) > -1) { %>
 										<span class="notification-tag tag tag-default tag-danger">NEW</span>
 									<% } %>
 	                        	<% } %>
@@ -56,6 +57,24 @@
 	</div>
 </div>
 
-<script>
-	alert(<%- JSON.stringify(currentAcc.new_notis) %>);
+<script type="text/javascript">
+	$(document).ready(function () {
+	    let condition = $('#noti_val').val() != "0";
+	    if(condition && !is_dropping) {
+	      $.ajax({
+	        async: true,
+	        url: '/clear-notifications',
+	        method: 'GET',
+	        data: {
+	          account_id: <%- JSON.stringify(currentAcc._id) %>,
+	          account_type: <%= account_type %>
+	        },
+	        success: (data) => {
+	          console.log(data);
+	          $('.noti_count').html(0);
+	          $('#noti_dropdown').html('0 NEW');
+	        }
+	      });
+	    }
+    });
 </script>

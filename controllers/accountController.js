@@ -597,5 +597,37 @@ router.get('/notifications', (req, res) => {
 	}
 });
 
+router.get('/clear-notifications', (req, res) => {
+	if(req.isAuthenticated()) {
+		let account_id = req.query.account_id;
+		let account_type = req.query.account_type;
+		console.log(typeof(account_type));
+		console.log(account_type);
+		if(account_type == '0') {
+			console.log('user');
+			User.findOne({'_id': account_id}, (err, user) => {
+				user.new_notis = [];
+				user.save().then(result => {
+					res.send(result);
+				}).catch(err => {
+					res.send(err);
+				});
+			});
+		} else {
+			console.log('org');
+			Org.findOne({'_id': account_id}, (err, org) => {
+				org.new_notis = [];
+				org.save().then(result => {
+					res.send(result);
+				}).catch(err => {	
+					res.send(err);
+				});
+			});
+		}
+	} else {
+		res.redirect('/login');
+	}
+});
+
 // Exports
 module.exports = router;

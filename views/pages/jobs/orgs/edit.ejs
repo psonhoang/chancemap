@@ -15,7 +15,7 @@
 			</div>
 			<div class="card-body collapse in">
 				<div class="card-block">
-					<form class="form" method="POST" action="/jobs/edit">
+					<form class="form" method="POST" action="/jobs/edit/<%= job._id %>">
 						<div class="form-body">
 							<!-- event name -->
 							<div class="row">
@@ -112,7 +112,7 @@
 								</div>
 							</div>
 						<!-- select image -->
-						<div class="row">
+						<!-- <div class="row">
 								<div class="form-group col-xs-12 mb-2">
 									<label>Select File</label>
 									<label id="projectinput8" class="file center-block">
@@ -120,7 +120,7 @@
 										<span class="file-custom"></span>
 									</label>
 								</div>
-						</div>
+						</div> -->
 						<!-- buttons -->
 						<div class="form-actions right">
 							<button onclick="location.href='/jobs/manage'" type="button" class="btn btn-warning mr-1">
@@ -131,7 +131,7 @@
 							</button>
 						</div>
 						<!-- Job ID -->
-						<input hidden name="jobId" value="<%= job._id %>">
+						<!-- <input hidden name="jobId" value="<%= job._id %>"> -->
 					</form>
 				</div>
 			</div>

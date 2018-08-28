@@ -87,7 +87,8 @@ router.get('/', (req, res) => {
 								orgs: orgs,
 								jobs: jobs,
 								events: events,
-								criteriaList: criteriaList
+								criteriaList: criteriaList,
+								notis: req.notis
 							});
 						});
 	        });
@@ -118,7 +119,8 @@ router.get('/', (req, res) => {
 								orgs: orgs,
 								jobs: jobs,
 								events: events,
-								criteriaList: criteriaList
+								criteriaList: criteriaList,
+								notis: req.notis
 							});
 						});
 					});
@@ -149,7 +151,8 @@ router.get('/:Id', (req, res) => {
 							jobs: jobs,
 							events: events,
 							criteriaList: user.hashtags,
-							currentAcc: user
+							currentAcc: user,
+							notis: req.notis
 						});
 					});
 				});
@@ -170,7 +173,8 @@ router.get('/:Id', (req, res) => {
 							jobs: jobs,
 							events: events,
 							criteriaList: user.interests.concat(user.skills),
-							currentAcc: user
+							currentAcc: user,
+							notis: req.notis
 						});
 					});
 				});

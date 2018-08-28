@@ -15,15 +15,21 @@
                 <p><label>Organisation name:</label>  <strong><%= cardElement1 %></strong></p>
                 <label>Hashtags:</label>
                 <% hashtags.forEach(function(tag) { %>
-                <p style="font-size: 13px" class="tag tag-pill tag-warning"><%= tag; %></p>
+                    <p style="font-size: 13px" class="tag tag-pill tag-warning"><%= tag; %></p>
                 <% }); %>
-								<p><label>Deadline:</label>  <strong><%= regForm %></strong></p> 
-								<p><label>Deadline:</label>  <strong><%= deadline %></strong></p>
+				<% if(regForm) { %>
+                    <p><label>Application Form:</label>  <strong><%= regForm %></strong></p> 
+    				<p><label>Deadline:</label>  <strong><%= deadline %></strong></p>
+                <% } %>
                 <p><label>Address:</label>  <strong><%= cardElement3 %></strong></p>
                 <p><label>Start date:</label>  <strong><%= cardElement4 %></strong></p>
-                <p><label>End date:</label>  <strong><%= cardElement6 %></strong></p>
-								<p><label>Start time:</label>  <strong><%= cardElement5 %></strong></p>
-                <p><label>End time:</label>  <strong><%= cardElement7 %></strong></p>
+                <% if(cardElement6) { %>
+                    <p><label>End date:</label>  <strong><%= cardElement6 %></strong></p>
+                <% } %>
+				<% if(cardElement5 || cardElement7) {%>
+                    <p><label>Start time:</label>  <strong><%= cardElement5 %></strong></p>
+                    <p><label>End time:</label>  <strong><%= cardElement7 %></strong></p>
+                <% } %>
             </div>
         </div>
     </div>

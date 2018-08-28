@@ -15,6 +15,7 @@ const Account = require('../models/account');
 const User = require('../models/user');
 const Job = require('../models/job');
 const Org = require('../models/org');
+const Notification = require('../models/notification');
 
 // Database connection
 const connection = mongoose.connection;
@@ -64,7 +65,8 @@ router.get('/manage', (req, res) => {
 						account_type: req.user.account_type,
 						account_id: req.user.account_id,
 						currentAcc: org,
-						jobs: jobs
+						jobs: jobs,
+						notis: req.notis
 					});
 				});
 			});
@@ -91,7 +93,8 @@ router.get('/', (req, res) => {
 						account_id: req.user.account_id,
 						currentAcc: org,
 						criteriaList: org.hashtags,
-						jobs: jobs
+						jobs: jobs,
+						notis: req.notis
 					});
 				});
 			});
@@ -106,7 +109,8 @@ router.get('/', (req, res) => {
 						account_id: req.user.account_id,
 						currentAcc: user,
 						criteriaList: user.interests.concat(user.skills),
-						jobs: jobs
+						jobs: jobs,
+						notis: req.notis
 					});
 				});
 			});
@@ -127,7 +131,8 @@ router.get('/create', (req, res) => {
 					title: 'ChanceMap | Add a new Job',
 					account_type: req.user.account_type,
 					account_id: req.user.account_id,
-					currentAcc: org
+					currentAcc: org,
+					notis: req.notis
 				});
 			});
 	}
@@ -166,15 +171,48 @@ router.post('/create', (req, res) => {
 			jobImage: jobImage
 		});
 
-		newJob.save((err, jobs) => {
+		newJob.save((err, job) => {
 			if(err) {
 				console.log(err);
 				return;
 			  }
-			  console.log(jobs);
-		});
+			  console.log(job);
+			  Org.findOne({'_id': req.user.account_id}, (err, org) => {
+                let accounts = [];
+                if(org.followers) {
+                    accounts = org.followers;
+                }
+                let newNoti = new Notification({
+                    _id: new mongoose.Types.ObjectId(),
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                    title: org.name + ' added a new job position!',
+                    body: org.name + ' is recruiting ' + job.name,
+                    image: 'job',
+                    accounts: accounts
+                });
 
-		res.redirect('/jobs/manage');
+                newNoti.save((err, noti) => {
+                    if(err) {
+                        console.log(err);
+                        return;
+                    }
+                    console.log(noti);
+                    User.find({'username': {$in: accounts}}, (err, users) => {
+                        users.forEach(user => {
+                            user.new_notis.push(noti._id);
+                            user.save().then(result => {
+                                console.log(result);
+                            }).catch(err => {
+                                res.send(err);
+                            });
+                        });
+                        req.socket.broadcast.to(req.user.username).emit('event', noti);
+                        res.redirect("/jobs/manage");
+                    });
+                });
+        	});
+		});
 	}
 });
 
@@ -190,19 +228,21 @@ router.get('/manage/edit/:ID', (req, res) => {
 					account_type: req.user.account_type,
 					account_id: req.user.account_id,
 					currentAcc: org,
-					job: job
+					job: job,
+					notis: req.notis
 				});
 			});
 		});
 	}
 });
 
-router.post('/edit', (req, res) => {
+router.post('/edit/:id', (req, res) => {
 		//console.log(req.body);
 		if(!req.isAuthenticated()) {
 			res.redirect('/login');
 		} else {
 			let data = req.body;
+			let job_id = req.params.id;
 			let name = data.name;
 			let org_id = req.user.account_id;
 			let org_name = data.org_name;
@@ -214,31 +254,66 @@ router.post('/edit', (req, res) => {
 			let website = data.website;
 			let jobImage = data.jobImage;
 
-			var newJob = new Job({
-				_id: req.jobId,
-				created_at: new Date(),
-				updated_at: new Date(),
-				name: name,
-				org_id: org_id,
-				org_name: org_name,
-				desc: desc,
-				hashtags: hashtags,
-				app_form: app_form,
-				app_deadline: app_deadline,
-				facebook: facebook,
-				website: website,
-				jobImage: jobImage
-			});
+			// Fix edit job
 
-			newJob.save((err, jobs) => {
+			Job.findOne({'_id': job_id}, (err, job) => {
 				if(err) {
 					console.log(err);
 					return;
-				  }
-				  console.log(jobs);
-			});
+				}
+				job.name = name;
+				job.desc = desc;
+				job.org_id = org_id;
+				job.org_name = org_name;
+				job.hashtags = hashtags;
+				job.app_form = app_form;
+				job.app_deadline = app_deadline;
+				job.facebook = facebook;
+				job.website = website;
+				job.jobImage = jobImage;
+				job.updated_at = new Date();
 
-			res.redirect('/');
+				job.save().then(result => {
+					console.log(result);
+					Org.findOne({'_id': req.user.account_id}, (err, org) => {
+	                    let accounts = [];
+	                    if(org.followers) {
+	                        accounts = org.followers;
+	                    }
+	                    let newNoti = new Notification({
+	                        _id: new mongoose.Types.ObjectId(),
+	                        created_at: new Date(),
+	                        updated_at: new Date(),
+	                        title: org.name + ' just editited their job position!',
+	                        body: org.name + ' made an edit to ' + job.name,
+	                        image: 'job',
+	                        accounts: accounts
+	                    });
+
+	                    newNoti.save((err, noti) => {
+	                        if(err) {
+	                            console.log(err);
+	                            return;
+	                        }
+	                        console.log(noti);
+	                        User.find({'username': {$in: accounts}}, (err, users) => {
+	                            users.forEach(user => {
+	                                user.new_notis.push(noti._id);
+	                                user.save().then(result => {
+	                                    console.log(result);
+	                                }).catch(err => {
+	                                    res.send(err);
+	                                });
+	                            });
+	                            req.socket.broadcast.to(req.user.username).emit('event', noti);
+	                            res.redirect("/jobs/manage");
+	                        });
+	                    });
+                	});
+				}).catch(err => {
+					res.send(err);
+				});
+			});
 		}
 });
 
@@ -249,9 +324,48 @@ router.post('/delete', (req, res) => {
 	} else {
 		console.log("DELETE!");
 		if (req.body.JobID != undefined) {
-			Job.findOneAndRemove({_id: req.body.JobID}, (err, job) => {});
+			Job.findOneAndRemove({_id: req.body.JobID}, (err, job) => {
+				if(err) {
+					console.log(err);
+					return;
+				}
+				Org.findOne({'_id': req.user.account_id}, (err, org) => {
+                    let accounts = [];
+                    if(org.followers) {
+                        accounts = org.followers;
+                    }
+                    let newNoti = new Notification({
+                        _id: new mongoose.Types.ObjectId(),
+                        created_at: new Date(),
+                        updated_at: new Date(),
+                        title: org.name + ' just removed a job position!',
+                        body: org.name + ' removed ' + job.name,
+                        image: 'job',
+                        accounts: accounts
+                    });
+
+                    newNoti.save((err, noti) => {
+                        if(err) {
+                            console.log(err);
+                            return;
+                        }
+                        console.log(noti);
+                        User.find({'username': {$in: accounts}}, (err, users) => {
+                            users.forEach(user => {
+                                user.new_notis.push(noti._id);
+                                user.save().then(result => {
+                                    console.log(result);
+                                }).catch(err => {
+                                    res.send(err);
+                                });
+                            });
+                            req.socket.broadcast.to(req.user.username).emit('event', noti);
+                            res.redirect("/jobs/manage");
+                        });
+                    });
+                });
+			});
 		}
-		res.redirect("/jobs/manage");
 	}
 });
 

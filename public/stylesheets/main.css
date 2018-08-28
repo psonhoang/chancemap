@@ -1,0 +1,10 @@
+@media (max-width: 500px) {
+	.brand-logo {
+		width: 16px;
+		height: 26px;
+	}
+
+    .brand-text {
+    	font-size: 20px;
+    }
+}

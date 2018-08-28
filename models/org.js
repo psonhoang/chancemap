@@ -15,7 +15,8 @@ const orgSchema = mongoose.Schema({
 	desc: {type: String, required: true},
 	facebook: String,
 	website: String,
-	avatar: String
+	avatar: String,
+	new_notis: [mongoose.Schema.Types.ObjectId]
 });
 
 // Export Org model

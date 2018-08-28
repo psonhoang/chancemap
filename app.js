@@ -9,13 +9,10 @@ const flash = require('connect-flash');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
-// const forceSsl = require('force-ssl-heroku');
 // For file uploading
 const crypto = require('crypto');
 const multer = require('multer');
-// const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
-// const methodOverride  = require('method-override');
 
 // Database
 const mongoose = require('mongoose');
@@ -33,6 +30,7 @@ const Org = require('./models/org');
 const Account = require('./models/account');
 const Event = require('./models/event');
 const Job = require('./models/job');
+const Notification = require('./models/notification');
 
 // View engine
 app.set('view engine', 'ejs');
@@ -42,8 +40,6 @@ app.set('views', [path.join(__dirname, 'views'),
                   path.join(__dirname, 'views/defaultLayouts')]);
 app.engine('ejs', require('express-ejs-extend'));
 
-// SSL
-// app.use(forceSsl);
 
 // Body-parser
 app.use(bodyParser.json()); // Parse json data for web forms
@@ -51,8 +47,6 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-// method-override
-// app.use(methodOverride('_method'));
 
 // Init gfs
 let gfs;
@@ -104,7 +98,66 @@ require('./config/passport')(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
-// ***** Routes *****
+// Socket.IO
+const http = require('http');
+const server = http.Server(app);
+const socketIO = require('socket.io');
+const io = socketIO(server);
+var mSocket;
+var mAccountType;
+
+io.on('connection', (socket) => {
+  console.log('a user connected');
+  
+  mSocket = socket;
+
+  // For orgs
+  socket.on('room', (room) => {
+    console.log(room);
+    socket.join(room);
+  });
+
+  // For users
+  socket.on('rooms', (rooms) => {
+    let noti_rooms = rooms.split(',');
+    console.log(noti_rooms);
+    socket.join(noti_rooms);
+  });
+
+  socket.on('event', (msg) => {
+    console.log(msg);
+  });
+  
+  // Disconnect
+  socket.on('disconnect', () => {
+    console.log('a user disconected');
+  });
+});
+
+// Make io accessible to our router
+app.use((req,res,next)  => {
+  req.socket = mSocket;
+  next();
+});
+
+/* ***** Routes ***** */
+
+// Get notifications numbers
+app.use((req, res, next) => {
+  if(req.isAuthenticated()) {
+    Notification.find({'accounts': req.user.username}, (err, notis) => {
+      if(err) {
+        console.log(err);
+        return;
+      }
+      req.notis = [];
+      if(notis.length > 0) {
+        req.notis = notis;
+      }
+    });
+  }
+  next();
+});
 
 // Home routes
 app.get('/', (req, res) => {
@@ -196,7 +249,8 @@ app.get('/', (req, res) => {
                   jobs: jobs,
                   orgs: orgs,
                   users: users,
-                  criteriaList: criteriaList
+                  criteriaList: criteriaList,
+                  notis: req.notis
                 });
               });
             } else {
@@ -252,7 +306,7 @@ app.get('/', (req, res) => {
                 });
                 users.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
                 res.render('index', {
-                  title: 'ChanceMap | Take Home',
+                  title: 'ChanceMap | Home',
                   account_type: account_type,
                   account_id: account_id,
                   currentAcc: org,
@@ -260,7 +314,8 @@ app.get('/', (req, res) => {
                   jobs: jobs,
                   orgs: orgs,
                   users: users,
-                  criteriaList: org.hashtags
+                  criteriaList: org.hashtags,
+                  notis: req.notis
                 });
               });
             }
@@ -289,5 +344,6 @@ app.use('/files', fileRoutes);
 // @API ROUTES
 let searchRoutes = require('./controllers/searchController');
 app.use('/search', searchRoutes);
+
 // Export
-module.exports = app
+module.exports = server;

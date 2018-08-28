@@ -1,0 +1,80 @@
+<% extend('../defaultLayouts/defaultLayout') %>
+
+<div class="app-content content container-fluid">
+	<div class="content-wrapper">
+	  <div class="content-header row">
+	    <div class="content-header-left col-md-6 col-xs-12 mb-2">
+	      <h3 class="content-header-title mb-0">Notifications</h3>
+	      <div class="row breadcrumbs-top">
+	        <div class="breadcrumb-wrapper col-xs-12">
+	          <ol class="breadcrumb">
+	            <li class="breadcrumb-item active"><span class='notification-tag tag tag-default tag-danger'>
+					<% if(currentAcc.new_notis) { %>
+	            		<%= currentAcc.new_notis.length %>
+	            	<% } else { %>
+	            		0
+	            	<% } %>
+	            	 new </span> notifications
+	            </li>
+	          </ol>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+	<div class="content-body">
+		<div class="row">
+			<div class='col-md-12'>
+				<div class='list-group scrollable-container ps-container ps-theme-dark ps-active-y'>
+					<% notis.reverse().forEach(noti => { %>
+	                  <a href="javascript:void(0)" class="list-group-item">
+	                    <div class="media">
+	                      <div class="media-left valign-middle">
+	                        <% if(noti.image == 'event') { %>
+	                          <i class="ft-calendar icon-bg-circle bg-amber"></i>
+	                        <% } else { %>
+	                          <i class="ft-clipboard icon-bg-circle bg-cyan"></i>
+	                        <% } %>
+	                      </div>
+	                      <div class="media-body">
+	                        <h6 class="media-heading"><%= noti.title %>
+	                        	<% if(currentAcc.new_notis) { %>
+	                        		<%- console.log(typeof(noti._id));%>
+									<% if (currentAcc.new_notis.indexOf(noti._id) > -1) { %>
+										<span class="notification-tag tag tag-default tag-danger">NEW</span>
+									<% } %>
+	                        	<% } %>
+	                        </h6>
+	                        <p class="notification-text font-small-3 text-muted"><%= noti.body %></p>
+	                      </div>
+	                    </div>
+	                  </a>
+                	<%});%>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function () {
+	    let condition = $('#noti_val').val() != "0";
+	    if(condition && !is_dropping) {
+	      $.ajax({
+	        async: true,
+	        url: '/clear-notifications',
+	        method: 'GET',
+	        data: {
+	          account_id: <%- JSON.stringify(currentAcc._id) %>,
+	          account_type: <%= account_type %>
+	        },
+	        success: (data) => {
+	          console.log(data);
+	          $('.noti_count').html(0);
+	          $('#noti_dropdown').html('0 NEW');
+	        }
+	      });
+	    }
+    });
+</script>

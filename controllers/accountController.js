@@ -15,6 +15,7 @@ const Grid = require('gridfs-stream');
 const Account = require('../models/account');
 const User = require('../models/user');
 const Org = require('../models/org');
+const Notification = require('../models/notification');
 
 // Database connection
 const connection = mongoose.connection;
@@ -70,7 +71,7 @@ router.get('/logout', (req, res) => {
 
 // Register
 router.get('/register', (req, res) => {
-	res.render('register', {title: "Code Dao | Sign up"});
+	res.render('register', {title: "ChanceMap | Sign up"});
 });
 
 // @route POST
@@ -140,7 +141,8 @@ router.post('/register/user', upload.fields([{name: 'avatar', maxCount: 1}, {nam
 		facebook: facebook,
 		website: website,
 		following: [], // contain org_ids
-		avatar: avatar
+		avatar: avatar,
+		new_notis: []
 	});
 
   newUser.save((err, user) => {
@@ -216,7 +218,8 @@ router.post('/register/org', upload.single('avatar'), (req, res) => {
 		desc: desc,
 		facebook: facebook,
 		website: website,
-		avatar: avatar
+		avatar: avatar,
+		new_notis: []
 	});
 
   newOrg.save((err, acc) => {
@@ -265,25 +268,33 @@ router.get('/profile', (req, res) => {
   } else {
     let account_type = req.user.account_type;
     let account_id = req.user.account_id;
-    if(account_type == 0) {
-      User.findOne({'_id': account_id}, (err, user) => {
-        res.render('profile', {
-          title: 'ChanceMap | My Profile',
-          account_type: account_type,
-          account_id: account_id,
-          currentAcc: user
-        });
-      });
-    } else {
-      Org.findOne({'_id': account_id}, (err, org) => {
-          res.render('profile', {
-            title: 'ChanceMap | My Profile',
-            account_type: account_type,
-            account_id: account_id,
-            currentAcc: org,
-          });
-      });
-    }
+    Notification.find({'accounts': req.user.username}, (err, notis) => {
+    	if(err) {
+    		console.log(err);
+    		return;
+    	}
+    	if(account_type == 0) {
+	      User.findOne({'_id': account_id}, (err, user) => {
+	        res.render('profile', {
+	          title: 'ChanceMap | My Profile',
+	          account_type: account_type,
+	          account_id: account_id,
+	          currentAcc: user,
+	          notis: req.notis
+	        });
+	      });
+	    } else {
+	      Org.findOne({'_id': account_id}, (err, org) => {
+	          res.render('profile', {
+	            title: 'ChanceMap | My Profile',
+	            account_type: account_type,
+	            account_id: account_id,
+	            currentAcc: org,
+	            notis: req.notis
+	          });
+	      });
+	    }
+    });
   }
 });
 
@@ -487,7 +498,7 @@ router.get('/:username/following', (req, res) => {
 	let account_type = req.user.account_type;
 	let account_id = req.user.account_id;
 	let username = req.params.username;
-	if (account_type == 0) 
+	if (account_type == 0 && username == req.user.username) 
 	{
 			User.findOne({'username': username}, (err, user) => {
 					if (err) {
@@ -505,7 +516,8 @@ router.get('/:username/following', (req, res) => {
 									account_type: account_type,
 									account_id: account_id,
 									criteriaList: user.interests.concat(user.skills),
-									orgs: orgs
+									orgs: orgs,
+									notis: req.notis
 							});
 					});
 			});
@@ -520,7 +532,7 @@ router.get('/:orgname/followers', (req, res) => {
 	let account_type = req.user.account_type;
 	let account_id = req.user.account_id;
 	let orgname = req.params.orgname;
-	if (account_type == 1) 
+	if (account_type == 1 && orgname == req.user.username) 
 	{
 			Org.findOne({'username': orgname}, (err, org) => {
 					if (err) {
@@ -538,7 +550,8 @@ router.get('/:orgname/followers', (req, res) => {
 									account_type: account_type,
 									account_id: account_id,
 									criteriaList: org.hashtags,
-									users: users
+									users: users,
+									notis: req.notis
 							});
 					});
 			});
@@ -546,6 +559,73 @@ router.get('/:orgname/followers', (req, res) => {
 	else 
 	{
 			res.redirect('/');
+	}
+});
+
+// Notifications
+router.get('/notifications', (req, res) => {
+	if(req.isAuthenticated()) {
+		Notification.find({'accounts': req.user.username}, (err, notis) => {
+			if(err) {
+				console.log(err);
+				return;
+			}
+			if(req.user.account_type == 0) {
+			User.findOne({'username': req.user.username}, (err, user) => {
+				res.render('notification', {
+					title: 'ChanceMap | Notifications',
+					currentAcc: user,
+					account_type: req.user.account_type,
+					account_id: req.user.account_id,
+					notis: notis
+				});
+			});
+		} else {
+			Org.findOne({'username': req.user.username}, (err, org) => {
+				res.render('notification', {
+					title: 'ChanceMap | Notifications',
+					currentAcc: org,
+					account_type: req.user.account_type,
+					account_id: req.user.account_id,
+					notis: notis
+				});
+			});
+		}
+		});
+	} else {
+		res.redirect('/login');
+	}
+});
+
+router.get('/clear-notifications', (req, res) => {
+	if(req.isAuthenticated()) {
+		let account_id = req.query.account_id;
+		let account_type = req.query.account_type;
+		console.log(typeof(account_type));
+		console.log(account_type);
+		if(account_type == '0') {
+			console.log('user');
+			User.findOne({'_id': account_id}, (err, user) => {
+				user.new_notis = [];
+				user.save().then(result => {
+					res.send(result);
+				}).catch(err => {
+					res.send(err);
+				});
+			});
+		} else {
+			console.log('org');
+			Org.findOne({'_id': account_id}, (err, org) => {
+				org.new_notis = [];
+				org.save().then(result => {
+					res.send(result);
+				}).catch(err => {	
+					res.send(err);
+				});
+			});
+		}
+	} else {
+		res.redirect('/login');
 	}
 });
 

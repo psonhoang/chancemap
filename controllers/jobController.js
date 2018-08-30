@@ -83,38 +83,60 @@ router.get('/', (req, res) => {
 	if(!req.isAuthenticated()) {
 		res.redirect('/login');
 	} else {
-		if (req.user.account_type == 1)
-		{
-			Job.find({org_id :  req.user.account_id}, (err, jobs) => {
+		Job.find({}, (err, jobs) => {
+			if (req.user.account_type == 1)
+			{
 				Org.findOne({_id: req.user.account_id}, (err, org) => {
+					let criteriaList = org.hashtags;
+	                jobs.forEach(job => {
+	                    job.matches = 0;
+	                    job.hashtags.forEach(hashtag => {
+	                        criteriaList.forEach(criteria => {
+	                            if(hashtag.includes(criteria)) {
+	                            	job.matches++;
+	                            }
+	                        });
+	                    });
+	                });
+	                jobs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
 					res.render('jobs/dashboard', {
 						title: 'ChanceMap | Jobs',
 						account_type: req.user.account_type,
 						account_id: req.user.account_id,
 						currentAcc: org,
-						criteriaList: org.hashtags,
+						criteriaList: criteriaList,
 						jobs: jobs,
 						notis: req.notis
 					});
 				});
-			});
-		}
-		else
-		{
-			Job.find({}, (err, jobs) => {
+			}
+			else
+			{
 				User.findOne({_id: req.user.account_id}, (err, user) => {
+					let criteriaList = user.interests.concat(user.skills);
+	                jobs.forEach(job => {
+	                    job.matches = 0;
+	                    job.hashtags.forEach(hashtag => {
+	                        criteriaList.forEach(criteria => {
+	                            if(hashtag.includes(criteria)) {
+	                            	job.matches++;
+	                            }
+	                        });
+	                    });
+	                });
+	                jobs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
 					res.render('jobs/dashboard', {
 						title: 'ChanceMap | Jobs',
 						account_type: req.user.account_type,
 						account_id: req.user.account_id,
 						currentAcc: user,
-						criteriaList: user.interests.concat(user.skills),
+						criteriaList: criteriaList,
 						jobs: jobs,
 						notis: req.notis
 					});
 				});
-			});
-		}
+			}
+		});
 	}
 });
 

@@ -1,0 +1,313 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+}
+
+.carousel-indicators li {
+    display: block; 
+    margin-bottom: 5px; 
+    border: 1px solid #fff; 
+}
+.carousel-indicators li.active {
+    margin-bottom: 5px; background:#fff;
+} 
+
+.carousel-inner,.carousel,.item,.container,.fill {
+    height:100%;
+    width:100%;
+    background-position: center center;
+    background-size: cover;
+}
+      
+.slide-wrapper {
+    display: inline;
+}
+        
+.slide-wrapper .container {
+    padding: 0px;
+}
+
+      /*------------------------------ vertical bootstrap slider----------------------------*/
+
+.carousel-inner> .item.next ,  .carousel-inner > .item.active.right {
+    transform: translate3d(0, 100%, 0); 
+    -webkit-transform: translate3d(0, 100%, 0); 
+    -ms-transform: translate3d(0, 100%, 0); 
+    -moz-transform: translate3d(0, 100%, 0); 
+    -o-transform: translate3d(0, 100%, 0);  
+    top: 0;
+}
+      
+.carousel-inner > .item.prev ,.carousel-inner > .item.active.left {
+    transform: translate3d(0,-100%, 0); 
+    -webkit-transform: translate3d(0,-100%, 0);  
+    -moz-transform: translate3d(0,-100%, 0);
+    -ms-transform: translate3d(0,-100%, 0); 
+    -o-transform: translate3d(0,-100%, 0); 
+    top: 0;
+}
+      
+.carousel-inner > .item.next.left , .carousel-inner > .item.prev.right , .carousel-inner > .item.active {
+    transform:translate3d(0,0,0); 
+    -webkit-transform:translate3d(0,0,0);
+    -ms-transform:translate3d(0,0,0);; 
+    -moz-transform:translate3d(0,0,0); 
+    -o-transform:translate3d(0,0,0); 
+    top: 0;
+}
+
+      /*------------------------------- vertical carousel indicators ------------------------------*/
+      .carousel-indicators{
+        position:absolute;
+        top:0;
+        bottom:0;
+        margin:auto;
+        height:20px;
+        right:10px; left:auto;
+        width:auto;
+        color: white;
+      }  
+
+/*------------------------------- 1st Login Page ------------------------------*/
+
+.First {
+    background: url('/images/splash_bg.jpg') no-repeat center;
+    background-size: cover;
+}
+
+.big-logo a img {
+    display: block;
+    align-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 400px;
+    padding-top: 140px;
+    padding-bottom: 10px;
+}
+
+.big-logo h3 {
+    color:white;
+    text-align: center;
+    margin-top: -10px;
+    font-weight: normal;
+}
+
+.buttonOne {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #DC4244; 
+    width: 300px;
+    height: 60px;
+    font-size: 24px;
+    color: white;
+    margin-top: 35px;
+    border: none;
+    border-radius: 5px;
+}
+
+.buttonTwo {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #313E50; 
+    width: 300px;
+    height: 60px;
+    font-size: 24px;
+    color: white;
+    border-radius: 10px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 5px;
+}
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 50px;
+    color: white;
+    text-align: center;
+    line-height: 35px;
+    font-size: 18px;
+    font-weight: 400;
+    background-image: linear-gradient(to right, #5AB4C0, #3D6D8B, #375F81, #24305E);
+    opacity: 0.75;
+}
+
+/*------------------------------- Who we are? ------------------------------*/
+
+.Second {
+    background: url('/images/bg_image_1.jpg') no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.navTop {
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 70px;
+    flex: 1;
+    padding-bottom: 0px;
+    margin-left: 80%
+}
+
+.navTop a {
+    text-decoration: none;
+}
+
+.navTop a:last-child {
+    display: inline-block;
+    text-align: center;
+    background-color: #ffffff;
+    color: #1B557D;
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: 100px;
+    height: 30px; 
+    width: 55px;
+    margin-left: 10px;
+    line-height: 30px;
+    border-radius: 3px;
+}
+
+.navTop a:first-child {
+    display: inline-block;
+    text-align: center;
+    background-color: #0A384D;
+    color: #ffffff;
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: 100px;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 3px;
+}
+
+.content1 h1 {
+    text-align: center;
+    color: #ffffff;
+    font-size: 50px;
+    font-weight: normal;
+    padding-top: 100px;
+    padding-bottom: 30px;
+}
+
+.content1 h3 {
+    text-align: center;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: normal;
+    margin-top: -30px;
+}
+
+/*------------------------------- How it works? ------------------------------*/
+
+.Third {
+    background-color: #1B557D;
+}
+
+.icon a img {
+    display: block;
+    align-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 630px;
+    padding-top: 100px;
+    padding-bottom: 10px;
+}
+
+.content2 h1 {
+    text-align: center;
+    color: #ffffff;
+    font-size: 50px;
+    font-weight: normal;
+    padding-bottom: 30px;
+}
+
+.content2 h3 {
+    text-align: center;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: normal;
+    margin-top: -30px;
+}
+
+/*------------------------------- Our sponsor ------------------------------*/
+
+.Fourth {
+    background-image: url('/images/about_bg.png');
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.small-logo a img {
+    display: block;
+    align-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 230px;
+    padding-top: 75px;
+    padding-bottom: 100px;
+}
+
+.content3 h2 {
+    text-align: center;
+    color: #ffffff;
+    font-size: 36px;
+    font-weight: normal;
+    padding-bottom: 30px;
+}
+
+.content3 h3 {
+    text-align: center;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: normal;
+    margin-top: -30px;
+}
+
+/*------------------------------- Last page ------------------------------*/
+
+.Fifth {
+    background: url('/images/last_splash.jpg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.nav4 {
+    text-decoration: none;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: right;
+    height: 70px;
+    flex: 1;
+}
+
+.content4 h1{
+    color: white;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 125px;
+    padding-bottom: 0px;
+}
+.content4 h3 {
+    color:white;
+    text-align: center;
+    margin-top: -5px;
+    font-weight: normal;
+}
+

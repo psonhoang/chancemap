@@ -70,7 +70,7 @@
                                 <% let cardId = org._id; %>
                                 <tr style="border: 0">
 	                            <td>
-	                            	<img onclick="window.location.href='orgs/<%= org._id %>'" src="<%= org.avatar %>" class="btn-secondary rounded-circle width-100 height-100" alt="org avatar">
+	                            	<img onclick="window.location.href='/orgs/<%= org._id %>'" src="<%= org.avatar %>" class="btn-secondary rounded-circle width-100 height-100" alt="org avatar">
                                         <% if(account_type == 0 && (currentAcc.following.indexOf(org.username) < 0)) { %>
 		                                <br><br>
 		                                <buton id="<%= org._id %>" onclick="follow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)" class="btn btn-info"><i class="fa fa-eye"></i> Follow</buton>

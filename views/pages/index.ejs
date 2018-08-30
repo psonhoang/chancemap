@@ -29,13 +29,13 @@
                 </a>
                 </div>
                 <div class="card">
-                    <div class="table-responsive">
+                    <div style="display: block; max-height: 400px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="table-responsive">
                         <table class="table">
-                            <tbody style="color: white" class="thead bg-blue-grey bg-darken-3">
+                            <thead style="color: white" class="thead bg-blue-grey bg-darken-3">
                                 <th>Deadline</th>
                                 <th>Event</th>
                                 <th>Hashtags</th>
-                            </tbody>
+                            </thead>
                             <tbody id="eventsBody">
                                 <% events.forEach(event => { %>
                                 <% cardId = event._id; %>
@@ -87,7 +87,7 @@
                 <i class="fa fa-ellipsis-v font-medium-3"></i>
               </a>
             </div>
-            <div class="card-body collapse-in" id="jobsBody">
+            <div class="card-body collapse-in" style="display: block; max-height: 400px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" id="jobsBody">
               <% jobs.forEach(job => { %>
                 <% cardId = job._id; %>
                 <div style="padding: 10px; border-bottom: 2px solid #92a8d1" class="container-fluid btn-secondary" data-toggle="modal" data-target="#<%= cardId %>">
@@ -126,7 +126,7 @@
                 </a>
               </div>
               <div class="card-body collapse-in">
-                <div class="table-responsive">
+                <div style="display: block; max-height: 400px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="table-responsive">
                   <table class="table">
                     <thead style="color: white" class="thead bg-blue-grey bg-darken-3">
                       <tr>
@@ -209,7 +209,7 @@
                 <i class="fa fa-ellipsis-v font-medium-3"></i>
               </a>
             </div>
-            <div class="card-body collapse-in" id="usersBody">
+            <div style="display: block; max-height: 400px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="card-body collapse-in" id="usersBody">
               <% users.forEach( user => { %>
               <% cardId = user._id; %>
                 <% if (currentAcc.username != user.username) { %>

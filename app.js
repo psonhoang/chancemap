@@ -13,11 +13,12 @@ const passport = require('passport');
 const crypto = require('crypto');
 const multer = require('multer');
 const Grid = require('gridfs-stream');
+const methodOverride = require('method-override');
 
 // Database
 const mongoose = require('mongoose');
 mongoose.connect(config.database, {
-  connectTimeoutMS: 120000
+  connectTimeoutMS: 120000,
 }).then().catch(err => {
   console.error('App starting error:', err.stack);
   process.exit(1);
@@ -39,6 +40,9 @@ app.set('views', [path.join(__dirname, 'views'),
                   path.join(__dirname, 'views/partials'),
                   path.join(__dirname, 'views/defaultLayouts')]);
 app.engine('ejs', require('express-ejs-extend'));
+
+// Method Override
+app.use(methodOverride('_method'));
 
 
 // Body-parser
@@ -162,7 +166,7 @@ app.use((req, res, next) => {
 // Home routes
 app.get('/', (req, res) => {
   if(!req.isAuthenticated()) {
-    res.redirect('/login');
+    res.render('splash', {title: 'ChanceMap'});
   } else {
     // res.send('Hi there, ' + req.user.username + '; Your account type is: ' + req.user.account_type);
     let account_type = req.user.account_type;

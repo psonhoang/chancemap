@@ -1,3 +1,9 @@
+
+
+.brand-text {
+	font-family: 'Josefin Sans', sans-serif;
+}
+
 @media (max-width: 500px) {
 	.brand-logo {
 		width: 16px;

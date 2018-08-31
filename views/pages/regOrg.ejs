@@ -121,7 +121,7 @@
                             <div class="col-md-6 col-xs-12 float-sm-left text-xs-center text-sm-right"><a href="recover-password.html" class="card-link">Forgot Password?</a></div>
                         </fieldset> -->
                   <br>
-                  <button type="submit" class="btn btn-outline-danger btn-block"><i class="ft-user"></i> Register</button>
+                  <button id="submitBtn" onclick="freezeBtn();" type="submit" class="btn btn-outline-danger btn-block"><i class="ft-user"></i> Register</button>
                 </form>
               </div>
               <div class="card-block">
@@ -146,6 +146,11 @@
       output.src = reader.result;
     }
     reader.readAsDataURL(event.target.files[0]);
+  }
+
+  function freezeBtn() {
+    document.getElementById('submitBtn').disabled = true;
+    $('form').submit();
   }
 
   $(document).ready(function() {

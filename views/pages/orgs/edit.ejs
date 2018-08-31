@@ -88,7 +88,7 @@
     </fieldset>
 
     <div class="form-actions center">
-      <button type="submit" class="btn btn-lg btn-outline-info">Submit</button>
+      <button id="submitBtn" onclick="freezeBtn();" type="submit" class="btn btn-lg btn-outline-info">Submit</button>
     </div>
   </form>
 </div>
@@ -102,6 +102,11 @@
       output.src = reader.result;
     }
     reader.readAsDataURL(event.target.files[0]);
+  }
+
+  function freezeBtn() {
+    document.getElementById('submitBtn').disabled = true;
+    $('form').submit();
   }
 
   $(document).ready(function() {

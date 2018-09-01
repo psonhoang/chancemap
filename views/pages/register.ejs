@@ -25,6 +25,9 @@
                     <a href="#" class="btn btn-social-icon mr-1 mb-1 btn-outline-github"><span class="fa fa-github font-medium-4"></span></a>
                 </div> -->
               <!-- <p class="card-subtitle line-on-side text-muted text-xs-center font-small-3 mx-2 my-1"><span>Sign Up</span></p> -->
+              <% if(message != '') { %>
+                <div style="margin-left: 20px; margin-right: 20px" class="alert alert-danger text-center"><%= message %></div>
+              <% } %>
               <div class="card-block">
                 <form class="form-horizontal" action="/register" method="POST">
                   <fieldset class="form-group position-relative">
@@ -47,7 +50,7 @@
                   </fieldset>
 
                   <fieldset class="form-group position-relative has-icon-left">
-                    <input type="text" class="form-control" id="user-name" name="username" placeholder="Username">
+                    <input type="text" class="form-control" id="user-name" name="username" placeholder="Username (Ex: johndoe123)">
                     <div class="form-control-position">
                       <i class="ft-user"></i>
                     </div>
@@ -60,6 +63,12 @@
                   </fieldset>
                   <fieldset class="form-group position-relative has-icon-left">
                     <input type="password" class="form-control" id="user-password" name="password" placeholder="Enter Password" required>
+                    <div class="form-control-position">
+                      <i class="fa fa-key"></i>
+                    </div>
+                  </fieldset>
+                  <fieldset class="form-group position-relative has-icon-left">
+                    <input type="password" class="form-control" id="re-password" name="re_password" placeholder="Re-enter Password" required>
                     <div class="form-control-position">
                       <i class="fa fa-key"></i>
                     </div>

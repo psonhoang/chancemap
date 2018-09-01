@@ -72,15 +72,15 @@ router.get('/logout', (req, res) => {
 
 // Register
 router.get('/register', (req, res) => {
-	res.render('register', {title: "ChanceMap | Sign up"});
+	res.render('register', {title: "ChanceMap | Sign up", message: ""});
 });
 
 // @route POST
 // @desc Determine which register view to render (regOrg || regUser)
 router.post('/register', (req, res) => {
 	let data = req.body;
-	if(!(data.org_acc || data.user_acc)) {
-		res.redirect('/register');
+	if(!(data.org_acc || data.user_acc) || data.password != data.re_password) {
+		res.render('register', {title: "ChanceMap | Sign up", message: "Your passwords don't match!"});
 	} else {
 		let acc_type = 0;
 		if(data.org_acc) { acc_type = 1; }

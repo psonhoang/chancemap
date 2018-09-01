@@ -18,12 +18,12 @@ const methodOverride = require('method-override');
 // Database
 const mongoose = require('mongoose');
 mongoose.connect(config.database, {
-  connectTimeoutMS: 120000,
+  useNewUrlParser: true,
+  connectTimeoutMS: 120000
 }).then().catch(err => {
   console.error('App starting error:', err.stack);
   process.exit(1);
 });
-const connection = mongoose.connection;
 
 // Models
 const User = require('./models/user');
@@ -44,21 +44,11 @@ app.engine('ejs', require('express-ejs-extend'));
 // Method Override
 app.use(methodOverride('_method'));
 
-
 // Body-parser
 app.use(bodyParser.json()); // Parse json data for web forms
 app.use(bodyParser.urlencoded({
   extended: true
 }));
-
-
-// Init gfs
-let gfs;
-connection.once('open', () => {
-	// Init stream
-	gfs = Grid(connection.db, mongoose.mongo);
-	gfs.collection('uploads');
-});
 
 // Public static
 app.use(express.static(path.join(__dirname, 'public'))); // Static files root directory
@@ -117,14 +107,14 @@ io.on('connection', (socket) => {
 
   // For orgs
   socket.on('room', (room) => {
-    console.log(room);
+    // console.log(room);
     socket.join(room);
   });
 
   // For users
   socket.on('rooms', (rooms) => {
     let noti_rooms = rooms.split(',');
-    console.log(noti_rooms);
+    // console.log(noti_rooms);
     socket.join(noti_rooms);
   });
 

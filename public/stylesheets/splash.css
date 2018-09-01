@@ -274,10 +274,10 @@ html, body {
     display: block;
     align-content: center;
     margin-left: auto;
-    margin-right: auto;
-    max-width: 200px;
-    padding-top: 150px;
-    margin-bottom: 200px;
+    margin-right: auto;.
+    max-height: 150px;
+    max-width: 150px;
+    padding-top: 9.5%;
 }
 
 .content3 h2 {
@@ -285,7 +285,6 @@ html, body {
     color: #ffffff;
     font-size: 36px;
     font-weight: normal;
-    padding-bottom: 30px;
 }
 
 .content3 h3 {
@@ -293,7 +292,6 @@ html, body {
     color: #ffffff;
     font-size: 18px;
     font-weight: normal;
-    margin-top: -30px;
 }
 
 /*------------------------------- Last page ------------------------------*/

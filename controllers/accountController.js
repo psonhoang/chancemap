@@ -18,14 +18,15 @@ const Org = require('../models/org');
 const Notification = require('../models/notification');
 
 // Database connection
-const connection = mongoose.connection;
+const conn = mongoose.connection;
 
 // Init gfs
 let gfs;
-connection.once('open', () => {
-	// Init stream
-	gfs = Grid(connection.db, mongoose.mongo);
-	gfs.collection('uploads');
+
+conn.once('open', () => {
+  // Init stream
+  gfs = Grid(conn.db, mongoose.mongo);
+  gfs.collection('uploads');
 });
 
 // Create storage engine
@@ -103,6 +104,8 @@ router.post('/register/user', upload.fields([{name: 'avatar', maxCount: 1}, {nam
 (req, res) => {
 	// console.log(req.body);
 	// console.log(req.files);
+
+	console.log('POST on /register/user');
 
 	let data = req.body;
 	let name = data.name;
@@ -304,6 +307,9 @@ router.post('/profile/user', upload.fields([{name: 'avatar', maxCount: 1}, {name
 	(req, res) => {
 	let data = req.body;
 	const currentAcc = req.user;
+
+	console.log('POST on /profile/user');
+
 	User.findOne({'username': currentAcc.username}, (err, user) => {
 		if(err) {
 			res.send('Database error...');
@@ -365,6 +371,9 @@ router.post('/profile/user', upload.fields([{name: 'avatar', maxCount: 1}, {name
 router.post('/profile/org', upload.single('avatar'), (req, res) => {
 	let data = req.body;
 	const currentAcc = req.user;
+
+	console.log('POST on /profile/org');
+
 	Org.findOne({'username': currentAcc.username}, (err, org) => {
 		if(err) {
 			res.send('Database error...');

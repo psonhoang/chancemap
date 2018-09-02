@@ -206,7 +206,7 @@ router.get('/delete/:id', (req, res) => {
                                         res.send(err);
                                     });
                                 });
-                                req.socket.broadcast.to(req.user.username).emit('event', noti);
+                                req.socketio.broadcast.to(req.user.username).emit('event', noti);
                                 res.redirect('/events/manage');
                             });
                         });
@@ -299,7 +299,7 @@ router.post('/create', (req, res) => {
                                 res.send(err);
                             });
                         });
-                        req.socket.broadcast.to(req.user.username).emit('event', noti);
+                        req.socketio.broadcast.to(req.user.username).emit('event', noti);
                         res.redirect('/events/manage');
                     });
                 });
@@ -372,7 +372,7 @@ router.post('/edit/:id', (req, res) => {
                                     res.send(err);
                                 });
                             });
-                            req.socket.broadcast.to(req.user.username).emit('event', noti);
+                            req.socketio.broadcast.to(req.user.username).emit('event', noti);
                             res.redirect('/events/manage');
                         });
                     });

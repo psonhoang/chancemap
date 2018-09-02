@@ -1,6 +1,6 @@
 {
 	"env": { 
-		"DB_PASS": "jwtpass"
+		"DB_PASS": "jwtpass123"
 	},
 
 	"string": {

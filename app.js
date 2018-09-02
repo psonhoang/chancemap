@@ -130,7 +130,7 @@ io.on('connection', (socket) => {
 
 // Make io accessible to our router
 app.use((req,res,next)  => {
-  req.socket = mSocket;
+  req.socketio = mSocket;
   next();
 });
 

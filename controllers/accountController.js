@@ -27,6 +27,7 @@ conn.once('open', () => {
   // Init stream
   gfs = Grid(conn.db, mongoose.mongo);
   gfs.collection('uploads');
+  console.log('connected to uploads database!');
 });
 
 // Create storage engine
@@ -100,8 +101,7 @@ router.post('/register', (req, res) => {
 
 // @route POST
 // @desc Register new user account
-router.post('/register/user', upload.fields([{name: 'avatar', maxCount: 1}, {name: 'resume_file', maxCount: 1}]),
-(req, res) => {
+router.post('/register/user', upload.fields([{name: 'avatar', maxCount: 1}, {name: 'resume_file', maxCount: 1}]), (req, res) => {
 	// console.log(req.body);
 	// console.log(req.files);
 
@@ -109,7 +109,7 @@ router.post('/register/user', upload.fields([{name: 'avatar', maxCount: 1}, {nam
 
 	let data = req.body;
 	let name = data.name;
-	let username = data.username;
+	let username = data.username.trim();
 	let email = data.email;
 	let password = data.password;
 	let interests = data.interests;
@@ -193,7 +193,7 @@ router.post('/register/org', upload.single('avatar'), (req, res) => {
 
 	let data = req.body;
 	let name = data.name;
-	let username = data.username;
+	let username = data.username.trim();
 	let email = data.email;
 	let password = data.password;
 	let hashtags = data.hashtags;
@@ -303,8 +303,7 @@ router.get('/profile', (req, res) => {
 
 // @route POST
 // @desc save edits to current user account's profile
-router.post('/profile/user', upload.fields([{name: 'avatar', maxCount: 1}, {name: 'resume_file', maxCount: 1}]),
-	(req, res) => {
+router.post('/profile/user', upload.fields([{name: 'avatar', maxCount: 1}, {name: 'resume_file', maxCount: 1}]), (req, res) => {
 	let data = req.body;
 	const currentAcc = req.user;
 

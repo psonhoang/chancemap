@@ -23,23 +23,23 @@
                         <% job.hashtags.forEach(function(tag) { %> 
                         <p style="font-size: 13px" class="tag tag-pill tag-info"><%= tag; %></p>
                         <% }); %>
-                        <p><label>Application Form: </label><b> <%= job.app_form %></b></p>
+                        <p><label>Application Form: </label><b><a href="<%= job.app_form %>"><%= job.app_form %></a> </b></p>
                         <p><lable>Application Deadline: </lable><b><%= months[job.app_deadline.getMonth()] + ' ' + job.app_deadline.getDate() + ', ' + job.app_deadline.getFullYear() %></b></p>
                         <p><label>Organisation's Facebook: </label>
                             <b>
                             <% if (job.facebook != undefined) { %>
-                                <%= job.facebook %>
+                                <a href="<%= job.website %>"><%= job.facebook %></a>
                             <% } else { %>
-                                To be updated
+                                To be updated.
                             <% } %>
                             </b>
                         </p>
                         <p><label>Organisation's Website: </label>
                             <b>
                                 <% if (job.website != undefined) { %>
-                                    <%= job.website %>
+                                    <a href="<%= job.website %>"><%= job.website %></a>
                                 <% } else { %>
-                                    To be updated
+                                    To be updated.
                                 <% } %>             
                             </b>
                         </p>

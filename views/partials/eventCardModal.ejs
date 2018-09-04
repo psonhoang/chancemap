@@ -9,17 +9,18 @@
                 <div class="card-body collapse in">
                     <div class="card-block">
                         <p><label>Organisation name:</label>  <strong><%= event.org_name %></strong></p>
+                        <p><label>Description:</label><strong><%= event.desc %></strong></p>
                         <p><label>Hashtags:</label>
                         <% event.hashtags.forEach(hashtag => { %>
                             <% var isMatch = false; %>
                             <% criteriaList.forEach(criteria => { %>
                             <% if (hashtag.includes(criteria) && !isMatch) { %>
                                 <% isMatch = true; %>
-                                <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
+                                <p style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></p>
                             <% } %>
                             <% }); %>
                             <% if (!isMatch) { %>
-                            <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
+                            <p style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></p>
                             <% } %>
                         <% }); %></p>  
                         <p><label>Address:</label>  <strong><%= event.address %></strong></p>
@@ -41,10 +42,10 @@
                             <p><label>End time:</label>  <strong><%= event.end_time %></strong></p>
                         <% } %>
                         <% if(event.facebook) { %>
-                            <p><label>Facebook:</label>  <strong><%= event.facebook %></strong></p>
+                            <p><label>Facebook:</label> <a href="<%= event.facebook %>"><strong><%= event.facebook %></strong></a></p>
                         <% } %>
                         <% if(event.website) { %>
-                            <p><label>Website:</label>  <strong><%= event.website %></strong></p>
+                            <p><label>Website:</label> <strong><a href="<%= event.website %>"><%= event.website %></a></strong></p>
                         <% } %>
                     </div>
                 </div>

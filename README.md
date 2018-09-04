@@ -4,4 +4,4 @@
 
 const founders = ['Pham Son Hoang', 'Nguyen Minh Dang', 'Dang Hoang Long'];
 
-let developer = ['Bao Bu'];
+let developer = ['Bao Bu', 'Minh Pham', 'Van Huynh'];

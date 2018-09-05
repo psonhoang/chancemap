@@ -35,30 +35,30 @@
                                         <% } %>
                                     <% }); %>
                                 </p>  
-                                <p><label>Organisation's Facebook: </label>
+                                <p><label>Facebook: </label>
                                     <b>
                                     <% if (org.facebook != "") { %>
-                                        <%= org.facebook %>
+                                        <a href="<%= org.facebook %>"><i class="ft-facebook"></i></a>
                                     <% } else { %>
-                                        We will update real quick ^^
+                                        N/A
                                     <% } %>
                                     </b>
                                 </p>
-                                <p><label>Organisation's Website: </label>
+                                <p><label>Website: </label>
                                     <b>
                                         <% if (org.website != "") { %>
-                                            <%= org.website %>
+                                            <a href="<%= org.website %>"><i class="ft-globe"></i></a>
                                         <% } else { %>
-                                            We will update real quick ^^
+                                            N/A
                                         <% } %>             
                                     </b>
                                 </p>
-                                <p><label>Organisation's Email: </label>
+                                <p><label>Email: </label>
                                     <b>
                                         <% if (org.email != "") { %>
                                             <%= org.email %>
                                         <% } else { %>
-                                            We will update real quick ^^
+                                            N/A
                                         <% } %>             
                                     </b>
                                 </p>            
@@ -79,7 +79,7 @@
                                     <i class="fa fa-ellipsis-v font-medium-3"></i>
                                 </a>
                             </div>
-                            <div class="card-body collapse-in">
+                            <div style="display: block; max-height: 200px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="card-body collapse-in">
                                 <% let jobCount = 0; %>
                                 <% jobs.forEach(job => { %>
                                     <% if(job.org_name == org.name) { %>
@@ -123,7 +123,7 @@
                                 </a>
                             </div>
                             <div class="card-body collapse-in">
-                                <div class="table-responsive">
+                                <div style="display: block; max-height: 200px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="table-responsive">
                                     <table class="table">
                                         <thead style="color: white" class="thead bg-blue-grey bg-darken-3">
                                             <tr>

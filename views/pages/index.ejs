@@ -39,7 +39,7 @@
                             <tbody id="eventsBody">
                                 <% events.forEach(event => { %>
                                 <% cardId = event._id; %>
-                                <tr class="btn-secondary" style="border: 0" data-toggle="modal" data-target="#<%= cardId %>">
+                                <tr class="btn-secondary" data-toggle="modal" data-target="#<%= cardId %>">
                                     <% if(event.reg_deadline) { %>
                                     <th scope="row"><%= months[event.reg_deadline.getMonth()] + ' ' + event.reg_deadline.getDate() + ', ' + event.reg_deadline.getFullYear() %></th>
                                     <% } else { %>

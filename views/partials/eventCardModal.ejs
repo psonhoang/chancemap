@@ -9,7 +9,7 @@
                 <div class="card-body collapse in">
                     <div class="card-block">
                         <p><label>Organisation name:</label>  <strong><%= event.org_name %></strong></p>
-                        <p><label>Description:</label><strong><%= event.desc %></strong></p>
+                        <p><label>Description:</label> <strong><%= event.desc %></strong></p>
                         <p><label>Hashtags:</label>
                         <% event.hashtags.forEach(hashtag => { %>
                             <% var isMatch = false; %>
@@ -24,7 +24,7 @@
                             <% } %>
                         <% }); %></p>  
                         <p><label>Address:</label>  <strong><%= event.address %></strong></p>
-                        <p><label>Registration form:</label>  <strong><%= event.reg_form %></strong></p>
+                        <p><label>Registration form:</label>  <a href="<%= event.reg_form %>"><strong><%= event.reg_form %></strong></a></p>
                         <p><label>Registration deadline:</label>
                         <% if(event.reg_deadline) { %>
                         <strong><%= months[event.reg_deadline.getMonth()] + ' ' + event.reg_deadline.getDate() + ', ' + event.reg_deadline.getFullYear() %></strong>
@@ -42,10 +42,10 @@
                             <p><label>End time:</label>  <strong><%= event.end_time %></strong></p>
                         <% } %>
                         <% if(event.facebook) { %>
-                            <p><label>Facebook:</label> <a href="<%= event.facebook %>"><strong><%= event.facebook %></strong></a></p>
+                            <p><label>Facebook:</label> <a href="<%= event.facebook %>"><strong><i class="ft-facebook"></i></strong></a></p>
                         <% } %>
                         <% if(event.website) { %>
-                            <p><label>Website:</label> <strong><a href="<%= event.website %>"><%= event.website %></a></strong></p>
+                            <p><label>Website:</label><a href="<%= event.website %>"><strong><i class="ft-globe"></i></strong></a></p>
                         <% } %>
                     </div>
                 </div>

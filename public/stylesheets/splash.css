@@ -88,7 +88,7 @@ html, body {
     padding-bottom: -5px;
     color: white;
     font-size: 80px;
-    font-family: 'Josefin Slab', serif;
+    font-family: 'Josefin Sans', sans-serif;
     text-align: center;
     font-weight: normal;
 }
@@ -101,10 +101,6 @@ html, body {
     font-size: large;
     margin-top: -10px;
     font-weight: normal;
-}
-
-#map {
-    font-family: 'Josefin Sans', sans-serif;
 }
 
 .buttonOne {

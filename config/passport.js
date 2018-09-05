@@ -11,17 +11,18 @@ module.exports = function(passport) {
   }
   // Local Strategy
   passport.use(new LocalStrategy((username, password, done) => {
-    query = {username:username};
-    if (validateEmail(username)) {
-      var query = {email: username};
-    } else {
-      var query = {username: username};
+    
+    let query = { username: username.trim() } ;
+    
+    if (validateEmail(username.trim())) {
+      query = { email: username.trim() };
     }
+    
     // Match username
     Account.findOne(query, (err, account) => {
       if (err) throw err;
       if(!account) {
-        return done(null, false, {message: 'No account found with username: '+ username});
+        return done(null, false, {message: 'No account found for: ' + username});
       }
 
     // Match password

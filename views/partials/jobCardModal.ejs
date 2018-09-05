@@ -23,21 +23,21 @@
                         <% job.hashtags.forEach(function(tag) { %> 
                         <p style="font-size: 13px" class="tag tag-pill tag-info"><%= tag; %></p>
                         <% }); %>
-                        <p><label>Application Form: </label><b><a href="<%= job.app_form %>"><%= job.app_form %></a> </b></p>
-                        <p><lable>Application Deadline: </lable><b><%= months[job.app_deadline.getMonth()] + ' ' + job.app_deadline.getDate() + ', ' + job.app_deadline.getFullYear() %></b></p>
-                        <p><label>Organisation's Facebook: </label>
+                        <p><label>Application Form: </label> <b><a href="<%= job.app_form %>"><%= job.app_form %></a> </b></p>
+                        <p><lable>Application Deadline: </lable> <b><%= months[job.app_deadline.getMonth()] + ' ' + job.app_deadline.getDate() + ', ' + job.app_deadline.getFullYear() %></b></p>
+                        <p><label>Facebook: </label>
                             <b>
                             <% if (job.facebook != undefined) { %>
-                                <a href="<%= job.website %>"><%= job.facebook %></a>
+                                <a href="<%= job.facebook %>"><i class="ft-facebook"></i></a>
                             <% } else { %>
                                 To be updated.
                             <% } %>
                             </b>
                         </p>
-                        <p><label>Organisation's Website: </label>
+                        <p><label>Website: </label>
                             <b>
                                 <% if (job.website != undefined) { %>
-                                    <a href="<%= job.website %>"><%= job.website %></a>
+                                    <a href="<%= job.website %>"><i class="ft-globe"></i></a>
                                 <% } else { %>
                                     To be updated.
                                 <% } %>             

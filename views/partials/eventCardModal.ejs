@@ -2,7 +2,8 @@
     <div class="modal-dialog">
            
         <!-- Modal content-->
-            <div class="modal-content">
+        <div class="row">
+            <div class="card col-md-11"  style="position: relative; left: -200px">
                 <div class="card-header bg-amber bg-darken-3" style="color: white">
                     <h4 class="card-title" id="from-actions-top-bottom-right"><i class="ft-calendar"></i> <%= event.name %></h4>
                 </div>
@@ -45,10 +46,13 @@
                             <p><label>Facebook:</label> <a href="<%= event.facebook %>"><strong><%= event.facebook %></strong></a></p>
                         <% } %>
                         <% if(event.website) { %>
-                            <p><label>Website:</label> <strong><a href="<%= event.website %>"><%= event.website %></a></strong></p>
+                            <p><label>Website:</label> <strong><a><%= event.website %></a></strong></p>
                         <% } %>
                     </div>
                 </div>
+            </div>
+            <div class="col-md-1" style="position: relative; left: -200px">
+                <div class="fb-post card" data-href="<%= event.facebook %>" data-width="500" data-show-text="true"></div>
             </div>
         </div>
 

@@ -326,3 +326,72 @@ html, body {
     font-weight: normal;
 }
 
+
+@media (max-width: 600px) {
+    .navTop {
+        display: none;
+    }
+
+    .carousel-indicators {
+        display: none;
+    }
+
+    .footer {
+        display: none;
+    }
+    
+    .big-logo p {
+        display: block;
+        align-content: center;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 400px;
+        padding-top: 180px;
+        padding-bottom: -5px;
+        color: white;
+        font-size: 55px;
+        font-family: 'Josefin Sans', sans-serif;
+        text-align: center;
+        font-weight: normal;
+    }
+
+    .big-logo h3 {
+        padding-top: -100px;
+        color: white;
+        text-align: center;
+        font-family: 'Josefin Slab', serif;
+        font-size: large;
+        margin-top: -10px;
+        font-weight: normal;
+    }
+
+    .buttonOne {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        background-color: #DC4244; 
+        width: 275px;
+        height: 48px;
+        font-size: 24px;
+        color: white;
+        margin-top: 35px;
+        border: none;
+        border-radius: 5px;
+    }
+
+    .buttonTwo {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        background-color: #313E50; 
+        width: 275px;
+        height: 48px;
+        font-size: 24px;
+        color: white;
+        border-radius: 10px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 5px;
+    }
+
+}

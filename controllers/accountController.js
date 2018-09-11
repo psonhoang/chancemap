@@ -83,19 +83,39 @@ router.post('/register', (req, res) => {
 	if(!(data.org_acc || data.user_acc) || data.password != data.re_password) {
 		res.render('register', {title: "ChanceMap | Sign up", message: "Your passwords don't match!"});
 	} else {
-		let acc_type = 0;
-		if(data.org_acc) { acc_type = 1; }
-		if(acc_type == 0) {
-			res.render('regUser', {
-				title: 'ChanceMap | Sign Up',
-				user: data // username, email, password
-			});
-		} else {
-			res.render('regOrg', {
-				title: 'ChanceMap | Sign Up',
-				org: data
-			});
-		}
+		Account.findOne({username: data.username}, (err, account) => {
+			if(err) {
+				console.log(err);
+				return;
+			}
+			if(!account) {
+				Account.findOne({email: data.email}, (err, acc) => {
+					if(err) {
+						console.log(err);
+						return;
+					}
+					if(!acc) {
+						let acc_type = 0;
+						if(data.org_acc) { acc_type = 1; }
+						if(acc_type == 0) {
+							res.render('regUser', {
+								title: 'ChanceMap | Sign Up',
+								user: data // username, email, password
+							});
+						} else {
+							res.render('regOrg', {
+								title: 'ChanceMap | Sign Up',
+								org: data
+							});
+						}
+					} else {
+						res.render('register', {title: "ChanceMap | Sign up", message: data.email + " already exists!"});
+					}
+				});
+			} else {
+				res.render('register', {title: "ChanceMap | Sign up", message: data.username + " already exists!"});
+			}
+		});
 	}
 });
 

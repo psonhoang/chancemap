@@ -326,7 +326,6 @@ html, body {
     font-weight: normal;
 }
 
-
 @media(max-width: 600px) {
     .navTop {
         display: none;
@@ -393,5 +392,4 @@ html, body {
         border: none;
         border-radius: 5px;
     }
-
 }

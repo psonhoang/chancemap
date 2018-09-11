@@ -67,8 +67,11 @@ router.get('/orgs', (req, res) => {
 		var sortedOrgs = [];
 		orgs.forEach(org => {
 			org.matches = 0;
-			org.hashtags.forEach(hashtag => {
-				criteriaList.forEach(criteria => {
+			criteriaList.forEach(criteria => {
+				if(org.username.toLowerCase().includes(criteria) || org.name.toLowerCase().includes(criteria)) {
+					org.matches++;
+				}
+				org.hashtags.forEach(hashtag => {
 					if(hashtag.includes(criteria)) {
 						org.matches++;
 					}
@@ -77,7 +80,6 @@ router.get('/orgs', (req, res) => {
 			if(org.matches > 0) {
 				sortedOrgs.push(org);
 			}
-			console.log(org.matches);
 		});
 		sortedOrgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
 		if(currentAcc.account_type == 1) {
@@ -143,14 +145,21 @@ router.get('/users', (req, res) => {
 		var sortedUsers = [];
 		users.forEach(user => {
 			user.matches = 0;
+
 			let hashtags = user.interests.concat(user.skills);
-			hashtags.forEach(hashtag => {
-				criteriaList.forEach(criteria => {
+
+			criteriaList.forEach(criteria => {
+				if(user.username.toLowerCase().includes(criteria) || user.name.toLowerCase().includes(criteria)) {
+					user.matches++;
+				}
+
+				hashtags.forEach(hashtag => {
 					if(hashtag.includes(criteria)) {
 						user.matches++;
 					}
 				});
 			});
+
 			if(user.matches > 0) {
 				// let index = users.indexOf(user);
 				// if(index != -1) {
@@ -159,7 +168,6 @@ router.get('/users', (req, res) => {
 				// }
 				sortedUsers.push(user);
 			}
-			console.log(user.matches);
 		});
 		sortedUsers.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
 		if(currentAcc.account_type == 1) {
@@ -226,8 +234,11 @@ router.get('/jobs', (req, res) => {
 		var sortedJobs = [];
 		jobs.forEach(job => {
 			job.matches = 0;
-			job.hashtags.forEach(hashtag => {
-				criteriaList.forEach(criteria => {
+			criteriaList.forEach(criteria => {
+				if(job.org_name.toLowerCase().includes(criteria) || job.name.toLowerCase().includes(criteria)) {
+					job.matches++;
+				}
+				job.hashtags.forEach(hashtag => {
 					if(hashtag.includes(criteria)) {
 						job.matches++;
 					}
@@ -240,7 +251,6 @@ router.get('/jobs', (req, res) => {
 				// }
 				sortedJobs.push(job);
 			}
-			console.log(job.matches);
 		});
 		sortedJobs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
 		if(currentAcc.account_type == 1) {
@@ -294,8 +304,11 @@ router.get('/events', (req, res) => {
 		var sortedEvents = [];
 		events.forEach(event => {
 			event.matches = 0;
-			event.hashtags.forEach(hashtag => {
-				criteriaList.forEach(criteria => {
+			criteriaList.forEach(criteria => {
+				if(event.org_name.toLowerCase().includes(criteria) || event.name.toLowerCase().includes(criteria)) {
+					event.matches++;
+				}
+				event.hashtags.forEach(hashtag => {
 					if(hashtag.includes(criteria)) {
 						event.matches++;
 					}
@@ -308,7 +321,6 @@ router.get('/events', (req, res) => {
 				// }
 				sortedEvents.push(event);
 			}
-			console.log(event.matches);
 		});
 		sortedEvents.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
 		if(currentAcc.account_type == 1) {
@@ -362,8 +374,11 @@ router.get('/', (req, res) => {
 		var sortedEvents = [];
 		events.forEach(event => {
 			event.matches = 0;
-			event.hashtags.forEach(hashtag => {
-				criteriaList.forEach(criteria => {
+			criteriaList.forEach(criteria => {
+				if(event.org_name.toLowerCase().includes(criteria) || event.name.toLowerCase().includes(criteria)) {
+					event.matches++;
+				}
+				event.hashtags.forEach(hashtag => {
 					if(hashtag.includes(criteria)) {
 						event.matches++;
 					}
@@ -376,7 +391,6 @@ router.get('/', (req, res) => {
 				// }
 				sortedEvents.push(event);
 			}
-			console.log(event.matches);
 		});
 		sortedEvents.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
 		Job.find((err, jobs) => {
@@ -388,8 +402,11 @@ router.get('/', (req, res) => {
 			var sortedJobs = [];
 			jobs.forEach(job => {
 				job.matches = 0;
-				job.hashtags.forEach(hashtag => {
-					criteriaList.forEach(criteria => {
+				criteriaList.forEach(criteria => {
+					if(job.org_name.toLowerCase().includes(criteria) || job.name.toLowerCase().includes(criteria)) {
+						job.matches++;
+					}
+					job.hashtags.forEach(hashtag => {
 						if(hashtag.includes(criteria)) {
 							job.matches++;
 						}
@@ -402,7 +419,6 @@ router.get('/', (req, res) => {
 					// }
 					sortedJobs.push(job);
 				}
-				console.log(job.matches);
 			});
 			sortedJobs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
 			Org.find((err, orgs) => {
@@ -414,8 +430,11 @@ router.get('/', (req, res) => {
 				var sortedOrgs = [];
 				orgs.forEach(org => {
 					org.matches = 0;
-					org.hashtags.forEach(hashtag => {
-						criteriaList.forEach(criteria => {
+					criteriaList.forEach(criteria => {
+						if(org.username.toLowerCase().includes(criteria) || org.name.toLowerCase().includes(criteria)) {
+							org.matches++;
+						}
+						org.hashtags.forEach(hashtag => {
 							if(hashtag.includes(criteria)) {
 								org.matches++;
 							}
@@ -428,7 +447,6 @@ router.get('/', (req, res) => {
 						// }
 						sortedOrgs.push(org);
 					}
-					console.log(org.matches);
 				});
 				sortedOrgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
 				User.find((err, users) => {
@@ -441,8 +459,12 @@ router.get('/', (req, res) => {
 					users.forEach(user => {
 						user.matches = 0;
 						let hashtags = user.interests.concat(user.skills);
-						hashtags.forEach(hashtag => {
-							criteriaList.forEach(criteria => {
+						criteriaList.forEach(criteria => {
+							if(user.username.toLowerCase().includes(criteria) || user.name.toLowerCase().includes(criteria)) {
+								user.matches++;
+							}
+
+							hashtags.forEach(hashtag => {
 								if(hashtag.includes(criteria)) {
 									user.matches++;
 								}
@@ -456,7 +478,6 @@ router.get('/', (req, res) => {
 							// }
 							sortedUsers.push(user);
 						}
-						console.log(user.matches);
 					});
 					sortedUsers.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
 					if(currentAcc.account_type == 1) {

@@ -2,6 +2,7 @@
   /*the container must be positioned relative:*/
   position: relative;
   display: inline-block;
+  width: 10%;
 }
 
 .autocomplete-items {
@@ -30,6 +31,6 @@
 
 .autocomplete-active {
   /*when navigating through the items using the arrow keys:*/
-  background-color: DodgerBlue !important;
+  background-color: #DC4244 !important;
   color: #ffffff;
 }

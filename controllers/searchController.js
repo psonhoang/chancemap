@@ -527,18 +527,33 @@ router.get('/', (req, res) => {
 });
 
 router.post('/preview-tags', (req, res) => {
-	let wordsInput = req.body.wordsInput;
+  let wordsInput = req.body.wordsInput;
   User.find({
-    interests:{
-      $regex: new RegExp(wordsInput)
-    }
-  },function(err, data){
+  	$or: [
+  		{ interests:{
+      		$regex: new RegExp(wordsInput)
+    	}},
+    	{ skills: {
+    		$regex: new RegExp(wordsInput)
+    	}}
+  	]
+  }, function(err, data){
 		var searchArray = [];
 		data.forEach(entry => {
-      searchArray = searchArray.concat(entry.interests);
-    });
-		searchArray = searchArray.filter(onlyUnique);
-		res.json(searchArray);
+	      searchArray = searchArray.concat(entry.interests);
+	      searchArray = searchArray.concat(entry.skills);
+	    });
+	    Org.find({
+	    	hashtags: {
+	    		$regex: new RegExp(wordsInput)
+	    	}
+	    }, (err, org_data) => {
+	    	org_data.forEach(org_entry => {
+		      searchArray = searchArray.concat(org_entry.hashtags);
+		    });
+		    searchArray = searchArray.filter(onlyUnique);
+			res.json(searchArray);
+	    }).limit(10);
   }).limit(10);
 });
 

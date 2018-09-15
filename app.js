@@ -102,7 +102,7 @@ var mAccountType;
 
 io.on('connection', (socket) => {
   console.log('a user connected');
-  
+
   mSocket = socket;
 
   // For orgs
@@ -121,7 +121,7 @@ io.on('connection', (socket) => {
   socket.on('event', (msg) => {
     console.log(msg);
   });
-  
+
   // Disconnect
   socket.on('disconnect', () => {
     console.log('a user disconected');
@@ -338,6 +338,7 @@ app.use('/files', fileRoutes);
 // @API ROUTES
 let searchRoutes = require('./controllers/searchController');
 app.use('/search', searchRoutes);
+
 
 // Export
 module.exports = server;

@@ -148,61 +148,71 @@ router.post('/register/user', upload.fields([{name: 'avatar', maxCount: 1}, {nam
 		avatar = '/files/' + req.files['avatar'][0].filename;
 	}
 
-	var newUser = new User({
-		_id: new mongoose.Types.ObjectId(),
-		created_at: new Date(),
-		updated_at: new Date(),
-		name: name,
-		email: email,
-		username: username,
-		interests: interests,
-		skills: skills,
-		intro: intro,
-		school: school,
-		resume_file: resume_file, // stores resume file's link (optional)
-		jobs: [],
-		facebook: facebook,
-		website: website,
-		following: [], // contain org_ids
-		avatar: avatar,
-		new_notis: []
+	Account.findOne({email: email}, (err, acc) => {
+		if(err) {
+			console.log(err);
+			return;
+		}
+		if(!acc) {
+			var newUser = new User({
+				_id: new mongoose.Types.ObjectId(),
+				created_at: new Date(),
+				updated_at: new Date(),
+				name: name,
+				email: email,
+				username: username,
+				interests: interests,
+				skills: skills,
+				intro: intro,
+				school: school,
+				resume_file: resume_file, // stores resume file's link (optional)
+				jobs: [],
+				facebook: facebook,
+				website: website,
+				following: [], // contain org_ids
+				avatar: avatar,
+				new_notis: []
+			});
+
+		    newUser.save((err, user) => {
+			    if(err) {
+			      console.log(err);
+			      return;
+			    }
+			    console.log(user);
+		    });
+
+			var newAccount = new Account({
+				_id: new mongoose.Types.ObjectId(),
+				created_at: new Date(),
+				updated_at: new Date(),
+				email: email,
+				username: username,
+				password: password,
+				account_type: 0, // 0: User account; 1: Org account
+				account_id: newUser._id // store either user or org account's _id
+			});
+
+			bcrypt.genSalt(10, function(err, salt) {
+				bcrypt.hash(newAccount.password, salt, function(err, hash) {
+				  if(err) {
+				    console.log(err);
+				  }
+				  newAccount.password = hash;
+				  newAccount.save((err, acc) => {
+				    if(err) {
+				      console.log(err);
+				      return;
+				    }
+				    console.log(acc);
+				    res.redirect('/login');
+				  });
+				});
+		  	});
+		} else {
+			res.render('register', {title: "ChanceMap | Sign up", message: email + " already exists!"});
+		}
 	});
-
-  newUser.save((err, user) => {
-    if(err) {
-      console.log(err);
-      return;
-    }
-    console.log(user);
-  });
-
-	var newAccount = new Account({
-		_id: new mongoose.Types.ObjectId(),
-		created_at: new Date(),
-		updated_at: new Date(),
-		email: email,
-		username: username,
-		password: password,
-		account_type: 0, // 0: User account; 1: Org account
-		account_id: newUser._id // store either user or org account's _id
-	});
-
-	bcrypt.genSalt(10, function(err, salt) {
-    bcrypt.hash(newAccount.password, salt, function(err, hash) {
-      if(err) {
-        console.log(err);
-      }
-      newAccount.password = hash;
-      newAccount.save((err, acc) => {
-        if(err) {
-          console.log(err);
-          return;
-        }
-        console.log(acc);
-        res.redirect('/login');
-      });
-    });
-  });
 });
 
 // @route POST
@@ -227,59 +237,70 @@ router.post('/register/org', upload.single('avatar'), (req, res) => {
 		avatar = '/files/' + req.file.filename;
 	}
 
-	var newOrg = new Org({
-		_id: new mongoose.Types.ObjectId(),
-		created_at: new Date(),
-		updated_at: new Date(),
-		name: name,
-		email: email,
-		username: username,
-		hashtags: hashtags,
-		events: [], // contain events' _ids
-		jobs: [], // contain jobs' _ids
-		followers: [], // contain users' _ids
-		desc: desc,
-		facebook: facebook,
-		website: website,
-		avatar: avatar,
-		new_notis: []
+	Account.findOne({email: email}, (err, acc) => {
+		if(err) {
+			console.log(err);
+			return;
+		}
+		if(!acc) {
+			var newOrg = new Org({
+				_id: new mongoose.Types.ObjectId(),
+				created_at: new Date(),
+				updated_at: new Date(),
+				name: name,
+				email: email,
+				username: username,
+				hashtags: hashtags,
+				events: [], // contain events' _ids
+				jobs: [], // contain jobs' _ids
+				followers: [], // contain users' _ids
+				desc: desc,
+				facebook: facebook,
+				website: website,
+				avatar: avatar,
+				new_notis: []
+			});
+
+			newOrg.save((err, acc) => {
+			if(err) {
+			  console.log(err);
+			  return;
+			}
+			console.log(acc);
+			});
+
+			var newAccount = new Account({
+				_id: new mongoose.Types.ObjectId(),
+				created_at: new Date(),
+				updated_at: new Date(),
+				email: email,
+				username: username,
+				password: password,
+				account_type: 1, // 0: User account; 1: Org account
+				account_id: newOrg._id // store either user or org account's _id
+			});
+
+			bcrypt.genSalt(10, function(err, salt) {
+			    bcrypt.hash(newAccount.password, salt, function(err, hash) {
+			      if(err) {
+			        console.log(err);
+			      }
+			      newAccount.password = hash;
+			      newAccount.save((err, acc) => {
+			        if(err) {
+			          console.log(err);
+			          return;
+			        }
+			        console.log(acc);
+			        res.redirect('/login');
+			      });
+			    });
+		  	});
+		} else {
+			res.render('register', {title: "ChanceMap | Sign up", message: email + " already exists!"});
+		}
 	});
 
-  newOrg.save((err, acc) => {
-    if(err) {
-      console.log(err);
-      return;
-    }
-    console.log(acc);
-  });
-
-	var newAccount = new Account({
-		_id: new mongoose.Types.ObjectId(),
-		created_at: new Date(),
-		updated_at: new Date(),
-		email: email,
-		username: username,
-		password: password,
-		account_type: 1, // 0: User account; 1: Org account
-		account_id: newOrg._id // store either user or org account's _id
-	});
-
-	bcrypt.genSalt(10, function(err, salt) {
-    bcrypt.hash(newAccount.password, salt, function(err, hash) {
-      if(err) {
-        console.log(err);
-      }
-      newAccount.password = hash;
-      newAccount.save((err, acc) => {
-        if(err) {
-          console.log(err);
-          return;
-        }
-        console.log(acc);
-        res.redirect('/login');
-      });
-    });
-  });
 });
 
 

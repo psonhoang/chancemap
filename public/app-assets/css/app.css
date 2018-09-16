@@ -189,12 +189,12 @@ footer.footer-dark {
           .main-menu.menu-light .navigation > li.hover > a.mm-next, .main-menu.menu-light .navigation > li:hover > a.mm-next, .main-menu.menu-light .navigation > li.active > a.mm-next {
             background-color: inherit; }
         .main-menu.menu-light .navigation > li.active > a {
-          color: #00B5B8;
+          color: #DC4244;
           font-weight: 400; }
         .main-menu.menu-light .navigation > li .active {
           background: #f0f0f0; }
           .main-menu.menu-light .navigation > li .active > a {
-            color: #00B5B8;
+            color: #DC4244;
             font-weight: 500; }
           .main-menu.menu-light .navigation > li .active .hover > a {
             background: whitesmoke; }
@@ -227,7 +227,7 @@ footer.footer-dark {
           .main-menu.menu-light .navigation > li ul .active {
             background: transparent; }
             .main-menu.menu-light .navigation > li ul .active > a {
-              color: #00B5B8;
+              color: #DC4244;
               font-weight: 500; }
             .main-menu.menu-light .navigation > li ul .active .hover > a {
               background-color: transparent; }

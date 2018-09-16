@@ -53,7 +53,8 @@
     cardElement4: months[event.start_date.getMonth()] + ' ' + event.start_date.getDate() + ', ' + event.start_date.getFullYear(),
     cardElement5: event.start_time,
     cardElement6: event.end_date ? months[event.end_date.getMonth()] + ' ' + event.end_date.getDate() + ', ' + event.end_date.getFullYear() : null,
-    cardElement7: event.end_time, }); %>
+    cardElement7: event.end_time, 
+    cardElement2: event.desc }); %>
 <%  eventCounts += 1; %>
 <%  }); %>
 </section>

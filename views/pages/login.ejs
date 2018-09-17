@@ -46,7 +46,8 @@
                       </div>
                       <div class="col-md-6 col-xs-12 text-xs-center text-md-right"><a style="color: #2489C5" href="recover-password.html" class="card-link font-medium-2">Forgot Password?</a></div>
                     </fieldset>
-                    <button style="background-color: #404E67; color: white" type="submit" class="btn btn-lg btn-block"><i class="ft-unlock"></i> Login</button>
+                    <button id="btnSubmit" style="background-color: #404E67; color: white" class="btn btn-lg btn-block"><i class="ft-unlock"></i> Login</button>
+                    <input type="submit" id="submitBtn" style="display: none">
                   </form>
               </div>
             </div>
@@ -61,3 +62,13 @@
     </div>
   </div>
 </div>
+
+<!-- BEGIN CHANCEMAP SCRIPT -->
+<script>
+  $('#btnSubmit').on('click', function() {
+    if($('#user-name').val() && $('#user-password').val()) {
+      document.getElementById('btnSubmit').disabled = true;
+    }
+    $("#submitBtn").trigger('click');
+  });
+</script>

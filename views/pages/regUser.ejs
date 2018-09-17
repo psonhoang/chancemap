@@ -40,7 +40,7 @@
                   <fieldset class="form-group position-relative has-icon-left">
                     <label class="col-md-2 label-control" for="name">Name</label>
                     <div class="col-md-10">
-                      <input type="text" class="form-control" id="user-name" name="name" placeholder="Name" required>
+                      <input type="text" class="form-control" id="fullname" name="name" placeholder="Name" required>
                       <div class="form-control-position">
                         <i class="ft-user"></i>
                       </div>
@@ -146,7 +146,8 @@
                   <!-- END -->
 
                   <br>
-                  <button id="submitBtn" onclick="freezeBtn();" type="submit" class="btn btn-outline-danger btn-block"><i class="ft-user"></i> Register</button>
+                  <button id="btnSubmit" class="btn btn-outline-danger btn-block"><i class="ft-user"></i> Register</button>
+                  <input id="submitBtn" type="submit" style="display: none;">
                 </form>
               </div>
               <div class="card-block">
@@ -174,14 +175,16 @@
     reader.readAsDataURL(event.target.files[0]);
   }
 
-  function freezeBtn() {
-    document.getElementById('submitBtn').disabled = true;
-    $('form').submit();
-  }
-
   $(document).ready(function() {
     $('#interests-input').tagging('removeAll');
     $('#skills-input').tagging('removeAll');
+
+    $('#btnSubmit').on('click', function() {
+      if($('#fullname').val()) {
+        document.getElementById('btnSubmit').disabled = true;
+      }
+      $("#submitBtn").trigger('click');
+    });
   });
 
 </script>

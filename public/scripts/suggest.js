@@ -65,7 +65,7 @@ function autocomplete(wordsInput, arr, keyEvent, inputField) {
   }
   document.addEventListener("click", function (e) {
       closeAllLists(e.target);
-      $("#" + inputField.parentNode.id).tagging('remove', wordsInput);
+      // $("#" + inputField.parentNode.id).tagging('remove', wordsInput);
       currentFocus = -1;
   });
 }

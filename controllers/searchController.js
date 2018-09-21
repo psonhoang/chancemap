@@ -553,7 +553,7 @@ router.post('/preview-tags', (req, res) => {
 		    });
 		    searchArray = searchArray.filter(onlyUnique);
 			res.json(searchArray);
-	    }).limit(10);
+		}).limit(10);
   }).limit(10);
 });
 

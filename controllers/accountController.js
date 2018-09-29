@@ -4,7 +4,9 @@ const mongoose = require('mongoose');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
+const nodemailer = require('nodemailer');
 const config = require('../config/database.js');
+const async = require('async');
 // For file uploading
 const crypto = require('crypto');
 const multer = require('multer');
@@ -547,7 +549,7 @@ router.get('/:username/following', (req, res) => {
 	let account_type = req.user.account_type;
 	let account_id = req.user.account_id;
 	let username = req.params.username;
-	if (account_type == 0 && username == req.user.username) 
+	if (account_type == 0 && username == req.user.username)
 	{
 			User.findOne({'username': username}, (err, user) => {
 					if (err) {
@@ -571,7 +573,7 @@ router.get('/:username/following', (req, res) => {
 					});
 			});
 	}
-	else 
+	else
 	{
 			res.redirect('/');
 	}
@@ -581,7 +583,7 @@ router.get('/:orgname/followers', (req, res) => {
 	let account_type = req.user.account_type;
 	let account_id = req.user.account_id;
 	let orgname = req.params.orgname;
-	if (account_type == 1 && orgname == req.user.username) 
+	if (account_type == 1 && orgname == req.user.username)
 	{
 			Org.findOne({'username': orgname}, (err, org) => {
 					if (err) {
@@ -605,7 +607,7 @@ router.get('/:orgname/followers', (req, res) => {
 					});
 			});
 	}
-	else 
+	else
 	{
 			res.redirect('/');
 	}
@@ -668,7 +670,7 @@ router.get('/clear-notifications', (req, res) => {
 				org.new_notis = [];
 				org.save().then(result => {
 					res.send(result);
-				}).catch(err => {	
+				}).catch(err => {
 					res.send(err);
 				});
 			});
@@ -677,6 +679,130 @@ router.get('/clear-notifications', (req, res) => {
 		res.redirect('/login');
 	}
 });
+
+// Forgot Password
+router.get('/recover-password', function(req,res){
+  res.render('recover-password', {title: "ChanceMap | I FORGOT MY PASSWORD", message: req.flash('error')});
+});
+
+router.post('/recover-password', function(req, res, next){
+  async.waterfall([
+    function(done){
+      crypto.randomBytes(20, function(err, buf){
+        var token = buf.toString('hex');
+        done(err, token);
+      });
+    },
+    function(token, done){
+      Account.findOne({email: req.body.email}, function(err, user){
+        if(!user){
+          req.flash('danger', 'No account with that email exists.');
+          return res.redirect('/recover-password');
+        }
+
+        user.resetPassToken = token;
+        user.resetExpiration = Date.now() + 300000; //5 mins
+
+        user.save(function(err){
+          done(err, token, user);
+        });
+      });
+    },
+    function(token, user, done){
+      var smtpTransport = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+          user: 'minhphamfake2310@gmail.com',
+          pass: 'Wefwefwef123'
+        }
+      });
+      var mailOptions = {
+        to: user.email,
+        from: 'minhphamfake2310@gmail.com',
+        subject: 'Password Reset',
+        text: 'Click on this link to reset password: http://' + req.headers.host + '/reset/' + token + '\n\n'
+      };
+      smtpTransport.sendMail(mailOptions, function(err){
+        console.log('mail sent');
+        req.flash('success', 'An email request has been sent to' + user.email);
+        done(err, 'done');
+      });
+    }
+  ], function(err){
+    if(err) return next(err);
+    res.redirect('/login');
+  });
+});
+
+router.get('/reset/:token', function(req,res){
+  Account.findOne({resetPassToken:  req.params.token, resetExpiration: { $gt: Date.now() } }, function(err, user){
+    if(!user){
+      req.flash('danger', 'Password reset token is invalid or has expired');
+      return res.redirect('/recover-password');
+    }
+    res.render('reset', {token: req.params.token, title: "ChanceMap | RESET PASSWORD", message: req.flash('error')});
+  });
+});
+
+router.post('/reset/:token', function(req, res){
+  async.waterfall([
+    function(done){
+      Account.findOne({resetPassToken:  req.params.token, resetExpiration: { $gt: Date.now() } }, function(err, user){
+        if(!user){
+          req.flash('danger', 'Password reset token is invalid or has expired');
+          return res.redirect('/recover-password');
+        }
+        if(req.body.password === req.body.confirm){
+          bcrypt.genSalt(10, function(err, salt){
+            bcrypt.hash(req.body.password, salt, function(err,hash){
+              if(err){
+                console.log(err);
+              }
+              user.password = hash;
+              user.save(function(err){
+                if(err){
+                  console.log(err);
+                  return;
+                } else{
+                  req.flash('success', 'Your password has changed');
+                  res.redirect('/login');
+                  done(err, user);
+                }
+              });
+            });
+            user.resetPassToken = undefined;
+            user.resetExpiration = undefined;
+          });
+        } else{
+          req.flash('danger', 'Passwords do not match');
+          return res.redirect('/recover-password');
+        }
+      });
+    },
+    function(user, done){
+      var smtpTransport = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+          user: 'minhphamfake2310@gmail.com',
+          pass: 'Wefwefwef123'
+        }
+      });
+      var mailOptions = {
+        to: user.email,
+        from: 'minhphamfake2310@gmail.com',
+        subject: 'Password Reset',
+        text: 'Your account password has been successfully reset'
+      };
+      smtpTransport.sendMail(mailOptions, function(err){
+        req.flash('success', 'Password changed!');
+        done(err);
+      });
+    }
+  ], function(err){
+    res.redirect('/');
+  });
+});
+
 
 // Exports
 module.exports = router;

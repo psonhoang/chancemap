@@ -682,7 +682,7 @@ router.get('/clear-notifications', (req, res) => {
 
 // Forgot Password
 router.get('/recover-password', function(req,res){
-  res.render('recover-password', {title: "ChanceMap | I FORGOT MY PASSWORD", message: req.flash('error')});
+  res.render('recover-password', {title: "ChanceMap | Recover Password", message: req.flash('error')});
 });
 
 router.post('/recover-password', function(req, res, next){
@@ -712,15 +712,15 @@ router.post('/recover-password', function(req, res, next){
       var smtpTransport = nodemailer.createTransport({
         service: 'Gmail',
         auth: {
-          user: 'minhphamfake2310@gmail.com',
-          pass: 'Wefwefwef123'
+          user: 'chancemap.official@gmail.com',
+          pass: 'Chancemap1234'
         }
       });
       var mailOptions = {
         to: user.email,
-        from: 'minhphamfake2310@gmail.com',
-        subject: 'Password Reset',
-        text: 'Click on this link to reset password: http://' + req.headers.host + '/reset/' + token + '\n\n'
+        from: 'chancemap.official@gmail.com',
+        subject: 'ChanceMap Account - Password Reset',
+        text: 'Click on this link to reset your password: http://' + req.headers.host + '/reset/' + token + '\n\n'
       };
       smtpTransport.sendMail(mailOptions, function(err){
         console.log('mail sent');
@@ -783,14 +783,14 @@ router.post('/reset/:token', function(req, res){
       var smtpTransport = nodemailer.createTransport({
         service: 'Gmail',
         auth: {
-          user: 'minhphamfake2310@gmail.com',
-          pass: 'Wefwefwef123'
+          user: 'chancemap.official@gmail.com',
+          pass: 'Chancemap1234'
         }
       });
       var mailOptions = {
         to: user.email,
-        from: 'minhphamfake2310@gmail.com',
-        subject: 'Password Reset',
+        from: 'chancemap.official@gmail.com',
+        subject: 'ChanceMap Account - Password Reset',
         text: 'Your account password has been successfully reset'
       };
       smtpTransport.sendMail(mailOptions, function(err){

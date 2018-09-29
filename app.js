@@ -215,6 +215,18 @@ app.get('/', (req, res) => {
                     });
                   });
                   events.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+                  //opportunities sort
+                  opportunities.forEach(opportunity => {
+                    opportunity.matches = 0;
+                    opportunity.hashtags.forEach(hashtag => {
+                      criteriaList.forEach(criteria => {
+                        if(hashtag.includes(criteria)) {
+                          opportunity.matches++;
+                        }
+                      });
+                    });
+                  });
+                  opportunities.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
                   // jobs sort
                   jobs.forEach(job => {
                     job.matches = 0;
@@ -281,6 +293,18 @@ app.get('/', (req, res) => {
                     });
                   });
                   events.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+                  // opportunities sort
+                  opportunities.forEach(opportunity => {
+                    opportunity.matches = 0;
+                    opportunity.hashtags.forEach(hashtag => {
+                      criteriaList.forEach(criteria => {
+                        if(hashtag.includes(criteria)) {
+                          opportunity.matches++;
+                        }
+                      });
+                    });
+                  });
+                  opportunities.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
                   // jobs sort
                   jobs.forEach(job => {
                     job.matches = 0;

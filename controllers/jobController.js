@@ -15,6 +15,7 @@ const Account = require('../models/account');
 const User = require('../models/user');
 const Job = require('../models/job');
 const Org = require('../models/org');
+const Admin = require('../models/admin');
 const Notification = require('../models/notification');
 
 // Database connection
@@ -70,6 +71,20 @@ router.get('/manage', (req, res) => {
 					});
 				});
 			});
+		} else if (req.user.account_type == 2){
+			Job.find({}, (err, jobs) => {
+				//console.log(jobs);
+				Admin.findOne({_id: req.user.account_id}, (err, admin) => {
+					res.render('jobs/orgs/manage', {
+						title: 'ChanceMap | Manage Jobs',
+						account_type: req.user.account_type,
+						account_id: req.user.account_id,
+						currentAcc: admin,
+						jobs: jobs,
+						notis: req.notis
+					});
+				});
+			});
 		}
 		else
 		{
@@ -104,6 +119,20 @@ router.get('/', (req, res) => {
 						account_type: req.user.account_type,
 						account_id: req.user.account_id,
 						currentAcc: org,
+						criteriaList: criteriaList,
+						jobs: jobs,
+						notis: req.notis
+					});
+				});
+			}
+			else if (req.user.account_type == 2){
+				Admin.findOne({_id: req.user.account_id}, (err, admin) => {
+					let criteriaList = [];
+					res.render('jobs/dashboard', {
+						title: 'ChanceMap | Jobs',
+						account_type: req.user.account_type,
+						account_id: req.user.account_id,
+						currentAcc: admin,
 						criteriaList: criteriaList,
 						jobs: jobs,
 						notis: req.notis

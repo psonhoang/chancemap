@@ -4,6 +4,7 @@ const router = express.Router();
 // Models
 const User = require('../models/user');
 const Org = require('../models/org');
+const Admin = require('../models/admin');
 
 // @Routes
 router.get('/', (req, res) => {
@@ -42,6 +43,19 @@ router.get('/', (req, res) => {
                   notis: req.notis
               });
           })
+      } else if (account_type == 2){
+        Admin.findOne({'_id': account_id}, (err, admin) => {
+            let criteriaList = [];
+            res.render('users/dashboard', {
+                title: 'ChanceMap | Users',
+                account_type: account_type,
+                account_id: account_id,
+                currentAcc: admin,
+                users: users,
+                criteriaList: criteriaList,
+                notis: req.notis
+            });
+        })
       } else {
           User.findOne({'_id': account_id}, (err, user) => {
               let criteriaList = user.interests.concat(user.skills);

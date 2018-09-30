@@ -348,8 +348,6 @@ app.get('/', (req, res) => {
               } else {
                 Admin.findOne({'_id': account_id}, (err, admin) => {
                   let criteriaList = [];
-                  Event.find({},(err,events) => {});
-                  Job.find({},(err,events) => {});
                   res.render('index', {
                     title: 'ChanceMap | Home',
                     account_type: account_type,

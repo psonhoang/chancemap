@@ -9,6 +9,7 @@ const Event = require('../models/event');
 const Org = require('../models/org');
 const User = require('../models/user');
 const Notification = require('../models/notification');
+const Admin = require('../models/admin');
 
 // Database connection
 const connection = mongoose.connection;
@@ -30,6 +31,16 @@ router.get('/create', (req, res) => {
                 notis: req.notis
             });
         });
+    } else if (account_type == 2){
+      Admin.findOne({'_id': account_id}, (err, admin) => {
+          res.render('events/orgs/create', {
+              title: 'ChanceMap | Add a new Event',
+              account_type: account_type,
+              account_id: account_id,
+              currentAcc: admin,
+              notis: req.notis
+          });
+      });
     }
   }
 });
@@ -47,7 +58,7 @@ router.get('/edit/:id', (req, res) => {
               console.log(err);
               return;
           }
-          if(account_type == 1) {
+          if(account_type == 1 ) {
               Org.findOne({'_id': account_id}, (err, org) => {
                   res.render('events/orgs/edit', {
                       title: 'ChanceMap | My Events',
@@ -58,7 +69,18 @@ router.get('/edit/:id', (req, res) => {
                       notis: req.notis
                   })
               })
-          } else {
+          } else if (account_type == 2){
+              Admin.findOne({'_id': account_id}, (err, admin) => {
+                  res.render('events/orgs/edit', {
+                      title: 'ChanceMap | Manage Events',
+                      account_type: account_type,
+                      account_id: account_id,
+                      currentAcc: admin,
+                      event: event,
+                      notis: req.notis
+                  })
+              })
+          }else {
               res.redirect('/');
           }
       });
@@ -101,6 +123,19 @@ router.get('/', (req, res) => {
                     notis: req.notis
                 });
             });
+        } else if (account_type == 2){
+          Admin.findOne({'_id': account_id}, (err, admin) => {
+              let criteriaList = [];
+              res.render('events/dashboard', {
+                  title: 'ChanceMap | Events',
+                  account_type: account_type,
+                  account_id: account_id,
+                  currentAcc: admin,
+                  events: events,
+                  criteriaList: criteriaList,
+                  notis: req.notis
+              });
+          });
         } else {
             User.findOne({'_id': account_id}, (err, user) => {
                 let criteriaList = user.interests.concat(user.skills);
@@ -137,26 +172,43 @@ router.get('/manage', (req, res) => {
   } else {
     let account_type = req.user.account_type;
     let account_id = req.user.account_id;
-    Event.find({org_id: account_id}, (err, events) => {
-        if(err) {
-          console.log(err);
-          return;
-        }
-        Org.findOne({'_id': account_id}, (err, org) => {
-            if(err) {
-                console.log(err);
-                return;
-            }
-            res.render('events/orgs/manage', {
-                title: 'ChanceMap | My Events',
-                account_type: account_type,
-                account_id: account_id,
-                currentAcc: org,
-                events: events,
-                notis: req.notis
-            });
+    if (account_type == 1) {
+      Event.find({org_id: account_id}, (err, events) => {
+          if(err) {
+            console.log(err);
+            return;
+          }
+          Org.findOne({'_id': account_id}, (err, org) => {
+              if(err) {
+                  console.log(err);
+                  return;
+              }
+              res.render('events/orgs/manage', {
+                  title: 'ChanceMap | My Events',
+                  account_type: account_type,
+                  account_id: account_id,
+                  currentAcc: org,
+                  events: events,
+                  notis: req.notis
+              });
+          });
+      });
+    } else if (account_type == 2) {
+        Event.find({},(err,events) => {
+          Admin.findOne({'_id': account_id}, (err, admin) => {
+              let criteriaList = [];
+              res.render('events/orgs/manage', {
+                  title: 'ChanceMap | Manage Events',
+                  account_type: account_type,
+                  account_id: account_id,
+                  currentAcc: admin,
+                  events: events,
+                  criteriaList: criteriaList,
+                  notis: req.notis
+              });
+          });
         });
-    });
+    };
   }
 });
 
@@ -168,7 +220,7 @@ router.get('/delete/:id', (req, res) => {
     let event_id = req.params.id;
     let account_id = req.user.account_id;
     let account_type = req.user.account_type;
-    if(account_type == 1) {
+    if(account_type == 1 ) {
         Event.findOneAndRemove({_id: event_id}, (err, event) => {
             if(err) {
                 console.log(err);

@@ -74,7 +74,7 @@
             <% }  else { %>
               <%= 0 %>
             <% } %>
-               
+
             </span></a>
             <ul class="dropdown-menu dropdown-menu-media dropdown-menu-right">
               <li class="dropdown-menu-header">
@@ -189,8 +189,10 @@
 <!-- ////////////////////////////////////////////////////////////////////////////-->
   <% if(account_type == 1) { %>
     <%- include('nav_menu_org'); %>
-  <% } else { %>
+  <% } else if (account_type ==0){ %>
     <%- include('nav_menu_user'); %>
+  <% } else { %>
+    <%- include('nav_menu_admin'); %>
   <% } %>
   <%- content %>
 
@@ -292,7 +294,7 @@
       });
     }
   }
-</script> 
+</script>
 <!-- END -->
 
 </body>

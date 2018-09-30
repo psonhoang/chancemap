@@ -15,6 +15,7 @@ const Account = require('../models/account');
 const Event = require('../models/event');
 const User = require('../models/user');
 const Job = require('../models/job');
+const Org = require('../models/org');
 const Admin = require('../models/admin');
 
 // Database connection
@@ -68,8 +69,8 @@ router.get('/', (req, res) => {
 	        criteriaList = [];
 					Job.find({'admin_id': {$ne: account_id}}, (err, jobs) => {
 						Event.find({'admin_id': {$ne: account_id}}, (err, events) => {
-							res.render('admins/dashboard', {
-								title: 'ChanceMap | Admins',
+							res.render('admin/dashboard', {
+								title: 'ChanceMap | Admin',
 								account_type: account_type,
 								account_id: account_id,
 								currentAcc: admin,
@@ -88,8 +89,8 @@ router.get('/', (req, res) => {
 	      User.findOne({'_id': account_id}, (err, user) => {
 					Job.find({}, (err, jobs) => {
 						Event.find({'admin_id': {$ne: account_id}}, (err, events) => {
-							res.render('admins/dashboard', {
-								title: 'ChanceMap | Admins',
+							res.render('admin/dashboard', {
+								title: 'ChanceMap | Admin',
 								account_type: account_type,
 								account_id: account_id,
 								currentAcc: user,
@@ -120,7 +121,7 @@ router.get('/:Id', (req, res) => {
 			Admin.findOne({'_id': adminId}, (err, admin) => {
 				Job.find({'admin_id': admin._id}, (err, jobs) => {
 					Event.find({'admin_id': admin._id}, (err, events) => {
-						res.render('admins/profile', {
+						res.render('admin/profile', {
 							title: admin.name,
 							account_type: account_type,
 							account_id: account_id,
@@ -142,7 +143,7 @@ router.get('/:Id', (req, res) => {
 			Admin.findOne({'_id': adminId}, (err, admin) => {
 				Job.find({'admin_id': admin._id}, (err, jobs) => {
 					Event.find({'admin_id': admin._id}, (err, events) => {
-						res.render('admins/profile', {
+						res.render('admin/profile', {
 							title: admin.name,
 							account_type: account_type,
 							account_id: account_id,

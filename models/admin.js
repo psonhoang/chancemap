@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-// Org Schema
+// 	Admin Schema
 const adminSchema = mongoose.Schema({
 	_id: mongoose.Schema.Types.ObjectId,
 	created_at: {type: Date, required: true},
@@ -16,5 +16,5 @@ const adminSchema = mongoose.Schema({
 	new_notis: [mongoose.Schema.Types.ObjectId]
 });
 
-// Export Org model
+// Export Admin model
 module.exports = mongoose.model('Admin', adminSchema);

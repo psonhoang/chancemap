@@ -388,7 +388,7 @@ app.use('/orgs', orgRoutes);
 let opportunitiesRoutes = require('./controllers/opportunitiesController');
 app.use('/opportunities', opportunitiesRoutes)
 let adminRoutes = require('./controllers/adminController');
-app.use('/admins', adminRoutes);
+app.use('/admin', adminRoutes);
 // @File ROUTES
 let fileRoutes = require('./controllers/fileController');
 app.use('/files', fileRoutes);

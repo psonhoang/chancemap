@@ -26,6 +26,7 @@ mongoose.connect(config.database, {
 });
 
 // Models
+const Admin = require('./models/admin');
 const User = require('./models/user');
 const Org = require('./models/org');
 const Account = require('./models/account');
@@ -247,6 +248,21 @@ app.get('/', (req, res) => {
                   notis: req.notis
                 });
               });
+            } else if(account_type == 2) {
+              Admin.findOne({'_id': account_id}, (err, admin) => {
+                res.render('index', {
+                  title: 'ChanceMap | Home',
+                  account_type: account_type,
+                  account_id: account_id,
+                  currentAcc: admin,
+                  events: events,
+                  jobs: jobs,
+                  orgs:orgs,
+                  users: users,
+                  criteriaList: [],
+                  notis: req.notis
+                });
+              });
             } else {
               Org.findOne({'_id': account_id}, (err, org) => {
                 let criteriaList = org.hashtags;
@@ -332,6 +348,7 @@ let userRoutes = require('./controllers/userController');
 app.use('/users', userRoutes);
 let orgRoutes = require('./controllers/orgController');
 app.use('/orgs', orgRoutes);
+let adminRoutes = require('./controllers/adminController');
 // @File ROUTES
 let fileRoutes = require('./controllers/fileController');
 app.use('/files', fileRoutes);

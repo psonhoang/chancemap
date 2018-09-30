@@ -11,13 +11,13 @@ module.exports = function(passport) {
   }
   // Local Strategy
   passport.use(new LocalStrategy((username, password, done) => {
-    
+
     let query = { username: username.trim() } ;
-    
+
     if (validateEmail(username.trim())) {
       query = { email: username.trim() };
     }
-    
+
     // Match username
     Account.findOne(query, (err, account) => {
       if (err) throw err;

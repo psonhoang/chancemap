@@ -5,9 +5,12 @@ const mongoose = require('mongoose');
 const path = require('path');
 const config = require('../config/database.js');
 
-const Opportunities = require('../models/opportunities');
+const Opportunity = require('../models/opportunity');
 const Org = require('../models/org');
 const User = require('../models/user');
+
+// Database connection
+const connection = mongoose.connection;
 
 //opportunitiesdashboard
 router.get('/', (req, res) => {
@@ -16,7 +19,7 @@ router.get('/', (req, res) => {
   } else {
     let account_type = req.user.account_type;
     let account_id = req.user.account_id;
-    Event.find((err, events) => {
+    Opportunity.find((err, opportunities) => {
         if(err) {
           console.log(err);
           return;
@@ -24,12 +27,12 @@ router.get('/', (req, res) => {
         if(account_type == 1) {
             Org.findOne({'_id': account_id}, (err, org) => {
                 let criteriaList = org.hashtags;
-                opportunities.forEach(event => {
-                    opportunities.matches = 0;
-                    opportunities.hashtags.forEach(hashtag => {
+                opportunities.forEach(opportunity => {
+                    opportunity.matches = 0;
+                    opportunity.hashtags.forEach(hashtag => {
                         criteriaList.forEach(criteria => {
                             if(hashtag.includes(criteria)) {
-                            opportunities.matches++;
+                            opportunity.matches++;
                             }
                         });
                     });
@@ -48,12 +51,12 @@ router.get('/', (req, res) => {
         } else {
             User.findOne({'_id': account_id}, (err, user) => {
                 let criteriaList = user.interests.concat(user.skills);
-                opportunities.forEach(event => {
-                    opportunities.matches = 0;
-                    opportunities.hashtags.forEach(hashtag => {
+                opportunities.forEach(opportunity => {
+                    opportunity.matches = 0;
+                    opportunity.hashtags.forEach(hashtag => {
                         criteriaList.forEach(criteria => {
                             if(hashtag.includes(criteria)) {
-                            opportunities.matches++;
+                            opportunity.matches++;
                             }
                         });
                     });

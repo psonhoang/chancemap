@@ -32,7 +32,7 @@ const Account = require('./models/account');
 const Event = require('./models/event');
 const Job = require('./models/job');
 const Notification = require('./models/notification');
-const Opportunities = require('./models/opportunities');
+const Opportunity = require('./models/opportunity');
 
 // View engine
 app.set('view engine', 'ejs');
@@ -162,7 +162,7 @@ app.get('/', (req, res) => {
     // res.send('Hi there, ' + req.user.username + '; Your account type is: ' + req.user.account_type);
     let account_type = req.user.account_type;
     let account_id = req.user.account_id;
-    Opportunities.find((err, opportunities) => {
+    Opportunity.find((err, opportunities) => {
       if(err) {
         console.log(err);
         return;
@@ -365,7 +365,7 @@ let userRoutes = require('./controllers/userController');
 app.use('/users', userRoutes);
 let orgRoutes = require('./controllers/orgController');
 app.use('/orgs', orgRoutes);
-let opportunitiesRoutes = require('./controllers/opportunitiesController');
+let opportunitiesRoutes = require('./controllers/opportunityController');
 app.use('/opportunities', opportunitiesRoutes)
 // @File ROUTES
 let fileRoutes = require('./controllers/fileController');

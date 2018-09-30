@@ -1,0 +1,37 @@
+<div class="col-md-6 col-sm-12">
+	<div class="card">
+		<div class="card-header bg-amber bg-darken-3" style="color: white">
+			<h4 class="card-title" id="from-actions-top-bottom-right"><i class="ft-calendar"></i> <%= cardTitle %></h4>
+			<div class="heading-elements">
+				<ul class="list-inline mb-0 ">
+                    <li><a data-action="collapse"><i style="color: white" class="ft-minus"></i></a></li>
+					<li><a href="/opportunities/edit/<%= opportunity_id; %>"><i class="ft-edit" style="color: white"></i></a></li>
+                    <li><a href="/opportunities/delete/<%= opportunity_id; %>"><i class="ft-trash" style="color: white"></i></a></li>
+				</ul>
+			</div>
+		</div>
+        <div class="card-body collapse in">
+            <div class="card-block">
+                <p><label>Organisation name:</label>  <strong><%= cardElement1 %></strong></p>
+                <p><label>Description:</label> <strong> <%= cardElement2 %></strong></p>
+                <label>Hashtags:</label>
+                <% hashtags.forEach(function(tag) { %>
+                    <p style="font-size: 13px" class="tag tag-pill tag-warning"><%= tag; %></p>
+                <% }); %>
+				<% if(regForm) { %>
+                    <p><label>Application Form:</label>  <strong><%= regForm %></strong></p>
+    				<p><label>Deadline:</label>  <strong><%= deadline %></strong></p>
+                <% } %>
+                <p><label>Address:</label>  <strong><%= cardElement3 %></strong></p>
+                <p><label>Start date:</label>  <strong><%= cardElement4 %></strong></p>
+                <% if(cardElement6) { %>
+                    <p><label>End date:</label>  <strong><%= cardElement6 %></strong></p>
+                <% } %>
+				<% if(cardElement5 || cardElement7) {%>
+                    <p><label>Start time:</label>  <strong><%= cardElement5 %></strong></p>
+                    <p><label>End time:</label>  <strong><%= cardElement7 %></strong></p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>

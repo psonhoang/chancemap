@@ -63,8 +63,7 @@ router.get('/', (req, res) => {
 	    if(err) {
 	      console.log(err);
 	      return;
-	    }
-	    if(account_type == 2) {
+	    } else {
 	      Admin.findOne({'_id': account_id}, (err, admin) => {
 	        criteriaList = [];
 					Job.find({'admin_id': {$ne: account_id}}, (err, jobs) => {
@@ -82,28 +81,8 @@ router.get('/', (req, res) => {
 							});
 						});
 	        });
-	      });
-			}
-			else
-			{
-	      User.findOne({'_id': account_id}, (err, user) => {
-					Job.find({}, (err, jobs) => {
-						Event.find({'admin_id': {$ne: account_id}}, (err, events) => {
-							res.render('admin/dashboard', {
-								title: 'ChanceMap | Admin',
-								account_type: account_type,
-								account_id: account_id,
-								currentAcc: user,
-								orgs: orgs,
-								jobs: jobs,
-								events: events,
-								criteriaList: criteriaList,
-								notis: req.notis
-							});
-						});
-					});
-	      });
-	    }
+      	});
+			};
 	  });
 	}
 });
@@ -117,43 +96,19 @@ router.get('/:Id', (req, res) => {
 
 	if (account_type == 2)
 	{
-		Admin.findOne({'_id': account_id}, (err, user) => {
-			Admin.findOne({'_id': adminId}, (err, admin) => {
-				Job.find({'admin_id': admin._id}, (err, jobs) => {
-					Event.find({'admin_id': admin._id}, (err, events) => {
-						res.render('admin/profile', {
-							title: admin.name,
-							account_type: account_type,
-							account_id: account_id,
-							orgs: orgs,
-							jobs: jobs,
-							events: events,
-							criteriaList: [],
-							currentAcc: user,
-							notis: req.notis
-						});
-					});
-				});
-			});
-		});
-	}
-	else
-	{
-		User.findOne({'_id': account_id}, (err, user) => {
-			Admin.findOne({'_id': adminId}, (err, admin) => {
-				Job.find({'admin_id': admin._id}, (err, jobs) => {
-					Event.find({'admin_id': admin._id}, (err, events) => {
-						res.render('admin/profile', {
-							title: admin.name,
-							account_type: account_type,
-							account_id: account_id,
-							orgs: orgs,
-							jobs: jobs,
-							events: events,
-							criteriaList: user.interests.concat(user.skills),
-							currentAcc: user,
-							notis: req.notis
-						});
+		Admin.findOne({'admin_id': admin._id}, (err, user) => {
+			Job.find({'admin_id': admin._id}, (err, jobs) => {
+				Event.find({'admin_id': admin._id}, (err, events) => {
+					res.render('org/profile', {
+						title: admin.name,
+						account_type: account_type,
+						account_id: account_id,
+						orgs: orgs,
+						jobs: jobs,
+						events: events,
+						criteriaList: [],
+						currentAcc: user,
+						notis: req.notis
 					});
 				});
 			});

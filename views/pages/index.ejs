@@ -201,6 +201,62 @@
           </div>
         </div>
 
+        <!-- Opportunities -->
+        <div class="col-xl-8 col-lg-12">
+          <div class="card">
+                <div style="color: white" class="card-header bg-amber bg-darken-1">
+                <h4 class="card-title"><i class="ft-calendar"></i> Opportunities</h4>
+                <a class="heading-elements-toggle">
+                    <i class="fa fa-ellipsis-v font-medium-3"></i>
+                </a>
+                </div>
+                <div class="card">
+                    <div style="display: block; max-height: 400px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="table-responsive">
+                        <table class="table">
+                            
+                            <tbody id="opportunitiesBody">
+                                <% opportunities.forEach(opportunity => { %>
+                                <% cardId = opportunity._id; %>
+                                <tr class="btn-secondary" data-toggle="modal" data-target="#<%= cardId %>">
+                                    <% if(opportunity.reg_deadline) { %>
+                                    <th scope="row"><%= months[opportunity.reg_deadline.getMonth()] + ' ' + opportunity.reg_deadline.getDate() + ', ' + opportunity.reg_deadline.getFullYear() %></th>
+                                    <% } else { %>
+                                    <th scope="row">N/A</th>
+                                    <% } %>
+                                    <td>
+                                        <li style="font-size: 16px"><strong><%= opportunity.name %></strong></li>
+                                        <li style="font-style: italic"><%= opportunity.org_name %></li>
+                                        <% if(opportunity.start_date) { %>
+                                        <li style="font-size: small">Date: <%= months[opportunity.start_date.getMonth()] + ' ' + opportunity.start_date.getDate() + ', ' + opportunity.start_date.getFullYear() %></li>
+                                        <% } %>
+                                        <li style="font-size: small">At: <%= opportunity.address %></li>
+                                    </td>
+                                    <td>
+                                    <% opportunity.hashtags.forEach(hashtag => { %>
+                                        <% var isMatch = false; %>
+                                        <% criteriaList.forEach(criteria => { %>
+                                        <% if (hashtag.includes(criteria) && !isMatch) { %>
+                                            <% isMatch = true; %>
+                                            <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
+                                        <% } %>
+                                        <% }); %>
+                                        <% if (!isMatch) { %>
+                                        <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
+                                        <% } %>
+                                    <% }); %>
+                                    </td>
+                                </tr>
+                                <!-- opportunity Modal Starts -->
+                                <%- include('opportunitiesCardModal', {opportunities: opportunity, months: months}); %>
+                                <% }); %>
+                                <!-- opportunity Modal Ends-->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+          </div>
+        </div>
+
         <!-- Users -->
         <div class="col-xl-4 col-lg-12">
           <div class="card">

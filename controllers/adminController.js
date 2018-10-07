@@ -68,7 +68,7 @@ router.get('/', (req, res) => {
 	        criteriaList = [];
 					Job.find({'admin_id': {$ne: account_id}}, (err, jobs) => {
 						Event.find({'admin_id': {$ne: account_id}}, (err, events) => {
-							res.render('admin/dashboard', {
+							res.render('orgs/dashboard', {
 								title: 'ChanceMap | Admin',
 								account_type: account_type,
 								account_id: account_id,

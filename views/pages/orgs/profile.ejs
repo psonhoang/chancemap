@@ -24,12 +24,12 @@
         <div style="margin-left: 5px; margin-right: 5px" class="row"> <!-- Org Card + Facebook -->
             <div class="fb-page col-md-6" data-width="4000px" data-height="600px" data-href="<%= org.facebook %>" data-tabs="timeline, events" data-small-header="false" data-adapt-container-width="false" data-hide-cover="false" data-show-facepile="true"></div>
             <div class="col-md-6">
-                <div class="card modal-content"> 
+                <div class="card modal-content">
                     <div style="color: white" class="card-header bg-teal bg-lighten-1"> <!-- card header-->
                         <h4 class="card-title"><%= org.name %></h4>
                         <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
                         <div class="heading-elements">
-                            <ul class="list-inline mb-0">		
+                            <ul class="list-inline mb-0">
                             </ul>
                         </div>
                     </div>
@@ -50,7 +50,7 @@
                                         <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
                                     <% } %>
                                 <% }); %>
-                            </p>  
+                            </p>
                             <p><label>Organisation's Facebook: </label>
                                 <b>
                                 <% if (org.facebook != "") { %>
@@ -66,7 +66,7 @@
                                         <%= org.website %>
                                     <% } else { %>
                                         N/A
-                                    <% } %>             
+                                    <% } %>
                                 </b>
                             </p>
                             <p><label>Organisation's Email: </label>
@@ -75,16 +75,16 @@
                                         <%= org.email %>
                                     <% } else { %>
                                         N/A
-                                    <% } %>             
+                                    <% } %>
                                 </b>
-                            </p>            
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <br>
-        <div style="margin-left: 5px; margin-right: 5px" class="row"> <!-- Jobs and events --> 
+        <div style="margin-left: 5px; margin-right: 5px" class="row"> <!-- Jobs and events -->
             <div class="col-xl-4 col-lg-12">
                 <!-- Jobs -->
                 <div class="modal-content">
@@ -126,10 +126,10 @@
                             <% } %>
                         </div>
                     </div>
-                </div>	
+                </div>
             </div>
             <div class="col-xl-8 col-lg-12">
-                <!-- Events -->		
+                <!-- Events -->
                 <div class="modal-content">
                     <div class="card">
                         <div style="color: white" class="card-header bg-amber bg-darken-3">
@@ -151,7 +151,7 @@
                                     <tbody id="eventsBody">
                                         <% let eventCount = 0; %>
                                         <% events.forEach(event => { %>
-                                            <% if (event.org_name == org.name) { %> 
+                                            <% if (event.org_name == org.name) { %>
                                             <tr>
                                                 <% if(event.reg_deadline) { %>
                                                     <th scope="row"><%= months[event.reg_deadline.getMonth()] + ' ' + event.reg_deadline.getDate() + ', ' + event.reg_deadline.getFullYear() %></th>
@@ -192,13 +192,13 @@
                                             </tr>
                                         <% } %>
                                     </tbody>
-                                </table>	
-                            </div>														 
+                                </table>
+                            </div>
                         </div>
-                    </div>													
+                    </div>
                 </div>
-            </div>       
-        </div>  
+            </div>
+        </div>
     </div>
 </div>
 

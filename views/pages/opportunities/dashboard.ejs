@@ -42,7 +42,11 @@
                 <div class="card">
                     <div class="table-responsive">
                         <table class="table">
-
+                          <thead style="color: white" class="thead bg-blue-grey bg-darken-3">
+                              <th>Deadline</th>
+                              <th>Opportunity</th>
+                              <th>Hashtags</th>
+                          </thead>
                             <tbody id="opportunitiesBody">
                                 <% opportunities.forEach(opportunity => { %>
                                 <% cardId = opportunity._id; %>

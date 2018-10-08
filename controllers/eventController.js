@@ -281,7 +281,7 @@ router.get('/delete/:id', (req, res) => {
     let jobImage = data.jobImage;
     let accounts = [];
     let org_followers = data.org_followers;
-    if(account_type == 1 || account == 2) {
+    if(account_type == 1 || account_type == 2) {
         Event.findOneAndRemove({_id: event_id}, (err, event) => {
             if(err) {
                 console.log(err);

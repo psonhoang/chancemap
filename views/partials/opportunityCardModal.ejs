@@ -26,7 +26,6 @@
                                     <p style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></p>
                                     <% } %>
                                 <% }); %></p>
-                                <p><label>Address:</label>  <strong><%= opportunity.address %></strong></p>
                                 <p><label>Registration form:</label>  <a><strong><%= opportunity.reg_form %></strong></a></p>
                                 <p><label>Registration deadline:</label>
                                 <% if(opportunity.reg_deadline) { %>
@@ -37,12 +36,6 @@
                                 <p><label>Start date:</label>  <strong><%= months[opportunity.start_date.getMonth()] + ' ' + opportunity.start_date.getDate() + ', ' + opportunity.start_date.getFullYear(), %></strong></p>
                                 <% if(opportunity.end_date) { %>
                                     <p><label>End date:</label>  <strong><%= months[opportunity.end_date.getMonth()] + ' ' + opportunity.end_date.getDate() + ', ' + opportunity.end_date.getFullYear(), %></strong></p>
-                                <% } %>
-                                <% if(opportunity.start_time) { %>
-                                    <p><label>Start time:</label>  <strong><%= opportunity.start_time %></strong></p>
-                                <%} %>
-                                <% if(opportunity.end_time) { %>
-                                    <p><label>End time:</label>  <strong><%= opportunity.end_time %></strong></p>
                                 <% } %>
                                 <% if(opportunity.facebook) { %>
                                     <p><label>Facebook:</label> <a href="<%= opportunity.facebook %>"><i class="ft-facebook"></i></a></p>

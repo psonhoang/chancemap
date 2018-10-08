@@ -1,8 +1,8 @@
-<% extend('../../../defaultLayouts/defaultLayout'); %>
+<% extend('../../defaultLayouts/defaultLayout'); %>
 	    <div class="col-md-7 offset-md-3 col-xs-10 offset-xs-1 box-shadow-2 p-0">
 	        <div class="card">
 	            <div style="color: white" class="card-header bg-cyan bg-lighten-1">
-	                <h4 class="card-title" id="from-actions-top-bottom-right">Job Creator</h4>
+	                <h4 class="card-title" id="from-actions-top-bottom-right">Opportunity Creator</h4>
 	                <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
 	                <div class="heading-elements">
 	                    <ul class="list-inline mb-0">
@@ -17,10 +17,10 @@
 	                <div class="card-block">
 	                    <form class="form" method="POST" action="/jobs/create">
 	                    	<div class="form-body">
-								<!-- event name -->
+								<!-- opportunity name -->
 	                    		<div class="row">
 	                    			<div class="form-group col-xs-12 mb-2">
-			                            <label for="timesheetinput1">Job Name</label>
+			                            <label for="timesheetinput1">Opportunity Name</label>
 			                            <div class="position-relative has-icon-left">
 			                            	<input type="text" id="timesheetinput1" class="form-control" name="name">
 				                            <div class="form-control-position">
@@ -34,11 +34,7 @@
 	                    			<div class="form-group col-xs-12 mb-2">
 			                            <label for="timesheetinput1">Organisation Name</label>
 			                            <div class="position-relative has-icon-left">
-																		<% if (account_type == 1){ %>
-			                            		<input readonly type="text" id="timesheetinput1" class="form-control" name="org_name" value="<%=currentAcc.name; %>">
-																		<% } else if (account_type == 2) { %>
-																			<input type="text" id="timesheetinput1" class="form-control" name="org_name">
-																		<% } %>
+																		<input type="text" id="timesheetinput1" class="form-control" name="org_name">
 																		<div class="form-control-position">
 				                                <i class="ft-user"></i>
 				                            </div>
@@ -127,7 +123,7 @@
 							</div> -->
 							<!-- buttons -->
 	                        <div class="form-actions right">
-	                            <button onclick="location.href='/jobs/manage'" type="button" class="btn btn-warning mr-1">
+	                            <button onclick="location.href='/opportunities/manage'" type="button" class="btn btn-warning mr-1">
 	                            	<i class="ft-x"></i> Cancel
 	                            </button>
 	                            <button type="submit" class="btn btn-primary">

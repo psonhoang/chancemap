@@ -8,6 +8,7 @@ const opportunitySchema = mongoose.Schema({
 	name: {type: String, required: true},
 	org_name: {type: String, required: true},
 	desc: {type: String, required: true},
+	hashtags: {type: [String], required: true},
 	app_form: String,
 	app_deadline: {type: Date, required: true},
 	start_date: {type: Date, required: true},

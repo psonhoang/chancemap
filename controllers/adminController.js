@@ -15,6 +15,7 @@ const Account = require('../models/account');
 const Event = require('../models/event');
 const User = require('../models/user');
 const Job = require('../models/job');
+const Opportunity = require('../models/opportunity');
 const Org = require('../models/org');
 const Admin = require('../models/admin');
 
@@ -68,16 +69,19 @@ router.get('/', (req, res) => {
 	        criteriaList = [];
 					Job.find({'admin_id': {$ne: account_id}}, (err, jobs) => {
 						Event.find({'admin_id': {$ne: account_id}}, (err, events) => {
-							res.render('orgs/dashboard', {
-								title: 'ChanceMap | Admin',
-								account_type: account_type,
-								account_id: account_id,
-								currentAcc: admin,
-								orgs: orgs,
-								jobs: jobs,
-								events: events,
-								criteriaList: criteriaList,
-								notis: req.notis
+							Opportunity.find({'admin_id': {$ne: account_id}}, (err, opportunities) => {
+								res.render('orgs/dashboard', {
+									title: 'ChanceMap | Admin',
+									account_type: account_type,
+									account_id: account_id,
+									currentAcc: admin,
+									orgs: orgs,
+									opportunities:opportunities,
+									jobs: jobs,
+									events: events,
+									criteriaList: criteriaList,
+									notis: req.notis
+								});
 							});
 						});
 	        });
@@ -99,16 +103,19 @@ router.get('/:Id', (req, res) => {
 		Admin.findOne({'admin_id': admin._id}, (err, user) => {
 			Job.find({'admin_id': admin._id}, (err, jobs) => {
 				Event.find({'admin_id': admin._id}, (err, events) => {
-					res.render('org/profile', {
-						title: admin.name,
-						account_type: account_type,
-						account_id: account_id,
-						orgs: orgs,
-						jobs: jobs,
-						events: events,
-						criteriaList: [],
-						currentAcc: user,
-						notis: req.notis
+					Opportunity.find({'admin_id': admin._id}, (err, opportunities) => {
+						res.render('org/profile', {
+							title: admin.name,
+							account_type: account_type,
+							account_id: account_id,
+							orgs: orgs,
+							jobs: jobs,
+							events: events,
+							opportunities: opportunities,
+							criteriaList: [],
+							currentAcc: user,
+							notis: req.notis
+						});
 					});
 				});
 			});

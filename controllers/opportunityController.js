@@ -217,25 +217,26 @@ router.get('/edit/:id', (req, res) => {
     } else {
       let account_type = req.user.account_type;
       let account_id = req.user.account_id;
-      Opportunity.findOne({_id: req.params.ID}, (err, opportunity) => {
+      Opportunity.findOne({_id: req.params.id}, (err, opportunity) => {
         if(err) {
               console.log(err);
               return;
+          } else {
+	        if (account_type == 2){
+	              Admin.findOne({'_id': account_id}, (err, admin) => {
+	                  res.render('opportunities/edit', {
+	                      title: 'ChanceMap | Manage Opportunities',
+	                      account_type: account_type,
+	                      account_id: account_id,
+	                      currentAcc: admin,
+	                      opportunity: opportunity,
+	                      notis: req.notis
+	                  })
+	              })
+	          }else {
+	              res.redirect('/');
           }
-        if (account_type == 2){
-              Admin.findOne({'_id': account_id}, (err, admin) => {
-                  res.render('opportunities/edit', {
-                      title: 'ChanceMap | Manage Opportunities',
-                      account_type: account_type,
-                      account_id: account_id,
-                      currentAcc: admin,
-                      opportunity: opportunity,
-                      notis: req.notis
-                  })
-              })
-          }else {
-              res.redirect('/');
-          }
+				}
       });
     }
 });
@@ -258,7 +259,7 @@ router.post('/edit/:id', (req, res) => {
 			console.log(err);
 			return;
     }
-    console.log(opportunity);
+    	console.log(opportunity);
     if(!opportunity.created_at) {
       opportunity.created_at = new Date();
     }
@@ -266,18 +267,16 @@ router.post('/edit/:id', (req, res) => {
         opportunity.name = data.name;
         opportunity.desc = data.desc;
         opportunity.hashtags = data.hashtags;
-        opportunity.reg_form = data.reg_form;
-        opportunity.reg_deadline = data.reg_deadline;
+        opportunity.app_form = data.app_form;
+        opportunity.app_deadline = data.app_deadline;
         opportunity.start_date = data.start_date;
         opportunity.end_date = data.end_date;
-        opportunity.start_time = data.start_time;
-        opportunity.end_time = data.end_time;
         opportunity.facebook = data.facebook;
         opportunity.website = data.website;
 
 				opportunity.save().then(result => {
             console.log(result);
-            res.redirect('opportunities/manage');
+            res.redirect('/opportunities/manage');
         }).catch(err => {
             res.send(err);
         });

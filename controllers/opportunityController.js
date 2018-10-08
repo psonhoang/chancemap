@@ -97,7 +97,7 @@ router.post('/create', (req, res) => {
         } else {
 	        console.log('new opportunity created!');
 	        console.log(opportunity);
-					res.redirect('/events/manage');
+					res.redirect('/opportunities/manage');
 				}
     });
 });
@@ -187,38 +187,6 @@ router.get('/delete/:id', (req, res) => {
   } else {
     let account_type = req.user.account_type;
     let data = req.body;
-    let event_id = req.params.id;
-    let event_name = data.name;
-    let org_name = data.org_name;
-    let desc = data.desc;
-    let hashtags = data.hashtags;
-    let app_form = data.app_form;
-    let app_deadline = data.app_deadline;
-    let facebook = data.facebook;
-    let website = data.website;
-    let jobImage = data.jobImage;
-    let accounts = [];
-    let org_followers = data.org_followers;
-    if(account_type == 1 || account == 2) {
-        Event.findOneAndRemove({_id: event_id}, (err, event) => {
-            if(err) {
-                console.log(err);
-            } else {
-                console.log(event);
-                res.redirect('/events/manage');
-            }
-        });
-    }
-  }
-});
-
-// deleting events (orgs)
-router.get('/delete/:id', (req, res) => {
-  if(!req.isAuthenticated()) {
-    res.redirect('/login');
-  } else {
-    let account_type = req.user.account_type;
-    let data = req.body;
     let opportunity_id = req.params.id;
     let opportunity_name = data.name;
     let org_name = data.org_name;
@@ -228,21 +196,20 @@ router.get('/delete/:id', (req, res) => {
     let app_deadline = data.app_deadline;
     let facebook = data.facebook;
     let website = data.website;
-    if( account_type  == 2) {
+    let accounts = [];
+    let org_followers = data.org_followers;
+    if(account_type == 1 || account_type == 2) {
         Opportunity.findOneAndRemove({_id: opportunity_id}, (err, opportunity) => {
             if(err) {
                 console.log(err);
             } else {
                 console.log(opportunity);
-                res.redirect('/events/manage');
+                res.redirect('/opportunities/manage');
             }
         });
-    } else {
-        res.redirect('/');
     }
   }
 });
-
 // editing existing opportunities
 router.get('/edit/:id', (req, res) => {
     if(!req.isAuthenticated()) {
@@ -285,7 +252,7 @@ router.post('/edit/:id', (req, res) => {
     let facebook = data.facebook;
     let website = data.website;
 
-    Opportunity.findOne({_id: event_id}, (err, opportunity) => {
+    Opportunity.findOne({_id: opportunity_id}, (err, opportunity) => {
 		if(err) {
 			res.send('Database error...');
 			console.log(err);
@@ -310,7 +277,7 @@ router.post('/edit/:id', (req, res) => {
 
 				opportunity.save().then(result => {
             console.log(result);
-                    res.redirect('/events/manage');
+            res.redirect('opportunities/manage');
         }).catch(err => {
             res.send(err);
         });

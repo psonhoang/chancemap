@@ -165,8 +165,8 @@
                                 <% opportunities.forEach(opportunity => { %>
                                 <% cardId = opportunity._id; %>
                                 <tr class="btn-secondary" data-toggle="modal" data-target="#<%= cardId %>">
-                                    <% if(opportunity.reg_deadline) { %>
-                                    <th scope="row"><%= months[opportunity.reg_deadline.getMonth()] + ' ' + opportunity.reg_deadline.getDate() + ', ' + opportunity.reg_deadline.getFullYear() %></th>
+                                    <% if(opportunity.end_date) { %>
+                                    <th scope="row"><%= months[opportunity.end_date.getMonth()] + ' ' + opportunity.end_date.getDate() + ', ' + opportunity.end_date.getFullYear() %></th>
                                     <% } else { %>
                                     <th scope="row">N/A</th>
                                     <% } %>
@@ -176,7 +176,6 @@
                                         <% if(opportunity.start_date) { %>
                                         <li style="font-size: small">Date: <%= months[opportunity.start_date.getMonth()] + ' ' + opportunity.start_date.getDate() + ', ' + opportunity.start_date.getFullYear() %></li>
                                         <% } %>
-                                        <li style="font-size: small">At: <%= opportunity.address %></li>
                                     </td>
                                     <td>
                                     <% opportunity.hashtags.forEach(hashtag => { %>
@@ -331,7 +330,7 @@
 
 
 
-      
+
     </div>
   </div>
 </div>

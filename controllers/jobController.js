@@ -174,9 +174,9 @@ router.get('/create', (req, res) => {
 	if(!req.isAuthenticated()) {
 		res.redirect('/login');
 	} else {
-		if (req.user.account_type != 1)
+		if (req.user.account_type == 0) {
 			res.redirect('/');
-		else
+		} else if (req.user.account_type == 1) {
 			Org.findOne({_id: req.user.account_id}, (err, org) => {
 				res.render('jobs/orgs/create', {
 					title: 'ChanceMap | Add a new Job',
@@ -186,6 +186,17 @@ router.get('/create', (req, res) => {
 					notis: req.notis
 				});
 			});
+		} else {
+			Admin.findOne({_id: req.user.account_id}, (err, admin) => {
+				res.render('jobs/orgs/create', {
+					title: 'ChanceMap | Add a new Job',
+					account_type: req.user.account_type,
+					account_id: req.user.account_id,
+					currentAcc: admin,
+					notis: req.notis
+				});
+			});
+		}
 	}
 });
 
@@ -205,6 +216,8 @@ router.post('/create', (req, res) => {
 		let facebook = data.facebook;
 		let website = data.website;
 		let jobImage = data.jobImage;
+		let accounts = [];
+		let org_followers = data.org_followers;
 
 		var newJob = new Job({
 			_id: new mongoose.Types.ObjectId(),
@@ -227,6 +240,7 @@ router.post('/create', (req, res) => {
 				console.log(err);
 				return;
 			  }
+				console.log('new job created!');
 			  console.log(job);
 			  Org.findOne({'_id': req.user.account_id}, (err, org) => {
                 let accounts = [];
@@ -271,37 +285,31 @@ router.post('/create', (req, res) => {
 router.get('/manage/edit/:ID', (req, res) => {
 	if(!req.isAuthenticated()) {
 		res.redirect('/login');
-	} else {
-		let account_type = req.user.account_type;
-		let account_id = req.user.account_id;
+	} else if ( req.user.account_type == 1 ){
 		Job.findOne({_id: req.params.ID}, (err, job) => {
-				if(err) {
-						console.log(err);
-						return;
-				}
-				if (account_type == 1 ) {
-					Org.findOne({_id: req.user.account_id}, (err, org) => {
-						res.render('jobs/orgs/edit', {
-							title: 'ChanceMap | Edit Job',
-							account_type: req.user.account_type,
-							account_id: req.user.account_id,
-							currentAcc: org,
-							job: job,
-							notis: req.notis
-						});
-					});
-				} else if ( account_type == 2){
-					Admin.findOne({_id: req.user.account_id}, (err, admin) => {
-						res.render('jobs/orgs/edit', {
-							title: 'ChanceMap | Edit Job',
-							account_type: req.user.account_type,
-							account_id: req.user.account_id,
-							currentAcc: admin,
-							job: job,
-							notis: req.notis
-						});
-					});
-				}
+			Org.findOne({_id: req.user.account_id}, (err, org) => {
+				res.render('jobs/orgs/edit', {
+					title: 'ChanceMap | Edit Job',
+					account_type: req.user.account_type,
+					account_id: req.user.account_id,
+					currentAcc: org,
+					job: job,
+					notis: req.notis
+				});
+			});
+		});
+	} else if ( req.user.account_type == 2 ){
+		Job.findOne({_id: req.params.ID}, (err, job) => {
+			Admin.findOne({_id: req.user.account_id}, (err, admin) => {
+				res.render('jobs/orgs/edit', {
+					title: 'ChanceMap | Edit Job',
+					account_type: req.user.account_type,
+					account_id: req.user.account_id,
+					currentAcc: admin,
+					job: job,
+					notis: req.notis
+				});
+			});
 		});
 	}
 });

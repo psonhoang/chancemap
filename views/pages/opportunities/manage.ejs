@@ -41,11 +41,19 @@
 <%  opportunities.forEach(opportunity => { %>
 <%  if (opportunityCounts >= 2) { %>
         <div class='row'></div>
-<%      opportunityCounts = 0; %>
-<%  } %>
-<%  } %>
-<%- include('opportunityCard', { opportunity: opportunity, admin: true, months: months}); %>
-<%  opportunityCounts += 1; %>
-<%  }) %>
-</section>
+        <%      opportunityCounts = 0; %>
+        <%  } %>
+        <%- include('opportunityCard', {
+            opportunity_id: opportunity._id,
+            cardTitle: opportunity.name,
+            cardElement1: opportunity.org_name,
+            hashtags: opportunity.hashtags,
+            appForm: opportunity.app_form,
+            deadline: opportunity.app_deadline,
+            cardElement4: months[opportunity.start_date.getMonth()] + ' ' + opportunity.start_date.getDate() + ', ' + opportunity.start_date.getFullYear(),
+            cardElement6: opportunity.end_date ? months[opportunity.end_date.getMonth()] + ' ' + opportunity.end_date.getDate() + ', ' + opportunity.end_date.getFullYear() : null,
+            cardElement2: opportunity.desc }); %>
+        <%  opportunityCounts += 1; %>
+        <%  }); %>
+        </section>
 <!-- // card-actions section end -->

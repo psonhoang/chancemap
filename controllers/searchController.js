@@ -17,6 +17,7 @@ const User = require('../models/user');
 const Org = require('../models/org');
 const Job = require('../models/job');
 const Event = require('../models/event');
+const Opportunity = require('../models/opportunity');
 
 // Database connection
 const connection = mongoose.connection;
@@ -359,6 +360,76 @@ router.get('/events', (req, res) => {
 	});
 });
 
+// @Routes /search/opportunities
+router.get('/opportunities', (req, res) => {
+	console.log(req.query.criteriaList);
+	let criteriaList = req.query.criteriaList;
+	let currentAcc = req.user;
+	console.log(currentAcc);
+	Opportunity.find((err, opportunities) => {
+		if(err) {
+			console.log(err);
+			return;
+		}
+		console.log("Opportunities: " + opportunities.length);
+		var sortedOpportunities = [];
+		opportunities.forEach(opportunity => {
+			opportunity.matches = 0;
+			criteriaList.forEach(criteria => {
+				if(opportunity.org_name.toLowerCase().includes(criteria) || opportunity.name.toLowerCase().includes(criteria)) {
+					opportunity.matches++;
+				}
+				opportunity.hashtags.forEach(hashtag => {
+					if(hashtag.includes(criteria)) {
+						opportunity.matches++;
+					}
+				});
+			});
+			if(opportunity.matches > 0) {
+				// let index = events.indexOf(event);
+				// if(index != -1) {
+				// 	events.splice(index, 1);
+				// }
+				sortedOpportunities.push(opportunity);
+			}
+		});
+		sortedOpportunities.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+		if(currentAcc.account_type == 1) {
+			Org.findOne({'_id': currentAcc.account_id}, (err, org) => {
+				if(err) {
+					console.log(err);
+				}
+				console.log(org);
+				res.render('opportunities/dashboard', {
+					title: 'ChanceMap | Opportunities',
+					opportunities: sortedOpportunities,
+					criteriaList: criteriaList,
+					account_type: currentAcc.account_type,
+					account_id: currentAcc.account_id,
+					currentAcc: org,
+					notis: req.notis
+				});
+			});
+		} else {
+			User.findOne({'_id': currentAcc.account_id}, (err, user) => {
+				if(err) {
+					console.log(err);
+				}
+				console.log(user);
+				res.render('opportunities/dashboard', {
+					title: 'ChanceMap | Opportunities',
+					opportunities: sortedOpportunities,
+					criteriaList: criteriaList,
+					account_type: currentAcc.account_type,
+					account_id: currentAcc.account_id,
+					currentAcc: user,
+					notis: req.notis
+				});
+			});
+		}
+	});
+});
+
 // @Routes /search/
 router.get('/', (req, res) => {
   	console.log(req.query.criteriaList);
@@ -480,46 +551,76 @@ router.get('/', (req, res) => {
 						}
 					});
 					sortedUsers.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-					if(currentAcc.account_type == 1) {
-						Org.findOne({'_id': currentAcc.account_id}, (err, org) => {
-							if(err) {
-								console.log(err);
-							}
-							console.log(org);
-							res.render('index', {
-								title: 'ChanceMap | Home',
-								events: sortedEvents,
-								jobs: sortedJobs,
-								orgs: sortedOrgs,
-								users: sortedUsers,
-								criteriaList: criteriaList,
-								account_type: currentAcc.account_type,
-								account_id: currentAcc.account_id,
-								currentAcc: org,
-								notis: req.notis
+					Opportunity.find((err, opportunities) => {
+						if(err) {
+							console.log(err);
+							return;
+						}
+						console.log("Opportunities: " + opportunities.length);
+						var sortedOpportunities = [];
+						opportunities.forEach(opportunity => {
+							opportunity.matches = 0;
+							criteriaList.forEach(criteria => {
+								if(opportunity.org_name.toLowerCase().includes(criteria) || opportunity.name.toLowerCase().includes(criteria)) {
+									opportunity.matches++;
+								}
+								opportunity.hashtags.forEach(hashtag => {
+									if(hashtag.includes(criteria)) {
+										opportunity.matches++;
+									}
+								});
 							});
-						});
-					} else {
-						User.findOne({'_id': currentAcc.account_id}, (err, user) => {
-							if(err) {
-								console.log(err);
+							if(opportunity.matches > 0) {
+								// let index = events.indexOf(event);
+								// if(index != -1) {
+								// 	events.splice(index, 1);
+								// }
+								sortedOpportunities.push(opportunity);
 							}
-							console.log(user);
-							res.render('index', {
-								title: 'ChanceMap | Home',
-								events: sortedEvents,
-								jobs: sortedJobs,
-								orgs: sortedOrgs,
-								users: sortedUsers,
-								criteriaList: criteriaList,
-								account_type: currentAcc.account_type,
-								account_id: currentAcc.account_id,
-								currentAcc: user,
-								notis: req.notis
-							});
 						});
-					}
-
+						sortedOpportunities.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+						if(currentAcc.account_type == 1) {
+							Org.findOne({'_id': currentAcc.account_id}, (err, org) => {
+								if(err) {
+									console.log(err);
+								}
+								console.log(org);
+								res.render('index', {
+									title: 'ChanceMap | Home',
+									events: sortedEvents,
+									jobs: sortedJobs,
+									orgs: sortedOrgs,
+									users: sortedUsers,
+									opportunities: sortedOpportunities,
+									criteriaList: criteriaList,
+									account_type: currentAcc.account_type,
+									account_id: currentAcc.account_id,
+									currentAcc: org,
+									notis: req.notis
+								});
+							});
+						} else {
+							User.findOne({'_id': currentAcc.account_id}, (err, user) => {
+								if(err) {
+									console.log(err);
+								}
+								console.log(user);
+								res.render('index', {
+									title: 'ChanceMap | Home',
+									events: sortedEvents,
+									jobs: sortedJobs,
+									orgs: sortedOrgs,
+									users: sortedUsers,
+									opportunities: sortedOpportunities,
+									criteriaList: criteriaList,
+									account_type: currentAcc.account_type,
+									account_id: currentAcc.account_id,
+									currentAcc: user,
+									notis: req.notis
+								});
+							});
+						}
+					});
 				});
 			});
 		});

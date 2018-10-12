@@ -1,5 +1,5 @@
 {
-	"env": { 
+	"env": {
 		"DB_PASS": "jwtpass"
 	},
 
@@ -11,6 +11,7 @@
 		"dashboard_users": "ChanceMap | Users",
 		"dashboard_jobs": "ChanecMap | Jobs",
 		"dashboard_events": "ChanceMap | Events",
+		"dashboard_opportunities": "ChanceMap | Opportunities",
 		"manage_jobs": "ChanceMap | Manage | My Jobs",
 		"manage_events": "ChanceMap | Manage | My Events",
 		"profile_title": "ChanceMap | My Profile"

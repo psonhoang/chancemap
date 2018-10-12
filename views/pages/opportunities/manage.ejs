@@ -1,0 +1,59 @@
+<% extend('../../defaultLayouts/defaultLayout'); %>
+<% var months = ["January", "February", "March", "April", "May", "June", "July","August", "September", "October","November", "December"]; %>
+
+<div class="app-content content container-fluid">
+  <div class="content-wrapper">
+    <div class="content-header row col-xs-10">
+      <div class="content-header-left col-md-6 col-xs-12 mb-2">
+        <h3 class="content-header-title mb-0">Opportunities</h3>
+        <div class="row breadcrumbs-top">
+          <div class="breadcrumb-wrapper col-xs-12">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href='/'>Home</a>
+              </li>
+              <li class="breadcrumb-item"><a>Manage</a>
+              </li>
+              <li class="breadcrumb-item active">My Opportunity
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<div class="content-body">
+
+<!-- Submit resume, edit and add opps button script-->
+<div class="row col-xs-12">
+		<div role="group" class="btn-group float-md-left" style="margin-left: 35px">
+      <div role="group" class="btn-group">
+          <button type="button" onclick="location.href='/opportunities/create'" class="btn btn-outline-primary"><i class="ft-plus"></i></button>
+      </div>
+		</div>
+</div>
+
+
+<div class='row col-xs-12'><br></div>
+
+<!-- card actions section start -->
+<section id="card-actions">
+<%  var opportunityCounts = 0; %>
+<%  opportunities.forEach(opportunity => { %>
+<%  if (opportunityCounts >= 2) { %>
+        <div class='row'></div>
+        <%      opportunityCounts = 0; %>
+        <%  } %>
+        <%- include('opportunityCard', {
+            opportunity_id: opportunity._id,
+            cardTitle: opportunity.name,
+            cardElement1: opportunity.org_name,
+            hashtags: opportunity.hashtags,
+            appForm: opportunity.app_form,
+            deadline: opportunity.app_deadline,
+            cardElement4: months[opportunity.start_date.getMonth()] + ' ' + opportunity.start_date.getDate() + ', ' + opportunity.start_date.getFullYear(),
+            cardElement6: opportunity.end_date ? months[opportunity.end_date.getMonth()] + ' ' + opportunity.end_date.getDate() + ', ' + opportunity.end_date.getFullYear() : null,
+            cardElement2: opportunity.desc }); %>
+        <%  opportunityCounts += 1; %>
+        <%  }); %>
+        </section>
+<!-- // card-actions section end -->

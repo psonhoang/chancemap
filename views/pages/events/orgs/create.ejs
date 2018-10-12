@@ -16,7 +16,7 @@
 			</div>
 		</div>
 		<div class="card-body collapse in">
-			<div class="card-block">    
+			<div class="card-block">
 
 				<form class="form" method="POST" action="/events/create">
 					<div class="form-body">
@@ -37,7 +37,11 @@
 							<div class="form-group col-xs-12 mb-2">
 								<label for="timesheetinput1">Organisation Name</label>
 								<div class="position-relative has-icon-left">
-									<input readonly type="text" value="<%= currentAcc.name %>" class="form-control" name="org_name">
+									<% if (account_type == 1){ %>
+										<input readonly type="text" id="timesheetinput1" class="form-control" name="org_name" value="<%=currentAcc.name; %>">
+									<% } else if (account_type == 2) { %>
+										<input type="text" id="timesheetinput1" class="form-control" name="name">
+									<% } %>
 									<div class="form-control-position">
 										<i class="ft-user"></i>
 									</div>
@@ -132,7 +136,7 @@
 								</div>
 							</div>
 						</div>
-						<!-- facebook -->								
+						<!-- facebook -->
 						<div class="row">
 							<div class="form-group col-xs-12 mb-2">
 								<label for="timesheetinput1">Facebook</label>
@@ -155,7 +159,7 @@
 									</div>
 								</div>
 							</div>
-						</div>	
+						</div>
 						<!-- event description -->
 						<div class="row">
 							<div class="form-group col-xs-12 mb-2">
@@ -177,7 +181,7 @@
 						<button type="submit" class="btn btn-primary">
 							<i class="fa fa-check-square-o"></i> Save
 						</button>
-					</div>  
+					</div>
 				</form>
 			</div>
 		</div>

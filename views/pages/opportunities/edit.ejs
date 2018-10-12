@@ -1,28 +1,31 @@
-<% extend('../../../defaultLayouts/defaultLayout'); %>
+<% extend('../../defaultLayouts/defaultLayout'); %>
+
+<br>
 	    <div class="col-md-7 offset-md-3 col-xs-10 offset-xs-1 box-shadow-2 p-0">
 	        <div class="card">
-	            <div style="color: white" class="card-header bg-cyan bg-lighten-1">
-	                <h4 class="card-title" id="from-actions-top-bottom-right">Job Creator</h4>
+	            <div class="card-header card-header bg-red bg-accent-2" style="color: white">
+	                <h4 class="card-title" id="from-actions-top-bottom-right">Opportunity Creator</h4>
 	                <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
-	                <div class="heading-elements">
+        			<div class="heading-elements">
 	                    <ul class="list-inline mb-0">
 	                        <li><a data-action="collapse"><i class="ft-minus" style="color: white"></i></a></li>
 	                        <li><a data-action="reload"><i class="ft-rotate-cw" style="color: white"></i></a></li>
 	                        <li><a data-action="expand"><i class="ft-maximize" style="color: white"></i></a></li>
-	                        <li><a href="/jobs/manage" data-action="close"><i class="ft-x" style="color: white"></i></a></li>
+	                        <li><a href="/opportunities/manage" data-action="close"><i class="ft-x" style="color: white"></i></a></li>
 	                    </ul>
 	                </div>
 	            </div>
 	            <div class="card-body collapse in">
 	                <div class="card-block">
-	                    <form class="form" method="POST" action="/jobs/create">
+
+	                    <form class="form" method="POST" action="/opportunities/edit/<%= opportunity._id %>">
 	                    	<div class="form-body">
 								<!-- event name -->
 	                    		<div class="row">
 	                    			<div class="form-group col-xs-12 mb-2">
-			                            <label for="timesheetinput1">Job Name</label>
+			                            <label for="timesheetinput1">Opportunity Name</label>
 			                            <div class="position-relative has-icon-left">
-			                            	<input type="text" id="timesheetinput1" class="form-control" name="name">
+			                            	<input type="text" value="<%= opportunity.name %>" id="timesheetinput1" class="form-control" name="name" required>
 				                            <div class="form-control-position">
 				                                <i class="ft-user"></i>
 				                            </div>
@@ -34,12 +37,8 @@
 	                    			<div class="form-group col-xs-12 mb-2">
 			                            <label for="timesheetinput1">Organisation Name</label>
 			                            <div class="position-relative has-icon-left">
-																		<% if (account_type == 1){ %>
-			                            		<input readonly type="text" id="timesheetinput1" class="form-control" name="org_name" value="<%=currentAcc.name; %>">
-																		<% } else if (account_type == 2) { %>
-																			<input type="text" id="timesheetinput1" class="form-control" name="org_name">
-																		<% } %>
-																		<div class="form-control-position">
+			                            	<input readonly type="text" value="<%= opportunity.org_name %>" class="form-control" name="org_name">
+				                            <div class="form-control-position">
 				                                <i class="ft-user"></i>
 				                            </div>
 			                            </div>
@@ -51,52 +50,63 @@
 			                            <label for="timesheetinput1">Hashtags</label>
 										<label class="col-md-0 label-control" for="hashtags"></label>
 										<div id="hashtags-input" class="edit-on-delete form-control tagging" data-tags-input-name="hashtags">
-											<input id="hashtags-input" class="type-zone form-control" name="hashtags" contenteditable="true" required>
+											<input class="type-zone form-control" name="hashtags" contenteditable="true" required>
 										</div>
 			                        </div>
 	                    		</div>
-								<!-- Desc -->
+								<!-- reg form -->
                                 <div class="row">
 	                    			<div class="form-group col-xs-12 mb-2">
-			                            <label for="timesheetinput1">Description</label>
+			                            <label for="timesheetinput1">Registration Form</label>
 			                            <div class="position-relative has-icon-left">
-			                            	<input type="text" id="timesheetinput1" class="form-control" name="desc">
+			                            	<input type="text" value="<%= opportunity.app_form %>" id="timesheetinput1" class="form-control" name="app_form">
 				                            <div class="form-control-position">
 				                                <i class="ft-user"></i>
 				                            </div>
 			                            </div>
 			                        </div>
 	                    		</div>
-								<!-- app form -->
-                                <div class="row">
-	                    			<div class="form-group col-xs-12 mb-2">
-			                            <label for="timesheetinput1">Application Form</label>
-			                            <div class="position-relative has-icon-left">
-			                            	<input type="text" id="timesheetinput1" class="form-control" name="app_form">
-				                            <div class="form-control-position">
-				                                <i class="ft-user"></i>
-				                            </div>
-			                            </div>
-			                        </div>
-	                    		</div>
-                                <!-- app deadline -->
+                                <!-- registration deadline -->
 								<div class="row">
 			                        <div class="form-group col-xs-12 mb-2">
-			                        	<label for="timesheetinput3">Application Deadline</label>
+			                        	<label for="timesheetinput3">Registration Deadline</label>
 			                            <div class="position-relative has-icon-left">
-			                            	<input type="date" id="timesheetinput3" class="form-control" name="app_deadline" value="2018-11-11">
+			                            	<input id="appDeadline" type="date" class="form-control" name="app_deadline">
 				                            <div class="form-control-position">
 				                                <i class="ft-message-square"></i>
 				                            </div>
 			                            </div>
 			                        </div>
 			                    </div>
+								<!-- event start -->
+                                <div class="row">
+			                        <div class="form-group col-md-6 mb-2">
+			                        	<label for="timesheetinput3">Start Date</label>
+			                            <div class="position-relative has-icon-left">
+			                            	<input type="date" id="startDate" class="form-control" name="start_date">
+				                            <div class="form-control-position">
+				                                <i class="ft-message-square"></i>
+				                            </div>
+			                            </div>
+			                        </div>
+								<!-- event end -->
+								<div class="row">
+									<div class="form-group col-md-6 mb-2">
+			                        	<label for="timesheetinput3">End Date</label>
+			                            <div class="position-relative has-icon-left">
+			                            	<input type="date" id="endDate" class="form-control" name="end_date">
+				                            <div class="form-control-position">
+				                                <i class="ft-message-square"></i>
+				                            </div>
+			                            </div>
+			                        </div>
+								</div>
 								<!-- facebook -->
                                 <div class="row">
 	                    			<div class="form-group col-xs-12 mb-2">
 			                            <label for="timesheetinput1">Facebook</label>
 			                            <div class="position-relative has-icon-left">
-			                            	<input type="text" id="timesheetinput1" class="form-control" name="facebook">
+			                            	<input type="text" value="<%= opportunity.facebook %>" id="timesheetinput1" class="form-control" name="facebook">
 				                            <div class="form-control-position">
 				                                <i class="ft-user"></i>
 				                            </div>
@@ -108,28 +118,31 @@
 	                    			<div class="form-group col-xs-12 mb-2">
 			                            <label for="timesheetinput1">Website</label>
 			                            <div class="position-relative has-icon-left">
-			                            	<input type="text" id="timesheetinput1" class="form-control" name="website">
+			                            	<input type="text" value="<%= opportunity.website %>" id="timesheetinput1" class="form-control" name="website">
 				                            <div class="form-control-position">
 				                                <i class="ft-user"></i>
 				                            </div>
 			                            </div>
 			                        </div>
 	                    		</div>
-                            <!-- select image -->
-                            <!-- <div class="row">
+								<!-- opportunity description -->
+								<div class="row">
 									<div class="form-group col-xs-12 mb-2">
-										<label>Select File</label>
-										<label id="projectinput8" class="file center-block">
-											<input type="file" id="file">
-											<span class="file-custom"></span>
-										</label>
+										<label for="timesheetinput7">Description</label>
+										<div class="position-relative has-icon-left">
+			                            	<input type="text" value="<%= opportunity.desc %>" id="timesheetinput7" rows="5" class="form-control" name="desc" placeholder="Description">
+				                            <div class="form-control-position">
+				                                <i class="ft-file"></i>
+				                            </div>
+			                            </div>
 									</div>
-							</div> -->
+								</div>
+							</div>
 							<!-- buttons -->
 	                        <div class="form-actions right">
-	                            <button onclick="location.href='/jobs/manage'" type="button" class="btn btn-warning mr-1">
+	                        	<button onclick="location.href='/opportunities/manage'" type="button" class="btn btn-warning mr-1">
 	                            	<i class="ft-x"></i> Cancel
-	                            </button>
+	                    		</button>
 	                            <button type="submit" class="btn btn-primary">
 	                                <i class="fa fa-check-square-o"></i> Save
 	                            </button>
@@ -141,10 +154,34 @@
 	    </div>
 	</div>
 
-<!-- BEGIN CODEDAO'S SCRIPT -->
+<!-- BEGIN CODEDAO SCRIPT -->
 <script>
 $(document).ready(function() {
-	$('#hashtags-input').tagging('removeAll');
+    let hashtags = <%- JSON.stringify(opportunity.hashtags) %>;
+    console.log("hashtags: " + hashtags);
+    $('#hashtags-input').tagging('removeAll');
+    hashtags.forEach(hashtag => {
+      $('#hashtags-input').tagging('add', hashtag);
+    });
+
+		let app_deadline = formatDate(new Date(<%- JSON.stringify(opportunity.app_deadline) %>));
+		let start_date = formatDate(new Date(<%- JSON.stringify(opportunity.start_date) %>));
+		let end_date = formatDate(new Date(<%- JSON.stringify(opportunity.end_date) %>));
+		document.getElementById('appDeadline').defaultValue = app_deadline;
+		document.getElementById('startDate').defaultValue = start_date;
+		document.getElementById('endDate').defaultValue = end_date;
+
 });
+
+function formatDate(d) {
+    var month = '' + (d.getMonth() + 1);
+    var day = '' + d.getDate();
+    var year = d.getFullYear()
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+}
 </script>
 <!-- END -->

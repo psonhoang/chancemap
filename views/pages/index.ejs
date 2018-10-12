@@ -18,7 +18,9 @@
           <button onclick="search()" class="col-xl-2 col-xs-12 btn btn-info" type="button"><i class="ft-search font-md-4"></i> Search</button>
         </div>
       <!-- </div> -->
+
       <div class="row">
+
         <!-- Orgs -->
         <div class="col-xl-9 col-lg-12">
           <div class="card">
@@ -140,6 +142,68 @@
           </div>
         </div>
       </div>
+
+      <!-- Opportunities -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+                <div style="color: white" class="card-header bg-red bg-accent-2">
+                <h4 class="card-title"><i class="ft-briefcase"></i> Opportunities</h4>
+                <a class="heading-elements-toggle">
+                    <i class="fa fa-ellipsis-v font-medium-3"></i>
+                </a>
+                </div>
+                <div class="card">
+                  <div style="display: block; max-height: 400px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar; " class="table-responsive">
+                    <table class="table">
+                            <thead style="color: white" class="thead bg-blue-grey bg-darken-3">
+                                <th>Deadline</th>
+                                <th>Opportunity</th>
+                                <th>Hashtags</th>
+                            </thead>
+                            <tbody id="opportunitiesBody">
+                                <% opportunities.forEach(opportunity => { %>
+                                <% cardId = opportunity._id; %>
+                                <tr class="btn-secondary" data-toggle="modal" data-target="#<%= cardId %>">
+                                    <% if(opportunity.app_deadline) { %>
+                                    <th scope="row"><%= months[opportunity.app_deadline.getMonth()] + ' ' + opportunity.app_deadline.getDate() + ', ' + opportunity.app_deadline.getFullYear() %></th>
+                                    <% } else { %>
+                                    <th scope="row">N/A</th>
+                                    <% } %>
+                                    <td>
+                                        <li style="font-size: 16px"><strong><%= opportunity.name %></strong></li>
+                                        <li style="font-style: italic"><%= opportunity.org_name %></li>
+                                        <% if(opportunity.start_date) { %>
+                                        <li style="font-size: small">Date: <%= months[opportunity.start_date.getMonth()] + ' ' + opportunity.start_date.getDate() + ', ' + opportunity.start_date.getFullYear() %></li>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                    <% opportunity.hashtags.forEach(hashtag => { %>
+                                        <% var isMatch = false; %>
+                                        <% criteriaList.forEach(criteria => { %>
+                                        <% if (hashtag.includes(criteria) && !isMatch) { %>
+                                            <% isMatch = true; %>
+                                            <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
+                                        <% } %>
+                                        <% }); %>
+                                        <% if (!isMatch) { %>
+                                        <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
+                                        <% } %>
+                                    <% }); %>
+                                    </td>
+                                </tr>
+                                <!-- Opportunity Modal Starts -->
+                                <%- include('opportunityCardModal', {opportunity: opportunity, months: months}); %>
+                                <% }); %>
+                                <!-- Opportunity Modal Ends-->
+                            </tbody>
+                    </table>
+                  </div>
+                </div>
+          </div>
+        </div>
+      </div>
+
       <div class="row">
         <!-- Events -->
         <div class="col-xl-8 col-lg-12">
@@ -201,6 +265,7 @@
           </div>
         </div>
 
+
         <!-- Users -->
         <div class="col-xl-4 col-lg-12">
           <div class="card">
@@ -260,7 +325,12 @@
             </div>
           </div>
         </div>
+
       </div>
+
+
+
+
     </div>
   </div>
 </div>

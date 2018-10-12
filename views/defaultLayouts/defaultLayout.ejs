@@ -74,7 +74,7 @@
             <% }  else { %>
               <%= 0 %>
             <% } %>
-               
+
             </span></a>
             <ul class="dropdown-menu dropdown-menu-media dropdown-menu-right">
               <li class="dropdown-menu-header">
@@ -177,7 +177,11 @@
               <i></i>
             </span>
             <span class="user-name"><%= currentAcc.username; %></span></a>
-            <div class="dropdown-menu dropdown-menu-right"><a href="/profile" class="dropdown-item"><i class="ft-user"></i> Edit Profile</a><a href="/notifications" class="dropdown-item"><i class="ft-bell"></i> Notifications</a>
+            <% if (account_type == 2) { %>
+              <div class="dropdown-menu dropdown-menu-right"><a href="javascript:void(0);" class="dropdown-item"><i class="ft-user"></i> Edit Profile</a><a href="javascript:void(0);" class="dropdown-item"><i class="ft-bell"></i> Notifications</a>
+            <%} else {%>
+              <div class="dropdown-menu dropdown-menu-right"><a href="/profile" class="dropdown-item"><i class="ft-user"></i> Edit Profile</a><a href="/notifications" class="dropdown-item"><i class="ft-bell"></i> Notifications</a>
+            <%}%>
               <div class="dropdown-divider"></div><a href="/logout" class="dropdown-item"><i class="ft-power"></i> Logout</a>
             </div>
           </li>
@@ -189,8 +193,10 @@
 <!-- ////////////////////////////////////////////////////////////////////////////-->
   <% if(account_type == 1) { %>
     <%- include('nav_menu_org'); %>
-  <% } else { %>
+  <% } else if (account_type ==0){ %>
     <%- include('nav_menu_user'); %>
+  <% } else { %>
+    <%- include('nav_menu_admin'); %>
   <% } %>
   <%- content %>
 
@@ -292,7 +298,7 @@
       });
     }
   }
-</script> 
+</script>
 <!-- END -->
 
 </body>

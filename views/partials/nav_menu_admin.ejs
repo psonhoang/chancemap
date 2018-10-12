@@ -2,28 +2,28 @@
   <div class="main-menu-content ps-container ps-theme-dark ps-active-y" data-ps-id="a0cf5723-e682-b9c3-b228-6640b1cf55c0" style="height: 753px;">
     <ul id="main-menu-navigation" data-menu="menu-navigation" class="navigation navigation-main">
       <ul class="navigation-header">
-        <li><a href="/profile"><i style="color:gray" class="ft-edit"></i></a></li>
+        <li><a href="javascript:void(0);"><i style="color:gray" class="ft-edit"></i></a></li>
         <li><div id="avatarHeader" class="text-xs-center">
           <div class="card-block">
-            <a href="/profile"><img id="avatar" src='<%= currentAcc.avatar; %>' class="rounded-circle width-100 height-100" alt="Card image"></a>
+            <a href="javascript:void(0);"><img id="avatar" src='<%= currentAcc.avatar; %>' class="rounded-circle width-100 height-100" alt="Card image"></a>
             <br><br>
-            <a href="/profile"><span class="card-subtitle"><%= currentAcc.name; %></span></a>
+            <a href="javascript:void(0);"><span class="card-subtitle"><%= currentAcc.name; %></span></a>
           </div>
         </div></li>
       </ul>
       <li class="nav-item"><a href="/"><i class="ft-home"></i><span data-i18n="" class="menu-title">Home</span></a>
       </li>
-      <li class="nav-item has-sub"><a><i class="ft-sidebar"></i><span data-i18n="" class="menu-title">Dashboard</span><%#<span class="tag tag tag-primary tag-pill float-xs-right mr-2">3</span>%></a>
+      <li class="nav-item has-sub"><a><i class="ft-sidebar"></i><span data-i18n="" class="menu-title">Dashboard</span><%#<span class="tag tag tag-primary tag-pill float-xs-right mr-2">4</span>%></a>
         <ul class="menu-content">
           <li><a href="/events" class="menu-item"><i class="ft-calendar"></i>Events</a>
           </li>
           <li><a href="/jobs" class="menu-item"><i class="ft-clipboard"></i>Jobs</a>
           </li>
+          <li><a href="/opportunities" class="menu-item"><i class="ft-briefcase"></i>Opportunities</a>
+          </li>
           <li><a href="/orgs" class="menu-item"><i class="ft-users"></i>Orgs</a>
           </li>
           <li><a href="/users" class="menu-item"><i class="ft-user"></i>Users</a>
-          </li>
-          <li><a href="/opportunities" class="menu-item"><i class="ft-briefcase"></i>Opportunities</a>
           </li>
         </ul>
       </li>
@@ -33,11 +33,10 @@
           </li>
           <li><a href="/jobs/manage" class="menu-item"><i class="ft-clipboard"></i>My Jobs</a>
           </li>
+          <li><a href="/opportunities/manage" class="menu-item"><i class="ft-briefcase"></i>My Opportunities</a>
+          </li>
         </ul>
       </li>
-      <li class="nav-item"><a href="/profile"><i class="ft-users"></i><span data-i18n="" class="menu-title">Org profile</span></a>
-      </li>
-      <li class="nav-item"><a href="/<%= currentAcc.username %>/followers"><i class="ft-user-check"></i><span data-i18n="" class="menu-title">Followers</span></a>
       <li class="navigation-header"><span>More</span>
         <%# <i data-toggle="tooltip" data-placement="right" data-original-title="Apps" class=" ft-minus"></i> %>
       </li>

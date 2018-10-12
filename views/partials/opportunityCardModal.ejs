@@ -1,0 +1,58 @@
+<div id="<%= cardId %>" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="col-md-12">
+
+            <!-- Modal content-->
+            <div class="row">
+                <div class="col-md-7 col-sm-12">
+                    <div class="card"  style="left: -50px">
+                        <div class="card-header bg-red bg-darken-2" style="color: white">
+                            <h4 class="card-title" id="from-actions-top-bottom-right"><i class="ft-briefcase"></i> <%= opportunity.name %></h4>
+                        </div>
+                        <div class="card-body collapse in">
+                            <div class="card-block">
+                                <p><label>Organisation name:</label>  <strong><%= opportunity.org_name %></strong></p>
+                                <p><label>Description:</label><strong><%= opportunity.desc %></strong></p>
+                                <p><label>Hashtags:</label>
+                                <% opportunity.hashtags.forEach(hashtag => { %>
+                                    <% var isMatch = false; %>
+                                    <% criteriaList.forEach(criteria => { %>
+                                    <% if (hashtag.includes(criteria) && !isMatch) { %>
+                                        <% isMatch = true; %>
+                                        <p style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></p>
+                                    <% } %>
+                                    <% }); %>
+                                    <% if (!isMatch) { %>
+                                    <p style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></p>
+                                    <% } %>
+                                <% }); %></p>
+                                <p><label>Registration form:</label>  <a><strong><%= opportunity.app_form %></strong></a></p>
+                                <p><label>Registration deadline:</label>
+                                <% if(opportunity.app_deadline) { %>
+                                <strong><%= months[opportunity.app_deadline.getMonth()] + ' ' + opportunity.app_deadline.getDate() + ', ' + opportunity.app_deadline.getFullYear() %></strong>
+                                <% } else { %>
+                                <strong>N/A</strong>
+                                <% } %></p>
+                                <p><label>Start date:</label>  <strong><%= months[opportunity.start_date.getMonth()] + ' ' + opportunity.start_date.getDate() + ', ' + opportunity.start_date.getFullYear(), %></strong></p>
+                                <% if(opportunity.end_date) { %>
+                                    <p><label>End date:</label>  <strong><%= months[opportunity.end_date.getMonth()] + ' ' + opportunity.end_date.getDate() + ', ' + opportunity.end_date.getFullYear(), %></strong></p>
+                                <% } %>
+                                <% if(opportunity.facebook) { %>
+                                    <p><label>Facebook:</label> <a href="<%= opportunity.facebook %>"><i class="ft-facebook"></i></a></p>
+                                <% } %>
+                                <% if(opportunity.website) { %>
+                                    <p><label>Website:</label><a href="<%= opportunity.website %>"><i class="ft-globe"></i></a></p>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5 col-sm-12">
+                    <div class="fb-post card" data-href="<%= opportunity.facebook %>" data-width="500" data-show-text="true"></div>
+                </div>
+            </div>
+            <!-- Modal content ends -->
+
+        </div>
+    </div>
+</div>

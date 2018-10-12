@@ -16,7 +16,7 @@ const Event = require('../models/event');
 const User = require('../models/user');
 const Job = require('../models/job');
 const Org = require('../models/org');
-
+const Admin = require('../models/admin');
 // Database connection
 const connection = mongoose.connection;
 
@@ -93,6 +93,27 @@ router.get('/', (req, res) => {
 						});
 	        });
 	      });
+			}
+			else if (account_type == 2){
+				Admin.findOne({'_id': account_id}, (err, admin) => {
+					criteriaList = [];
+					orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+					Job.find({'org_id': {$ne: account_id}}, (err, jobs) => {
+						Event.find({'org_id': {$ne: account_id}}, (err, events) => {
+							res.render('orgs/dashboard', {
+								title: 'ChanceMap | Orgs',
+								account_type: account_type,
+								account_id: account_id,
+								currentAcc: admin,
+								orgs: orgs,
+								jobs: jobs,
+								events: events,
+								criteriaList: criteriaList,
+								notis: req.notis
+							});
+						});
+					});
+				});
 			}
 			else
 			{

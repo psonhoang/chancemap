@@ -1,4 +1,4 @@
-<% extend('../../../defaultLayouts/defaultLayout') %>
+<% extend('../../../defaultLayouts/defaultLayout.ejs') %>
 <% var months = ["January", "February", "March", "April", "May", "June", "July","August", "September", "October","November", "December"]; %>
 
 <div class="app-content content container-fluid">
@@ -26,7 +26,7 @@
 <!-- Submit resume, edit job and add jobs button script-->
 <div class="row col-xs-12">
   <div role="group" class="btn-group float-md-left" style="margin-left: 25px">
-    <% if (account_type == 1) {%>
+    <% if (account_type == 1 || account_type == 2) {%>
       <button type="button" onclick="location.href='/jobs/create'" class="btn btn-outline-primary"><i class="ft-plus"></i></button>
     <% } %>
   </div>

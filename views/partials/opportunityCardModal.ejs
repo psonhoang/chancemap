@@ -6,7 +6,7 @@
             <div class="row">
                 <div class="col-md-7 col-sm-12">
                     <div class="card"  style="left: -50px">
-                        <div class="card-header bg-amber bg-darken-3" style="color: white">
+                        <div class="card-header bg-red bg-accent-2" style="color: white">
                             <h4 class="card-title" id="from-actions-top-bottom-right"><i class="ft-briefcase"></i> <%= opportunity.name %></h4>
                         </div>
                         <div class="card-body collapse in">
@@ -26,10 +26,10 @@
                                     <p style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></p>
                                     <% } %>
                                 <% }); %></p>
-                                <p><label>Registration form:</label>  <a><strong><%= opportunity.reg_form %></strong></a></p>
+                                <p><label>Registration form:</label>  <a><strong><%= opportunity.app_form %></strong></a></p>
                                 <p><label>Registration deadline:</label>
-                                <% if(opportunity.reg_deadline) { %>
-                                <strong><%= months[opportunity.reg_deadline.getMonth()] + ' ' + opportunity.reg_deadline.getDate() + ', ' + opportunity.reg_deadline.getFullYear() %></strong>
+                                <% if(opportunity.app_deadline) { %>
+                                <strong><%= months[opportunity.app_deadline.getMonth()] + ' ' + opportunity.app_deadline.getDate() + ', ' + opportunity.app_deadline.getFullYear() %></strong>
                                 <% } else { %>
                                 <strong>N/A</strong>
                                 <% } %></p>

@@ -147,7 +147,7 @@
       <div class="row">
         <div class="col-md-12">
           <div class="card">
-                <div style="color: white" class="card-header bg-amber bg-darken-1">
+                <div style="color: white" class="card-header bg-red bg-accent-2">
                 <h4 class="card-title"><i class="ft-briefcase"></i> Opportunities</h4>
                 <a class="heading-elements-toggle">
                     <i class="fa fa-ellipsis-v font-medium-3"></i>
@@ -165,8 +165,8 @@
                                 <% opportunities.forEach(opportunity => { %>
                                 <% cardId = opportunity._id; %>
                                 <tr class="btn-secondary" data-toggle="modal" data-target="#<%= cardId %>">
-                                    <% if(opportunity.end_date) { %>
-                                    <th scope="row"><%= months[opportunity.end_date.getMonth()] + ' ' + opportunity.end_date.getDate() + ', ' + opportunity.end_date.getFullYear() %></th>
+                                    <% if(opportunity.app_deadline) { %>
+                                    <th scope="row"><%= months[opportunity.app_deadline.getMonth()] + ' ' + opportunity.app_deadline.getDate() + ', ' + opportunity.app_deadline.getFullYear() %></th>
                                     <% } else { %>
                                     <th scope="row">N/A</th>
                                     <% } %>

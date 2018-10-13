@@ -268,7 +268,7 @@ app.get('/', (req, res) => {
                   });
                 });
               } else if (account_type ==1 ){
-                Org.findOne({'_id': account_id}, (err, admin) => {
+                Org.findOne({'_id': account_id}, (err, org) => {
                   let criteriaList = org.hashtags;
                   // orgs sort
                   orgs.forEach(org => {

@@ -1,3 +1,4 @@
+const compression = require('compression');
 const express = require('express');
 const app = express();
 const config = require('./config/database.js');
@@ -42,6 +43,9 @@ app.set('views', [path.join(__dirname, 'views'),
                   path.join(__dirname, 'views/partials'),
                   path.join(__dirname, 'views/defaultLayouts')]);
 app.engine('ejs', require('express-ejs-extend'));
+
+// gzip compression
+app.use(compression());
 
 // Method Override
 app.use(methodOverride('_method'));

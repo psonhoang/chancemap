@@ -341,7 +341,7 @@ router.get('/edit/:id', (req, res) => {
     } else {
       let account_type = req.user.account_type;
       let account_id = req.user.account_id;
-      Event.findOne({_id: req.params.ID}, (err, event) => {
+      Event.findOne({_id: req.params.id}, (err, event) => {
           if(err) {
               console.log(err);
               return;
@@ -377,7 +377,7 @@ router.get('/edit/:id', (req, res) => {
 
 router.post('/edit/:id', (req, res) => {
     let data = req.body;
-    let job_id = req.params.id;
+    let event_id = req.params.id;
     let name = data.name;
     let org_id = req.user.account_id;
     let org_name = data.org_name;
@@ -392,15 +392,15 @@ router.post('/edit/:id', (req, res) => {
     let org_followers = data.org_followers;
 
     Event.findOne({_id: event_id}, (err, event) => {
-		if(err) {
-			res.send('Database error...');
-			console.log(err);
-			return;
-    }
-    console.log(event);
-    if(!event.created_at) {
-      event.created_at = new Date();
-    }
+    		if(err) {
+    			res.send('Database error...');
+    			console.log(err);
+    			return;
+        }
+        console.log(event);
+        if(!event.created_at) {
+          event.created_at = new Date();
+        }
         event.updated_at = new Date();
         event.name = data.name;
         event.desc = data.desc;

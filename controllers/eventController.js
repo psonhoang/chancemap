@@ -31,7 +31,7 @@ router.get('/create', (req, res) => {
                 notis: req.notis
             });
         });
-    } else if (account_type ==2){
+    } else if (account_type == 2){
       let account_type = req.user.account_type;
       let account_id = req.user.account_id;
       if(account_type == 2) {
@@ -49,11 +49,19 @@ router.get('/create', (req, res) => {
   }
 });
 
+// TODO: GIVE ADMIN RIGHT TO CREATE EVENT FOR ORGS
 router.post('/create', (req, res) => {
     let data = req.body;
     let name = data.name;
-    let org_id = req.user.account_id;
     let org_name = data.org_name;
+    let org_id = req.user.account_id;
+    // TEST ADMIN CREATE EVENT CODE
+    if(req.user.account_id == 2) {
+      Org.findOne({'name': org_name}, (err, targetOrg) => {
+        org_id = targetOrg._id;
+      });
+    }
+    // REMEMBER TO DEBUG BEFORE COMMIT
     let desc = data.desc;
     let hashtags = data.hashtags;
     let address = data.address;
@@ -94,7 +102,7 @@ router.post('/create', (req, res) => {
         }
         console.log('new event created!');
         console.log(event);
-        Org.findOne({'_id': req.user.account_id}, (err, org) => {
+        Org.findOne({'_id': org_id}, (err, org) => {
             let accounts = [];
             if(org.followers) {
                 accounts = org.followers;

@@ -5,6 +5,7 @@ const config = require('./config/database.js');
 //Modules
 const path = require('path');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const expressValidator = require('express-validator');
 const flash = require('connect-flash');
 const session = require('express-session');
@@ -56,6 +57,9 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
+// Cookie-parser
+app.use(cookieParser());
+
 // Public static
 app.use(express.static(path.join(__dirname, 'public'))); // Static files root directory
 // app.use(express.static('uploads')); // Upload files root directory
@@ -97,6 +101,7 @@ require('./config/passport')(passport);
 // Passsport Middleware
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(passport.authenticate('remember-me'));
 
 // Socket.IO
 const http = require('http');
@@ -107,7 +112,7 @@ var mSocket;
 var mAccountType;
 
 io.on('connection', (socket) => {
-  console.log('a user connected');
+  // console.log('a user connected');
 
   mSocket = socket;
 
@@ -124,14 +129,10 @@ io.on('connection', (socket) => {
     socket.join(noti_rooms);
   });
 
-  socket.on('event', (msg) => {
-    console.log(msg);
-  });
-
   // Disconnect
-  socket.on('disconnect', () => {
-    console.log('a user disconected');
-  });
+  // socket.on('disconnect', () => {
+  //   console.log('a user disconected');
+  // });
 });
 
 // Make io accessible to our router
@@ -164,7 +165,6 @@ app.get('/', (req, res) => {
   if(!req.isAuthenticated()) {
     res.render('splash', {title: 'ChanceMap'});
   } else {
-    // res.send('Hi there, ' + req.user.username + '; Your account type is: ' + req.user.account_type);
     let account_type = req.user.account_type;
     let account_id = req.user.account_id;
     Opportunity.find((err, opportunities) => {

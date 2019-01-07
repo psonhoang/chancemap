@@ -1,4 +1,5 @@
 const LocalStrategy = require('passport-local').Strategy;
+const RememberMeStrategy = require('passport-remember-me').Strategy;
 const Account = require('../models/account');
 const databaseConfig = require('./database');
 const bcrypt = require('bcryptjs');
@@ -37,7 +38,25 @@ module.exports = function(passport) {
           }
         });
       });
-    }));
+  }));
+
+  // Remember me strategy
+  passport.use(new RememberMeStrategy(
+    function(token, done) {
+      Token.consume(token, (err, user) => {
+        if (err) { return done(err); }
+        if (!user) { return done(null, false); }
+        return done(null, user);
+      });
+    },
+    function(user, done) {
+      let token = utils.generateToken(64);
+      Token.save(token, { userId: user.id }, (err) => {
+        if (err) { return done(err); }
+        return done(null, token);
+      });
+    }
+  ));
 
   passport.serializeUser(function(account, done) {
     done(null, account.id);

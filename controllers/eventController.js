@@ -55,13 +55,13 @@ router.post('/create', (req, res) => {
     let name = data.name;
     let org_name = data.org_name;
     let org_id = req.user.account_id;
-    // TEST ADMIN CREATE EVENT CODE
+    // ADMIN CREATE EVENT CODE
     if(req.user.account_id == 2) {
       Org.findOne({'name': org_name}, (err, targetOrg) => {
         org_id = targetOrg._id;
       });
     }
-    // REMEMBER TO DEBUG BEFORE COMMIT
+
     let desc = data.desc;
     let hashtags = data.hashtags;
     let address = data.address;

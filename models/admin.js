@@ -9,7 +9,7 @@ const adminSchema = mongoose.Schema({
 	username: {type: String, required: true},
 	events: [mongoose.Schema.Types.ObjectId], // contain events' _ids
 	jobs: [mongoose.Schema.Types.ObjectId], // contain jobs' _ids
-  opportunities: [mongoose.Schema.Types.ObjectId],
+  	opportunities: [mongoose.Schema.Types.ObjectId],
 	desc: {type: String, required: true},
 	facebook: String,
 	avatar: String,

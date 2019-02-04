@@ -42,19 +42,19 @@
                 <div class="card">
                     <div class="table-responsive">
                         <table class="table">
-                          <thead style="color: white" class="thead bg-blue-grey bg-darken-3">
+                          <!-- <thead style="color: white" class="thead bg-blue-grey bg-darken-3">
                               <th>Deadline</th>
                               <th>Opportunity</th>
                               <th>Hashtags</th>
-                          </thead>
+                          </thead> -->
                             <tbody id="opportunitiesBody">
                                 <% opportunities.forEach(opportunity => { %>
                                 <% cardId = opportunity._id; %>
                                 <tr class="btn-secondary" style="border: 0" data-toggle="modal" data-target="#<%= cardId %>">
                                     <% if(opportunity.reg_deadline) { %>
-                                    <th scope="row"><%= months[opportunity.reg_deadline.getMonth()] + ' ' + opportunity.reg_deadline.getDate() + ', ' + opportunity.reg_deadline.getFullYear() %></th>
+                                    <th scope="row">Deadline: <%= months[opportunity.reg_deadline.getMonth()] + ' ' + opportunity.reg_deadline.getDate() + ', ' + opportunity.reg_deadline.getFullYear() %></th>
                                     <% } else { %>
-                                    <th scope="row">N/A</th>
+                                    <th scope="row">Deadline: N/A</th>
                                     <% } %>
                                     <td>
                                         <li style="font-size: 16px"><strong><%= opportunity.name %></strong></li>

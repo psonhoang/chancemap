@@ -19,6 +19,9 @@ const User = require('../models/user');
 const Org = require('../models/org');
 const Notification = require('../models/notification');
 
+// Utils
+const utils = require('../utils');
+
 // Database connection
 const conn = mongoose.connection;
 
@@ -59,13 +62,19 @@ router.get('/login', (req, res) => {
 	res.render('login', {title: "ChanceMap | Login", message: req.flash('error')});
 });
 
-router.post('/login', (req, res, next) => {
-  passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/login',
-    failureFlash: true,
-  })(req, res, next);
-});
+router.post('/login', passport.authenticate('local', {failureRedirect: '/login', failureFlash: true}), 
+	(req, res, next) => {
+		// issue a remember me cookie if the option was checked
+    if (!req.body.remember_me) { return next(); }
+    var token = utils.generateToken(64);
+    Token.save(token, { userId: req.user.id }, function(err) {
+      if (err) { return done(err); }
+      res.cookie('remember_me', token, { path: '/', httpOnly: true, maxAge: 604800000 }); // 7 days
+			return next();
+		});
+	}, (req, res) => {
+		res.redirect('/');
+	});
 
 // logout
 router.get('/logout', (req, res) => {
@@ -124,11 +133,6 @@ router.post('/register', (req, res) => {
 // @route POST
 // @desc Register new user account
 router.post('/register/user', upload.fields([{name: 'avatar', maxCount: 1}, {name: 'resume_file', maxCount: 1}]), (req, res) => {
-	// console.log(req.body);
-	// console.log(req.files);
-
-	console.log('POST on /register/user');
-
 	let data = req.body;
 	let name = data.name;
 	let username = data.username.trim();
@@ -140,7 +144,6 @@ router.post('/register/user', upload.fields([{name: 'avatar', maxCount: 1}, {nam
 	if(req.files['resume_file']) {
 		resume_file = '/files/' + req.files['resume_file'][0].filename;
 	}
-	console.log(resume_file);
 	let school = data.school;
 	let intro = data.intro;
 	let facebook = data.facebook;
@@ -220,18 +223,13 @@ router.post('/register/user', upload.fields([{name: 'avatar', maxCount: 1}, {nam
 // @route POST
 // @desc Register new org account
 router.post('/register/org', upload.single('avatar'), (req, res) => {
-	// console.log(req.body);
-	// console.log(req.file);
-
 	let data = req.body;
 	let name = data.name;
 	let username = data.username.trim();
 	let email = data.email;
 	let password = data.password;
 	let hashtags = data.hashtags;
-	console.log(hashtags);
 	let desc = data.desc;
-	console.log(desc);
 	let facebook = data.facebook;
 	let website = data.website;
 	let avatar = "https://cdn0.iconfinder.com/data/icons/users-android-l-lollipop-icon-pack/24/group2-512.png";
@@ -349,8 +347,6 @@ router.get('/profile', (req, res) => {
 router.post('/profile/user', upload.fields([{name: 'avatar', maxCount: 1}, {name: 'resume_file', maxCount: 1}]), (req, res) => {
 	let data = req.body;
 	const currentAcc = req.user;
-
-	console.log('POST on /profile/user');
 
 	User.findOne({'username': currentAcc.username}, (err, user) => {
 		if(err) {

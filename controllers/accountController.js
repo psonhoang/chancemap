@@ -780,7 +780,7 @@ router.post('/reset/:token', function(req, res){
         service: 'Gmail',
         auth: {
           user: 'chancemap.official@gmail.com',
-          pass: 'Chancemap1234'
+          pass: 'Chancemap@1234'
         }
       });
       var mailOptions = {

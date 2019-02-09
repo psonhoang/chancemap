@@ -3,12 +3,12 @@ html, body {
     height: 100%;
     background-color: #ffffff;
     font-family: 'Josefin Sans', sans-serif;
-    font-color: white;
+    color: white;
 }
 
 .carousel-indicators li {
     display: block; 
-    margin-bottom: 5px; 
+    margin-bottom: 5px;
     border: 1px solid #fff; 
 }
 .carousel-indicators li.active {
@@ -74,7 +74,13 @@ html, body {
 /*------------------------------- 1st Login Page ------------------------------*/
 
 .First {
-    background: url('/images/splash_bg.jpg') no-repeat center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+#particles-js {
+    background: url('/images/splash_bg.png') no-repeat;
     background-size: cover;
 }
 
@@ -84,10 +90,10 @@ html, body {
     margin-left: auto;
     margin-right: auto;
     max-width: 400px;
-    padding-top: 180px;
+    padding-top: 118px;
     padding-bottom: -5px;
     color: white;
-    font-size: 80px;
+    font-size: 68px;
     font-family: 'Josefin Sans', sans-serif;
     text-align: center;
     font-weight: normal;
@@ -100,7 +106,7 @@ html, body {
     font-family: 'Josefin Slab', serif;
     font-size: large;
     margin-top: -10px;
-    font-weight: normal;
+    font-weight: bold;
 }
 
 .buttonOne {
@@ -108,13 +114,13 @@ html, body {
     margin-left: auto;
     margin-right: auto;
     background-color: #DC4244; 
-    width: 300px;
-    height: 60px;
+    width: 255px;
+    height: 57px;
     font-size: 24px;
     color: white;
     margin-top: 35px;
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
 }
 
 .buttonTwo {
@@ -122,14 +128,14 @@ html, body {
     margin-left: auto;
     margin-right: auto;
     background-color: #313E50; 
-    width: 300px;
-    height: 60px;
+    width: 255px;
+    height: 57px;
     font-size: 24px;
     color: white;
     border-radius: 10px;
     margin-top: 10px;
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
 }
 
 .footer {
@@ -137,7 +143,7 @@ html, body {
     left: 0;
     bottom: 0;
     width: 100%;
-    height: 50px;
+    height: 49px;
     color: white;
     text-align: center;
     line-height: 35px;
@@ -201,27 +207,32 @@ html, body {
     border-radius: 3px;
 }
 
-.content1 h1 {
+.Second .content1 h1 {
     text-align: center;
     color: #ffffff;
     font-weight: normal;
-    padding-top: 100px;
+    padding-top: 80px;
     padding-bottom: 30px;
 }
 
-.content1 p {
-    text-align: center;
+.Second .content1 p {
     color: #ffffff;
     font-weight: normal;
     font-size: large;
     margin: 30px;
 }
 
-.content1 h3 {
+.Second .content1 h4 {
     text-align: center;
     color: #ffffff;
     font-weight: normal;
     margin-top: -30px;
+}
+
+.Second .content1 h3 {
+    color: #ffffff;
+    font-weight: normal;
+    margin: 30px;
 }
 
 /*------------------------------- How it works? ------------------------------*/
@@ -240,7 +251,7 @@ html, body {
     padding-bottom: 10px;
 }
 
-.content2 h1 {
+.content2 h2 {
     text-align: center;
     color: #ffffff;
     font-size: 50px;
@@ -264,16 +275,6 @@ html, body {
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
-}
-
-.small-logo a img {
-    display: block;
-    align-content: center;
-    margin-left: auto;
-    margin-right: auto;.
-    max-height: 150px;
-    max-width: 150px;
-    padding-top: 9.8%;
 }
 
 .content3 h2 {
@@ -369,13 +370,13 @@ html, body {
         margin-left: auto;
         margin-right: auto;
         background-color: #DC4244; 
-        width: 275px;
-        height: 48px;
+        width: 255px;
+        height: 57px;
         font-size: 24px;
         color: white;
         margin-top: 35px;
         border: none;
-        border-radius: 5px;
+        border-radius: 10px;
     }
 
     .buttonTwo {
@@ -383,13 +384,12 @@ html, body {
         margin-left: auto;
         margin-right: auto;
         background-color: #313E50; 
-        width: 275px;
-        height: 48px;
+        width: 255px;
+        height: 57px;
         font-size: 24px;
         color: white;
-        border-radius: 10px;
         margin-top: 10px;
         border: none;
-        border-radius: 5px;
+        border-radius: 10px;
     }
 }

@@ -30,6 +30,7 @@
                     <div class="First fill">
                         <div class="big-logo">
                             <p>
+                                <img width="120px" height="120px" src="/images/w_logo.png" alt="logo"></img>
                                 ChanceMap
                             </p>
                             <h3>
@@ -48,9 +49,10 @@
                                 Log In
                             </button>
                         </div>
-                        <div onclick="$('#myCarousel').carousel(1);" class="footer">
+                    </div>
+                    <div id="particles-js"></div>
+                    <div onclick="$('#myCarousel').carousel(1);" class="footer">
                             <p style="padding-top: 10px">Explore ChanceMap</p>
-                        </div>
                     </div>
                 </div>
                 <!-- What is ChanceMap? -->
@@ -60,10 +62,7 @@
                             <a href="/login" class="logIn">Log In</a>
                             <a href="/register" class="signUp">Sign Up</a>
                         </div>
-                        <div class="small-logo" style="margin-top: 30px">
-                            <a><img src="/images/w_logo.png"></a>
-                        </div>
-                        <div style="margin-top: 14%; margin-right: 30px; margin-left: 30px;" class="content3">
+                        <div style="margin-top: 34%; margin-right: 30px; margin-left: 30px;" class="content3">
                             <h2>It looks familiar... but not really</h2>
                             <h3>ChanceMap is the LinkedIn, Facebook, Tumblr... (you name it) of extracurricular activites!</h3>
                         </div>
@@ -80,9 +79,9 @@
                             <a><img src="/images/func_bg.png" alt="logo"></a>
                         </div>
                         <div class="content2">
-                            <h1>
+                            <h2>
                                 Just type in <strong>#tags</strong> of what you're interested in
-                            </h1>
+                            </h2>
                             <h3>                
                                 And let us do the mapping with the most suitable students, events and jobs from organizations around you!
                             </h3>
@@ -102,14 +101,30 @@
                                     A Map of Chances
                                 </h1>
                             </div>
-                            <h3>We made it much simpler to search for extracurriculars</h3>
-                            <p>
-                                A lot of Vietnamese students lack access to information regarding ECs they are <strong>truly interested in</strong>, making it considerably harder for them to embark into the EC community. With our platform, students can get access to the kinds of ECs they want to do and the causes they want to serve. 
-                                <br>
-                                With that said, ChanceMap is founded to foster a more sharing and active extracurricular community where access to information is easily available to all students from any background or circumstance in Vietnam within a few clicks of a button. We aim to promote students’ interest/involvement in extracurriculars, self-awareness in youths’ responsibility to contribute to society and most importantly, a sharing, cooperative spirit in their endeavors to bring about positive social impacts.
-                                <br>
-                                By collaborating with various student-run organizations and NPOs/NGOs in Ho Chi Minh city, ChanceMap is more than ever diverse for you to explore new opportunities around you.
-                            </p>
+                            <h4>We made it much simpler to search for extracurriculars</h4>
+                            <br>
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <h3>What we are trying to solve</h3>
+                                        <p>A lot of Vietnamese students lack access to information regarding ECs they are <strong>truly interested in</strong>, making it considerably harder for them to embark into the EC community. With our platform, students can get access to the kinds of ECs they want to do and the causes they want to serve.</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h3>Our mission</h3>
+                                        <p>
+                                            ChanceMap is founded to foster an inclusive student community where access to information on extracurricular and academic opportunities is easily attainable within a few clicks of a button. We aim to promote Vietnamese students’ interest/involvement in extracurriculars, awareness of youths’ responsibility to contribute to society, and most importantly, a sharing and cooperative spirit in their endeavors to bring about positive social impacts. 
+                                        </p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h3>How we do it</h3>
+                                        <p>
+                                            We collect your interests, skills,... in '#'s and generate suggestions that match those inputs.
+                                            <br>
+                                            By collaborating with various student-run organizations and NPOs/NGOs in Ho Chi Minh city, ChanceMap is more than ever diverse for you to explore new opportunities around you.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -140,6 +155,14 @@
         </div>
     </div>
 </section>  
+<!-- ParticlesJS -->
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+    particlesJS.load('particles-js', '/particlesjs-config/particles-links.json', function() {
+        console.log('loaded particles!');
+    });
+</script>
+<!-- Carousel navigation script -->
 <script type="text/javascript">
   $(document).ready(function(){
     if( !($('.navTop').css('display') == 'none') ) {

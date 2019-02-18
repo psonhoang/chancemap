@@ -31,7 +31,7 @@ router.get('/create', (req, res) => {
                 notis: req.notis
             });
         });
-    } else if (account_type == 2){
+    } else if (account_type == 2) {
       let account_type = req.user.account_type;
       let account_id = req.user.account_id;
       if(account_type == 2) {
@@ -276,28 +276,16 @@ router.get('/delete/:id', (req, res) => {
   } else {
     let account_type = req.user.account_type;
     let data = req.body;
-    let event_id = req.params.id;
-    let event_name = data.name;
-    let org_id = req.user.account_id;
-    let org_name = data.org_name;
-    let desc = data.desc;
-    let hashtags = data.hashtags;
-    let app_form = data.app_form;
-    let app_deadline = data.app_deadline;
-    let facebook = data.facebook;
-    let website = data.website;
-    let jobImage = data.jobImage;
-    let accounts = [];
-    let org_followers = data.org_followers;
+
     if(account_type == 1 || account_type == 2) {
-        Event.findOneAndRemove({_id: event_id}, (err, event) => {
+        Event.findOneAndRemove({_id: data.event_id}, (err, event) => {
             if(err) {
                 console.log(err);
             } else {
-                console.log(event);
-                Org.findOne({'_id': org_id}, (err, org) => {
-                    if(org_followers) {
-                        accounts = org_followers;
+                Org.findOne({'_id': event.org_id}, (err, org) => {
+                    let accounts = [];
+                    if(org.org_followers) {
+                        accounts = org.org_followers;
                     }
 
                     if(accounts.length > 0) {
@@ -305,8 +293,8 @@ router.get('/delete/:id', (req, res) => {
                             _id: new mongoose.Types.ObjectId(),
                             created_at: new Date(),
                             updated_at: new Date(),
-                            title: org_name + ' just removed their event!',
-                            body: org_name + ' removed ' + event_name,
+                            title: org.org_name + ' just removed their event!',
+                            body: org.org_name + ' removed ' + event.event_name,
                             image: 'event',
                             accounts: accounts
                         });
@@ -316,7 +304,6 @@ router.get('/delete/:id', (req, res) => {
                                 console.log(err);
                                 return;
                             }
-                            console.log(noti);
                             User.find({'username': {$in: accounts}}, (err, users) => {
                                 users.forEach(user => {
                                     user.new_notis.push(noti._id);

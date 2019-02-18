@@ -400,62 +400,58 @@ router.post('/delete', (req, res) => {
 	if(!req.isAuthenticated()) {
 		res.redirect('/login');
 	} else {
-			let data = req.body;
-			let job_id = req.params.id;
-			let job_name = data.name;
-			let org_id = req.user.account_id;
-			let org_name = data.org_name;
-			let desc = data.desc;
-			let hashtags = data.hashtags;
-			let app_form = data.app_form;
-			let app_deadline = data.app_deadline;
-			let facebook = data.facebook;
-			let website = data.website;
-			let jobImage = data.jobImage;
-			let accounts = [];
-			let org_followers = data.org_followers;
-		console.log("DELETE!");
-		if (req.body.JobID != undefined) {
-			Job.findOneAndRemove({_id: job_id}, (err, job) => {
-				if(err) {
-					console.log(err);
-					return;
-				}
-				Org.findOne({'_id': org_id}, (err, org) => {
-                    if(org_followers) {
-                        accounts = org_followers;
-                    }
-                    let newNoti = new Notification({
-                        _id: new mongoose.Types.ObjectId(),
-                        created_at: new Date(),
-                        updated_at: new Date(),
-                        title: org_name + ' just removed a job position!',
-                        body: org_name + ' removed ' + job_name,
-                        image: 'job',
-                        accounts: accounts
-                    });
+		let account_type = req.user.account_type;
+		let data = req.body;
 
-                    newNoti.save((err, noti) => {
-                        if(err) {
-                            console.log(err);
-                            return;
-                        }
-                        console.log(noti);
-                        User.find({'username': {$in: accounts}}, (err, users) => {
-                            users.forEach(user => {
-                                user.new_notis.push(noti._id);
-                                user.save().then(result => {
-                                    console.log(result);
-                                }).catch(err => {
-                                    res.send(err);
-                                });
-                            });
-                            req.socketio.broadcast.to(req.user.username).emit('event', noti);
-                            res.redirect("/jobs/manage");
-                        });
-                    });
-                });
-			});
+		if(account_type == 1 || account_type == 2) {
+			if (data.JobID != undefined) {
+				Job.findOneAndRemove({_id: data.JobID}, (err, job) => {
+					if(err) {
+						console.log(err);
+						return;
+					}
+					Org.findOne({'_id': job.org_id}, (err, org) => {
+						let accounts = [];
+						if(org.org_followers) {
+							accounts = org.org_followers;
+						}
+						if (accounts.length > 0) {
+							let newNoti = new Notification({
+								_id: new mongoose.Types.ObjectId(),
+								created_at: new Date(),
+								updated_at: new Date(),
+								title: org.org_name + ' just removed a job position!',
+								body: org.org_name + ' removed ' + job.job_name,
+								image: 'job',
+								accounts: accounts
+							});
+	
+							newNoti.save((err, noti) => {
+								if(err) {
+									console.log(err);
+									return;
+								}
+								User.find({'username': {$in: accounts}}, (err, users) => {
+									users.forEach(user => {
+										user.new_notis.push(noti._id);
+										user.save().then(result => {
+											console.log(result);
+										}).catch(err => {
+											res.send(err);
+										});
+									});
+									req.socketio.broadcast.to(req.user.username).emit('event', noti);
+									res.redirect("/jobs/manage");
+								});
+							});
+						} else {
+							res.redirect('/jobs/manage');
+						}
+					});
+				});
+			}
+		} else {
+			res.redirect('/');
 		}
 	}
 });

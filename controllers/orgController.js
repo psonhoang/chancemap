@@ -151,17 +151,17 @@ router.get('/', (req, res) => {
 	}
 });
 
-router.get('/:Id', (req, res) => {
+router.get('/:username', (req, res) => {
 	let account_type = req.user.account_type;
 	let account_id = req.user.account_id;
 	let criteriaList;
 	var thisUser;
-	let orgId = req.params.Id;
+	let orgUsername = req.params.username;
 
 	if (account_type == 1)
 	{
 		Org.findOne({'_id': account_id}, (err, user) => {
-			Org.findOne({'_id': orgId}, (err, org) => {
+			Org.findOne({'username': orgUsername}, (err, org) => {
 				Job.find({'org_id': org._id}, (err, jobs) => {
 					Event.find({'org_id': org._id}, (err, events) => {
 						res.render('orgs/profile', {
@@ -183,7 +183,7 @@ router.get('/:Id', (req, res) => {
 	else
 	{
 		User.findOne({'_id': account_id}, (err, user) => {
-			Org.findOne({'_id': orgId}, (err, org) => {
+			Org.findOne({'username': orgUsername}, (err, org) => {
 				Job.find({'org_id': org._id}, (err, jobs) => {
 					Event.find({'org_id': org._id}, (err, events) => {
 						res.render('orgs/profile', {

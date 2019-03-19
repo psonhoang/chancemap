@@ -377,26 +377,37 @@ app.get('/', (req, res) => {
 
 
 // Route controllers
+
+// @Account ROUTES
 let accRoutes = require('./controllers/accountController');
 app.use('/', accRoutes);
+// @Event ROUTES
 let eventRoutes = require('./controllers/eventController');
 app.use('/events', eventRoutes);
+// @Job ROUTES
 let jobRoutes = require('./controllers/jobController');
 app.use('/jobs', jobRoutes);
+// @User ROUTES
 let userRoutes = require('./controllers/userController');
 app.use('/users', userRoutes);
+// @Org ROUTES
 let orgRoutes = require('./controllers/orgController');
 app.use('/orgs', orgRoutes);
+// @Opportunity ROUTES
 let opportunitiesRoutes = require('./controllers/opportunityController');
 app.use('/opportunities', opportunitiesRoutes)
+// @Admin ROUTES
 let adminRoutes = require('./controllers/adminController');
 app.use('/admin', adminRoutes);
 // @File ROUTES
 let fileRoutes = require('./controllers/fileController');
 app.use('/files', fileRoutes);
-// @API ROUTES
+// @Search ROUTES
 let searchRoutes = require('./controllers/searchController');
 app.use('/search', searchRoutes);
+// @Calendar ROUTES
+let calendarRoutes = require('./controllers/calendarController');
+app.use('/calendar', calendarRoutes);
 
 
 // Export

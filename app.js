@@ -378,6 +378,14 @@ app.get('/', (req, res) => {
 
 // Route controllers
 
+app.use((req, res, next) => {
+  if(req.isUnauthenticated() && req.url != '/login') {
+    res.redirect('/login');
+  } else {
+    next();
+  }
+});
+
 // @Account ROUTES
 let accRoutes = require('./controllers/accountController');
 app.use('/', accRoutes);

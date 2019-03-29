@@ -16,6 +16,7 @@ const Event = require('../models/event');
 const User = require('../models/user');
 const Job = require('../models/job');
 const Org = require('../models/org');
+const OrgProfile = require('../models/org_profile');
 const Admin = require('../models/admin');
 // Database connection
 const connection = mongoose.connection;
@@ -164,16 +165,19 @@ router.get('/:username', (req, res) => {
 			Org.findOne({'username': orgUsername}, (err, org) => {
 				Job.find({'org_id': org._id}, (err, jobs) => {
 					Event.find({'org_id': org._id}, (err, events) => {
-						res.render('orgs/profile', {
-							title: org.name,
-							account_type: account_type,
-							account_id: account_id,
-							org: org,
-							jobs: jobs,
-							events: events,
-							criteriaList: user.hashtags,
-							currentAcc: user,
-							notis: req.notis
+						OrgProfile.find({'org_id': org._id}, (err, orgProfile) => {
+							res.render('orgs/profile', {
+								title: org.name,
+								account_type: account_type,
+								account_id: account_id,
+								org: org,
+								orgProfile: orgProfile,
+								jobs: jobs,
+								events: events,
+								criteriaList: user.hashtags,
+								currentAcc: user,
+								notis: req.notis
+							});
 						});
 					});
 				});
@@ -186,16 +190,19 @@ router.get('/:username', (req, res) => {
 			Org.findOne({'username': orgUsername}, (err, org) => {
 				Job.find({'org_id': org._id}, (err, jobs) => {
 					Event.find({'org_id': org._id}, (err, events) => {
-						res.render('orgs/profile', {
-							title: org.name,
-							account_type: account_type,
-							account_id: account_id,
-							org: org,
-							jobs: jobs,
-							events: events,
-							criteriaList: user.interests.concat(user.skills),
-							currentAcc: user,
-							notis: req.notis
+						OrgProfile.find({'org_id': org._id}, (err, orgProfile) => {
+							res.render('orgs/profile', {
+								title: org.name,
+								account_type: account_type,
+								account_id: account_id,
+								org: org,
+								orgProfile: orgProfile,
+								jobs: jobs,
+								events: events,
+								criteriaList: user.interests.concat(user.skills),
+								currentAcc: user,
+								notis: req.notis
+							});
 						});
 					});
 				});

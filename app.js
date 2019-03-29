@@ -36,6 +36,7 @@ const Event = require('./models/event');
 const Job = require('./models/job');
 const Notification = require('./models/notification');
 const Opportunity = require('./models/opportunity');
+const OrgProfile = require('./models/org_profile');
 
 // View engine
 app.set('view engine', 'ejs');

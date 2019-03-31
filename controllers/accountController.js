@@ -17,6 +17,7 @@ const Grid = require('gridfs-stream');
 const Account = require('../models/account');
 const User = require('../models/user');
 const Org = require('../models/org');
+const OrgPage = require('../models/org_page');
 const Notification = require('../models/notification');
 
 // Utils
@@ -329,14 +330,52 @@ router.get('/profile', (req, res) => {
 	      });
 	    } else {
 	      Org.findOne({'_id': account_id}, (err, org) => {
-	          res.render('profile', {
+					OrgPage.findOne({'org_id': org._id}, (err, page) => {
+						res.render('profile', {
 	            title: 'ChanceMap | My Profile',
 	            account_type: account_type,
-	            account_id: account_id,
+							account_id: account_id,
+							page: page,
 	            currentAcc: org,
 	            notis: req.notis
 	          });
+					});
 	      });
+	    }
+    });
+  }
+});
+
+// @route GET
+// @desc edit org's US NEWs profile (available only to orgs)
+router.get('/profile/orgPage', (req, res) => {
+	if(!req.isAuthenticated()) {
+    res.redirect('/login');
+  } else {
+    let account_type = req.user.account_type;
+		let account_id = req.user.account_id;
+    Notification.find({'accounts': req.user.username}, (err, notis) => {
+    	if(err) {	
+    		console.log(err);
+    		return;
+    	}
+    	if(account_type == 1) {
+	      Org.findOne({'_id': account_id}, (err, org) => {
+					OrgPage.findOne({'org_id': org._id}, (err, orgPage) => {
+						console.log(orgPage);
+						res.render('orgs/pageEdit', {
+							title: "ChanceMap | Edit your Org's Profile",
+							account_type: account_type,
+							org: org,
+							page: orgPage,
+							account_id: account_id,
+							currentAcc: org,
+							notis: req.notis
+						});
+					});			
+				});
+	    } else {
+				res.redirect('/');
 	    }
     });
   }
@@ -411,6 +450,7 @@ router.post('/profile/org', upload.single('avatar'), (req, res) => {
 	const currentAcc = req.user;
 
 	console.log('POST on /profile/org');
+	console.log(data);
 
 	Org.findOne({'username': currentAcc.username}, (err, org) => {
 		if(err) {
@@ -448,6 +488,63 @@ router.post('/profile/org', upload.single('avatar'), (req, res) => {
 			res.redirect('/profile');
 		}).catch(err => {
 			res.send(err);
+		});
+	});
+});
+
+// @route POST
+// @desc save edits to org US NEWS profile
+router.post('/profile/orgPageEDIT', upload.single(), (req, res) => {
+	let data = req.body;
+	const currentAcc = req.user;
+
+	console.log('POST on /profile/orgPageEDIT');
+
+	Org.findOne({'username': currentAcc.username}, (err, org) => {
+		if(err) {
+			res.send('Database error...');
+			console.log(err);
+			return;
+		}
+		OrgPage.findOne({'org_id': org._id}, (err, page) => {
+			if (page != null) {
+			
+				page.what_we_do = data.what_we_do;
+				page.our_team = data.our_team;
+				if(!page.created_at) {
+					orgPage.created_at = new Date();
+				}
+				page.updated_at = new Date();
+		
+				page.save().then(result => {
+					console.log(result);
+					res.redirect('/orgs/' + org.username);
+				}).catch(err => {
+					res.send(err);
+				});
+				
+			}	
+			else 
+			{
+				var newOrgPage = new OrgPage({
+				  _id: new mongoose.Types.ObjectId(),
+					created_at: new Date(),
+					updated_at: new Date(),
+					org_id : org._id,
+					org_name: org.name,
+					what_we_do: data.what_we_do, //contain description of org
+					our_team: data.our_team, //contain description of org's team
+				});
+				newOrgPage.save((err, page) => {
+					if(err) {
+						console.log(err);
+						return;
+					}
+					console.log("New org profile made!");
+					console.log(page);
+					res.redirect('/profile');
+				});
+			}
 		});
 	});
 });
@@ -802,3 +899,5 @@ router.post('/reset/:token', function(req, res){
 
 // Exports
 module.exports = router;
+
+	

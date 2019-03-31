@@ -1,0 +1,87 @@
+<% extend('../../defaultLayouts/defaultLayout') %>
+
+<div class="card-block" style="margin-right: 20%; margin-left: 20%">
+  <form enctype="multipart/form-data" class="form-horizontal" action="/profile/orgPageEDIT" method="POST">
+    <!-- Name -->
+    <fieldset class="form-group position-relative has-icon-left">
+      <label class="col-md-2 label-control" for="what_we_do">What we do</label>
+      <div class="col-md-10">
+        <input type="text" class="form-control" value="<%= page.what_we_do %>" id="user-name" name="what_we_do" placeholder="Describe what you do" required>
+        <div class="form-control-position">
+          <i class="ft-users"></i>
+        </div>
+      </div>
+    </fieldset>
+    <!-- Hashtags
+    <fieldset class="form-group position-relative has-icon-left">
+      <label class="col-md-2 label-control" for="interests">#About</label>
+      <div class="col-md-10">
+        <div id="hashtags-input" class="edit-on-delete form-control tagging" data-tags-input-name="hashtags">
+          <input class="type-zone form-control" name="hashtags" contenteditable="true" required>
+        </div>
+        <div class="form-control-position">
+          <i class="ft-hash" style="position: relative; top: -5px"></i>
+        </div>
+        <span style="font-style: italic" class="small">Enter your hashtags in keywords (ex: youth) and 'Enter'</span>
+      </div>
+    </fieldset> -->
+    <!-- Description -->
+    <fieldset class="form-group position-relative has-icon-left">
+      <label class="col-md-2 label-control" for="our_team">Our Team</label>
+      <div class="col-md-10">
+        <textarea row="8" cols "15" class="form-control" value="<%= page.our_team %>" id="user-name" name="our_team" placeholder="Your team's description"><%= page.our_team %></textarea>
+        <div class="form-control-position">
+          <i class="ft-info"></i>
+        </div>
+      </div>
+    </fieldset>
+    <!-- Facebook -->
+    <!-- Website -->
+
+    <!-- Hidden fields -->
+    <fieldset class="hidden form-group position-relative has-icon-left">
+      <input type="hidden" class="form-control" id="user-name" name="username" value="<%= currentAcc.username; %>" required>
+      <div class="form-control-position">
+        <i class="ft-user"></i>
+      </div>
+    </fieldset>
+    <fieldset class="hidden form-group position-relative has-icon-left">
+      <input type="hidden" class="form-control" id="user-password" name="password" value="<%= currentAcc.password; %>" required>
+      <div class="form-control-position">
+        <i class="fa fa-key"></i>
+      </div>
+    </fieldset>
+
+    <div class="form-actions center">
+      <button id="submitBtn" onclick="freezeBtn();" type="submit" class="btn btn-lg btn-outline-info">Submit</button>
+    </div>
+  </form>
+</div>
+
+<!-- BEGIN CODEDAO SCRIPT -->
+<script src="/scripts/suggest.js" type="text/javascript"></script>
+<script>
+  function previewImage(event) {
+    let reader = new FileReader();
+    reader.onload = function() {
+      let output = document.getElementById('ava_preview');
+      output.src = reader.result;
+    }
+    reader.readAsDataURL(event.target.files[0]);
+  }
+
+  function freezeBtn() {
+    document.getElementById('submitBtn').disabled = true;
+    $('form').submit();
+  }
+
+  $(document).ready(function() {
+    let hashtags = <%- JSON.stringify(currentAcc.hashtags) %>;
+    console.log("hashtags: " + hashtags);
+    $('#hashtags-input').tagging('removeAll');
+    hashtags.forEach(hashtag => {
+      $('#hashtags-input').tagging('add', hashtag);
+    });
+  });
+</script>
+<!-- END -->

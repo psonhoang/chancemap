@@ -16,8 +16,8 @@ const Event = require('../models/event');
 const User = require('../models/user');
 const Job = require('../models/job');
 const Org = require('../models/org');
-const OrgProfile = require('../models/org_profile');
 const Admin = require('../models/admin');
+const OrgPage = require('../models/org_page');
 // Database connection
 const connection = mongoose.connection;
 
@@ -155,8 +155,6 @@ router.get('/', (req, res) => {
 router.get('/:username', (req, res) => {
 	let account_type = req.user.account_type;
 	let account_id = req.user.account_id;
-	let criteriaList;
-	var thisUser;
 	let orgUsername = req.params.username;
 
 	if (account_type == 1)
@@ -165,13 +163,13 @@ router.get('/:username', (req, res) => {
 			Org.findOne({'username': orgUsername}, (err, org) => {
 				Job.find({'org_id': org._id}, (err, jobs) => {
 					Event.find({'org_id': org._id}, (err, events) => {
-						OrgProfile.find({'org_id': org._id}, (err, orgProfile) => {
-							res.render('orgs/profile', {
+						OrgPage.find({'org_id': org._id}, (err, page) => {
+							res.render('orgs/page', {
 								title: org.name,
 								account_type: account_type,
 								account_id: account_id,
 								org: org,
-								orgProfile: orgProfile,
+								page: page,
 								jobs: jobs,
 								events: events,
 								criteriaList: user.hashtags,
@@ -190,13 +188,13 @@ router.get('/:username', (req, res) => {
 			Org.findOne({'username': orgUsername}, (err, org) => {
 				Job.find({'org_id': org._id}, (err, jobs) => {
 					Event.find({'org_id': org._id}, (err, events) => {
-						OrgProfile.find({'org_id': org._id}, (err, orgProfile) => {
-							res.render('orgs/profile', {
+						OrgPage.find({'org_id': org._id}, (err, page) => {
+							res.render('orgs/page', {
 								title: org.name,
 								account_type: account_type,
 								account_id: account_id,
 								org: org,
-								orgProfile: orgProfile,
+								page: page,
 								jobs: jobs,
 								events: events,
 								criteriaList: user.interests.concat(user.skills),

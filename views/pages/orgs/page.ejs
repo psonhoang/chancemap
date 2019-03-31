@@ -27,7 +27,7 @@
 
             <div style="margin-left: 5px; margin-right: 5px" class="row"> <!-- Overview Card -->
                 <div class="col-lg-12 col-md-12">
-                    <%- include('orgProfileCards/overviewCard', {orgProfile: orgProfile, org: org}); %>
+                    <%- include('orgPageCards/overviewCard', {page: page, org: org}); %>
                 </div>
             </div>
             <br>
@@ -37,7 +37,7 @@
                 <div class="fb-page col-md-6 col-lg-5" data-width="700px" data-height="600px" data-href="<%= org.facebook %>" data-tabs="timeline, events" data-small-header="false" data-adapt-container-width="false" data-hide-cover="false" data-show-facepile="true"></div>
                 <!-- Who we are -->
                 <div class="col-md-6 col-lg-7">
-                    <%- include('orgProfileCards/overviewCard', {orgProfile: orgProfile, org: org}); %>
+                    <%- include('orgPageCards/overviewCard', {page: page, org: org}); %>
                 </div>
             </div>
             <br>

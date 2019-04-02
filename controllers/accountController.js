@@ -62,7 +62,7 @@ router.get('/login', (req, res) => {
 	res.render('login', {title: "ChanceMap | Login", message: req.flash('error')});
 });
 
-router.post('/login', passport.authenticate('local', {failureRedirect: '/login', failureFlash: true}), 
+router.post('/login', passport.authenticate('local', {failureRedirect: '/login', failureFlash: true}),
 	(req, res, next) => {
 		// issue a remember me cookie if the option was checked
     if (!req.body.remember_me) { return next(); }
@@ -306,41 +306,205 @@ router.post('/register/org', upload.single('avatar'), (req, res) => {
 
 // @route GET
 // @desc edit current account's profile
+// router.get('/profile', (req, res) => {
+// 	if(!req.isAuthenticated()) {
+//     res.redirect('/login');
+//   } else {
+//     let account_type = req.user.account_type;
+//     let account_id = req.user.account_id;
+//     Notification.find({'accounts': req.user.username}, (err, notis) => {
+//     	if(err) {
+//     		console.log(err);
+//     		return;
+//     	}
+//       if(account_type === 0) {
+// 	      User.findOne({'_id': account_id}, (err, user) => {
+//       //     // user.following.find((err, orgs) => {
+//       //       res.render('profile', {
+//   	  //         title: 'ChanceMap | My Profile',
+//   	  //         account_type: account_type,
+//   	  //         account_id: account_id,
+//   	  //         currentAcc: user,
+//       //         // orgs: orgs,
+//   	  //         notis: req.notis
+//   	  //       });
+//       //       if(err) {
+//       //         console.log(err);
+//       //         res.redirect('/');
+//       //       }
+//       //     });
+// 	    // }
+//           if(req.query.isFollowing) {
+//             let following = sortedOrgs.filter(org => user.following.indexOf(org.username) >= 0);
+//             res.render('following', {
+//               title: 'ChanceMap | Following',
+//               orgs: following,
+//               criteriaList: criteriaList,
+//               account_type: currentAcc.account_type,
+//               account_id: currentAcc.account_id,
+//               currentAcc: user
+//             });
+//           }
+//           if(account_type === 0) {
+//             User.findOne({'_id': account_id}, (err, user) => {
+//               if(err) {
+//                 console.log(err);
+//               }
+//               res.render('users/profile', {
+//                 title: 'ChanceMap | My Profile',
+//                 account_type: account_type,
+//                 account_id: account_id,
+//                 currentAcc: user,
+//                 following: following,
+//                 notis: req.notis
+//               });
+//             });
+//           }
+//         });
+// 	    } else {
+// 	      Org.findOne({'_id': account_id}, (err, org) => {
+// 	          res.render('profile', {
+// 	            title: 'ChanceMap | My Profile',
+// 	            account_type: account_type,
+// 	            account_id: account_id,
+// 	            currentAcc: org,
+// 	            notis: req.notis
+// 	          });
+// 	      });
+//       }
+//     });
+//   }
+// });
+
+
+
+
+
+
+// router.get('/profile', (req, res) => {
+// 	console.log(req.query.criteriaList);
+// 	let criteriaList = req.query.criteriaList;
+// 	let currentAcc = req.user;
+// 	console.log(currentAcc);
+// 	Org.find((err, orgs) => {
+// 		if(err) {
+// 			console.log(err);
+// 			return;
+// 		}
+// 		console.log("Orgs: " + orgs.length);
+// 		var sortedOrgs = [];
+//
+// 		orgs.forEach(org => {
+// 			org.matches = 0;
+// 			criteriaList.forEach(criteria => {
+// 				if(org.username.toLowerCase().includes(criteria) || org.name.toLowerCase().includes(criteria)) {
+// 					org.matches++;
+// 				}
+// 				org.hashtags.forEach(hashtag => {
+// 					if(hashtag.includes(criteria)) {
+// 						org.matches++;
+// 					}
+// 				});
+// 			});
+// 			if(org.matches > 0) {
+// 				sortedOrgs.push(org);
+// 			}
+// 		});
+// 		sortedOrgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+//
+// 		if(currentAcc.account_type == 1) {
+// 			Org.findOne({'_id': currentAcc.account_id}, (err, org) => {
+// 				if(err) {
+// 					console.log(err);
+// 				}
+// 				console.log(org);
+// 				res.render('orgs/dashboard', {
+// 					title: 'ChanceMap | Orgs',
+// 					orgs: sortedOrgs,
+// 					criteriaList: criteriaList,
+// 					account_type: currentAcc.account_type,
+// 					account_id: currentAcc.account_id,
+// 					currentAcc: org,
+// 					notis: req.notis
+// 				});
+// 			});
+// 		} else {
+// 			User.findOne({'_id': currentAcc.account_id}, (err, user) => {
+// 				if(err) {
+// 					console.log(err);
+// 				}
+// 				console.log(user);
+// 				if(req.query.isFollowing) {
+// 					let following = sortedOrgs.filter(org => user.following.indexOf(org.username) >= 0);
+// 					res.render('following', {
+// 						title: 'ChanceMap | Following',
+// 						orgs: following,
+// 						criteriaList: criteriaList,
+// 						account_type: currentAcc.account_type,
+// 						account_id: currentAcc.account_id,
+// 						currentAcc: user,
+//             notis: req.notis
+// 					});
+// 				} else {
+// 					res.render('orgs/dashboard', {
+// 						title: 'ChanceMap | Orgs',
+// 						orgs: sortedOrgs,
+// 						criteriaList: criteriaList,
+// 						account_type: currentAcc.account_type,
+// 						account_id: currentAcc.account_id,
+// 						currentAcc: user,
+// 						notis: req.notis
+// 					});
+// 				}
+// 			});
+// 		}
+// 	});
+// });
+
+// user profile
 router.get('/profile', (req, res) => {
-	if(!req.isAuthenticated()) {
-    res.redirect('/login');
-  } else {
-    let account_type = req.user.account_type;
-    let account_id = req.user.account_id;
-    Notification.find({'accounts': req.user.username}, (err, notis) => {
-    	if(err) {
-    		console.log(err);
-    		return;
-    	}
-    	if(account_type == 0) {
-	      User.findOne({'_id': account_id}, (err, user) => {
-	        res.render('profile', {
-	          title: 'ChanceMap | My Profile',
-	          account_type: account_type,
-	          account_id: account_id,
-	          currentAcc: user,
-	          notis: req.notis
-	        });
-	      });
-	    } else {
-	      Org.findOne({'_id': account_id}, (err, org) => {
-	          res.render('profile', {
-	            title: 'ChanceMap | My Profile',
-	            account_type: account_type,
-	            account_id: account_id,
-	            currentAcc: org,
-	            notis: req.notis
-	          });
-	      });
-	    }
-    });
-  }
+	let currentAcc = req.user;
+	console.log(currentAcc);
+	Org.find((err, orgs) => {
+		if(err) {
+			console.log(err);
+			return;
+		}
+		if(currentAcc.account_type == 1) {
+			Org.findOne({'_id': currentAcc.account_id}, (err, org) => {
+				if(err) {
+					console.log(err);
+				}
+				console.log(org);
+				res.render('orgs/dashboard', {
+					title: 'ChanceMap | Orgs',
+					orgs: sortedOrgs,
+					criteriaList: criteriaList,
+					account_type: currentAcc.account_type,
+					account_id: currentAcc.account_id,
+					currentAcc: org,
+          notis: req.notis
+				});
+			});
+		} else {
+			User.findOne({'_id': currentAcc.account_id}, (err, user) => {
+				if(err) {
+					console.log(err);
+				}
+				let following = orgs.filter(org => user.following.indexOf(org.username) >= 0);
+        res.render('users/profile', {
+          title: 'ChanceMap | Following',
+					orgs: following,
+					account_type: currentAcc.account_type,
+					account_id: currentAcc.account_id,
+					currentAcc: user,
+          notis: req.notis
+        });
+			});
+		}
+	});
 });
+
 
 // @route POST
 // @desc save edits to current user account's profile

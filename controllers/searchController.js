@@ -83,6 +83,7 @@ router.get('/orgs', (req, res) => {
 			}
 		});
 		sortedOrgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+
 		if(currentAcc.account_type == 1) {
 			Org.findOne({'_id': currentAcc.account_id}, (err, org) => {
 				if(err) {

@@ -377,10 +377,6 @@ router.post('/register/org', upload.single('avatar'), (req, res) => {
 // });
 
 
-
-
-
-
 // router.get('/profile', (req, res) => {
 // 	console.log(req.query.criteriaList);
 // 	let criteriaList = req.query.criteriaList;
@@ -476,7 +472,7 @@ router.get('/profile', (req, res) => {
 					console.log(err);
 				}
 				console.log(org);
-				res.render('orgs/dashboard', {
+				res.render('index', {
 					title: 'ChanceMap | Orgs',
 					orgs: sortedOrgs,
 					criteriaList: criteriaList,
@@ -503,6 +499,90 @@ router.get('/profile', (req, res) => {
 			});
 		}
 	});
+});
+
+// connecting users function
+router.post('/connect', (req, res) => {
+	let user_id = req.body.user_id;
+	let account_id = req.body.account_id;
+	let connect = req.body.connect;
+	console.log(req.body);
+	if (connect == "true")
+	{
+			User.findOne({'_id': account_id}, (err, currentAcc) => {
+  			if(err) {
+  				res.send("Database error!");
+  				console.log(err);
+  				return;
+  			}
+  			User.findOne({'_id': user_id}, (err, user) => {
+  				if(err) {
+  					res.send('Database error!');
+  					console.log(err);
+  					return;
+  				}
+  				if (currentAcc.connected.indexOf(user.username) < 0)
+  				{
+  					currentAcc.connected.push(user.username);
+  					currentAcc.updated_at = new Date();
+  					currentAcc.save().then(result => {
+  						console.log("Successfully connected!");
+  						user.connected.push(currentAcc.username);
+  						user.updated_at = new Date();
+  						user.save().then(result => {
+  							console.log("Successfully Connected With User!");
+  							res.end();
+  						}).catch(err => {
+  							res.send(err);
+  						});
+  					});
+  				}
+  				else
+  				{
+  					res.send("Unexpected Error!")
+  				}
+  			}).catch(err => {
+  				res.send(err);
+  			});
+		});
+	}
+	else if (connect == "false")
+	{
+		User.findOne({'_id': account_id}, (err, currentAcc) => {
+			if(err) {
+				res.send("Database error!");
+				console.log(err);
+				return;
+			}
+			User.findOne({'_id': user_id}, (err, user) => {
+				if(err) {
+					res.send('Database error!');
+					console.log(err);
+					return;
+				}
+				if (currentAcc.connected.indexOf(user.username) > -1)
+				{
+					let i = currentAcc.connected.indexOf(user.username);
+					currentAcc.connected.splice(i, 1);
+					currentAcc.updated_at = new Date();
+					currentAcc.save().then(result => {
+						console.log("Successfully disconnected");
+						let i = user.connected.indexOf(currentAcc.username);
+						user.connected.splice(i, 1);
+						user.updated_at = new Date();
+						user.save().then(result => {
+							console.log("Successfully remove connection!");
+							res.end();
+						}).catch(err => {
+							res.send(err);
+						});
+					});
+				}
+			}).catch(err => {
+				res.send(err);
+			});
+		});
+	}
 });
 
 

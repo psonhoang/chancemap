@@ -272,38 +272,53 @@
               <% users.forEach( user => { %>
               <% cardId = user._id; %>
                 <% if (currentAcc.username != user.username) { %>
-                  <div style="padding: 10px; border-bottom: 2px solid #F06292" class="container-fluid btn-secondary" style="border: 0" data-toggle="modal" data-target="#<%= cardId %>">
-                    <div style="margin-bottom: 20px;" class="media">
+                  <div style="padding: 10px; border-bottom: 2px solid #F06292" class="container-fluid btn-secondary" style="border: 0" >
+                    <div style="margin-bottom: 20px;" class="media" data-toggle="modal" data-target="#<%= cardId %>">
                       <div class="media-left">
                         <img src="<%= user.avatar; %>" class="media-object rounded-circle width-50 height-50" alt="org avatar">
                       </div>
                       <div class="media-body">
-                        <p class="list-group-item-heading" style="font-size: 16px;"><strong><%= user.name; %></strong></p>
-                        <h6 class="list-group-item-text" style="font-style: italic">
-                          @<%= user.username; %>
-                          <% if (user.facebook) { %>
-                            <a href="<%= user.facebook; %>"><i class="ft-facebook"></i></a>
-                          <% } %>
-                        </h6>
+                          <p class="list-group-item-heading" style="font-size: 16px;">
+                            <strong><%= user.name; %></strong>
+                          </p>
+                          <h6 class="list-group-item-text" style="font-style: italic">
+                            @<%= user.username; %>
+                            <% if (user.facebook) { %>
+                              <a href="<%= user.facebook; %>"><i class="ft-facebook"></i></a>
+                            <% } %>
+                          </h6>
                       </div>
                     </div>
                     <h6 style="margin-bottom: 10px"><i class="ft-mail"></i> <%= user.email; %></h6>
                     <% if (user.website) { %>
                       <h6 style="margin-bottom: 10px"><i class="ft-globe"></i> <%= user.website; %></h6>
                     <% } %>
-                    <% var hashtags = user.interests.concat(user.skills); %>
-                    <% hashtags.forEach (hashtag => { %>
-                      <% var isMatch = false; %>
-                      <% criteriaList.forEach(criteria => { %>
-                        <% if (hashtag.includes(criteria) && !isMatch) { %>
-                          <% isMatch = true; %>
-                          <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
+                    <div class="media-left">
+                      <% if(account_type == 0 && (currentAcc.connected.indexOf(user.username) < 0)) { %>
+                            <button id="<%=user._id%>2" onclick="connect(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)" class="btn btn-info">Connect</button>
+                        <% } else if (account_type == 0 && (currentAcc.connected.indexOf(user.username) >= 0)) { %>
+                            <button id="<%=user._id%>2>" onclick="disconnect(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)" class="btn btn-success">Connected</button>
+                      <% } %>
+                    </div>
+                    <div class="media-body">
+                      <button class="btn btn-warning" onclick="showHashtags(<%= JSON.stringify(user._id) %>)">Show hashtags</button>
+                    </div>
+                    <br>
+                    <div id="<%= user._id %>" class="hashes">
+                      <% var hashtags = user.interests.concat(user.skills); %>
+                      <% hashtags.forEach (hashtag => { %>
+                        <% var isMatch = false; %>
+                        <% criteriaList.forEach(criteria => { %>
+                          <% if (hashtag.includes(criteria) && !isMatch) { %>
+                            <% isMatch = true; %>
+                            <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
+                          <% } %>
+                        <% }); %>
+                        <% if (!isMatch) { %>
+                          <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
                         <% } %>
                       <% }); %>
-                      <% if (!isMatch) { %>
-                        <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
-                      <% } %>
-                    <% }); %>
+                    </div>
                   </div>
                 <% } %>
               <% }); %>
@@ -339,9 +354,38 @@
   $(document).ready(function() {
     $('#search-input').tagging('removeAll');
     toastr.info("You're logged in as " + <%- JSON.stringify(currentAcc.username) %>, 'Welcome!', {positionClass: 'toast-top-center', containerId: 'toast-top-center'});
+    $('.hashes').hide();
   });
 
+  function showHashtags(user_id) {
+    let button_id = '#' + user_id;
+    $(button_id).toggle();
+  }
 
+  function connect(account_id, user_id, user_username) {
+    let button_id = '#' + user_id + '2';
+    $(button_id).removeClass('btn-info');
+    $(button_id).addClass('btn-success');
+    $(button_id).html('<i class="fa fa-check"></i> Connected');
+    $(button_id).attr('onclick', 'Disconnect("'+ account_id + '","' + user_id +'","' + user_username +'")');
+
+    let formData = new FormData();
+    formData.append("user_id", user_id);
+    formData.append("account_id", account_id);
+    formData.append('connect', true);
+
+    $.ajax({
+      async: true,
+      url: '/connect',
+      method: 'POST',
+      processData: false,
+      contentType: false,
+      data: formData,
+      success: (data) => {
+        toastr.success('You have connected with ' + user_username, 'Connected!');
+      }
+    });
+  }
 
   function follow(user_id, org_id, org_username) {
     let button_id = '#' + org_id;

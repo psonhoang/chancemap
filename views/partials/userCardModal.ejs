@@ -1,6 +1,6 @@
 <div id="<%= cardId %>" class="modal fade" role="dialog">
     <div class="modal-dialog">
-           
+
         <!-- Modal content-->
             <div class="modal-content">
                 <div style="color: white" class="card-header bg-pink bg-accent-1">
@@ -21,7 +21,7 @@
                                 <% if (!isMatch) { %>
                                 <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
                             <% } %>
-                        <% }); %></p>  
+                        <% }); %></p>
                         <p><label>Email:</label>  <a href="mailto:<%= user.email %>"><strong><%= user.email %></strong></a></p>
                         <p><label>Username:</label>  <strong><%= user.username %></strong></p>
                         <p><label>Introduction:</label>  <strong><%= user.intro %></strong></p>

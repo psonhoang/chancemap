@@ -17,6 +17,7 @@ const userSchema = mongoose.Schema({
 	facebook: String,
 	website: String,
 	following: [String], // contain org's usernames
+	connected: [String],
 	avatar: String,
 	new_notis: [mongoose.Schema.Types.ObjectId]
 });

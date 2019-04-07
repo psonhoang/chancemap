@@ -4,7 +4,8 @@
 <div class="app-content content container-fluid" style="margin-top: 1%">
   <div class="content-wrapper">
     <div class="content-body">
-      <!-- Orgs -->
+
+      <!-- Orgs followed -->
       <div class="content-body" >
         <div class="row">
           <div class="col-xl-6 col-lg-12">
@@ -18,12 +19,6 @@
                   <div class="card">
                       <div style="display: block; max-height: 600px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="table-responsive">
                         <table class="table" width="0.75rem">
-                          <thead style="color: white" class="thead bg-blue-grey bg-darken-3">
-                            <tr>
-                              <th>Avatar</th>
-                              <th style="text-align: center">Organization</th> <!-- Includes info: event name, org, location, time, tags -->
-                            </tr>
-                          </thead>
                           <tbody id="orgsBody">
                             <% orgs.forEach(org => { %>
                                 <% if (org.username != currentAcc.username) { %>
@@ -66,11 +61,11 @@
               </div>
           </div>
 
-          <!-- users connected style="margin-left: 60%; margin-right: 3%; margin-top: 5%"-->
+          <!-- users connected -->
           <div class="col-xl-6 col-lg-12">
             <div class="card">
-                  <div style="color: white" class="card-header bg-teal bg-lighten-1">
-                    <h4 class="card-title"><i class="ft-calendar"></i> Users connected</h4>
+                  <div style="color: white" class="card-header bg-pink bg-lighten-3">
+                    <h4 class="card-title"><i class="ft-user"></i> Users connected</h4>
                     <a class="heading-elements-toggle">
                         <i class="fa fa-ellipsis-v font-medium-3"></i>
                     </a>
@@ -78,47 +73,60 @@
                   <div class="card">
                       <div style="display: block; max-height: 600px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="table-responsive">
                         <table class="table" width="0.75rem">
-                          <thead style="color: white" class="thead bg-blue-grey bg-darken-3">
-                            <tr>
-                              <th>Avatar</th>
-                              <th style="text-align: center">Organization</th> <!-- Includes info: event name, org, location, time, tags -->
-                            </tr>
-                          </thead>
                           <tbody id="orgsBody">
-                            <% orgs.forEach(org => { %>
-                                <% if (org.username != currentAcc.username) { %>
-                                    <% let cardId = org._id; %>
-                                    <tr style="border: 0">
-                                  <td style="padding-right: 10px; padding-top: 20px">
-                                    <img onclick="window.location.href='/orgs/<%= org._id %>'" src="<%= org.avatar %>" class="btn-secondary rounded-circle width-100 height-100" alt="org avatar" style="width: 90%">
-                                            <% if(account_type == 0 && (currentAcc.following.indexOf(org.username) < 0)) { %>
-                                        <br><br>
-                                        <buton id="<%= org._id %>" onclick="follow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)" class="btn btn-info"><i class="fa fa-eye"></i> Follow</buton>
-                                            <% } else if (account_type == 0 && (currentAcc.following.indexOf(org.username) >= 0)) { %>
-                                                <br><br>
-                                                <buton id="<%= org._id %>" onclick="unfollow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)"class="btn btn-success"><i class="fa fa-check"></i> Followed</buton>
-                                            <% } %>
-                                  </td>
-                                  <td style="padding: 0px; padding-top: 10px">
-                                    <ul style="width: 95%">
-                                        <li style="font-size: 16px"><strong><%= org.name %></strong></li>
-                                        <li style="margin-bottom: 10px; font-style: italic">
-                                          @<%= org.username %>
-                                          <% if (org.facebook) { %>
-                                            <a style="font-style: small" href="<%= org.facebook %>"><i class="ft-facebook"></i></a>
+                            <% users.forEach( user => { %>
+                            <% cardId = user._id; %>
+                              <% if (currentAcc.username != user.username) { %>
+                                <div style="padding: 10px; border-bottom: 2px solid #F06292" class="container-fluid btn-secondary" style="border: 0" >
+                                  <div style="margin-bottom: 20px;" class="media" data-toggle="modal" data-target="#<%= cardId %>">
+                                    <div class="media-left">
+                                      <img src="<%= user.avatar; %>" class="media-object rounded-circle width-50 height-50" alt="org avatar">
+                                    </div>
+                                    <div class="media-body">
+                                        <p class="list-group-item-heading" style="font-size: 16px;">
+                                          <strong><%= user.name; %></strong>
+                                        </p>
+                                        <h6 class="list-group-item-text" style="font-style: italic">
+                                          @<%= user.username; %>
+                                          <% if (user.facebook) { %>
+                                            <a href="<%= user.facebook; %>"><i class="ft-facebook"></i></a>
                                           <% } %>
-                                        </li>
-                                        <% if (org.email) { %>
-                                          <li style="margin-bottom: 3px; font-size: small;"><i class="ft-mail"></i> <%= org.email %></li>
+                                        </h6>
+                                    </div>
+                                  </div>
+                                  <h6 style="margin-bottom: 10px"><i class="ft-mail"></i> <%= user.email; %></h6>
+                                  <% if (user.website) { %>
+                                    <h6 style="margin-bottom: 10px"><i class="ft-globe"></i> <%= user.website; %></h6>
+                                  <% } %>
+                                  <div class="media-left">
+                                    <% if(account_type == 0 && (currentAcc.connected.indexOf(user.username) < 0)) { %>
+                                          <button id="<%=user._id%>2" onclick="connect(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)" class="btn btn-info">Connect</button>
+                                      <% } else if (account_type == 0 && (currentAcc.connected.indexOf(user.username) >= 0)) { %>
+                                          <button id="<%=user._id%>2>" onclick="disconnect(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)" class="btn btn-success">Connected</button>
+                                    <% } %>
+                                  </div>
+                                  <div class="media-body">
+                                    <button class="btn btn-warning" onclick="showHashtags(<%= JSON.stringify(user._id) %>)">Show hashtags</button>
+                                  </div>
+                                  <br>
+                                  <div id="<%= user._id %>" class="hashes">
+                                    <% var hashtags = user.interests.concat(user.skills); %>
+                                    <% hashtags.forEach (hashtag => { %>
+                                      <% var isMatch = false; %>
+                                      <% criteriaList.forEach(criteria => { %>
+                                        <% if (hashtag.includes(criteria) && !isMatch) { %>
+                                          <% isMatch = true; %>
+                                          <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
                                         <% } %>
-                                        <% if (org.website) { %>
-                                          <li style="margin-bottom: 3px; font-size: small"><i class="ft-globe"></i> <%= org.website %></li>
-                                        <% } %>
-                                        <li style="font-size: small"><i class="ft-info"></i> <strong>About:</strong> <%= org.desc %></li>
-                                      </ul>
-                                  </td>
+                                      <% }); %>
+                                      <% if (!isMatch) { %>
+                                        <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
+                                      <% } %>
+                                    <% }); %>
+                                  </div>
+                                </div>
                               <% } %>
-                            <% }) %>
+                            <% }); %>
                           </tbody>
                         </table>
                       </div>
@@ -138,7 +146,38 @@
 <script>
   $(document).ready(function() {
     $('#search-input').tagging('removeAll');
+    $('.hashes').hide();
   });
+
+  function showHashtags(user_id) {
+    let button_id = '#' + user_id;
+    $(button_id).toggle();
+  }
+
+  function connect(account_id, user_id, user_username) {
+    let button_id = '#' + user_id + '2';
+    $(button_id).removeClass('btn-info');
+    $(button_id).addClass('btn-success');
+    $(button_id).html('<i class="fa fa-check"></i> Connected');
+    $(button_id).attr('onclick', 'Disconnect("'+ account_id + '","' + user_id +'","' + user_username +'")');
+
+    let formData = new FormData();
+    formData.append("user_id", user_id);
+    formData.append("account_id", account_id);
+    formData.append('connect', true);
+
+    $.ajax({
+      async: true,
+      url: '/connect',
+      method: 'POST',
+      processData: false,
+      contentType: false,
+      data: formData,
+      success: (data) => {
+        toastr.success('You have connected with ' + user_username, 'Connected!');
+      }
+    });
+  }
 
   function follow(user_id, org_id, org_username) {
     let button_id = '#' + org_id;

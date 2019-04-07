@@ -460,47 +460,86 @@ router.post('/register/org', upload.single('avatar'), (req, res) => {
 
 // user profile
 router.get('/profile', (req, res) => {
+  console.log(req.query.criteriaList);
 	let currentAcc = req.user;
+  let account_type = currentAcc.account_type;
 	console.log(currentAcc);
-	Org.find((err, orgs) => {
-		if(err) {
-			console.log(err);
-			return;
-		}
-		if(currentAcc.account_type == 1) {
-			Org.findOne({'_id': currentAcc.account_id}, (err, org) => {
-				if(err) {
-					console.log(err);
-				}
-				console.log(org);
-				res.render('index', {
-					title: 'ChanceMap | Orgs',
-					orgs: sortedOrgs,
-					criteriaList: criteriaList,
-					account_type: currentAcc.account_type,
-					account_id: currentAcc.account_id,
-					currentAcc: org,
-          notis: req.notis
-				});
-			});
-		} else {
-			User.findOne({'_id': currentAcc.account_id}, (err, user) => {
-				if(err) {
-					console.log(err);
-				}
-				let following = orgs.filter(org => user.following.indexOf(org.username) >= 0);
-        res.render('users/profile', {
-          title: 'ChanceMap | Following',
-					orgs: following,
-					account_type: currentAcc.account_type,
-					account_id: currentAcc.account_id,
-					currentAcc: user,
-          notis: req.notis
+  if(account_type == 0) {
+    User.findOne({'_id': currentAcc.account_id}, (err, currentUser) => {
+      let criteriaList = currentUser.interests.concat(currentUser.skills);
+      if(err) {
+  			console.log(err);
+  			return;
+  		}
+      Org.find((err, orgs) => {
+        User.find((err, users) => {
+          let following = orgs.filter(org => currentUser.following.indexOf(org.username) >= 0);
+          let connected = users.filter(user => currentUser.connected.indexOf(user.username) >= 0);
+          // need a filter for connected users here
+          res.render('users/profile', {
+            title: 'ChanceMap | Following',
+  					orgs: following,
+            users: connected,
+  					account_type: currentAcc.account_type,
+  					account_id: currentAcc.account_id,
+            currentAcc: currentUser,
+            notis: req.notis,
+            criteriaList: criteriaList,
+          });
         });
-			});
-		}
-	});
+      });
+    });
+  } else {
+    Org.findOne({'_id': currentAcc.account_id}, (err, org) => {
+      if(err) {
+  			console.log(err);
+  			return;
+  		}
+    });
+  }
 });
+
+// 	Org.find((err, orgs) => {
+// 		if(err) {
+// 			console.log(err);
+// 			return;
+// 		}
+// 		if(currentAcc.account_type == 1) {
+// 			Org.findOne({'_id': currentAcc.account_id}, (err, org) => {
+// 				if(err) {
+// 					console.log(err);
+// 				}
+// 				console.log(org);
+// 				res.render('index', {
+// 					title: 'ChanceMap | Orgs',
+// 					orgs: sortedOrgs,
+// 					criteriaList: criteriaList,
+// 					account_type: currentAcc.account_type,
+// 					account_id: currentAcc.account_id,
+// 					currentAcc: org,
+//           notis: req.notis
+// 				});
+// 			});
+// 		} else {
+// 			User.findOne({'_id': currentAcc.account_id}, (err, user) => {
+// 				if(err) {
+// 					console.log(err);
+// 				}
+// 				let following = orgs.filter(org => user.following.indexOf(org.username) >= 0);
+//         res.render('users/profile', {
+//           title: 'ChanceMap | Following',
+// 					orgs: following,
+// 					account_type: currentAcc.account_type,
+// 					account_id: currentAcc.account_id,
+// 					currentAcc: user,
+//           notis: req.notis
+//         });
+// 			});
+// 		}
+// 	});
+// });
+
+router.use(multer().single());
 
 // connecting users function
 router.post('/connect', (req, res) => {

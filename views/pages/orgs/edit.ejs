@@ -88,7 +88,12 @@
     </fieldset>
 
     <div class="form-actions center">
-      <button id="submitBtn" onclick="freezeBtn();" type="submit" class="btn btn-lg btn-outline-info">Submit</button>
+      <% if(page != null) { %>
+      <button onclick="window.location.href='/profile/orgPage'" type="button" class="btn btn-lg btn-primary">Edit your organization's Page</button>
+      <% } else { %>
+      <button onclick="window.location.href='/profile/orgPage'" type="button" class="btn btn-lg btn-primary">Create your organization's Page</button>
+      <% } %> 
+      <button id="submitBtn" onclick="freezeBtn();" type="submit" class="btn btn-lg btn-outline-info">Save changes</button>
     </div>
   </form>
 </div>

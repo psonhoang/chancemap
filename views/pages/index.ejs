@@ -45,7 +45,7 @@
                           <% cardId = org._id; %>
                           <tr style="border: 0px">
                             <td>
-                              <a><img src="<%= org.avatar; %>" onclick="window.location.href='/orgs/<%= org.username %>'" class="btn-secondary rounded-circle width-100 height-100" alt="org avatar"></a>
+                              <a><img src="<%= org.avatar; %>" onclick="window.location.href='/orgs/<%= org.username; %>'" class="btn-secondary rounded-circle width-100 height-100" alt="org avatar"></a>
                               <% if(account_type == 0 && (currentAcc.following.indexOf(org.username) < 0)) { %>
                                     <br><br>
                                     <buton id="<%= org._id %>" onclick="follow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)" class="btn btn-info"><i class="fa fa-eye"></i> Follow</buton>

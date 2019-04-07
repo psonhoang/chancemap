@@ -17,6 +17,7 @@ const Grid = require('gridfs-stream');
 const Account = require('../models/account');
 const User = require('../models/user');
 const Org = require('../models/org');
+const OrgPage = require('../models/org_page');
 const Notification = require('../models/notification');
 
 // Utils
@@ -655,6 +656,7 @@ router.post('/profile/org', upload.single('avatar'), (req, res) => {
 	const currentAcc = req.user;
 
 	console.log('POST on /profile/org');
+	console.log(data);
 
 	Org.findOne({'username': currentAcc.username}, (err, org) => {
 		if(err) {
@@ -692,6 +694,63 @@ router.post('/profile/org', upload.single('avatar'), (req, res) => {
 			res.redirect('/profile');
 		}).catch(err => {
 			res.send(err);
+		});
+	});
+});
+
+// @route POST
+// @desc save edits to org US NEWS profile
+router.post('/profile/orgPageEDIT', upload.single(), (req, res) => {
+	let data = req.body;
+	const currentAcc = req.user;
+
+	console.log('POST on /profile/orgPageEDIT');
+
+	Org.findOne({'username': currentAcc.username}, (err, org) => {
+		if(err) {
+			res.send('Database error...');
+			console.log(err);
+			return;
+		}
+		OrgPage.findOne({'org_id': org._id}, (err, page) => {
+			if (page != null) {
+
+				page.what_we_do = data.what_we_do;
+				page.our_team = data.our_team;
+				if(!page.created_at) {
+					orgPage.created_at = new Date();
+				}
+				page.updated_at = new Date();
+
+				page.save().then(result => {
+					console.log(result);
+					res.redirect('/orgs/' + org.username);
+				}).catch(err => {
+					res.send(err);
+				});
+
+			}
+			else
+			{
+				var newOrgPage = new OrgPage({
+				  _id: new mongoose.Types.ObjectId(),
+					created_at: new Date(),
+					updated_at: new Date(),
+					org_id : org._id,
+					org_name: org.name,
+					what_we_do: data.what_we_do, //contain description of org
+					our_team: data.our_team, //contain description of org's team
+				});
+				newOrgPage.save((err, page) => {
+					if(err) {
+						console.log(err);
+						return;
+					}
+					console.log("New org profile made!");
+					console.log(page);
+					res.redirect('/profile');
+				});
+			}
 		});
 	});
 });

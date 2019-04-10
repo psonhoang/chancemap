@@ -109,7 +109,7 @@
                                     <button class="btn btn-warning" onclick="showHashtags(<%= JSON.stringify(user._id) %>)">Show hashtags</button>
                                   </div>
                                   <br>
-                                  <div id="<%= user._id %>" class="hashes">
+                                  <div id="<%= user._id %>2" class="hashes">
                                     <% var hashtags = user.interests.concat(user.skills); %>
                                     <% hashtags.forEach (hashtag => { %>
                                       <% var isMatch = false; %>
@@ -126,6 +126,9 @@
                                   </div>
                                 </div>
                               <% } %>
+                              <!-- User Modal Starts -->
+                              <%- include('userCardModal', {user: user}); %>
+                              <!-- User Modal Ends -->
                             <% }); %>
                           </tbody>
                         </table>
@@ -150,7 +153,7 @@
   });
 
   function showHashtags(user_id) {
-    let button_id = '#' + user_id;
+    let button_id = '#' + user_id + '2';
     $(button_id).toggle();
   }
 

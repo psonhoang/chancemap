@@ -258,7 +258,6 @@
           </div>
       </div>
 
-
         <!-- Users -->
         <div class="col-xl-4 col-lg-12">
           <div class="card">
@@ -272,12 +271,12 @@
               <% users.forEach( user => { %>
               <% cardId = user._id; %>
                 <% if (currentAcc.username != user.username) { %>
-                  <div style="padding: 10px; border-bottom: 2px solid #F06292" class="container-fluid btn-secondary" style="border: 0" >
-                    <div style="margin-bottom: 20px;" class="media" data-toggle="modal" data-target="#<%= cardId %>">
+                  <div style="padding: 10px; border-bottom: 2px solid #F06292" class="container-fluid btn-secondary">
+                    <div style="margin-bottom: 20px;" class="media">
                       <div class="media-left">
-                        <img src="<%= user.avatar; %>" class="media-object rounded-circle width-50 height-50" alt="org avatar">
+                        <img src="<%= user.avatar; %>" class="media-object rounded-circle width-50 height-50" alt="org avatar" >
                       </div>
-                      <div class="media-body">
+                      <div class="media-body" data-toggle="modal" data-target="#<%= cardId %>">
                           <p class="list-group-item-heading" style="font-size: 16px;">
                             <strong><%= user.name; %></strong>
                           </p>
@@ -296,15 +295,15 @@
                     <div class="media-left">
                       <% if(account_type == 0 && (currentAcc.connected.indexOf(user.username) < 0)) { %>
                             <button id="<%=user._id%>2" onclick="connect(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)" class="btn btn-info">Connect</button>
-                        <% } else if (account_type == 0 && (currentAcc.connected.indexOf(user.username) >= 0)) { %>
-                            <button id="<%=user._id%>2>" onclick="disconnect(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)" class="btn btn-success">Connected</button>
+                      <% } else if (account_type == 0 && (currentAcc.connected.indexOf(user.username) >= 0)) { %>
+                          <button id="<%=user._id%>2>" onclick="disconnect(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)" class="btn btn-success">Connected</button>
                       <% } %>
                     </div>
                     <div class="media-body">
                       <button class="btn btn-warning" onclick="showHashtags(<%= JSON.stringify(user._id) %>)">Show hashtags</button>
                     </div>
                     <br>
-                    <div id="<%= user._id %>" class="hashes">
+                    <div id="<%= user._id %>2" class="hashes">
                       <% var hashtags = user.interests.concat(user.skills); %>
                       <% hashtags.forEach (hashtag => { %>
                         <% var isMatch = false; %>
@@ -321,15 +320,10 @@
                     </div>
                   </div>
                 <% } %>
+                <!-- User Modal Starts -->
+                <%- include('userCardModal', {user: user}); %>
+                <!-- User Modal Ends -->
               <% }); %>
-              <!-- User Modal Starts -->
-              <% users.forEach( user => { %>
-                <% cardId = user._id; %>
-                <% if (currentAcc.username != user.username) { %>
-                  <%- include('userCardModal', {user: user}); %>
-                <% } %>
-              <% }); %>
-              <!-- User Modal Ends -->
             </div>
           </div>
         </div>
@@ -358,7 +352,7 @@
   });
 
   function showHashtags(user_id) {
-    let button_id = '#' + user_id;
+    let button_id = '#' + user_id + '2';
     $(button_id).toggle();
   }
 

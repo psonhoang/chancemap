@@ -1,14 +1,108 @@
 <% extend('../../defaultLayouts/defaultLayout') %>
-
+<% var months = ["January", "February", "March", "April", "May", "June", "July","August", "September", "October","November", "December"]; %>
 
 <div class="app-content content container-fluid" style="margin-top: 1%">
   <div class="content-wrapper">
     <div class="content-body">
 
+      <form enctype="multipart/form-data" class="form-horizontal" action="/profile/user" method="POST">
+        <!-- User profile -->
+        <div class="content-body" >
+            <div class="col-xl-12">
+              <div class="card">
+                <div style="color: white" class="card-header bg-blue bg-darken-4">
+                  <h4 class="card-title"><i class="ft-calendar"></i> About me</h4>
+                  <a class="heading-elements-toggle">
+                      <i class="fa fa-ellipsis-v font-medium-3"></i>
+                  </a>
+                </div>
+                  <div style="display: block; max-height: 620px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="table-responsive">
+                    <div class="col-xl-6">
+                      <!-- Avatar -->
+                      <fieldset>
+                        <div class="col-md-1" style="margin-left: 30%; margin-top: 10px">
+                          <div style="padding: 10px">
+                            <img id="ava_preview" src="<%= currentAcc.avatar; %>" class="rounded-circle width-150 height-150" alt="Card image">
+                          </div>
+                            <input id="avatar" type="file" accept="image/*" name="avatar" onchange="previewImage(event)">
+                        </div>
+                      </fieldset>
+                      <!-- Name -->
+                      <div class="form">
+                        <label for="name" style="padding: 5px">Name</label>
+                          <input type="text" class="form-control" id="user-name" name="name" value="<%= currentAcc.name; %>" placeholder="Name" required>
+                      </div>
+                      <!-- Email -->
+                      <div class="form">
+                        <label for="email" style="padding: 5px">Email</label>
+                        <input type="email" class="form-control" id="user-email" name="email" value="<%= currentAcc.email; %>" required>
+                      </div>
+                      <!-- Interests-->
+                      <div class="form">
+                        <label for="interests" style="padding: 5px">Interests</label>
+                          <div id="interests-input" class="edit-on-delete  tagging" data-tags-input-name="interests">
+                            <input class="type-zone form-control" name="interests" placeholder="Interests" contenteditable="true" required>
+                          </div>
+                          <span style="font-style: italic" class="small">Enter your interests in keywords (ex: charity) and 'Enter'</span>
+                      </div>
+                      <!-- Skills -->
+                      <div class="form">
+                        <label for="interests" style="padding: 5px">Skills</label>
+                          <div id="skills-input" class="edit-on-delete tagging" data-tags-input-name="skills">
+                            <input class="type-zone form-control" name="skills" placeholder="Skills" contenteditable="true" required>
+                          </div>
+                          <span style="font-style: italic" class="small">Enter your skills in keywords (ex: designer) and 'Enter'</span>
+                      </div>
+                    </div>
+
+                    <div class="col-xl-6" style="padding-top: 20px;">
+                      <!-- Resume -->
+                      <div class="form" style="padding-bottom: 5px">
+                        <label for="resume_file" style="padding: 5px">Resúme</label>
+                          <input type="file" accept=".doc, .docx, .pdf" class="form-control"
+                          name="resume_file" value="<%= currentAcc.resume_file; %>" id="user-name">
+                          <span style="font-style: italic" class="small">Upload your resume here (docx, pdf,...)</span>
+                          <br>
+                          <a href='<%= currentAcc.resume_file; %>' class="btn btn-outline-warning">View current resume</a>
+                      </div>
+                      <!-- School -->
+                      <div class="form">
+                        <label for="school" style="padding-bottom: 5px">School</label>
+                        <input type="text" class="form-control" id="user-name" name="school" value="<%= currentAcc.school; %>" placeholder="School (optional)">
+                      </div>
+                      <!-- Self intro -->
+                      <div class="form">
+                        <label for="intro" style="padding: 5px">Bio</label>
+                          <input type="text" class="form-control" id="user-name" name="intro" value="<%= currentAcc.intro; %>" placeholder="Your bio">
+                      </div>
+                      <!-- Facebook -->
+                      <div class="form">
+                        <label for="facebook" style="padding: 5px">Facebook</label>
+                        <input type="url" class="form-control" id="user-name" name="facebook" value="<%= currentAcc.facebook; %>" placeholder="Your Facebook profile url (optional)">
+                      </div>
+                      <!-- Website -->
+                      <div class="form">
+                        <label for="website" style="padding: 5px">Website</label>
+                        <input type="url" class="form-control" id="user-name" name="website" value="<%= currentAcc.website; %>" placeholder="Your website url (optional)">
+                      </div>
+                      <br>
+                      <!-- submit button -->
+                      <div style="margin-left: 40%">
+                        <button id="submitBtn" onclick="freezeBtn();" type="submit" class="btn btn-lg btn-outline-info">Submit</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+
       <!-- Orgs followed -->
       <div class="content-body" >
         <div class="row">
-          <div class="col-xl-6 col-lg-12">
+          <div class="col-xl-6">
             <div class="card">
                   <div style="color: white" class="card-header bg-teal bg-lighten-1">
                     <h4 class="card-title"><i class="ft-calendar"></i> Organizations followed</h4>
@@ -61,8 +155,8 @@
               </div>
           </div>
 
-          <!-- users connected -->
-          <div class="col-xl-6 col-lg-12">
+          <!-- Users -->
+          <div class="col-xl-6">
             <div class="card">
                   <div style="color: white" class="card-header bg-pink bg-lighten-3">
                     <h4 class="card-title"><i class="ft-user"></i> Users connected</h4>
@@ -74,62 +168,62 @@
                       <div style="display: block; max-height: 600px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="table-responsive">
                         <table class="table" width="0.75rem">
                           <tbody id="orgsBody">
-                            <% users.forEach( user => { %>
-                            <% cardId = user._id; %>
-                              <% if (currentAcc.username != user.username) { %>
-                                <div style="padding: 10px; border-bottom: 2px solid #F06292" class="container-fluid btn-secondary" style="border: 0" >
-                                  <div style="margin-bottom: 20px;" class="media" data-toggle="modal" data-target="#<%= cardId %>">
+                              <% users.forEach( user => { %>
+                              <% cardId = user._id; %>
+                                <% if (currentAcc.username != user.username) { %>
+                                  <div style="padding: 10px; border-bottom: 1px solid #E8E8E8" class="container-fluid btn-secondary">
+                                    <div style="margin-bottom: 20px;" class="media" data-toggle="modal" data-target="#<%= cardId %>">
+                                      <div class="media-left">
+                                        <img src="<%= user.avatar; %>" class="media-object rounded-circle width-50 height-50" alt="org avatar">
+                                      </div>
+                                      <div class="media-body">
+                                          <p class="list-group-item-heading" style="font-size: 16px;">
+                                            <strong><%= user.name; %></strong>
+                                          </p>
+                                          <h6 class="list-group-item-text" style="font-style: italic">
+                                            @<%= user.username; %>
+                                            <% if (user.facebook) { %>
+                                              <a href="<%= user.facebook; %>"><i class="ft-facebook"></i></a>
+                                            <% } %>
+                                          </h6>
+                                      </div>
+                                    </div>
+                                    <h6 style="margin-bottom: 10px"><i class="ft-mail"></i> <%= user.email; %></h6>
+                                    <% if (user.website) { %>
+                                      <h6 style="margin-bottom: 10px"><i class="ft-globe"></i> <%= user.website; %></h6>
+                                    <% } %>
                                     <div class="media-left">
-                                      <img src="<%= user.avatar; %>" class="media-object rounded-circle width-50 height-50" alt="org avatar">
+                                      <% if(account_type == 0 && (currentAcc.connected.indexOf(user.username) < 0)) { %>
+                                            <button id="<%=user._id%>2" onclick="connect(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)" class="btn btn-info">Connect</button>
+                                        <% } else if (account_type == 0 && (currentAcc.connected.indexOf(user.username) >= 0)) { %>
+                                            <button id="<%=user._id%>2>" onclick="disconnect(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)" class="btn btn-success">Connected</button>
+                                      <% } %>
                                     </div>
                                     <div class="media-body">
-                                        <p class="list-group-item-heading" style="font-size: 16px;">
-                                          <strong><%= user.name; %></strong>
-                                        </p>
-                                        <h6 class="list-group-item-text" style="font-style: italic">
-                                          @<%= user.username; %>
-                                          <% if (user.facebook) { %>
-                                            <a href="<%= user.facebook; %>"><i class="ft-facebook"></i></a>
-                                          <% } %>
-                                        </h6>
+                                      <button class="btn btn-warning" onclick="showHashtags(<%= JSON.stringify(user._id) %>)">Show hashtags</button>
                                     </div>
-                                  </div>
-                                  <h6 style="margin-bottom: 10px"><i class="ft-mail"></i> <%= user.email; %></h6>
-                                  <% if (user.website) { %>
-                                    <h6 style="margin-bottom: 10px"><i class="ft-globe"></i> <%= user.website; %></h6>
-                                  <% } %>
-                                  <div class="media-left">
-                                    <% if(account_type == 0 && (currentAcc.connected.indexOf(user.username) < 0)) { %>
-                                          <button id="<%=user._id%>2" onclick="connect(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)" class="btn btn-info">Connect</button>
-                                      <% } else if (account_type == 0 && (currentAcc.connected.indexOf(user.username) >= 0)) { %>
-                                          <button id="<%=user._id%>2>" onclick="disconnect(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)" class="btn btn-success">Connected</button>
-                                    <% } %>
-                                  </div>
-                                  <div class="media-body">
-                                    <button class="btn btn-warning" onclick="showHashtags(<%= JSON.stringify(user._id) %>)">Show hashtags</button>
-                                  </div>
-                                  <br>
-                                  <div id="<%= user._id %>2" class="hashes">
-                                    <% var hashtags = user.interests.concat(user.skills); %>
-                                    <% hashtags.forEach (hashtag => { %>
-                                      <% var isMatch = false; %>
-                                      <% criteriaList.forEach(criteria => { %>
-                                        <% if (hashtag.includes(criteria) && !isMatch) { %>
-                                          <% isMatch = true; %>
-                                          <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
+                                    <br>
+                                    <div id="<%= user._id %>2" class="hashes">
+                                      <% var hashtags = user.interests.concat(user.skills); %>
+                                      <% hashtags.forEach (hashtag => { %>
+                                        <% var isMatch = false; %>
+                                        <% criteriaList.forEach(criteria => { %>
+                                          <% if (hashtag.includes(criteria) && !isMatch) { %>
+                                            <% isMatch = true; %>
+                                            <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
+                                          <% } %>
+                                        <% }); %>
+                                        <% if (!isMatch) { %>
+                                          <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
                                         <% } %>
                                       <% }); %>
-                                      <% if (!isMatch) { %>
-                                        <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
-                                      <% } %>
-                                    <% }); %>
+                                    </div>
                                   </div>
-                                </div>
-                              <% } %>
-                              <!-- User Modal Starts -->
-                              <%- include('userCardModal', {user: user}); %>
-                              <!-- User Modal Ends -->
-                            <% }); %>
+                                <% } %>
+                                <!-- User Modal Starts -->
+                                <%- include('userCardModal', {user: user}); %>
+                                <!-- User Modal Ends -->
+                              <% }); %>
                           </tbody>
                         </table>
                       </div>
@@ -137,6 +231,99 @@
                 </div>
               </div>
           </div>
+      </div>
+
+      <div class="row">
+        <!-- Events -->
+        <div class="col-xl-4">
+          <div class="card">
+            <div style="color: white" class="card-header bg-amber bg-darken-1">
+              <h4 class="card-title"><i class="ft-user"></i> Events attended</h4>
+              <a class="heading-elements-toggle">
+                <i class="fa fa-ellipsis-v font-medium-3"></i>
+              </a>
+            </div>
+            <div style="display: block; max-height: 400px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="card-body collapse-in" id="usersBody">
+              <% events.forEach(event => { %>
+                <% cardId = event._id; %>
+                <div style="padding: 10px; border-bottom: 1px solid #E8E8E8" class="container-fluid btn-secondary" data-toggle="modal" data-target="#<%= cardId %>">
+                  <tr class="btn-secondary">
+                      <td>
+                          <h4><li><strong><%= event.name %></strong></li></h4>
+                          <h5><li style="font-style: italic"><%= event.org_name %></li></h5>
+                          <% if(event.start_date) { %>
+                          <h6><li style="font-size: small">Date: <%= months[event.start_date.getMonth()] + ' ' + event.start_date.getDate() + ', ' + event.start_date.getFullYear() %></li></h6>
+                          <% } %>
+                          <h6><li style="font-size: small">At: <%= event.address %></li></h6>
+                      </td>
+                  </tr>
+                </div>
+              <!-- Event Modal Starts -->
+              <%- include('eventCardModal', {event: event, months: months}); %>
+              <% }); %>
+              <!-- Event Modal Ends-->
+            </div>
+          </div>
+        </div>
+
+        <!-- Jobs -->
+        <div class="col-xl-4">
+          <div class="card">
+            <div style="color: white" class="card-header bg-blue bg-lighten-1">
+              <h4 class="card-title"><i class="ft-user"></i> Past jobs</h4>
+              <a class="heading-elements-toggle">
+                <i class="fa fa-ellipsis-v font-medium-3"></i>
+              </a>
+            </div>
+            <div style="display: block; max-height: 400px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="card-body collapse-in" id="usersBody">
+              <% jobs.forEach(job => { %>
+                <% cardId = job._id; %>
+                <div style="padding: 10px; border-bottom: 1px solid #E8E8E8" class="container-fluid btn-secondary" data-toggle="modal" data-target="#<%= cardId %>">
+                  <h4><strong><%= job.name %></strong></h4>
+                  <h5 style="font-style: italic">-<%= job.org_name %>-</h5>
+                  <h6>Deadline: <%= months[job.app_deadline.getMonth()] + ' ' + job.app_deadline.getDate() + ', ' + job.app_deadline.getFullYear() %></h6>
+                </div>
+                <!-- Job Modal Starts -->
+                <%- include('jobCardModal', { job: job, admin: false, months: months, cardId: cardId }); %>
+                <!-- Job Modal Ends -->
+              <% }); %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Opportunities -->
+        <div class="col-xl-4">
+          <div class="card">
+            <div style="color: white" class="card-header bg-red bg-accent-2">
+              <h4 class="card-title"><i class="ft-user"></i> Opportunities taken</h4>
+              <a class="heading-elements-toggle">
+                <i class="fa fa-ellipsis-v font-medium-3"></i>
+              </a>
+            </div>
+            <div style="display: block; max-height: 400px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="card-body collapse-in" id="usersBody">
+              <% opportunities.forEach(opportunity => { %>
+              <% cardId = opportunity._id; %>
+              <tr class="btn-secondary" data-toggle="modal" data-target="#<%= cardId %>">
+                  <% if(opportunity.app_deadline) { %>
+                  <th scope="row"><%= months[opportunity.app_deadline.getMonth()] + ' ' + opportunity.app_deadline.getDate() + ', ' + opportunity.app_deadline.getFullYear() %></th>
+                  <% } else { %>
+                  <th scope="row">N/A</th>
+                  <% } %>
+                  <td>
+                      <li style="font-size: 16px"><strong><%= opportunity.name %></strong></li>
+                      <li style="font-style: italic"><%= opportunity.org_name %></li>
+                      <% if(opportunity.start_date) { %>
+                      <li style="font-size: small">Date: <%= months[opportunity.start_date.getMonth()] + ' ' + opportunity.start_date.getDate() + ', ' + opportunity.start_date.getFullYear() %></li>
+                      <% } %>
+                  </td>
+              </tr>
+              <!-- Opportunity Modal Starts -->
+              <%- include('opportunityCardModal', {opportunity: opportunity, months: months}); %>
+              <% }); %>
+              <!-- Opportunity Modal Ends-->
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -150,6 +337,17 @@
   $(document).ready(function() {
     $('#search-input').tagging('removeAll');
     $('.hashes').hide();
+    let interests = <%- JSON.stringify(currentAcc.interests) %>;
+    $('#interests-input').tagging('removeAll');
+    interests.forEach(interest => {
+      $('#interests-input').tagging('add', interest);
+    });
+
+    let skills = <%- JSON.stringify(currentAcc.skills) %>;
+    $('#skills-input').tagging('removeAll');
+    skills.forEach(skill => {
+      $('#skills-input').tagging('add', skill);
+    });
   });
 
   function showHashtags(user_id) {
@@ -265,6 +463,20 @@
     } else {
       toastr.warning("Your search field can't be empty!", 'Error!', {positionClass: 'toast-top-center', containerId: 'toast-top-center'});
     }
+  }
+
+  function previewImage(event) {
+    let reader = new FileReader();
+    reader.onload = function() {
+      let output = document.getElementById('ava_preview');
+      output.src = reader.result;
+    }
+    reader.readAsDataURL(event.target.files[0]);
+  }
+
+  function freezeBtn() {
+    document.getElementById('submitBtn').disabled = true;
+    $('form').submit();
   }
 </script>
 <!-- END -->

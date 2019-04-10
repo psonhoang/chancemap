@@ -17,6 +17,9 @@ const Grid = require('gridfs-stream');
 const Account = require('../models/account');
 const User = require('../models/user');
 const Org = require('../models/org');
+const Event = require('../models/event');
+const Job = require('../models/job');
+const Opportunity = require('../models/opportunity');
 const OrgPage = require('../models/org_page');
 const Notification = require('../models/notification');
 
@@ -473,18 +476,26 @@ router.get('/profile', (req, res) => {
   		}
       Org.find((err, orgs) => {
         User.find((err, users) => {
-          let following = orgs.filter(org => currentUser.following.indexOf(org.username) >= 0);
-          let connected = users.filter(user => currentUser.connected.indexOf(user.username) >= 0);
-          // need a filter for connected users here
-          res.render('users/profile', {
-            title: 'ChanceMap | Following',
-  					orgs: following,
-            users: connected,
-  					account_type: currentAcc.account_type,
-  					account_id: currentAcc.account_id,
-            currentAcc: currentUser,
-            notis: req.notis,
-            criteriaList: criteriaList,
+          Event.find((err, events) => {
+            Job.find((err, jobs) => {
+              Opportunity.find((err, opportunities) => {
+                let following = orgs.filter(org => currentUser.following.indexOf(org.username) >= 0);
+                let connected = users.filter(user => currentUser.connected.indexOf(user.username) >= 0);
+                res.render('users/profile', {
+                  title: 'ChanceMap | Following',
+        					orgs: following,
+                  users: connected,
+                  events: events,
+                  jobs: jobs,
+                  opportunities: opportunities,
+        					account_type: currentAcc.account_type,
+        					account_id: currentAcc.account_id,
+                  currentAcc: currentUser,
+                  notis: req.notis,
+                  criteriaList: criteriaList,
+                });
+              });
+            });
           });
         });
       });
@@ -625,7 +636,7 @@ router.post('/connect', (req, res) => {
 	}
 });
 
-
+router.use(multer().single());
 // @route POST
 // @desc save edits to current user account's profile
 router.post('/profile/user', upload.fields([{name: 'avatar', maxCount: 1}, {name: 'resume_file', maxCount: 1}]), (req, res) => {

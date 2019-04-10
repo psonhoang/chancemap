@@ -110,7 +110,7 @@
             <div class="card-body collapse-in" style="display: block; max-height: 500px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" id="jobsBody">
               <% jobs.forEach(job => { %>
                 <% cardId = job._id; %>
-                <div style="padding: 10px; border-bottom: 2px solid #92a8d1" class="container-fluid btn-secondary" data-toggle="modal" data-target="#<%= cardId %>">
+                <div style="padding: 10px; border-bottom: 1px solid #E8E8E8" class="container-fluid btn-secondary" data-toggle="modal" data-target="#<%= cardId %>">
                   <h4><strong><%= job.name %></strong></h4>
                   <h5 style="font-style: italic">-<%= job.org_name %>-</h5>
                   <h6>Deadline: <%= months[job.app_deadline.getMonth()] + ' ' + job.app_deadline.getDate() + ', ' + job.app_deadline.getFullYear() %></h6>
@@ -271,7 +271,7 @@
               <% users.forEach( user => { %>
               <% cardId = user._id; %>
                 <% if (currentAcc.username != user.username) { %>
-                  <div style="padding: 10px; border-bottom: 2px solid #F06292" class="container-fluid btn-secondary">
+                  <div style="padding: 10px; border-bottom: 1px solid #E8E8E8" class="container-fluid btn-secondary">
                     <div style="margin-bottom: 20px;" class="media">
                       <div class="media-left">
                         <img src="<%= user.avatar; %>" class="media-object rounded-circle width-50 height-50" alt="org avatar" >

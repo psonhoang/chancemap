@@ -323,46 +323,18 @@ router.post('/register/org', upload.single('avatar'), (req, res) => {
 //     	}
 //       if(account_type === 0) {
 // 	      User.findOne({'_id': account_id}, (err, user) => {
-//       //     // user.following.find((err, orgs) => {
-//       //       res.render('profile', {
-//   	  //         title: 'ChanceMap | My Profile',
-//   	  //         account_type: account_type,
-//   	  //         account_id: account_id,
-//   	  //         currentAcc: user,
-//       //         // orgs: orgs,
-//   	  //         notis: req.notis
-//   	  //       });
-//       //       if(err) {
-//       //         console.log(err);
-//       //         res.redirect('/');
-//       //       }
-//       //     });
-// 	    // }
-//           if(req.query.isFollowing) {
-//             let following = sortedOrgs.filter(org => user.following.indexOf(org.username) >= 0);
-//             res.render('following', {
-//               title: 'ChanceMap | Following',
-//               orgs: following,
-//               criteriaList: criteriaList,
-//               account_type: currentAcc.account_type,
-//               account_id: currentAcc.account_id,
-//               currentAcc: user
-//             });
-//           }
-//           if(account_type === 0) {
-//             User.findOne({'_id': account_id}, (err, user) => {
-//               if(err) {
-//                 console.log(err);
-//               }
-//               res.render('users/profile', {
-//                 title: 'ChanceMap | My Profile',
-//                 account_type: account_type,
-//                 account_id: account_id,
-//                 currentAcc: user,
-//                 following: following,
-//                 notis: req.notis
-//               });
-//             });
+//         // user.following.find((err, orgs) => {
+//           res.render('profile', {
+// 	          title: 'ChanceMap | My Profile',
+// 	          account_type: account_type,
+// 	          account_id: account_id,
+// 	          currentAcc: user,
+//             // orgs: orgs,
+// 	          notis: req.notis
+// 	        });
+//           if(err) {
+//             console.log(err);
+//             res.redirect('/');
 //           }
 //         });
 // 	    } else {
@@ -376,9 +348,21 @@ router.post('/register/org', upload.single('avatar'), (req, res) => {
 // 	          });
 // 	      });
 //       }
+//       if(req.query.isFollowing) {
+//         let following = sortedOrgs.filter(org => user.following.indexOf(org.username) >= 0);
+//         res.render('following', {
+//           title: 'ChanceMap | Following',
+//           orgs: following,
+//           criteriaList: criteriaList,
+//           account_type: currentAcc.account_type,
+//           account_id: currentAcc.account_id,
+//           currentAcc: user
+//         });
+//       }
 //     });
-//   }
+//    }
 // });
+
 
 
 // router.get('/profile', (req, res) => {
@@ -506,52 +490,81 @@ router.get('/profile', (req, res) => {
   			console.log(err);
   			return;
   		}
+      res.render('profile', {
+        title: 'ChanceMap | My Profile',
+        account_type: currentAcc.account_type,
+        account_id: currentAcc.account_id,
+        currentAcc: org,
+        notis: req.notis
+      });
     });
   }
 });
 
-// 	Org.find((err, orgs) => {
-// 		if(err) {
-// 			console.log(err);
-// 			return;
-// 		}
-// 		if(currentAcc.account_type == 1) {
-// 			Org.findOne({'_id': currentAcc.account_id}, (err, org) => {
-// 				if(err) {
-// 					console.log(err);
-// 				}
-// 				console.log(org);
-// 				res.render('index', {
-// 					title: 'ChanceMap | Orgs',
-// 					orgs: sortedOrgs,
-// 					criteriaList: criteriaList,
-// 					account_type: currentAcc.account_type,
-// 					account_id: currentAcc.account_id,
-// 					currentAcc: org,
-//           notis: req.notis
-// 				});
-// 			});
-// 		} else {
-// 			User.findOne({'_id': currentAcc.account_id}, (err, user) => {
-// 				if(err) {
-// 					console.log(err);
-// 				}
-// 				let following = orgs.filter(org => user.following.indexOf(org.username) >= 0);
-//         res.render('users/profile', {
-//           title: 'ChanceMap | Following',
-// 					orgs: following,
-// 					account_type: currentAcc.account_type,
-// 					account_id: currentAcc.account_id,
-// 					currentAcc: user,
-//           notis: req.notis
-//         });
-// 			});
-// 		}
-// 	});
-// });
+
+// @route POST
+// @desc save edits to current user account's profile
+router.post('/profile/user', upload.fields([{name: 'avatar', maxCount: 1}, {name: 'resume_file', maxCount: 1}]), (req, res) => {
+	let data = req.body;
+  let currentAcc = req.user;
+
+	User.findOne({'_id': currentAcc.account_id}, (err, user) => {
+		if(err) {
+			res.send('Database error...');
+			console.log(err);
+			return;
+		}
+		console.log(user.avatar);
+		if(req.files['avatar']) {
+			if(user.avatar != 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Antu_im-invisible-user.svg/2000px-Antu_im-invisible-user.svg.png') {
+				gfs.remove({filename: user.avatar.split('files/')[1], root: 'uploads'}, (err, result) => {
+					if(err) {
+						console.log(err);
+					} else {
+						console.log(result);
+					}
+				});
+			}
+			// delete existing avatar file
+			user.avatar = '/files/' + req.files['avatar'][0].filename;
+		}
+		user.name = data.name;
+		user.email = data.email;
+		user.interests = data.interests;
+		user.skills = data.skills;
+		if(req.files['resume_file']) {
+			if(user.resume_file) {
+				// delete existing resume file
+				gfs.remove({filename: user.resume_file.split('files/')[1], root: 'uploads'}, (err, result) => {
+					if(err) {
+						console.log(err);
+						return;
+					} else {
+						console.log(result);
+					}
+				});
+			}
+			user.resume_file = '/files/' + req.files['resume_file'][0].filename;
+		}
+		user.school = data.school;
+		user.intro = data.intro;
+		user.facebook = data.facebook;
+		user.website = data.website;
+		if(!user.created_at) {
+			user.created_at = new Date();
+		}
+		user.updated_at = new Date();
+
+		user.save().then(result => {
+			console.log(result);
+			res.redirect('/profile');
+		}).catch(err => {
+			res.send(err);
+		});
+	});
+});
 
 router.use(multer().single());
-
 // connecting users function
 router.post('/connect', (req, res) => {
 	let user_id = req.body.user_id;
@@ -636,118 +649,56 @@ router.post('/connect', (req, res) => {
 	}
 });
 
-router.use(multer().single());
-// @route POST
-// @desc save edits to current user account's profile
-router.post('/profile/user', upload.fields([{name: 'avatar', maxCount: 1}, {name: 'resume_file', maxCount: 1}]), (req, res) => {
-	let data = req.body;
-	const currentAcc = req.user;
-
-	User.findOne({'username': currentAcc.username}, (err, user) => {
-		if(err) {
-			res.send('Database error...');
-			console.log(err);
-			return;
-		}
-		console.log(user.avatar);
-		if(req.files['avatar']) {
-			if(user.avatar != 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Antu_im-invisible-user.svg/2000px-Antu_im-invisible-user.svg.png') {
-				gfs.remove({filename: user.avatar.split('files/')[1], root: 'uploads'}, (err, result) => {
-					if(err) {
-						console.log(err);
-					} else {
-						console.log(result);
-					}
-				});
-			}
-			// delete existing avatar file
-			user.avatar = '/files/' + req.files['avatar'][0].filename;
-		}
-		user.name = data.name;
-		user.email = data.email;
-		user.interests = data.interests;
-		user.skills = data.skills;
-		if(req.files['resume_file']) {
-			if(user.resume_file) {
-				// delete existing resume file
-				gfs.remove({filename: user.resume_file.split('files/')[1], root: 'uploads'}, (err, result) => {
-					if(err) {
-						console.log(err);
-						return;
-					} else {
-						console.log(result);
-					}
-				});
-			}
-			user.resume_file = '/files/' + req.files['resume_file'][0].filename;
-		}
-		user.school = data.school;
-		user.intro = data.intro;
-		user.facebook = data.facebook;
-		user.website = data.website;
-		if(!user.created_at) {
-			user.created_at = new Date();
-		}
-		user.updated_at = new Date();
-
-		user.save().then(result => {
-			console.log(result);
-			res.redirect('/profile');
-		}).catch(err => {
-			res.send(err);
-		});
-	});
-});
 
 // @route POST
 // @desc save edits to current org account's profile
-router.post('/profile/org', upload.single('avatar'), (req, res) => {
-	let data = req.body;
-	const currentAcc = req.user;
-
-	console.log('POST on /profile/org');
-	console.log(data);
-
-	Org.findOne({'username': currentAcc.username}, (err, org) => {
-		if(err) {
-			res.send('Database error...');
-			console.log(err);
-			return;
-		}
-		console.log(org);
-		if(req.file) {
-			if(	org.avatar != 'https://cdn0.iconfinder.com/data/icons/users-android-l-lollipop-icon-pack/24/group2-512.png') {
-				// delete existing avatar file
-				gfs.remove({filename: org.avatar.split('files/')[1], root: 'uploads'}, (err, result) => {
-					if(err) {
-						console.log(err);
-					} else {
-						console.log(result);
-					}
-				});
-			}
- 			org.avatar = '/files/' + req.file.filename;
-		}
-		org.name = data.name;
-		org.email = data.email;
-		org.hashtags = data.hashtags;
-		org.desc = data.desc;
-		org.facebook = data.facebook;
-		org.website = data.website;
-		if(!org.created_at) {
-			org.created_at = new Date();
-		}
-		org.updated_at = new Date();
-
-		org.save().then(result => {
-			console.log(result);
-			res.redirect('/profile');
-		}).catch(err => {
-			res.send(err);
-		});
-	});
-});
-
+// router.post('/profile/org', upload.single('avatar'), (req, res) => {
+// 	let data = req.body;
+// 	const currentAcc = req.user;
+//
+// 	console.log('POST on /profile/org');
+// 	console.log(data);
+//
+// 	Org.findOne({'username': currentAcc.username}, (err, org) => {
+// 		if(err) {
+// 			res.send('Database error...');
+// 			console.log(err);
+// 			return;
+// 		}
+// 		console.log(org);
+// 		if(req.file) {
+// 			if(	org.avatar != 'https://cdn0.iconfinder.com/data/icons/users-android-l-lollipop-icon-pack/24/group2-512.png') {
+// 				// delete existing avatar file
+// 				gfs.remove({filename: org.avatar.split('files/')[1], root: 'uploads'}, (err, result) => {
+// 					if(err) {
+// 						console.log(err);
+// 					} else {
+// 						console.log(result);
+// 					}
+// 				});
+// 			}
+//  			org.avatar = '/files/' + req.file.filename;
+// 		}
+// 		org.name = data.name;
+// 		org.email = data.email;
+// 		org.hashtags = data.hashtags;
+// 		org.desc = data.desc;
+// 		org.facebook = data.facebook;
+// 		org.website = data.website;
+// 		if(!org.created_at) {
+// 			org.created_at = new Date();
+// 		}
+// 		org.updated_at = new Date();
+//
+// 		org.save().then(result => {
+// 			console.log(result);
+// 			res.redirect('/profile');
+// 		}).catch(err => {
+// 			res.send(err);
+// 		});
+// 	});
+// });
+//
 // @route POST
 // @desc save edits to org US NEWS profile
 router.post('/profile/orgPageEDIT', upload.single(), (req, res) => {

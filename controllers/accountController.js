@@ -501,7 +501,6 @@ router.get('/profile', (req, res) => {
   }
 });
 
-
 // @route POST
 // @desc save edits to current user account's profile
 router.post('/profile/user', upload.fields([{name: 'avatar', maxCount: 1}, {name: 'resume_file', maxCount: 1}]), (req, res) => {
@@ -564,9 +563,8 @@ router.post('/profile/user', upload.fields([{name: 'avatar', maxCount: 1}, {name
 	});
 });
 
-router.use(multer().single());
 // connecting users function
-router.post('/connect', (req, res) => {
+router.post('/connect', upload.single(), (req, res) => {
 	let user_id = req.body.user_id;
 	let account_id = req.body.account_id;
 	let connect = req.body.connect;
@@ -648,6 +646,7 @@ router.post('/connect', (req, res) => {
 		});
 	}
 });
+
 
 
 // @route POST

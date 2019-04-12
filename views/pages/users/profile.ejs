@@ -7,94 +7,90 @@
 
       <form enctype="multipart/form-data" class="form-horizontal" action="/profile/user" method="POST">
         <!-- User profile -->
-        <div class="content-body" >
-            <div class="col-xl-12">
-              <div class="card">
-                <div style="color: white" class="card-header bg-blue bg-darken-4">
-                  <h4 class="card-title"><i class="ft-calendar"></i> About me</h4>
-                  <a class="heading-elements-toggle">
-                      <i class="fa fa-ellipsis-v font-medium-3"></i>
-                  </a>
-                </div>
-                  <div style="display: block; max-height: 620px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="table-responsive">
-                    <div class="col-xl-6">
-                      <!-- Avatar -->
-                      <fieldset class="form">
-                        <div class="col-md-1" style="margin-left: 30%; margin-top: 10px">
-                          <div style="padding: 10px">
-                            <img id="ava_preview" src="<%= currentAcc.avatar; %>" class="rounded-circle width-150 height-150" alt="Card image">
-                          </div>
-                            <input id="avatar" type="file" accept="image/*" name="avatar" onchange="previewImage(event)">
+            <div class="card">
+              <div style="color: white" class="card-header bg-blue bg-darken-4">
+                <h4 class="card-title"><i class="ft-calendar"></i> About me</h4>
+                <a class="heading-elements-toggle">
+                    <i class="fa fa-ellipsis-v font-medium-3"></i>
+                </a>
+              </div>
+                <div style="display: block; max-height: 620px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="table-responsive">
+                  <div class="col-xl-6">
+                    <!-- Avatar -->
+                    <fieldset class="form">
+                      <div class="col-md-1" style="margin-left: 30%; margin-top: 10px">
+                        <div style="padding: 10px">
+                          <img id="ava_preview" src="<%= currentAcc.avatar; %>" class="rounded-circle width-150 height-150" alt="Card image">
                         </div>
-                      </fieldset>
-                      <!-- Name -->
-                      <div class="form">
-                        <label for="name" style="padding: 5px">Name</label>
-                          <input type="text" class="form-control" id="user-name" name="name" value="<%= currentAcc.name; %>" placeholder="Name" required>
+                          <input id="avatar" type="file" accept="image/*" name="avatar" onchange="previewImage(event)">
                       </div>
-                      <!-- Email -->
-                      <div class="form">
-                        <label for="email" style="padding: 5px">Email</label>
-                        <input type="email" class="form-control" id="user-email" name="email" value="<%= currentAcc.email; %>" required>
-                      </div>
-                      <!-- Interests-->
-                      <div class="form">
-                        <label for="interests" style="padding: 5px">Interests</label>
-                          <div id="interests-input" class="edit-on-delete  tagging" data-tags-input-name="interests">
-                            <input class="type-zone form-control" name="interests" placeholder="Interests" contenteditable="true" required>
-                          </div>
-                          <span style="font-style: italic" class="small">Enter your interests in keywords (ex: charity) and 'Enter'</span>
-                      </div>
-                      <!-- Skills -->
-                      <div class="form">
-                        <label for="interests" style="padding: 5px">Skills</label>
-                          <div id="skills-input" class="edit-on-delete tagging" data-tags-input-name="skills">
-                            <input class="type-zone form-control" name="skills" placeholder="Skills" contenteditable="true" required>
-                          </div>
-                          <span style="font-style: italic" class="small">Enter your skills in keywords (ex: designer) and 'Enter'</span>
-                      </div>
+                    </fieldset>
+                    <!-- Name -->
+                    <div class="form">
+                      <label for="name" style="padding: 5px">Name</label>
+                        <input type="text" class="form-control" id="user-name" name="name" value="<%= currentAcc.name; %>" placeholder="Name" required>
                     </div>
+                    <!-- Email -->
+                    <div class="form">
+                      <label for="email" style="padding: 5px">Email</label>
+                      <input type="email" class="form-control" id="user-email" name="email" value="<%= currentAcc.email; %>" required>
+                    </div>
+                    <!-- Interests-->
+                    <div class="form">
+                      <label for="interests" style="padding: 5px">Interests</label>
+                        <div id="interests-input" class="edit-on-delete  tagging" data-tags-input-name="interests">
+                          <input class="type-zone form-control" name="interests" placeholder="Interests" contenteditable="true" required>
+                        </div>
+                        <span style="font-style: italic" class="small">Enter your interests in keywords (ex: charity) and 'Enter'</span>
+                    </div>
+                    <!-- Skills -->
+                    <div class="form">
+                      <label for="interests" style="padding: 5px">Skills</label>
+                        <div id="skills-input" class="edit-on-delete tagging" data-tags-input-name="skills">
+                          <input class="type-zone form-control" name="skills" placeholder="Skills" contenteditable="true" required>
+                        </div>
+                        <span style="font-style: italic" class="small">Enter your skills in keywords (ex: designer) and 'Enter'</span>
+                    </div>
+                  </div>
 
-                    <div class="col-xl-6" style="padding-top: 20px;">
-                      <!-- Resume -->
-                      <div class="form" style="padding-bottom: 5px">
-                        <label for="resume_file" style="padding: 5px">Resúme</label>
-                          <input type="file" accept=".doc, .docx, .pdf" class="form-control"
-                          name="resume_file" value="<%= currentAcc.resume_file; %>" id="user-name">
-                          <span style="font-style: italic" class="small">Upload your resume here (docx, pdf,...)</span>
-                          <br>
-                          <a href='<%= currentAcc.resume_file; %>' class="btn btn-outline-warning">View current resume</a>
-                      </div>
-                      <!-- School -->
-                      <div class="form">
-                        <label for="school" style="padding-bottom: 5px">School</label>
-                        <input type="text" class="form-control" id="user-name" name="school" value="<%= currentAcc.school; %>" placeholder="School (optional)">
-                      </div>
-                      <!-- Self intro -->
-                      <div class="form">
-                        <label for="intro" style="padding: 5px">Bio</label>
-                          <input type="text" class="form-control" id="user-name" name="intro" value="<%= currentAcc.intro; %>" placeholder="Your bio">
-                      </div>
-                      <!-- Facebook -->
-                      <div class="form">
-                        <label for="facebook" style="padding: 5px">Facebook</label>
-                        <input type="url" class="form-control" id="user-name" name="facebook" value="<%= currentAcc.facebook; %>" placeholder="Your Facebook profile url (optional)">
-                      </div>
-                      <!-- Website -->
-                      <div class="form">
-                        <label for="website" style="padding: 5px">Website</label>
-                        <input type="url" class="form-control" id="user-name" name="website" value="<%= currentAcc.website; %>" placeholder="Your website url (optional)">
-                      </div>
-                      <br>
-                      <!-- submit button -->
-                      <div style="margin-left: 40%">
-                        <button id="submitBtn" onclick="freezeBtn();" type="submit" class="btn btn-lg btn-outline-info">Submit</button>
-                      </div>
+                  <div class="col-xl-6" style="padding-top: 20px;">
+                    <!-- Resume -->
+                    <div class="form" style="padding-bottom: 5px">
+                      <label for="resume_file" style="padding: 5px">Resúme</label>
+                        <input type="file" accept=".doc, .docx, .pdf" class="form-control"
+                        name="resume_file" value="<%= currentAcc.resume_file; %>" id="user-name">
+                        <span style="font-style: italic" class="small">Upload your resume here (docx, pdf,...)</span>
+                        <br>
+                        <a href='<%= currentAcc.resume_file; %>' class="btn btn-outline-warning">View current resume</a>
+                    </div>
+                    <!-- School -->
+                    <div class="form">
+                      <label for="school" style="padding-bottom: 5px">School</label>
+                      <input type="text" class="form-control" id="user-name" name="school" value="<%= currentAcc.school; %>" placeholder="School (optional)">
+                    </div>
+                    <!-- Self intro -->
+                    <div class="form">
+                      <label for="intro" style="padding: 5px">Bio</label>
+                        <input type="text" class="form-control" id="user-name" name="intro" value="<%= currentAcc.intro; %>" placeholder="Your bio">
+                    </div>
+                    <!-- Facebook -->
+                    <div class="form">
+                      <label for="facebook" style="padding: 5px">Facebook</label>
+                      <input type="url" class="form-control" id="user-name" name="facebook" value="<%= currentAcc.facebook; %>" placeholder="Your Facebook profile url (optional)">
+                    </div>
+                    <!-- Website -->
+                    <div class="form">
+                      <label for="website" style="padding: 5px">Website</label>
+                      <input type="url" class="form-control" id="user-name" name="website" value="<%= currentAcc.website; %>" placeholder="Your website url (optional)">
+                    </div>
+                    <br>
+                    <!-- submit button -->
+                    <div style="margin-left: 40%">
+                      <button id="submitBtn" onclick="freezeBtn();" type="submit" class="btn btn-lg btn-outline-info">Submit</button>
                     </div>
                   </div>
                 </div>
-            </div>
-          </div>
+              </div>
         </form>
 
 

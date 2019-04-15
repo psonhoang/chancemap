@@ -4,7 +4,7 @@ const router = express.Router();
 const Admin = require('../models/admin');
 const User = require('../models/user');
 const Org = require('../models/org');
-const Event = requrie('../models/event');
+const Event = require('../models/event');
 const Job = require('../models/job');
 const Opportunitiy = require('../models/opportunity');
 

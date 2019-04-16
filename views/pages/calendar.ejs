@@ -8,7 +8,7 @@
                     <div class="col-xs-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Default</h4>
+                                <h3 class="card-title">Calendar</h3>
                                 <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
                                 <div class="heading-elements">
                                     <ul class="list-inline mb-0">
@@ -20,7 +20,12 @@
                             </div>
                             <div class="card-body collapse in">
                                 <div class="card-block">
-                                    <p class="card-text">This is the most basic example having navigation button to navigate next and previous months and today button. This basic example lists all the events on the calendar.</p>
+                                    <p style="font-size: 16px" class="card-body"><strong>*NOTE:&nbsp;</strong>
+                                        <span><i style="color:#FFB300" class="ft-activity"></i>&nbsp;Event</span>&nbsp;&nbsp;
+                                        <span><i style="color:#42A5F5" class="ft-activity"></i>&nbsp;Job</span>&nbsp;&nbsp;
+                                        <span><i style="color:#FF5252" class="ft-activity"></i>&nbsp;Opportunity</span>
+                                    </p>
+                                    <br>
                                     <div id='fc-default'></div>
                                 </div>
                             </div>
@@ -40,11 +45,12 @@
     
     let eventsData = [], jobsData = [], opportunitiesData = [];
 
-    // TODO: Plug data into calendar
+    // Plug data into calendar
     events.forEach(event => {
         let data = {
             title: event.name,
-            start: event.reg_deadline ? event.reg_deadline : event.start_date
+            start: event.reg_deadline ? event.reg_deadline : event.start_date,
+            color: '#FFB300'
         };
         eventsData.push(data);
     });
@@ -52,7 +58,8 @@
     jobs.forEach(job => {
         let data = {
             title: job.name,
-            start: job.app_deadline
+            start: job.app_deadline,
+            color: '#42A5F5'
         };
         jobsData.push(data);
     });
@@ -60,7 +67,8 @@
     opportunities.forEach(opportunity => {
         let data = {
             title: opportunity.name,
-            start: opportunity.app_deadline ? opportunity.app_deadline : opportunity.start_date
+            start: opportunity.app_deadline ? opportunity.app_deadline : opportunity.start_date,
+            color: '#FF5252'
         };
         opportunitiesData.push(data);
     });
@@ -68,13 +76,8 @@
     const calendarData = eventsData.concat(jobsData, opportunitiesData);
     
     $(document).ready(function () {
-        /************************************
-        *				Default				*
-        ************************************/
+        // fullCalendar
         $('#fc-default').fullCalendar({
-            defaultDate: '2019-04-04',
-            editable: true,
-            eventLimit: true, // allow "more" link when too many events
             events: calendarData
         });
     });

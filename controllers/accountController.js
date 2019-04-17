@@ -487,15 +487,18 @@ router.get('/profile', (req, res) => {
   } else {
     Org.findOne({'_id': currentAcc.account_id}, (err, org) => {
       if(err) {
-  			console.log(err);
-  			return;
-  		}
-      res.render('profile', {
-        title: 'ChanceMap | My Profile',
-        account_type: currentAcc.account_type,
-        account_id: currentAcc.account_id,
-        currentAcc: org,
-        notis: req.notis
+        console.log(err);
+        return;
+      }
+      OrgPage.findOne({'org_id': org._id}, (err, page) => {
+        res.render('profile', {
+          title: 'ChanceMap | My Profile',
+          account_type: currentAcc.account_type,
+          account_id: currentAcc.account_id,
+          currentAcc: org,
+          page: page,
+          notis: req.notis
+        });
       });
     });
   }
@@ -622,7 +625,7 @@ router.post('/connect', upload.single(), (req, res) => {
 					console.log(err);
 					return;
 				}
-				if (currentAcc.connected.indexOf(user.username) > -1)
+				if (currentAcc.connected.indexOf(user.username) >= 0)
 				{
 					let i = currentAcc.connected.indexOf(user.username);
 					currentAcc.connected.splice(i, 1);
@@ -633,7 +636,7 @@ router.post('/connect', upload.single(), (req, res) => {
 						user.connected.splice(i, 1);
 						user.updated_at = new Date();
 						user.save().then(result => {
-							console.log("Successfully remove connection!");
+							console.log("Successfully removed connection!");
 							res.end();
 						}).catch(err => {
 							res.send(err);
@@ -755,12 +758,9 @@ router.post('/profile/orgPageEDIT', upload.single(), (req, res) => {
 	});
 });
 
-// Multer
-router.use(multer().single());
-
 //@route POST
 //@desc Follower/Following func
-router.post('/follow', (req, res) => {
+router.post('/follow', upload.single(), (req, res) => {
 	let org_id = req.body.org_id;
 	let user_id = req.body.user_id;
 	let follow = req.body.follow;

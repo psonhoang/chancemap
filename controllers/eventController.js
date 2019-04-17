@@ -117,7 +117,6 @@ router.post('/create', (req, res) => {
                     image: 'event',
                     accounts: accounts
                 });
-
                 newNoti.save((err, noti) => {
                     if(err) {
                         console.log(err);
@@ -275,10 +274,9 @@ router.get('/delete/:id', (req, res) => {
     res.redirect('/login');
   } else {
     let account_type = req.user.account_type;
-    let data = req.body;
 
     if(account_type == 1 || account_type == 2) {
-        Event.findOneAndRemove({_id: data.event_id}, (err, event) => {
+        Event.findOneAndRemove({'_id': req.params.id}, (err, event) => {
             if(err) {
                 console.log(err);
             } else {

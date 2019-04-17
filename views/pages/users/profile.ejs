@@ -355,7 +355,7 @@
     $(button_id).removeClass('btn-info');
     $(button_id).addClass('btn-success');
     $(button_id).html('<i class="fa fa-check"></i> Connected');
-    $(button_id).attr('onclick', 'Disconnect("'+ account_id + '","' + user_id +'","' + user_username +'")');
+    $(button_id).attr('onclick', 'disconnect("'+ account_id + '","' + user_id +'","' + user_username +'")');
 
     let formData = new FormData();
     formData.append("user_id", user_id);
@@ -371,6 +371,31 @@
       data: formData,
       success: (data) => {
         toastr.success('You have connected with ' + user_username, 'Connected!');
+      }
+    });
+  }
+
+  function disconnect(account_id, user_id, user_username) {
+    let button_id = '#' + user_id + '2';
+    $(button_id).removeClass('btn-success');
+    $(button_id).addClass('btn-info');
+    $(button_id).html('Connect');
+    $(button_id).attr('onclick', 'connect("' + account_id + '","' + user_id +'","' + user_username +'")');
+
+    let formData = new FormData();
+    formData.append("user_id", user_id);
+    formData.append("account_id", account_id);
+    formData.append("connect", false);
+
+    $.ajax({
+      async: true,
+      url: '/connect',
+      method: 'POST',
+      processData: false,
+      contentType: false,
+      data: formData,
+      success: (data) => {
+        toastr.warning('You have unfollowed ' + user_username, 'Unfollowed!');
       }
     });
   }

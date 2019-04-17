@@ -16,6 +16,7 @@ const crypto = require('crypto');
 const multer = require('multer');
 const Grid = require('gridfs-stream');
 const methodOverride = require('method-override');
+const JSON = require('circular-json')
 
 // Database
 const mongoose = require('mongoose');
@@ -111,34 +112,123 @@ const socketIO = require('socket.io');
 const io = socketIO(server);
 var mSocket;
 var mAccountType;
+var chatables = [];
 
 io.on('connection', (socket) => {
-  // console.log('a user connected');
+  console.log('a user connected');
 
-  mSocket = socket;
+  // storing all connected sockets
+  //chatables[socket.id] = socket;
+
+  //listening for connection with other users
+  // socket.on('chats', (chats) => {
+  //   let chatrooms = chats.split(',');
+  //   //console.log(chatrooms);
+  //   socket.join(chatrooms); //each chatroom is a user's id
+  //   //console.log(socket);
+  //   //console.log(socket.adapter);
+  // })
+
+  // socket.on('join private', (data) => {
+  //   let room_id = data.room_id;
+  //   let user_name = data.user_name;
+  //
+  //   console.log(room_id);
+  //   socket.join(room_id);
+  //   //for sending data to req
+  //   socket.currentChatID = room_id;
+  //   socket.currentChatName = user_name;
+  // })
+  //
+  socket.on('join private', (data) => {
+    let room_id = data.room_id;
+    //console.log(room_id);
+    //socket.to(room_id).emit('new private message', {user_name, message});
+    socket.join(room_id);
+  })
+
+  socket.on('private message', (data) => {
+    let room_id = data.room_id;
+    let user_name = data.user_name;
+    let message = data.message;
+    console.log(user_name);
+    console.log(room_id);
+    socket.to(room_id).emit('new private message', {user_name, message});
+  })
+
+  socket.on('success', (message) => {
+    console.log(message);
+  })
+
+  // socket.on('private chat', (_id) => {
+  //   console.log(_id);
+  //   socket.join(_id);
+  // })
+  //
+  // socket.on('private message', (data) => {
+  //   let user_id = data._id;
+  //   let message = data.message;
+  //   let name = data.name;
+  //   socket.to(user_id).emit('new private message', {message: message, name: name});
+  // })
+
+  // socket.on('ids', (ids) => {
+  //   let user_ids = ids.split(',');
+  //   console.log(user_ids);
+  // })
 
   // For orgs
   socket.on('room', (room) => {
-    // console.log(room);
+    console.log(room);
     socket.join(room);
   });
-
   // For users
   socket.on('rooms', (rooms) => {
     let noti_rooms = rooms.split(',');
-    // console.log(noti_rooms);
+    //console.log(noti_rooms);
     socket.join(noti_rooms);
   });
 
-  // Disconnect
-  // socket.on('disconnect', () => {
-  //   console.log('a user disconected');
-  // });
+
+  // messaging function
+  // socket.on('new user' (data) => {
+  //   socket._id = data; // unique id for each socket
+  //   users[socket._id] = socket; // storing socket by their key values
+  //   updateUsers();
+  // })
+  // function updateUsers() {
+  //   io.sockets.emit('usernames', Object.key(users));
+  // }
+  // socket.on('join_room', (data) => {
+  //   socket._id = data._id
+  //   socket.join(socket._id);
+  // })
+
+  // listening for new message
+  socket.on('new_message', (data) => {
+    console.log('new message');
+    io.sockets.emit('new_message', {message: data.message});
+  })
+
+  // socket.on('disconnect' (data) => {
+  //   delete users[socket._id];
+  //   updateUsers();
+  // })
+
+  mSocket = socket;
+  // console.log(mSocket.currentChatID);
+  // console.log(mSocket.currentChatName);
+  //console.log(mSocket);
+  //console.log(mSocket.rooms);
+  //console.log(mSocket.adapter);
+  //console.log(socket);
 });
 
 // Make io accessible to our router
 app.use((req,res,next)  => {
   req.socketio = mSocket;
+  //req.socketio = io;
+  //req.chatables = chatables;
   next();
 });
 
@@ -417,7 +507,8 @@ app.use('/search', searchRoutes);
 // @Calendar ROUTES
 let calendarRoutes = require('./controllers/calendarController');
 app.use('/calendar', calendarRoutes);
-
+let messageRoutes = require('./controllers/messageController');
+app.use('/messages', messageRoutes);
 
 // Export
 module.exports = server;

@@ -1,12 +1,16 @@
 <% extend('../../defaultLayouts/defaultLayout') %>
 
 <div class="card-block" style="margin-right: 20%; margin-left: 20%">
-  <form enctype="multipart/form-data" class="form-horizontal" action="/profile/orgPageEDIT" method="POST">
+  <form enctype="multipart/form-data" class="form-horizontal" action="" method="POST">
     <!-- Name -->
     <fieldset class="form-group position-relative has-icon-left">
       <label class="col-md-2 label-control" for="what_we_do">What we do</label>
       <div class="col-md-10">
+        <% if (page != null) { %>
         <input type="text" class="form-control" value="<%= page.what_we_do %>" id="user-name" name="what_we_do" placeholder="Describe what you do" required>
+        <% } else { %>
+        <input type="text" class="form-control" id="user-name" name="what_we_do" placeholder="Describe what you do" required>        
+        <% } %>
         <div class="form-control-position">
           <i class="ft-users"></i>
         </div>
@@ -29,7 +33,11 @@
     <fieldset class="form-group position-relative has-icon-left">
       <label class="col-md-2 label-control" for="our_team">Our Team</label>
       <div class="col-md-10">
+        <% if (page != null) { %>
         <textarea row="8" cols "15" class="form-control" value="<%= page.our_team %>" id="user-name" name="our_team" placeholder="Your team's description"><%= page.our_team %></textarea>
+        <% } else { %>
+        <textarea row="8" cols "15" class="form-control" id="user-name" name="our_team" placeholder="Your team's description"></textarea>
+        <% } %>
         <div class="form-control-position">
           <i class="ft-info"></i>
         </div>

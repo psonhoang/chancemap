@@ -12,4 +12,4 @@ const orgPageSchema = mongoose.Schema({
 });
 
 // Export Org model
-module.exports = mongoose.model('OrgProfile', orgPageSchema);
+module.exports = mongoose.model('OrgPage', orgPageSchema);

@@ -491,6 +491,8 @@ router.get('/profile', (req, res) => {
         return;
       }
       OrgPage.findOne({'org_id': org._id}, (err, page) => {
+				console.log("we got here and we have a page");
+				console.log(page);
         res.render('profile', {
           title: 'ChanceMap | My Profile',
           account_type: currentAcc.account_type,
@@ -654,60 +656,12 @@ router.post('/connect', upload.single(), (req, res) => {
 
 // @route POST
 // @desc save edits to current org account's profile
-// router.post('/profile/org', upload.single('avatar'), (req, res) => {
-// 	let data = req.body;
-// 	const currentAcc = req.user;
-//
-// 	console.log('POST on /profile/org');
-// 	console.log(data);
-//
-// 	Org.findOne({'username': currentAcc.username}, (err, org) => {
-// 		if(err) {
-// 			res.send('Database error...');
-// 			console.log(err);
-// 			return;
-// 		}
-// 		console.log(org);
-// 		if(req.file) {
-// 			if(	org.avatar != 'https://cdn0.iconfinder.com/data/icons/users-android-l-lollipop-icon-pack/24/group2-512.png') {
-// 				// delete existing avatar file
-// 				gfs.remove({filename: org.avatar.split('files/')[1], root: 'uploads'}, (err, result) => {
-// 					if(err) {
-// 						console.log(err);
-// 					} else {
-// 						console.log(result);
-// 					}
-// 				});
-// 			}
-//  			org.avatar = '/files/' + req.file.filename;
-// 		}
-// 		org.name = data.name;
-// 		org.email = data.email;
-// 		org.hashtags = data.hashtags;
-// 		org.desc = data.desc;
-// 		org.facebook = data.facebook;
-// 		org.website = data.website;
-// 		if(!org.created_at) {
-// 			org.created_at = new Date();
-// 		}
-// 		org.updated_at = new Date();
-//
-// 		org.save().then(result => {
-// 			console.log(result);
-// 			res.redirect('/profile');
-// 		}).catch(err => {
-// 			res.send(err);
-// 		});
-// 	});
-// });
-//
-// @route POST
-// @desc save edits to org US NEWS profile
-router.post('/profile/orgPageEDIT', upload.single(), (req, res) => {
+router.post('/profile/org', upload.single('avatar'), (req, res) => {
 	let data = req.body;
 	const currentAcc = req.user;
 
-	console.log('POST on /profile/orgPageEDIT');
+	console.log('POST on /profile/org');
+	console.log(data);
 
 	Org.findOne({'username': currentAcc.username}, (err, org) => {
 		if(err) {
@@ -715,45 +669,36 @@ router.post('/profile/orgPageEDIT', upload.single(), (req, res) => {
 			console.log(err);
 			return;
 		}
-		OrgPage.findOne({'org_id': org._id}, (err, page) => {
-			if (page != null) {
-
-				page.what_we_do = data.what_we_do;
-				page.our_team = data.our_team;
-				if(!page.created_at) {
-					orgPage.created_at = new Date();
-				}
-				page.updated_at = new Date();
-
-				page.save().then(result => {
-					console.log(result);
-					res.redirect('/orgs/' + org.username);
-				}).catch(err => {
-					res.send(err);
-				});
-
-			}
-			else
-			{
-				var newOrgPage = new OrgPage({
-				  _id: new mongoose.Types.ObjectId(),
-					created_at: new Date(),
-					updated_at: new Date(),
-					org_id : org._id,
-					org_name: org.name,
-					what_we_do: data.what_we_do, //contain description of org
-					our_team: data.our_team, //contain description of org's team
-				});
-				newOrgPage.save((err, page) => {
+		console.log(org);
+		if(req.file) {
+			if(	org.avatar != 'https://cdn0.iconfinder.com/data/icons/users-android-l-lollipop-icon-pack/24/group2-512.png') {
+				// delete existing avatar file
+				gfs.remove({filename: org.avatar.split('files/')[1], root: 'uploads'}, (err, result) => {
 					if(err) {
 						console.log(err);
-						return;
+					} else {
+						console.log(result);
 					}
-					console.log("New org profile made!");
-					console.log(page);
-					res.redirect('/profile');
 				});
 			}
+ 			org.avatar = '/files/' + req.file.filename;
+		}
+		org.name = data.name;
+		org.email = data.email;
+		org.hashtags = data.hashtags;
+		org.desc = data.desc;
+		org.facebook = data.facebook;
+		org.website = data.website;
+		if(!org.created_at) {
+			org.created_at = new Date();
+		}
+		org.updated_at = new Date();
+
+		org.save().then(result => {
+			console.log(result);
+			res.redirect('/profile');
+		}).catch(err => {
+			res.send(err);
 		});
 	});
 });

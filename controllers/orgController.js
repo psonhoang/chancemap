@@ -238,12 +238,11 @@ router.get('/:username', (req, res) => {
 });
 
 router.get('/:username/edit', (req, res) => {
-	const currentAcc = req.user;
 	const account_id = req.user.account_id;
 	const account_type = req.user.account_type;
 
 	Org.findOne({'username': req.params.username}, (err, org) => {
-		if (currentAcc.username.toString() != org.username) {
+		if (req.user.username.toString() != org.username) {
 			res.redirect('/');
 		}
 		else {
@@ -252,8 +251,7 @@ router.get('/:username/edit', (req, res) => {
 					title: org.name + ' ' + ' Edit',
 					account_type: account_type,
 					account_id: account_id,
-					currentAcc: currentAcc,
-					org: org,
+					currentAcc: org,
 					page: page,
 					notis: req.notis,
 					criteriaList: org.hashtags

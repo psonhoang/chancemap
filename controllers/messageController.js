@@ -60,22 +60,9 @@ const upload = multer({ storage });
 router.get('/', (req, res) => {
   let currentAcc = req.user;
   let account_type = currentAcc.account_type;
-  //let chatables = req.chatables; //array of connected sockets
-  let currentSocket = req.socketio;
-  // let currentChatID = currentSocket.currentChatID;
-  // let currentChatName = currentSocket.currentChatName;
-
   if(account_type == 0) {
     User.findOne({'_id': currentAcc.account_id}, (err, currentAcc) => {
       console.log(currentAcc.name);
-      //console.log(currentSocket);
-      //console.log(req.socketio);
-      //console.log(currentSocket.rooms);
-      // console.log(currentChatID);
-      // console.log(currentChatName);
-      // chatables.forEach(chatable => {
-      //   console.log(chatable);
-      // })
 
       User.find((err, users) => {
         // finding users this current user is connected with
@@ -84,17 +71,11 @@ router.get('/', (req, res) => {
         connected.forEach(user => {
           ids.push(user._id);
         })
-        //console.log(ids);
         res.render('message', {
           title: 'ChanceMap',
           currentAcc: currentAcc,
           account_type: account_type,
           connected: connected,
-          ids: ids,
-          //chatables: chatables,
-          currentSocket: currentSocket,
-          // room_id: currentChatID,
-          // user_name: currentChatName,
           notis: req.notis
         });
       })

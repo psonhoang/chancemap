@@ -13,21 +13,8 @@
                 </div>
             </fieldset>
           </div>
-          <div id="users-list" class="list-group position-relative" style="max-height: 660px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar">
-            <div class="users-list-padding">
-              <% connected.forEach( user => { %>
-                <a id="<%=user._id%>" onclick="startChatting(<%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.name) %>); " class="list-group-item list-group-item-action media no-border">
-                  <div class="media-left">
-                      <span class="avatar avatar-md avatar-away"><img class="media-object rounded-circle" src="<%= user.avatar %>" alt="Generic placeholder image">
-                      </span>
-                  </div>
-                  <div class="media-body">
-                      <h6 class="list-group-item-heading"><%= user.name %> <span class="font-small-3 float-xs-right primary">Yesterday</span></h6>
-                      <p class="list-group-item-text text-muted"><i class="ft-check font-small-2"></i> Some message here</p>
-                  </div>
-                </a>
-              <% }) %>
-            </div>
+          <div id="users_list" class="list-group position-relative" style="max-height: 660px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar">
+
           </div>
         </div>
       </div>
@@ -44,7 +31,8 @@
         <div class="content-header row">
         </div>
         <div class="content-body">
-          <div class="user-chatting" style="width: 100%; padding-top: 40px; background-color: #DCDCDC"></div>
+          <!-- where the current conversation is shown -->
+          <div id="current_chat" style="width: 100%; padding-top: 40px; background-color: #DCDCDC"></div>
           <!-- chat area -->
           <section class="chat-app-form">
             <!-- this is where messages appear -->
@@ -52,8 +40,9 @@
 
             </section>
             <!-- this is where user types their messages -->
-            <form class="chat-app-input" style="position: fixed; bottom: 0; width: 62%; padding-bottom: 20px">
-              <fieldset id="chatbox" class="form-group col-xs-10 m-0">
+            <form id="chatbox" class="chat-app-input" autocomplete="off" style="position: fixed; bottom: 0; width: 62%; padding-bottom: 20px">
+              <!-- input box -->
+              <fieldset class="form-group col-xs-10 m-0">
                 <div class="form-control-position">
                   <i class="icon-emoticon-smile"></i>
                 </div>
@@ -61,8 +50,9 @@
                 <div class="form-control-position control-position-right">
                 </div>
               </fieldset>
+              <!-- send button -->
               <fieldset class="form-group position-relative has-icon-left col-xs-2 m-0">
-                <button id="send_message" onclick="clearText();" type="button" class="btn btn-primary"><i class="fa fa-paper-plane-o hidden-lg-up"></i>
+                <button id="send_message" type="button" class="btn btn-primary"><i class="fa fa-paper-plane-o hidden-lg-up"></i>
                   <span class="hidden-md-down">Send</span>
                 </button>
               </fieldset>
@@ -79,103 +69,71 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
   $(document).ready(function() {
-    $('.user-chatting').hide();
+    $('#current_chat').hide();
+
     // chat function
     var socket = io();
     var chatroom = $('#chatroom');
     var message = $('#message');
     var send_message = $('#send_message');
-    var user_ids = [];
-    var user_id = $('#5b2906bbf2970c0744983404')
-    // ids.forEach(id => {
-    //   var temp_id =
-    // })
+    var chatbox = $('#chatbox');
+    var current_user_name = $('#current_user_name').html();
+    var users_list = $('#users_list');
+    var current_chat = $('#current_chat');
 
-    // var chatbox = $('#chatbox');
+    //loading all chatable users
+    socket.on('new connection', (data) => {
+      let currentSocket = data.currentSocket;
+      let connectedUsers = data.connectedUsers.slice();
+      connectedUsers.forEach(user => {
+        let room_id = user.id;
+        let name = user.name;
+        users_list.append('<li ' + 'id="' + room_id + '">' + name + '</li>');
+        let button_id = '#' + room_id;
+        $(button_id).bind('click', () => {
+          // alert(name);
+          socket.emit('join private', room_id);
+          current_chat.show();
+          current_chat.html(name);
+        })
+      })
+    })
 
-    // connecting to other users' rooms through their ids
-    socket.on('connect', () => {
-      if(<%- JSON.stringify(account_type) %> == 0) {
-        let chats = <%- JSON.stringify(ids) %> + "";
-        socket.emit('chats', chats);
-
-        // sending a private message to a user
-        // ids.forEach(id => {
-        //   let user_id = '#' + id + '2';
-        //   $(user_id).click(() => {
-        //     socket.emit('private chat', {_id: id});
-        //     connected.findOne({'_id': id} (err, privateUser) => {
-        //       let name = privateUser.name;
-        //     })
-        //     //sending messages
-        //     send_message.click((id, name) => {
-        //       socket.emit('private message', {_id: id, name: name, message: message.val()});
-        //     })
-        //   })
-        // })
+    //sending a message
+    chatbox.submit((e) => {
+      e.preventDefault();
+      // private messaging
+      if (current_chat.html() != '') {
+        socket.emit('private message', {
+          message: message.val(),
+          name: current_chat.html(),
+        });
+        // normal messaging
+      } else {
+        socket.emit('chat message', {
+          message: message.val()
+        });
       }
+      message.val('');
+      return false;
+    });
+
+    //displaying the message onscreen
+    socket.on('chat message', (data) => {
+      let message = data.message;
+      let name = data.name;
+      let new_message = `${name}: ${message}`;
+      chatroom.append('<li>' + new_message + '</li>');
     })
 
-    // sending a private message to a user
-    // ids.forEach(id => {
-    //   let user_id = '#' + id + '2';
-    //   $(user_id).click(() => {
-    //     socket.emit('private chat', {_id: id});
-    //     connected.findOne({'_id': id} (err, privateUser) => {
-    //       let name = privateUser.name;
-    //     })
-    //     //sending messages
-    //     send_message.click((id, name) => {
-    //       socket.emit('private message', {_id: id, name: name, message: message.val()});
-    //     })
-    //   })
-    // })
-
-    // socket.on('new private message', (data) => {
-    //   chatroom.append('<p>' + <%- JSON.stringify(currentAcc.name) %> + ' said to ' + data.name + ': ' + data.message + '</p>');
-    // })
-
-    //sending messages
-    // send_message.click(() => {
-    //   socket.emit('new_message', {message: message.val()});
-    // })
-    //
-    // socket.on('new_message', (data) => {
-    //   chatroom.append('<p>' + <%- JSON.stringify(currentAcc.name) %> + ': ' + data.message + '</p>');
-    // })
-
-    //sending private messages
-    user_id.click(() => {
-      socket.emit('join private', {room_id: '5b2906bbf2970c0744983404'});
+    //show private message on the screen
+    socket.on('private message', (data) => {
+      let message = data.message;
+      let sender = data.sender;
+      let recipient = data.recipient;
+      // alert(`${sender} to ${recipient}: ${message}`);
+      let new_log = `${sender} to ${recipient}: ${message}`;
+      chatroom.append('<li>' + new_log + '</li>');
     })
-    send_message.click(() => {
-      socket.emit('private message', {room_id: '5b2906bbf2970c0744983404', user_name: 'SH', message: message.val()});
-    })
-    socket.on('new private message', (data) => {
-      chatroom.append('<p>' + <%- JSON.stringify(currentAcc.name) %> + ' said to ' + data.user_name + ': ' + data.message + '</p>');
-      socket.emit('success', {message: 'messaged sent!'});
-    })
-
-    // send_message.click(() => {
-    //   socket.emit('private message', {room_id, user_name, message: message.val()})
-    // })
-    // socket.on('new private message', (data) => {
-    //   chatroom.append('<p>' + <%- JSON.stringify(currentAcc.name) %> + ' said to ' + data.user_name + ': ' + data.message + '</p>');
-    // })
   })
-
-  function startChatting(user_id, user_name) {
-    $('.user-chatting').show();
-    $('.user-chatting').html(user_name);
-
-    //emit a private chatroom for the user clicked
-    //currentSocket.emit('join private', {room_id: user_id, user_name});
-
-    //socket.emit('join_room', {_id: user_id});
-  }
-  function clearText() {
-    setTimeout(function() {
-      message.value = '';
-    },0)
-  }
 </script>

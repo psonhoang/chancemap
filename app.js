@@ -112,70 +112,13 @@ const socketIO = require('socket.io');
 const io = socketIO(server);
 var mSocket;
 var mAccountType;
-var chatables = [];
+var connectedUsers = [];
+var currentSocket = {};
 
 io.on('connection', (socket) => {
   console.log('a user connected');
-
-  // storing all connected sockets
-  //chatables[socket.id] = socket;
-
-  //listening for connection with other users
-  // socket.on('chats', (chats) => {
-  //   let chatrooms = chats.split(',');
-  //   //console.log(chatrooms);
-  //   socket.join(chatrooms); //each chatroom is a user's id
-  //   //console.log(socket);
-  //   //console.log(socket.adapter);
-  // })
-
-  // socket.on('join private', (data) => {
-  //   let room_id = data.room_id;
-  //   let user_name = data.user_name;
-  //
-  //   console.log(room_id);
-  //   socket.join(room_id);
-  //   //for sending data to req
-  //   socket.currentChatID = room_id;
-  //   socket.currentChatName = user_name;
-  // })
-  //
-  socket.on('join private', (data) => {
-    let room_id = data.room_id;
-    //console.log(room_id);
-    //socket.to(room_id).emit('new private message', {user_name, message});
-    socket.join(room_id);
-  })
-
-  socket.on('private message', (data) => {
-    let room_id = data.room_id;
-    let user_name = data.user_name;
-    let message = data.message;
-    console.log(user_name);
-    console.log(room_id);
-    socket.to(room_id).emit('new private message', {user_name, message});
-  })
-
-  socket.on('success', (message) => {
-    console.log(message);
-  })
-
-  // socket.on('private chat', (_id) => {
-  //   console.log(_id);
-  //   socket.join(_id);
-  // })
-  //
-  // socket.on('private message', (data) => {
-  //   let user_id = data._id;
-  //   let message = data.message;
-  //   let name = data.name;
-  //   socket.to(user_id).emit('new private message', {message: message, name: name});
-  // })
-
-  // socket.on('ids', (ids) => {
-  //   let user_ids = ids.split(',');
-  //   console.log(user_ids);
-  // })
+  console.log(currentSocket);
+  console.log(connectedUsers);
 
   // For orgs
   socket.on('room', (room) => {
@@ -189,46 +132,48 @@ io.on('connection', (socket) => {
     socket.join(noti_rooms);
   });
 
+  socket.emit('new connection', {currentSocket, connectedUsers});
 
-  // messaging function
-  // socket.on('new user' (data) => {
-  //   socket._id = data; // unique id for each socket
-  //   users[socket._id] = socket; // storing socket by their key values
-  //   updateUsers();
-  // })
-  // function updateUsers() {
-  //   io.sockets.emit('usernames', Object.key(users));
-  // }
-  // socket.on('join_room', (data) => {
-  //   socket._id = data._id
-  //   socket.join(socket._id);
-  // })
-
-  // listening for new message
-  socket.on('new_message', (data) => {
-    console.log('new message');
-    io.sockets.emit('new_message', {message: data.message});
+  //when this socket wants to send a message to another
+  socket.on('chat message', (data) => {
+    console.log(currentSocket.name);
+    io.sockets.emit('chat message', {name: currentSocket.name, message: data.message});
   })
 
-  // socket.on('disconnect' (data) => {
-  //   delete users[socket._id];
-  //   updateUsers();
-  // })
+  //when this socket joins a private room
+  socket.on('join private', (room_id) => {
+    console.log(room_id);
+    let rooms = Object.keys(socket.rooms);
+    if((room_id != currentSocket.id) && !(room_id in rooms)) {
+      socket.join(room_id, () => {
+        console.log(Object.keys(socket.rooms));
+      });
+    }
+  });
+
+  //when this socket sends a private message
+  socket.on('private message', (data) => {
+    let message = data.message;
+    let sender = currentSocket.name;
+    let recipient = data.name;
+    let room_id;
+    connectedUsers.forEach(user => {
+      if(user.name === recipient) {
+        room_id = user.id;
+      }
+    })
+    console.log(room_id);
+    console.log(recipient);
+    socket.to(room_id).emit('private message', {message, sender, recipient});
+    socket.emit('private message', {message, sender, recipient});
+  })
 
   mSocket = socket;
-  // console.log(mSocket.currentChatID);
-  // console.log(mSocket.currentChatName);
-  //console.log(mSocket);
-  //console.log(mSocket.rooms);
-  //console.log(mSocket.adapter);
-  //console.log(socket);
 });
 
 // Make io accessible to our router
 app.use((req,res,next)  => {
   req.socketio = mSocket;
-  //req.socketio = io;
-  //req.chatables = chatables;
   next();
 });
 
@@ -285,6 +230,22 @@ app.get('/', (req, res) => {
               }
               if(account_type == 0) {
                 User.findOne({'_id': account_id}, (err, user) => {
+                  let connected = users.filter(client => user.connected.indexOf(client.username) >= 0);
+                  connected.forEach(user => {
+                    let id = user._id;
+                    let name = user.name;
+                    connectedUsers.push({
+                      id: id,
+                      name: name,
+                    })
+                  })
+                  let id = user._id;
+                  let name = user.name;
+                  var client = {
+                    id: id,
+                    name: name,
+                  };
+                  currentSocket = client;
                   // res.send(user);
                   let criteriaList = user.interests.concat(user.skills);
                   // orgs sort

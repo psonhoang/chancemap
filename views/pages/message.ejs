@@ -57,6 +57,7 @@
                 </button>
               </fieldset>
             </form>
+            <div id="hidden-div"><%= currentAcc._id %></div>
           </section>
         </div>
       </div>
@@ -70,7 +71,7 @@
 <script>
   $(document).ready(function() {
     $('#current_chat').hide();
-
+    $('#hidden-div').hide();
     // chat function
     var socket = io();
     var chatroom = $('#chatroom');
@@ -80,60 +81,62 @@
     var current_user_name = $('#current_user_name').html();
     var users_list = $('#users_list');
     var current_chat = $('#current_chat');
+    var currentSocketID = $('#hidden-div').html();
 
     //loading all chatable users
     socket.on('new connection', (data) => {
-      let currentSocket = data.currentSocket;
-      let connectedUsers = data.connectedUsers.slice();
-      connectedUsers.forEach(user => {
-        let room_id = user.id;
-        let name = user.name;
-        users_list.append('<li ' + 'id="' + room_id + '">' + name + '</li>');
-        let button_id = '#' + room_id;
-        $(button_id).bind('click', () => {
-          // alert(name);
-          socket.emit('join private', room_id);
-          current_chat.show();
-          current_chat.html(name);
-        })
-      })
-    })
+      socket.emit('connect self', {currentSocketID});
+      let chatSession = data.chatSession;
+      chatSession.forEach(session => {
+        // search for the right session here based on sessionID
+        if(session.sessionID == currentSocketID) {
+          let connectedUsers = session.connectedUsers.slice();
+          connectedUsers.forEach(user => {
+            let room_id = user.id;
+            let name = user.name;
+            users_list.append('<li ' + 'id="' + room_id + '">' + name + '</li>');
+            let button_id = '#' + room_id;
+            $(button_id).bind('click', () => {
+              socket.emit('join private', {
+                room_id,
+                currentSocketID,
+              });
+              current_chat.show();
+              current_chat.html(name);
+            });
+          });
+        }
+      });
+    });
 
     //sending a message
     chatbox.submit((e) => {
       e.preventDefault();
-      // private messaging
       if (current_chat.html() != '') {
         socket.emit('private message', {
           message: message.val(),
-          name: current_chat.html(),
+          sender: current_user_name,
+          recipient: current_chat.html(),
+          currentSocketID,
         });
-        // normal messaging
-      } else {
-        socket.emit('chat message', {
-          message: message.val()
-        });
+        socket.emit('leave rooms', {currentSocketID});
       }
       message.val('');
       return false;
     });
-
-    //displaying the message onscreen
-    socket.on('chat message', (data) => {
-      let message = data.message;
-      let name = data.name;
-      let new_message = `${name}: ${message}`;
-      chatroom.append('<li>' + new_message + '</li>');
-    })
 
     //show private message on the screen
     socket.on('private message', (data) => {
       let message = data.message;
       let sender = data.sender;
       let recipient = data.recipient;
-      // alert(`${sender} to ${recipient}: ${message}`);
-      let new_log = `${sender} to ${recipient}: ${message}`;
+      let new_log = `${'<strong>' + sender + '</strong>'} to ${recipient}: ${message}`;
       chatroom.append('<li>' + new_log + '</li>');
+    })
+
+    //disconnection
+    socket.on('disconnect', () => {
+      socket.emit('disconnect', {currentSocketID});
     })
   })
 </script>

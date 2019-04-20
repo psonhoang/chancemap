@@ -114,11 +114,12 @@ var mSocket;
 var mAccountType;
 var connectedUsers = [];
 var currentSocket = {};
+//record of all connections
+var chatSession = [];
 
 io.on('connection', (socket) => {
   console.log('a user connected');
-  console.log(currentSocket);
-  console.log(connectedUsers);
+  console.log(chatSession);
 
   // For orgs
   socket.on('room', (room) => {
@@ -132,41 +133,65 @@ io.on('connection', (socket) => {
     socket.join(noti_rooms);
   });
 
-  socket.emit('new connection', {currentSocket, connectedUsers});
+  //send the record of sessions to new user
+  socket.emit('new connection', {chatSession});
 
-  //when this socket wants to send a message to another
-  socket.on('chat message', (data) => {
-    console.log(currentSocket.name);
-    io.sockets.emit('chat message', {name: currentSocket.name, message: data.message});
-  })
-
-  //when this socket joins a private room
-  socket.on('join private', (room_id) => {
-    console.log(room_id);
-    let rooms = Object.keys(socket.rooms);
-    if((room_id != currentSocket.id) && !(room_id in rooms)) {
-      socket.join(room_id, () => {
-        console.log(Object.keys(socket.rooms));
-      });
-    }
+  //join own room based on account id
+  socket.on('connect self', (data) => {
+    let currentSocketID = data.currentSocketID;
+    socket.join(currentSocketID, () => {
+      console.log(Object.keys(socket.rooms));
+    });
   });
 
   //when this socket sends a private message
   socket.on('private message', (data) => {
     let message = data.message;
-    let sender = currentSocket.name;
-    let recipient = data.name;
+    let sender = data.sender;
+    let recipient = data.recipient;
+    let currentSocketID = data.currentSocketID;
+    let rooms = Object.keys(socket.rooms);
     let room_id;
-    connectedUsers.forEach(user => {
-      if(user.name === recipient) {
-        room_id = user.id;
+    chatSession.forEach(session => {
+      if(session.sessionID == currentSocketID) {
+        connectedUsers = session.connectedUsers.slice();
+        connectedUsers.forEach(user => {
+          if(user.name === recipient) {
+            room_id = user.id;
+          }
+        });
       }
-    })
-    console.log(room_id);
-    console.log(recipient);
+    });
+    console.log(`Room ID: ${room_id}`);
+    console.log(`Sender: ${sender}`);
+    console.log(`Recipient: ${recipient}`);
+    socket.join(room_id, () => {
+      console.log(Object.keys(socket.rooms));
+    });
     socket.to(room_id).emit('private message', {message, sender, recipient});
     socket.emit('private message', {message, sender, recipient});
-  })
+  });
+
+  //leave all rooms when another online user sends a message
+  socket.on('leave rooms', (data) => {
+    let currentSocketID = data.currentSocketID;
+    let rooms = Object.keys(socket.rooms);
+    rooms.forEach(room => {
+      if(room != currentSocketID) {
+        socket.leave(room);
+      }
+    });
+  });
+
+  //disconnect
+  socket.on('disconnect', (data) => {
+    let currentSocketID = data.currentSocketID;
+    chatSession.forEach(session => {
+      if(session.sessionID == currentSocketID) {
+        chatSession.splice(chatSession.indexOf(session.sessionID));
+      }
+    });
+  });
 
   mSocket = socket;
 });
@@ -230,15 +255,31 @@ app.get('/', (req, res) => {
               }
               if(account_type == 0) {
                 User.findOne({'_id': account_id}, (err, user) => {
+                  let temp = [];
                   let connected = users.filter(client => user.connected.indexOf(client.username) >= 0);
+                  //array of chatable users
                   connected.forEach(user => {
-                    let id = user._id;
+                    let id = user.id;
                     let name = user.name;
-                    connectedUsers.push({
-                      id: id,
-                      name: name,
-                    })
+                    if(connectedUsers.length == 0) {
+                      temp.push({
+                        id: id,
+                        name: name,
+                      })
+                    } else {
+                      for(let i = 0; i < connectedUsers.length; i++) {
+                        if(connectedUsers[i].id != user.id) {
+                          temp.push({
+                            id: id,
+                            name: name,
+                          })
+                          break;
+                        }
+                      }
+                    }
                   })
+                  connectedUsers = temp;
+                  //self info
                   let id = user._id;
                   let name = user.name;
                   var client = {
@@ -246,6 +287,23 @@ app.get('/', (req, res) => {
                     name: name,
                   };
                   currentSocket = client;
+                  //array storing all users' sessions
+                  let tempObject = {
+                    sessionID: currentSocket.id,
+                    currentSocket: currentSocket,
+                    connectedUsers: connectedUsers,
+                  }
+                  if(chatSession.length == 0) {
+                    chatSession.push(tempObject);
+                  } else {
+                    for(let i = 0; i < chatSession.length; i++) {
+                      if(chatSession[i].sessionID != user.id) {
+                        chatSession.push(tempObject);
+                        break;
+                      }
+                    }
+                  }
+
                   // res.send(user);
                   let criteriaList = user.interests.concat(user.skills);
                   // orgs sort

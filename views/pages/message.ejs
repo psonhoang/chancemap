@@ -13,7 +13,7 @@
                 </div>
             </fieldset>
           </div>
-          <div id="users_list" class="list-group position-relative" style="max-height: 660px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar">
+          <div id="users_list" class="list-group position-relative" style="max-height: 700px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar">
 
           </div>
         </div>
@@ -32,11 +32,12 @@
         </div>
         <div class="content-body">
           <!-- where the current conversation is shown -->
-          <div id="current_chat" style="width: 100%; padding-top: 40px; background-color: #DCDCDC"></div>
+          <div id="current_chat" style="width: 100%; padding-top: 0px; text-align: center"></div>
           <!-- chat area -->
+          <br>
           <section class="chat-app-form">
             <!-- this is where messages appear -->
-            <section id="chatroom">
+            <section id="chatroom" style="max-height: 550px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar">
 
             </section>
             <!-- this is where user types their messages -->
@@ -65,6 +66,9 @@
   </div>
 </div>
 
+
+
+
 <!-- script stuff -->
 <script src="scripts/suggest.js" type="text/javascript"></script>
 <script src="/socket.io/socket.io.js"></script>
@@ -81,6 +85,7 @@
     var current_user_name = $('#current_user_name').html();
     var users_list = $('#users_list');
     var current_chat = $('#current_chat');
+    var current_chat_name = $('#current_chat_name');
     var currentSocketID = $('#hidden-div').html();
 
     //loading all chatable users
@@ -94,7 +99,18 @@
           connectedUsers.forEach(user => {
             let room_id = user.id;
             let name = user.name;
-            users_list.append('<li ' + 'id="' + room_id + '">' + name + '</li>');
+            let avatar = user.avatar;
+            users_list.append(
+              `<a id="${room_id}" class="list-group-item list-group-item-action media no-border">
+                <div class="media-left">
+                  <span class="avatar avatar-md avatar-away"><img class="media-object rounded-circle" src="${avatar}"/></span>
+                </div>
+                <div class="media-body">
+                  <h6 class="list-group-item-heading">${name}<span class="font-small-3 float-xs-right primary">Yesterday</span></h6>
+                  <p class="list-group-item-text text-muted"><i class="ft-check font-small-2"></i> Some message here</p>
+                </div>
+              </a>`
+            );
             let button_id = '#' + room_id;
             $(button_id).bind('click', () => {
               socket.emit('join private', {
@@ -102,7 +118,9 @@
                 currentSocketID,
               });
               current_chat.show();
+              // current_chat.html(`<strong>${name}</strong>`);
               current_chat.html(name);
+              // current_chat_name.html(name);
             });
           });
         }
@@ -130,8 +148,34 @@
       let message = data.message;
       let sender = data.sender;
       let recipient = data.recipient;
-      let new_log = `${'<strong>' + sender + '</strong>'} to ${recipient}: ${message}`;
-      chatroom.append('<li>' + new_log + '</li>');
+      let flag = data.flag;
+      if(flag == 2) {
+        let new_log = `
+          <div class="chat">
+            <div class="chat-body">
+              <div class="chat-content" style="text-align: right; position: relative; display: block; float: right; padding: 8px 15px; margin: 0 20px 10px 0; clear: both; color: #fff; background-color: #00B5B8; border-radius: 4px;">
+                <p>${sender} to ${recipient}: ${message}</p>
+              </div>
+            </div>
+          </div>
+        `;
+        chatroom.append('<li>' + new_log + '</li>');
+      } else {
+        current_chat.show();
+        // current_chat.html(`<strong>${sender}</strong>`);
+        current_chat.html(sender);
+        // current_chat_name.html(sender);
+        let new_log = `
+          <div class="chat chat-left" style="right: auto; left: -10px; border-right-color: #edeef0; border-left-color: transparent;">
+            <div class="chat-body">
+              <div class="chat-content" style="text-align: left; float: left; margin: 0 0 10px 20px; color: #404E67; background-color: #edeef0; position: relative; display: block; padding: 8px 15px; clear: both;">
+                <p>${sender} to ${recipient}: ${message}</p>
+              </div>
+            </div>
+          </div>
+        `;
+        chatroom.append('<li>' + new_log + '</li>');
+      }
     })
 
     //disconnection

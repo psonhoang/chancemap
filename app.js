@@ -168,8 +168,8 @@ io.on('connection', (socket) => {
     socket.join(room_id, () => {
       console.log(Object.keys(socket.rooms));
     });
-    socket.to(room_id).emit('private message', {message, sender, recipient});
-    socket.emit('private message', {message, sender, recipient});
+    socket.to(room_id).emit('private message', {flag: 1, message, sender, recipient});
+    socket.emit('private message', {flag: 2, message, sender, recipient});
   });
 
   //leave all rooms when another online user sends a message

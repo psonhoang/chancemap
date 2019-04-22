@@ -19,7 +19,8 @@ const userSchema = mongoose.Schema({
 	following: [String], // contain org's usernames
 	connected: [String],
 	avatar: String,
-	new_notis: [mongoose.Schema.Types.ObjectId]
+	new_notis: [mongoose.Schema.Types.ObjectId],
+	messages: [mongoose.Schema.Types.ObjectId],
 });
 
 // Export User model

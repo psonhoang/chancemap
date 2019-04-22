@@ -92,10 +92,12 @@
     socket.on('new connection', (data) => {
       socket.emit('connect self', {currentSocketID});
       let chatSession = data.chatSession;
+      let allMessages = data.allMessages;
       chatSession.forEach(session => {
         // search for the right session here based on sessionID
         if(session.sessionID == currentSocketID) {
           let connectedUsers = session.connectedUsers.slice();
+          let currentSocket = session.currentSocket;
           connectedUsers.forEach(user => {
             let room_id = user.id;
             let name = user.name;
@@ -103,7 +105,7 @@
             users_list.append(
               `<a id="${room_id}" class="list-group-item list-group-item-action media no-border">
                 <div class="media-left">
-                  <span class="avatar avatar-md avatar-away"><img class="media-object rounded-circle" src="${avatar}"/></span>
+                  <span class="avatar avatar-md avatar-away"><img id="${room_id}2" src="${avatar}" class="media-object rounded-circle width-30 height-30"/></span>
                 </div>
                 <div class="media-body">
                   <h6 class="list-group-item-heading">${name}<span class="font-small-3 float-xs-right primary">Yesterday</span></h6>
@@ -113,14 +115,38 @@
             );
             let button_id = '#' + room_id;
             $(button_id).bind('click', () => {
-              socket.emit('join private', {
-                room_id,
-                currentSocketID,
-              });
               current_chat.show();
-              // current_chat.html(`<strong>${name}</strong>`);
               current_chat.html(name);
-              // current_chat_name.html(name);
+              //displaying message user sent
+              let senderMessages = allMessages.filter(message => (message.creator === currentSocketID && message.recipient === name));
+              senderMessages.forEach(item => {
+                let message = item.message;
+                let new_log = `
+                  <div class="chat">
+                    <div class="chat-body">
+                      <div class="chat-content" style="text-align: right; position: relative; display: block; float: right; padding: 8px 15px; margin: 0 20px 10px 0; clear: both; color: #fff; background-color: #00B5B8; border-radius: 4px;">
+                        <p>${message}</p>
+                      </div>
+                    </div>
+                  </div>
+                `;
+                chatroom.append('<li>' + new_log + '</li>');
+              });
+              //displaying messages user received
+              let recipientMessages = allMessages.filter(message => (message.creator === room_id && message.recipient === currentSocket.name));
+              recipientMessages.forEach(item => {
+                let message = item.message;
+                let new_log = `
+                  <div class="chat chat-left" style="right: auto; left: -10px; border-right-color: #edeef0; border-left-color: transparent;">
+                    <div class="chat-body">
+                      <div class="chat-content" style="text-align: left; float: left; margin: 0 0 10px 20px; color: #404E67; background-color: #edeef0; position: relative; display: block; padding: 8px 15px; clear: both;">
+                        <p>${message}</p>
+                      </div>
+                    </div>
+                  </div>
+                `;
+                chatroom.append('<li>' + new_log + '</li>');
+              });
             });
           });
         }
@@ -145,11 +171,11 @@
 
     //show private message on the screen
     socket.on('private message', (data) => {
+      let creator = data.creator;
       let message = data.message;
       let sender = data.sender;
       let recipient = data.recipient;
-      let flag = data.flag;
-      if(flag == 2) {
+      if(creator === currentSocketID) {
         let new_log = `
           <div class="chat">
             <div class="chat-body">
@@ -162,9 +188,7 @@
         chatroom.append('<li>' + new_log + '</li>');
       } else {
         current_chat.show();
-        // current_chat.html(`<strong>${sender}</strong>`);
         current_chat.html(sender);
-        // current_chat_name.html(sender);
         let new_log = `
           <div class="chat chat-left" style="right: auto; left: -10px; border-right-color: #edeef0; border-left-color: transparent;">
             <div class="chat-body">

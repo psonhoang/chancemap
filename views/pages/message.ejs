@@ -96,7 +96,7 @@
         if(session.sessionID === currentSocketID) {
           let connectedUsers = session.connectedUsers.slice();
           let currentSocket = session.currentSocket;
-          
+
           let sentMessages = allMessages.filter(message => message.creator === currentSocketID);
           sentMessages.sort((a, b) => {
             return a.sort_value - b.sort_value;
@@ -156,17 +156,19 @@
             let room_id = user.id;
             let name = user.name;
             let avatar = user.avatar;
-            users_list.append(
-              `<a id="${room_id}" class="list-group-item list-group-item-action media no-border">
-                <div class="media-left">
-                  <span class="avatar avatar-md avatar-away"><img src="${avatar}" class="media-object rounded-circle width-30 height-30"/></span>
-                </div>
-                <div class="media-body">
-                  <h6 class="list-group-item-heading">${name}<span class="font-small-3 float-xs-right primary">Yesterday</span></h6>
-                  <p class="list-group-item-text text-muted"><i class="ft-check font-small-2"></i> Some message here</p>
-                </div>
-              </a>`
-            );
+            if(users_list.children().length < connectedUsers.length) {
+              users_list.append(
+                `<a id="${room_id}" class="list-group-item list-group-item-action media no-border">
+                  <div class="media-left">
+                    <span class="avatar avatar-md avatar-away"><img src="${avatar}" class="media-object rounded-circle width-30 height-30"/></span>
+                  </div>
+                  <div class="media-body">
+                    <h6 class="list-group-item-heading">${name}<span class="font-small-3 float-xs-right primary">Yesterday</span></h6>
+                    <p class="list-group-item-text text-muted"><i class="ft-check font-small-2"></i> Some message here</p>
+                  </div>
+                </a>`
+              );
+            }
             let mutualMessages = allMessages.filter(message => ((message.creator === currentSocketID && message.recipient === name) || (message.creator === room_id && message.recipient === currentSocket.name)));
             mutualMessages.sort((a, b) => {
               return a.sort_value - b.sort_value;

@@ -91,64 +91,65 @@
       socket.emit('connect self', {currentSocketID});
       let chatSession = data.chatSession;
       let allMessages = data.allMessages;
-
-      allMessages.sort((a, b) => {
-        return a.sort_value - b.sort_value;
-      })
-      let lastChat = allMessages[allMessages.length - 1].recipient;
-
       chatSession.forEach(session => {
         // search for the right session here based on sessionID
         if(session.sessionID === currentSocketID) {
           let connectedUsers = session.connectedUsers.slice();
           let currentSocket = session.currentSocket;
-
+          
+          let sentMessages = allMessages.filter(message => message.creator === currentSocketID);
+          sentMessages.sort((a, b) => {
+            return a.sort_value - b.sort_value;
+          })
+          let lastChat = sentMessages[sentMessages.length - 1].recipient;
           //showing last chat history
-          if(current_chat.html() == '') {
-            connectedUsers.forEach(user => {
-              if(user.name === lastChat) {
-                current_chat.show();
-                current_chat.html(user.name);
-                setTimeout(() => {
-                  chatroom.scrollTop(chatroom.prop('scrollHeight'));
-                }, 0);
-                let mutualMessages = allMessages.filter(message => ((message.creator === currentSocketID && message.recipient === user.name) || (message.creator === user.id && message.recipient === currentSocket.name)));
-                mutualMessages.sort((a, b) => {
-                  return a.sort_value - b.sort_value;
-                })
-                mutualMessages.forEach(item => {
-                  if(item.creator === currentSocketID) {
-                    let message = item.message;
-                    let date = item.created_at;
-                    let new_log = `
-                      <div class="chat">
-                        <div class="chat-body">
-                          <div class="chat-content" style="text-align: right; position: relative; display: block; float: right; padding: 8px 15px; margin: 0 20px 10px 0; clear: both; color: #fff; background-color: #00B5B8; border-radius: 4px; max-width: 50%">
-                            <p>${message}</p>
+          if(sentMessages.length > 0) {
+            if(current_chat.html() == '') {
+              connectedUsers.forEach(user => {
+                if(user.name === lastChat) {
+                  current_chat.show();
+                  current_chat.html(user.name);
+                  setTimeout(() => {
+                    chatroom.scrollTop(chatroom.prop('scrollHeight'));
+                  }, 0);
+                  let mutualMessages = allMessages.filter(message => ((message.creator === currentSocketID && message.recipient === user.name) || (message.creator === user.id && message.recipient === currentSocket.name)));
+                  mutualMessages.sort((a, b) => {
+                    return a.sort_value - b.sort_value;
+                  })
+                  mutualMessages.forEach(item => {
+                    if(item.creator === currentSocketID) {
+                      let message = item.message;
+                      let date = item.created_at;
+                      let new_log = `
+                        <div class="chat">
+                          <div class="chat-body">
+                            <div class="chat-content" style="text-align: right; position: relative; display: block; float: right; padding: 8px 15px; margin: 0 20px 10px 0; clear: both; color: #fff; background-color: #00B5B8; border-radius: 4px; max-width: 50%">
+                              <p>${message}</p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    `;
-                    //displaying message user sent
-                    chatroom.append('<li>' + new_log + '</li>');
-                  } else {
-                    let message = item.message;
-                    let date = item.created_at;
-                    let new_log = `
-                      <div class="chat chat-left" style="right: auto; left: -10px; border-right-color: #edeef0; border-left-color: transparent;">
-                        <div class="chat-body">
-                          <div class="chat-content" style="text-align: left; float: left; margin: 0 0 10px 20px; color: #404E67; background-color: #edeef0; position: relative; display: block; padding: 8px 15px; clear: both; max-width: 50%">
-                            <p>${message}</p>
+                      `;
+                      //displaying message user sent
+                      chatroom.append('<li>' + new_log + '</li>');
+                    } else {
+                      let message = item.message;
+                      let date = item.created_at;
+                      let new_log = `
+                        <div class="chat chat-left" style="right: auto; left: -10px; border-right-color: #edeef0; border-left-color: transparent;">
+                          <div class="chat-body">
+                            <div class="chat-content" style="text-align: left; float: left; margin: 0 0 10px 20px; color: #404E67; background-color: #edeef0; position: relative; display: block; padding: 8px 15px; clear: both; max-width: 50%">
+                              <p>${message}</p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    `;
-                    //displaying messages user received
-                    chatroom.append('<li>' + new_log + '</li>');
-                  }
-                });
-              }
-            });
+                      `;
+                      //displaying messages user received
+                      chatroom.append('<li>' + new_log + '</li>');
+                    }
+                  });
+                }
+              });
+            }
           }
           //displaying all chatable users
           connectedUsers.forEach(user => {

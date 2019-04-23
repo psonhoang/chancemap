@@ -212,7 +212,7 @@ io.on('connection', (socket) => {
     setTimeout(() => {
       Message.find((err, messages) => {
         allMessages = messages;
-        socket.emit('new connection', {chatSession, allMessages});
+        io.sockets.emit('new connection', {chatSession, allMessages});
       });
     }, 2000);
   });

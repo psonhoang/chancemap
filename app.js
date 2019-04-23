@@ -177,13 +177,10 @@ io.on('connection', (socket) => {
       sender: sender,
       recipient: recipient,
       created_at: new Date(),
+      sort_value: new Date().valueOf(),
       message: message,
     });
     newMessage.save((err, message) => {
-      if(err => {
-        console.log(err);
-        return;
-      });
       console.log(message);
       //saving and emitting message to recipient
       User.findOne({'_id': room_id}, (err, user) => {
@@ -211,7 +208,13 @@ io.on('connection', (socket) => {
         });
         console.log(user.messages);
       });
-    });
+    })
+    setTimeout(() => {
+      Message.find((err, messages) => {
+        allMessages = messages;
+        socket.emit('new connection', {chatSession, allMessages});
+      });
+    }, 2000);
   });
 
   //leave all rooms when another online user sends a message
@@ -242,6 +245,11 @@ io.on('connection', (socket) => {
 // Make io accessible to our router
 app.use((req,res,next)  => {
   req.socketio = mSocket;
+  next();
+});
+
+app.use((req,res,next)  => {
+  req.chatSession = chatSession;
   next();
 });
 

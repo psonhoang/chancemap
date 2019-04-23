@@ -15,6 +15,7 @@ const Account = require('../models/account');
 const User = require('../models/user');
 const Org = require('../models/org');
 const Notification = require('../models/notification');
+const Message = require('../models/message');
 
 // socket.io
 const http = require('http');
@@ -56,33 +57,38 @@ const storage = new GridFsStorage({
 });
 const upload = multer({ storage });
 
+// const socketIO = require('socket.io');
+// const io = socketIO(server);
+
 // messenger route
 router.get('/', (req, res) => {
   let currentAcc = req.user;
   let account_type = currentAcc.account_type;
+  let chatSession = req.chatSession;
   if(account_type == 0) {
     User.findOne({'_id': currentAcc.account_id}, (err, currentAcc) => {
       console.log(currentAcc.name);
-
-      User.find((err, users) => {
-        // finding users this current user is connected with
-        let connected = users.filter(user => currentAcc.connected.indexOf(user.username) >= 0)
-        let ids = [];
-        connected.forEach(user => {
-          ids.push(user._id);
-        })
-        res.render('message', {
-          title: 'ChanceMap',
-          currentAcc: currentAcc,
-          account_type: account_type,
-          connected: connected,
-          notis: req.notis
+      // Message.find((err, messages) => {
+      //   let allMessages = messages;
+      //   io.emit('new connection', {chatSession, allMessages});
+        User.find((err, users) => {
+          // finding users this current user is connected with
+          let connected = users.filter(user => currentAcc.connected.indexOf(user.username) >= 0)
+          let ids = [];
+          connected.forEach(user => {
+            ids.push(user._id);
+          })
+          res.render('message', {
+            title: 'ChanceMap',
+            currentAcc: currentAcc,
+            account_type: account_type,
+            connected: connected,
+            notis: req.notis
+          });
         });
-      })
-    })
+      // });
+    });
   }
-})
-
-
+});
 
 module.exports = router;

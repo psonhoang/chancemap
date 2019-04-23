@@ -7,6 +7,7 @@ const messageSchema = mongoose.Schema({
   sender: {type: String, required: true},
   recipient: {type: String, required: true},
 	created_at: {type: Date, required: true},
+  sort_value: {type: Number, required: true},
 	message: {type: String, required: true},
 });
 

@@ -1,4 +1,5 @@
 <% extend('../defaultLayouts/defaultLayout') %>
+<% var months = ["January", "February", "March", "April", "May", "June", "July","August", "September", "October","November", "December"]; %>
 
 <div class="app-content content container-fluid">
   <div class="col-xl-12">
@@ -85,6 +86,9 @@
     var current_chat = $('#current_chat');
     var current_chat_name = $('#current_chat_name');
     var currentSocketID = $('#hidden-div').html();
+    var msg_noti = $('#msg_noti');
+    var msg_noti_val = $('#msg_noti_val');
+    var msg_noti_box = $('#msg_noti_box');
 
     //loading all chatable users
     socket.on('new connection', (data) => {
@@ -97,12 +101,12 @@
           let connectedUsers = session.connectedUsers.slice();
           let currentSocket = session.currentSocket;
 
+          //showing last chat history
           let sentMessages = allMessages.filter(message => message.creator === currentSocketID);
           sentMessages.sort((a, b) => {
             return a.sort_value - b.sort_value;
           })
           let lastChat = sentMessages[sentMessages.length - 1].recipient;
-          //showing last chat history
           if(sentMessages.length > 0) {
             if(current_chat.html() == '') {
               connectedUsers.forEach(user => {
@@ -132,6 +136,7 @@
                       //displaying message user sent
                       chatroom.append('<li>' + new_log + '</li>');
                     } else {
+                      item.read = true;
                       let message = item.message;
                       let date = item.created_at;
                       let new_log = `
@@ -156,19 +161,56 @@
             let room_id = user.id;
             let name = user.name;
             let avatar = user.avatar;
+            let recentMessages = allMessages.filter(message => ((message.creator === currentSocketID && message.recipient === name) || (message.creator === room_id && message.recipient === currentSocket.name)));
+            recentMessages.sort((a, b) => {
+              return a.sort_value - b.sort_value;
+            })
             if(users_list.children().length < connectedUsers.length) {
-              users_list.append(
-                `<a id="${room_id}" class="list-group-item list-group-item-action media no-border">
-                  <div class="media-left">
-                    <span class="avatar avatar-md avatar-away"><img src="${avatar}" class="media-object rounded-circle width-30 height-30"/></span>
-                  </div>
-                  <div class="media-body">
-                    <h6 class="list-group-item-heading">${name}<span class="font-small-3 float-xs-right primary">Yesterday</span></h6>
-                    <p class="list-group-item-text text-muted"><i class="ft-check font-small-2"></i> Some message here</p>
-                  </div>
-                </a>`
-              );
+              if(user.messages.length > 0) {
+                let mostRecentMessage = recentMessages[recentMessages.length - 1].message;
+                let lastSent = recentMessages[recentMessages.length - 1].created_at + "";
+                let date = lastSent.substr(0, 10);
+
+                if(recentMessages[recentMessages.length - 1].creator === room_id) {
+                  users_list.append(
+                    `<a id="${room_id}" class="list-group-item list-group-item-action media no-border">
+                      <div class="media-left">
+                        <span class="avatar avatar-md avatar-away"><img src="${avatar}" class="media-object rounded-circle width-30 height-30"/></span>
+                      </div>
+                      <div class="media-body">
+                        <h6 class="list-group-item-heading">${name}<span class="font-small-3 float-xs-right primary">${date}</span></h6>
+                        <p id="${room_id}-messages" class="list-group-item-text text-muted"><i class="ft-corner-down-right font-small-2"></i> ${mostRecentMessage}</p>
+                      </div>
+                    </a>`
+                  );
+                } else {
+                  users_list.append(
+                    `<a id="${room_id}" class="list-group-item list-group-item-action media no-border">
+                      <div class="media-left">
+                        <span class="avatar avatar-md avatar-away"><img src="${avatar}" class="media-object rounded-circle width-30 height-30"/></span>
+                      </div>
+                      <div class="media-body">
+                        <h6 class="list-group-item-heading">${name}<span class="font-small-3 float-xs-right primary">${date}</span></h6>
+                        <p id="${room_id}-messages" class="list-group-item-text text-muted"><i class="ft-corner-down-left font-small-2"></i> ${mostRecentMessage}</p>
+                      </div>
+                    </a>`
+                  );
+                }
+              } else {
+                users_list.append(
+                  `<a id="${room_id}" class="list-group-item list-group-item-action media no-border">
+                    <div class="media-left">
+                      <span class="avatar avatar-md avatar-away"><img src="${avatar}" class="media-object rounded-circle width-30 height-30"/></span>
+                    </div>
+                    <div class="media-body">
+                      <h6 class="list-group-item-heading">${name}<span class="font-small-3 float-xs-right primary"></span></h6>
+                      <p id="${room_id}-messages" class="list-group-item-text text-muted"><i class="ft-check font-small-2"></i> no messages yet</p>
+                    </div>
+                  </a>`
+                );
+              }
             }
+
             let mutualMessages = allMessages.filter(message => ((message.creator === currentSocketID && message.recipient === name) || (message.creator === room_id && message.recipient === currentSocket.name)));
             mutualMessages.sort((a, b) => {
               return a.sort_value - b.sort_value;
@@ -202,6 +244,7 @@
                   //displaying message user sent
                   chatroom.append('<li>' + new_log + '</li>');
                 } else {
+                  item.read = true;
                   let message = item.message;
                   let date = item.created_at;
                   let new_log = `
@@ -241,10 +284,15 @@
 
     //show private message on the screen
     socket.on('private message', (data) => {
-      let creator = data.creator;
-      let message = data.message;
-      let sender = data.sender;
-      let recipient = data.recipient;
+      let temp = data.message;
+      let creator = temp.creator;
+      let message = temp.message;
+      let sender = temp.sender;
+      let recipient = temp.recipient;
+      let room_id = data.room_id;
+      let button_id = '#' + room_id + '-messages';
+      let button_id2 = '#' + creator + '-messages';
+
       if(creator === currentSocketID) {
         let new_log = `
           <div class="chat">
@@ -256,6 +304,7 @@
           </div>
         `;
         chatroom.append('<li>' + new_log + '</li>');
+        $(button_id).html(`<i class="ft-corner-down-left font-small-2"></i> ${message}`);
       } else {
         current_chat.show();
         current_chat.html(sender);
@@ -269,8 +318,8 @@
           </div>
         `;
         chatroom.append('<li>' + new_log + '</li>');
+        $(button_id2).html(`<i class="ft-corner-down-right font-small-2"></i> ${message}`);
       }
-      // chatroom.scrollTop(750);
       chatroom.scrollTop(chatroom.prop('scrollHeight'));
     });
 

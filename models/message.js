@@ -9,6 +9,7 @@ const messageSchema = mongoose.Schema({
 	created_at: {type: Date, required: true},
   sort_value: {type: Number, required: true},
 	message: {type: String, required: true},
+  read: {type: Boolean, required: true},
 });
 
 // Export Account model

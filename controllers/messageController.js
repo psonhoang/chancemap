@@ -57,9 +57,6 @@ const storage = new GridFsStorage({
 });
 const upload = multer({ storage });
 
-// const socketIO = require('socket.io');
-// const io = socketIO(server);
-
 // messenger route
 router.get('/', (req, res) => {
   let currentAcc = req.user;
@@ -68,25 +65,20 @@ router.get('/', (req, res) => {
   if(account_type == 0) {
     User.findOne({'_id': currentAcc.account_id}, (err, currentAcc) => {
       console.log(currentAcc.name);
-      // Message.find((err, messages) => {
-      //   let allMessages = messages;
-      //   io.emit('new connection', {chatSession, allMessages});
-        User.find((err, users) => {
+      User.find((err, users) => {
+        Message.find((err, messages) => {
           // finding users this current user is connected with
-          let connected = users.filter(user => currentAcc.connected.indexOf(user.username) >= 0)
-          let ids = [];
-          connected.forEach(user => {
-            ids.push(user._id);
-          })
+          let connected = users.filter(user => currentAcc.connected.indexOf(user.username) >= 0);
           res.render('message', {
             title: 'ChanceMap',
             currentAcc: currentAcc,
             account_type: account_type,
             connected: connected,
-            notis: req.notis
+            notis: req.notis,
+            messages: messages,
           });
         });
-      // });
+      });
     });
   }
 });

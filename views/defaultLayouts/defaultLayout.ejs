@@ -72,15 +72,102 @@
               <li class="nav-item hidden-sm-down"><a href="#" class="nav-link nav-link-expand"><i class="ficon ft-maximize"></i></a></li>
             </ul>
             <ul style="margin-right: 50px" class="nav navbar-nav float-xs-right">
-              <li onclick="clearNoti()" class="dropdown dropdown-notification nav-item"><a href="#" data-toggle="dropdown" class="nav-link nav-link-label"><i class="ficon ft-bell"></i><span class="noti_count tag tag-pill tag-default tag-danger tag-default tag-up">
+
+
+              <!-- user connect noti -->
+              <li onclick="clearMsgNoti()" class="dropdown dropdown-notification nav-item">
+                <a href="#" data-toggle="dropdown" class="nav-link nav-link-label"><i class="ficon ft-users"></i>
+                  <span class="noti_count tag tag-pill tag-default tag-danger tag-default tag-up">0</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-media dropdown-menu-right">
+                  <li class="list-group scrollable-container ps-container ps-theme-dark ps-active-y" data-ps-id="f63177ae-103d-18cc-b7ba-6373aaa089ef">
+                    <a href="javascript:void(0)" class="list-group-item">
+                      <div class="media">
+                        <div class="media-left valign-middle">
+                          <img src="" class="media-object rounded-circle" style="max-width: 40px; max-height: 40px" />
+                        </div>
+                        <div class="media-body">
+                          <p class="font-small-3 text-muted">
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                    <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 3px;">
+                      <div class="ps-scrollbar-x" tabindex="0" style="left: 0px; width: 0px;"></div>
+                    </div>
+                    <div class="ps-scrollbar-y-rail" style="top: 0px; height: 255px; right: 3px;">
+                      <div class="ps-scrollbar-y" tabindex="0" style="top: 0px; height: 167px;"></div>
+                    </div>
+                  </li>
+                  <li class="dropdown-menu-footer"><a href="/messages" class="dropdown-item text-muted text-xs-center">See all messages</a></li>
+                </ul>
+              </li>
+
+              <!-- messages noti -->
+              <li onclick="clearMsgNoti()" class="dropdown dropdown-notification nav-item">
+                <% let myMessages = messages.filter(message => message.recipient === currentAcc.name) %>
+                <a id="msg_noti" href="#" data-toggle="dropdown" class="nav-link nav-link-label"><i class="ficon ft-message-square"></i>
+                  <span class="noti_count tag tag-pill tag-default tag-danger tag-default tag-up">0</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-media dropdown-menu-right">
+                  <li id="msg_noti_box" class="list-group scrollable-container ps-container ps-theme-dark ps-active-y" data-ps-id="f63177ae-103d-18cc-b7ba-6373aaa089ef">
+                    <% let chatters = [] %>
+                    <% let conversations = [] %>
+                    <% myMessages.forEach(message => { %>
+                    <%  chatters.push(message.sender) %>
+                    <% }) %>
+                    <% let allConversations = connected.filter(user => chatters.indexOf(user.name) >= 0) %>
+                    <% allConversations.forEach(conversation => { %>
+                    <%  let user_id = conversation.id %>
+                    <%  let avatar = conversation.avatar %>
+                    <%  let receivedMessages = myMessages.filter(message => message.sender === conversation.name) %>
+                    <%  receivedMessages.sort((a, b) => { %>
+                    <%    return a.sort_value - b.sort_value; %>
+                    <%  }) %>
+                    <%  let lastMessage = receivedMessages[receivedMessages.length - 1].message %>
+                    <%  let name = receivedMessages[receivedMessages.length - 1].sender %>
+                    <%  conversations.push({avatar, user_id, name, lastMessage}) %>
+                    <% }) %>
+                    <% conversations.forEach(conversation => { %>
+                    <a href="javascript:void(0)" class="list-group-item">
+                      <div class="media">
+                        <div class="media-left valign-middle">
+                          <img src="<%= conversation.avatar %>" class="media-object rounded-circle" style="max-width: 40px; max-height: 40px" />
+                        </div>
+                        <div id="<%= conversation.user_id %>-noti" class="media-body">
+                          <p class="font-small-3 text-muted">
+                            <strong>
+                              <%= conversation.name %>
+                            </strong>
+                            <%= conversation.lastMessage %>
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                    <% }) %>
+                    <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 3px;">
+                      <div class="ps-scrollbar-x" tabindex="0" style="left: 0px; width: 0px;"></div>
+                    </div>
+                    <div class="ps-scrollbar-y-rail" style="top: 0px; height: 255px; right: 3px;">
+                      <div class="ps-scrollbar-y" tabindex="0" style="top: 0px; height: 167px;"></div>
+                    </div>
+                  </li>
+                  <li class="dropdown-menu-footer"><a href="/messages" class="dropdown-item text-muted text-xs-center">See all messages</a></li>
+                </ul>
+              </li>
+
+
+              <li onclick="clearNoti()" class="dropdown dropdown-notification nav-item">
+                <a href="#" data-toggle="dropdown" class="nav-link nav-link-label"><i class="ficon ft-bell"></i>
+                  <span class="noti_count tag tag-pill tag-default tag-danger tag-default tag-up">
                     <input id="noti_val" type="hidden" value="<%= currentAcc.new_notis.length %>">
                     <% if (currentAcc.new_notis) { %>
                     <%= currentAcc.new_notis.length %>
                     <% }  else { %>
                     <%= 0 %>
                     <% } %>
-
-                  </span></a>
+                  </span>
+                </a>
                 <ul class="dropdown-menu dropdown-menu-media dropdown-menu-right">
                   <li class="dropdown-menu-header">
                     <h6 class="dropdown-header m-0"><span class="grey darken-2">Notifications</span><span class="notification-tag tag tag-default tag-danger float-xs-right m-0" id="noti_dropdown">
@@ -243,86 +330,126 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
       $(document).ready(function() {
-        $.blockUI({
-          overlayCSS: {
-            opacity: 0
-          },
-          message: ''
-        });
-        setTimeout(() => {
-          $.unblockUI();
-        }, 1500);
-        // Socket.IO
-        var socket = io();
-        socket.on('connect', () => {
-          if (<%- JSON.stringify(account_type) %> == 0) {
-            let rooms = <%- JSON.stringify(currentAcc.following) %> + "";
-            socket.emit('rooms', rooms);
-          } else {
-            let room = <%- JSON.stringify(currentAcc.username) %>;
-            socket.emit('room', room);
-            console.log('this is an org');
-          }
-        });
+            var msg_noti = ('#msg_noti');
+            var msg_noti_box = ('#msg_noti_box');
 
-        socket.on('event', (noti) => {
-          console.log(noti);
-          if (noti.image == 'event') {
-            $('#noti').prepend(
-              '<a href="javascript:void(0)" class="list-group-item">\
+            $.blockUI({
+              overlayCSS: {
+                opacity: 0
+              },
+              message: ''
+            });
+            setTimeout(() => {
+              $.unblockUI();
+            }, 1500);
+            // Socket.IO
+            var socket = io();
+            socket.on('connect', () => {
+              if (<%- JSON.stringify(account_type) %> == 0) {
+                let rooms = <%- JSON.stringify(currentAcc.following) %> + "";
+                socket.emit('rooms', rooms);
+              } else {
+                let room = <%- JSON.stringify(currentAcc.username) %>;
+                socket.emit('room', room);
+                console.log('this is an org');
+              }
+            });
+
+            socket.on('event', (noti) => {
+              console.log(noti);
+              if (noti.image == 'event') {
+                $('#noti').prepend(
+                  '<a href="javascript:void(0)" class="list-group-item">\
                     <div class="media">\
                       <div class="media-left valign-middle"><i class="ft-calendar icon-bg-circle bg-amber"></i></div>\
                       <div class="media-body">\
                         <h6 class="media-heading">' +
-              noti.title + ' <i style="color: orange" class="ft-bell"></i></h6>\
+                  noti.title + ' <i style="color: orange" class="ft-bell"></i></h6>\
                         <p class="notification-text font-small-3 text-muted">' + noti.body +
-              '</p><small>\
+                  '</p><small>\
                       </div>\
                     </div>\
                   </a>');
-          } else if (noti.image == 'job') {
-            $('#noti').prepend(
-              '<a href="javascript:void(0)" class="list-group-item">\
+              } else if (noti.image == 'job') {
+                $('#noti').prepend(
+                  '<a href="javascript:void(0)" class="list-group-item">\
                     <div class="media">\
                       <div class="media-left valign-middle"><i class="ft-clipboard icon-bg-circle bg-cyan"></i></div>\
                       <div class="media-body">\
                         <h6 class="media-heading">' +
-              noti.title + ' <i style="color: orange" class="ft-bell"></i></h6>\
+                  noti.title + ' <i style="color: orange" class="ft-bell"></i></h6>\
                         <p class="notification-text font-small-3 text-muted">' + noti.body +
-              '</p><small>\
+                  '</p><small>\
                       </div>\
                     </div>\
                   </a>');
-          }
-          $('.noti_count').html(parseInt($('#nav_noti').html().trim()) + 1);
-          $('#noti_dropdown').html(parseInt($('#noti_dropdown').html().trim()) + 1 + ' NEW');
+              }
+              $('.noti_count').html(parseInt($('#nav_noti').html().trim()) + 1);
+              $('#noti_dropdown').html(parseInt($('#noti_dropdown').html().trim()) + 1 + ' NEW');
+            });
 
-        });
-      });
+            socket.on('update noti', (data) => {
+              //   let senderID = data.currentSocketID;
+              //   let myID = data.room_id;
+              //   let chatSession = data.chatSession;
+              //   let allMessages = data.allMessages;
+              //
+              //   chatSession.forEach(session => {
+              //     if (session.sessionID === myID) {
+              //       let currentSocket = session.currentSocket;
+              //       let connectedUsers = session.connectedUsers.slice();
+              //
+              //       connectedUsers.forEach(user => {
+              //         let name = user.name;
+              //         let avatar = user.avatar;
+              //         let sharedMessages = allMessages.filter(message => (message.creator === user.id && message.recipient === currentSocket.name));
+              //         sharedMessages.sort((a, b) => {
+              //           return a.sort_value - b.sort_value;
+              //         });
+              //         let newestMessage = sharedMessages[sharedMessages.length - 1].message;
+              //         let button_id = '#' + user.id + '-noti';
+              //         $(button_id).html(`<strong>${name}</strong> ${newestMessage}`);
+              //       })
+              //     }
+              //   });
+              // });
+              msg_noti.append(`<span class="noti_count tag tag-pill tag-default tag-danger tag-default tag-up">NEW</span>`)
+            });
 
-      var is_dropping = false;
+            var is_dropping = false;
 
-      // Clear notifications
-      function clearNoti() {
-        let condition = $('#noti_val').val() != "0";
-        is_dropping = !is_dropping;
-        if (condition && !is_dropping) {
-          $.ajax({
-            async: true,
-            url: '/clear-notifications',
-            method: 'GET',
-            data: {
-              account_id: <%- JSON.stringify(currentAcc._id) %>,
-              account_type: <%= account_type %>
-            },
-            success: (data) => {
-              console.log(data);
-              $('.noti_count').html(0);
-              $('#noti_dropdown').html('0 NEW');
+            // Clear notifications
+            function clearNoti() {
+              let condition = $('#noti_val').val() != "0";
+              is_dropping = !is_dropping;
+              if (condition && !is_dropping) {
+                $.ajax({
+                  async: true,
+                  url: '/clear-notifications',
+                  method: 'GET',
+                  data: {
+                    account_id: <%- JSON.stringify(currentAcc._id) %>,
+                    account_type: <%= account_type %>
+                  },
+                  success: (data) => {
+                    console.log(data);
+                    $('.noti_count').html(0);
+                    $('#noti_dropdown').html('0 NEW');
+                  }
+                });
+              }
             }
-          });
-        }
-      }
+
+            // function clearMsgNoti() {
+            //   alert('hi');
+            //   messages.forEach(message => {
+            //     if (message.recipient === currentAcc.name) {
+            //       message.read = true;
+            //       alert(message.read);
+            //     }
+            //   })
+            //   $('#msg_noti').remove();
+            // }
     </script>
     <!-- END -->
 

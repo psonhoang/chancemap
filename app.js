@@ -179,6 +179,7 @@ io.on('connection', (socket) => {
       created_at: new Date(),
       sort_value: new Date().valueOf(),
       message: message,
+      read: false,
     });
     newMessage.save((err, message) => {
       console.log(message);
@@ -189,7 +190,7 @@ io.on('connection', (socket) => {
         }
         user.messages.push(message._id);
         user.save().then(result => {
-          socket.to(room_id).emit('private message', message);
+          socket.to(room_id).emit('private message', {message, room_id});
         }).catch(err => {
           console.log(err);
         });
@@ -202,7 +203,7 @@ io.on('connection', (socket) => {
         }
         user.messages.push(message._id);
         user.save().then(result => {
-          socket.emit('private message', message);
+          socket.emit('private message', {message, room_id});
         }).catch(err => {
           console.log(err);
         });
@@ -213,6 +214,7 @@ io.on('connection', (socket) => {
       Message.find((err, messages) => {
         allMessages = messages;
         io.sockets.emit('new connection', {chatSession, allMessages});
+        socket.to(room_id).emit('update noti', {currentSocketID, room_id, chatSession, allMessages});
       });
     }, 2000);
   });
@@ -268,6 +270,18 @@ app.use((req, res, next) => {
         req.notis = notis;
       }
     });
+  }
+  next();
+});
+
+app.use((req, res, next) => {
+  if(req.isAuthenticated()) {
+    Message.find((err, messages) => {
+      if(err) {
+        console.log(err);
+      }
+      req.messages = messages;
+    })
   }
   next();
 });
@@ -370,7 +384,6 @@ app.get('/', (req, res) => {
                         }
                       }
                     }
-
                     // res.send(user);
                     let criteriaList = user.interests.concat(user.skills);
                     // orgs sort
@@ -445,7 +458,9 @@ app.get('/', (req, res) => {
                       users: users,
                       opportunities: opportunities,
                       criteriaList: criteriaList,
-                      notis: req.notis
+                      notis: req.notis,
+                      messages: req.messages,
+                      connected: connected,
                     });
                   });
                 } else if (account_type ==1 ){
@@ -523,7 +538,9 @@ app.get('/', (req, res) => {
                       users: users,
                       opportunities: opportunities,
                       criteriaList: org.hashtags,
-                      notis: req.notis
+                      notis: req.notis,
+                      messages: req.messages,
+                      connected: connected,
                     });
                   });
                 } else {
@@ -540,7 +557,9 @@ app.get('/', (req, res) => {
                       users: users,
                       opportunities: opportunities,
                       criteriaList: criteriaList,
-                      notis: req.notis
+                      notis: req.notis,
+                      messages: req.messages,
+                      connected: connected,
                     });
                   })
                 };

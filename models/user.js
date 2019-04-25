@@ -21,6 +21,8 @@ const userSchema = mongoose.Schema({
 	avatar: String,
 	new_notis: [mongoose.Schema.Types.ObjectId],
 	messages: [mongoose.Schema.Types.ObjectId],
+	// unread_messages: Number,
+	msg_noti: Number,
 });
 
 // Export User model

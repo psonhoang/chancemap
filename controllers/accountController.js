@@ -22,6 +22,7 @@ const Job = require('../models/job');
 const Opportunity = require('../models/opportunity');
 const OrgPage = require('../models/org_page');
 const Notification = require('../models/notification');
+const Message = require('../models/message');
 
 // Utils
 const utils = require('../utils');
@@ -463,20 +464,24 @@ router.get('/profile', (req, res) => {
           Event.find((err, events) => {
             Job.find((err, jobs) => {
               Opportunity.find((err, opportunities) => {
-                let following = orgs.filter(org => currentUser.following.indexOf(org.username) >= 0);
-                let connected = users.filter(user => currentUser.connected.indexOf(user.username) >= 0);
-                res.render('users/profile', {
-                  title: 'ChanceMap | Following',
-        					orgs: following,
-                  users: connected,
-                  events: events,
-                  jobs: jobs,
-                  opportunities: opportunities,
-        					account_type: currentAcc.account_type,
-        					account_id: currentAcc.account_id,
-                  currentAcc: currentUser,
-                  notis: req.notis,
-                  criteriaList: criteriaList,
+                Message.find((err, messages) => {
+                  let following = orgs.filter(org => currentUser.following.indexOf(org.username) >= 0);
+                  let connected = users.filter(user => currentUser.connected.indexOf(user.username) >= 0);
+                  res.render('users/profile', {
+                    title: 'ChanceMap | Following',
+          					orgs: following,
+                    users: connected,
+                    events: events,
+                    jobs: jobs,
+                    opportunities: opportunities,
+          					account_type: currentAcc.account_type,
+          					account_id: currentAcc.account_id,
+                    currentAcc: currentUser,
+                    notis: req.notis,
+                    criteriaList: criteriaList,
+                    connected: connected,
+                    messages: messages,
+                  })
                 });
               });
             });

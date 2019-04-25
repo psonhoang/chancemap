@@ -80,6 +80,24 @@ router.get('/', (req, res) => {
         });
       });
     });
+  } else if(account_type == 1) {
+    Org.findOne({'_id': currentAcc.account_id}, (err, currentAcc) => {
+      console.log(currentAcc.name);
+      User.find((err, users) => {
+        Message.find((err, messages) => {
+          // finding users following this org
+          let followers = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
+          res.render('message', {
+            title: 'ChanceMap',
+            currentAcc: currentAcc,
+            account_type: account_type,
+            connected: followers,
+            notis: req.notis,
+            messages: messages,
+          });
+        });
+      });
+    });
   }
 });
 

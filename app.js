@@ -121,8 +121,9 @@ var allMessages = [];
 
 io.on('connection', (socket) => {
   console.log('a user connected');
-  console.log(chatSession);
-  console.log(allMessages);
+  // console.log(connectedUsers);
+  console.log(chatSession[0]);
+  // console.log(allMessages);
 
   // For orgs
   socket.on('room', (room) => {
@@ -155,12 +156,14 @@ io.on('connection', (socket) => {
     let currentSocketID = data.currentSocketID;
     let rooms = Object.keys(socket.rooms);
     let room_id;
+    let account_type;
     chatSession.forEach(session => {
       if(session.sessionID == currentSocketID) {
         connectedUsers = session.connectedUsers.slice();
         connectedUsers.forEach(user => {
           if(user.name === recipient) {
             room_id = user.id;
+            account_type = user.type;
           }
         });
       }
@@ -183,6 +186,8 @@ io.on('connection', (socket) => {
     });
     newMessage.save((err, message) => {
       console.log(message);
+
+
       //saving and emitting message to recipient
       User.findOne({'_id': room_id}, (err, user) => {
         if(err) {
@@ -209,7 +214,7 @@ io.on('connection', (socket) => {
         });
         console.log(user.messages);
       });
-    })
+    });
     setTimeout(() => {
       Message.find((err, messages) => {
         allMessages = messages;
@@ -299,7 +304,7 @@ app.get('/', (req, res) => {
         return;
       }
       allMessages = messages;
-      console.log(allMessages);
+      // console.log(allMessages);
       Opportunity.find((err, opportunities) => {
         if(err) {
           console.log(err);
@@ -329,6 +334,7 @@ app.get('/', (req, res) => {
                   User.findOne({'_id': account_id}, (err, user) => {
                     let temp = [];
                     let connected = users.filter(client => user.connected.indexOf(client.username) >= 0);
+                    let following = orgs.filter(org => user.following.indexOf(org.username) >= 0);
                     //array of chatable users
                     connected.forEach(user => {
                       let id = user.id;
@@ -337,6 +343,7 @@ app.get('/', (req, res) => {
                       let messages = user.messages;
                       if(connectedUsers.length == 0) {
                         temp.push({
+                          type: 1,
                           id: id,
                           name: name,
                           avatar: avatar,
@@ -346,6 +353,36 @@ app.get('/', (req, res) => {
                         for(let i = 0; i < connectedUsers.length; i++) {
                           if(connectedUsers[i].id != user.id) {
                             temp.push({
+                              type: 1,
+                              id: id,
+                              name: name,
+                              avatar: avatar,
+                              messages: messages,
+                            })
+                            break;
+                          }
+                        }
+                      }
+                    })
+                    //adding orgs to chat
+                    following.forEach(org => {
+                      let id = org.id;
+                      let name = org.name;
+                      let avatar = org.avatar;
+                      let messages = org.messages;
+                      if(connectedUsers.length == 0) {
+                        temp.push({
+                          type: 2,
+                          id: id,
+                          name: name,
+                          avatar: avatar,
+                          messages: messages,
+                        })
+                      } else {
+                        for(let i = 0; i < connectedUsers.length; i++) {
+                          if(connectedUsers[i].id != user.id) {
+                            temp.push({
+                              type: 2,
                               id: id,
                               name: name,
                               avatar: avatar,
@@ -358,11 +395,13 @@ app.get('/', (req, res) => {
                     })
                     connectedUsers = temp;
                     //self info
+                    let type = 1;
                     let id = user._id;
                     let name = user.name;
                     let messages = user.messages;
                     console.log(user.messages);
                     var client = {
+                      type: type,
                       id: id,
                       name: name,
                       messages: messages,
@@ -463,8 +502,79 @@ app.get('/', (req, res) => {
                       connected: connected,
                     });
                   });
-                } else if (account_type ==1 ){
+                } else if (account_type == 1){
                   Org.findOne({'_id': account_id}, (err, org) => {
+                    let temp = [];
+                    let followers = users.filter(user => org.followers.indexOf(user.username) >= 0);
+                    //array of chatable users
+                    followers.forEach(user => {
+                      let id = user.id;
+                      let name = user.name;
+                      let avatar = user.avatar;
+                      let messages = user.messages;
+                      // if(connectedUsers.length == 0) {
+                      //   temp.push({
+                      //     type: 1,
+                      //     id: id,
+                      //     name: name,
+                      //     avatar: avatar,
+                      //     messages: messages,
+                      //   })
+                      // } else {
+                      //   for(let i = 0; i < connectedUsers.length; i++) {
+                      //     if(connectedUsers[i].id != user.id) {
+                      //       temp.push({
+                      //         type: 1,
+                      //         id: id,
+                      //         name: name,
+                      //         avatar: avatar,
+                      //         messages: messages,
+                      //       })
+                      //       break;
+                      //     }
+                      //   }
+                      // }
+                      temp.push({
+                        type: 1,
+                        id: id,
+                        name: name,
+                        avatar: avatar,
+                        messages: messages,
+                      })
+                    })
+                    connectedUsers = temp;
+                    // console.log(connectedUsers);
+                    //self info
+                    let type = 2;
+                    let id = org._id;
+                    let name = org.name;
+                    let messages = org.messages;
+                    // console.log(org.messages);
+                    var client = {
+                      type: type,
+                      id: id,
+                      name: name,
+                      messages: messages,
+                    };
+                    currentSocket = client;
+                    //array storing all users' sessions
+                    let tempObject = {
+                      sessionID: currentSocket.id,
+                      currentSocket: currentSocket,
+                      connectedUsers: connectedUsers,
+                    }
+                    if(chatSession.length == 0) {
+                      chatSession.push(tempObject);
+                    } else {
+                      for(let i = 0; i < chatSession.length; i++) {
+                        if(chatSession[i].sessionID != org.id) {
+                          chatSession.push(tempObject);
+                          break;
+                        }
+                      }
+                    }
+                    // console.log(chatSession[0]);
+
                     let criteriaList = org.hashtags;
                     // orgs sort
                     orgs.forEach(org => {
@@ -540,7 +650,7 @@ app.get('/', (req, res) => {
                       criteriaList: org.hashtags,
                       notis: req.notis,
                       messages: req.messages,
-                      connected: connected,
+                      connected: followers,
                     });
                   });
                 } else {

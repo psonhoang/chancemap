@@ -344,8 +344,12 @@
 
 <!--  BEGIN CODEDAO SCRIPT -->
 <script src="/scripts/suggest.js" type="text/javascript"></script>
+<script src="/socket.io/socket.io.js"></script>
 <script>
   $(document).ready(function() {
+    var socket = io();
+    socket.emit('connection');
+
     $('#search-input').tagging('removeAll');
     toastr.info("You're logged in as " + <%- JSON.stringify(currentAcc.username) %>, 'Welcome!', {positionClass: 'toast-top-center', containerId: 'toast-top-center'});
     $('.hashes').hide();
@@ -357,6 +361,7 @@
   }
 
   function connect(account_id, user_id, user_username) {
+
     let button_id = '#' + user_id + '2';
     $(button_id).removeClass('btn-info');
     $(button_id).addClass('btn-success');

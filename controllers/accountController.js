@@ -573,65 +573,36 @@ router.post('/profile/user', upload.fields([{name: 'avatar', maxCount: 1}, {name
 	});
 });
 
-// connecting users function
 router.post('/connect', upload.single(), (req, res) => {
 	let user_id = req.body.user_id;
 	let account_id = req.body.account_id;
 	let connect = req.body.connect;
 	console.log(req.body);
-	if (connect == "true")
-	{
-			User.findOne({'_id': account_id}, (err, currentAcc) => {
-  			if(err) {
-  				res.send("Database error!");
-  				console.log(err);
-  				return;
-  			}
-  			User.findOne({'_id': user_id}, (err, user) => {
-  				if(err) {
-  					res.send('Database error!');
-  					console.log(err);
-  					return;
-  				}
-  				if (currentAcc.connected.indexOf(user.username) < 0)
-  				{
-  					currentAcc.connected.push(user.username);
-  					currentAcc.updated_at = new Date();
-  					currentAcc.save().then(result => {
-  						console.log("Successfully connected!");
-  						user.connected.push(currentAcc.username);
-  						user.updated_at = new Date();
-  						user.save().then(result => {
-  							console.log("Successfully Connected With User!");
-  							res.end();
-  						}).catch(err => {
-  							res.send(err);
-  						});
-  					});
-  				}
-  				else
-  				{
-  					res.send("Unexpected Error!")
-  				}
-  			}).catch(err => {
-  				res.send(err);
-  			});
+	if (connect == "true") {
+		User.findOne({'_id': account_id}, (err, currentAcc) => {
+			User.findOne({'_id': user_id}, (err, user) => {
+				if (currentAcc.connected.indexOf(user.username) < 0) {
+					currentAcc.connected.push(user.username);
+					currentAcc.updated_at = new Date();
+					currentAcc.save().then(result => {
+						console.log("Successfully connected!");
+						user.connected.push(currentAcc.username);
+						user.updated_at = new Date();
+						user.save().then(result => {
+							console.log("Successfully Connected With User!");
+							res.end();
+						}).catch(err => {
+							res.send(err);
+						});
+					});
+				}
+			})
 		});
 	}
 	else if (connect == "false")
 	{
 		User.findOne({'_id': account_id}, (err, currentAcc) => {
-			if(err) {
-				res.send("Database error!");
-				console.log(err);
-				return;
-			}
 			User.findOne({'_id': user_id}, (err, user) => {
-				if(err) {
-					res.send('Database error!');
-					console.log(err);
-					return;
-				}
 				if (currentAcc.connected.indexOf(user.username) >= 0)
 				{
 					let i = currentAcc.connected.indexOf(user.username);

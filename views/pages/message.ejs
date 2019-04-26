@@ -70,6 +70,7 @@
 <!-- script stuff -->
 <script src="scripts/suggest.js" type="text/javascript"></script>
 <script src="/socket.io/socket.io.js"></script>
+
 <script>
   $(document).ready(function() {
     $('#current_chat').hide();
@@ -81,7 +82,7 @@
     var message = $('#message');
     var send_message = $('#send_message');
     var chatbox = $('#chatbox');
-    var current_user_name = $('#current_user_name').html();
+    var current_user_name = $('.current_user_name').html();
     var users_list = $('#users_list');
     var current_chat = $('#current_chat');
     var current_chat_name = $('#current_chat_name');
@@ -103,107 +104,93 @@
           let connectedUsers = session.connectedUsers.slice();
           let currentSocket = session.currentSocket;
           let type = currentSocket.type;
-
-          if(type === 1) {
-            //showing last chat history
-            let sentMessages = allMessages.filter(message => message.creator === currentSocketID);
+          // showing last chat history
+          let sentMessages = allMessages.filter(message => message.creator === currentSocketID);
+          if(sentMessages.length > 0) {
             sentMessages.sort((a, b) => {
               return a.sort_value - b.sort_value;
             })
             let lastChat = sentMessages[sentMessages.length - 1].recipient;
-
-            if(sentMessages.length > 0) {
-              if(current_chat.html() == '') {
-                connectedUsers.forEach(user => {
-                  if(user.name === lastChat) {
-                    current_chat.show();
-                    current_chat.html(user.name);
-                    setTimeout(() => {
-                      chatroom.scrollTop(chatroom.prop('scrollHeight'));
-                    }, 0);
-                    let mutualMessages = allMessages.filter(message => ((message.creator === currentSocketID && message.recipient === user.name) || (message.creator === user.id && message.recipient === currentSocket.name)));
-                    mutualMessages.sort((a, b) => {
-                      return a.sort_value - b.sort_value;
-                    })
-                    mutualMessages.forEach(item => {
-                      if(item.creator === currentSocketID) {
-                        let message = item.message;
-                        let date = item.created_at;
-                        let new_log = `
-                          <div class="chat">
-                            <div class="chat-body">
-                              <div class="chat-content" style="text-align: right; position: relative; display: block; float: right; padding: 8px 15px; margin: 0 20px 10px 0; clear: both; color: #fff; background-color: #00B5B8; border-radius: 4px; max-width: 50%">
-                                <p>${message}</p>
-                              </div>
+            if(current_chat.html() == '') {
+              connectedUsers.forEach(user => {
+                if(user.name === lastChat) {
+                  current_chat.show();
+                  current_chat.html(user.name);
+                  setTimeout(() => {
+                    chatroom.scrollTop(chatroom.prop('scrollHeight'));
+                  }, 0);
+                  let mutualMessages = allMessages.filter(message => ((message.creator === currentSocketID && message.recipient === user.name) || (message.creator === user.id && message.recipient === currentSocket.name)));
+                  mutualMessages.sort((a, b) => {
+                    return a.sort_value - b.sort_value;
+                  })
+                  mutualMessages.forEach(item => {
+                    if(item.creator === currentSocketID) {
+                      let message = item.message;
+                      let date = item.created_at;
+                      let new_log = `
+                        <div class="chat">
+                          <div class="chat-body">
+                            <div class="chat-content" style="text-align: right; position: relative; display: block; float: right; padding: 8px 15px; margin: 0 20px 10px 0; clear: both; color: #fff; background-color: #00B5B8; border-radius: 4px; max-width: 50%">
+                              <p>${message}</p>
                             </div>
                           </div>
-                        `;
-                        //displaying message user sent
-                        chatroom.append('<li>' + new_log + '</li>');
-                      } else {
-                        item.read = true;
-                        let message = item.message;
-                        let date = item.created_at;
-                        let new_log = `
-                          <div class="chat chat-left" style="right: auto; left: -10px; border-right-color: #edeef0; border-left-color: transparent;">
-                            <div class="chat-body">
-                              <div class="chat-content" style="text-align: left; float: left; margin: 0 0 10px 20px; color: #404E67; background-color: #edeef0; position: relative; display: block; padding: 8px 15px; clear: both; max-width: 50%">
-                                <p>${message}</p>
-                              </div>
+                        </div>
+                      `;
+                      //displaying message user sent
+                      chatroom.append('<li>' + new_log + '</li>');
+                    } else {
+                      item.read = true;
+                      let message = item.message;
+                      let date = item.created_at;
+                      let new_log = `
+                        <div class="chat chat-left" style="right: auto; left: -10px; border-right-color: #edeef0; border-left-color: transparent;">
+                          <div class="chat-body">
+                            <div class="chat-content" style="text-align: left; float: left; margin: 0 0 10px 20px; color: #404E67; background-color: #edeef0; position: relative; display: block; padding: 8px 15px; clear: both; max-width: 50%">
+                              <p>${message}</p>
                             </div>
                           </div>
-                        `;
-                        //displaying messages user received
-                        chatroom.append('<li>' + new_log + '</li>');
-                      }
-                    });
-                  }
-                });
-              }
+                        </div>
+                      `;
+                      //displaying messages user received
+                      chatroom.append('<li>' + new_log + '</li>');
+                    }
+                  });
+                }
+              });
             }
-            //displaying all chatable users
-            connectedUsers.forEach(user => {
-
-              let room_id = user.id;
-              let name = user.name;
-              let avatar = user.avatar;
-              let recentMessages = allMessages.filter(message => ((message.creator === currentSocketID && message.recipient === name) || (message.creator === room_id && message.recipient === currentSocket.name)));
-
-              recentMessages.sort((a, b) => {
-                return a.sort_value - b.sort_value;
-              })
-
-              if(users_list.children().length < connectedUsers.length) {
-                if(user.messages.length > 0) {
-                  let mostRecentMessage = recentMessages[recentMessages.length - 1].message;
-                  let lastSent = recentMessages[recentMessages.length - 1].created_at + "";
-                  let date = lastSent.substr(0, 10);
-
-                  if(recentMessages[recentMessages.length - 1].creator === room_id) {
-                    users_list.append(
-                      `<a id="${room_id}" class="list-group-item list-group-item-action media no-border">
-                        <div class="media-left">
-                          <span class="avatar avatar-md avatar-away"><img src="${avatar}" class="media-object rounded-circle width-30 height-30"/></span>
-                        </div>
-                        <div class="media-body">
-                          <h6 class="list-group-item-heading">${name}<span class="font-small-3 float-xs-right primary">${date}</span></h6>
-                          <p id="${room_id}-messages" class="list-group-item-text text-muted"><i class="ft-corner-down-right font-small-2"></i> ${mostRecentMessage}</p>
-                        </div>
-                      </a>`
-                    );
-                  } else {
-                    users_list.append(
-                      `<a id="${room_id}" class="list-group-item list-group-item-action media no-border">
-                        <div class="media-left">
-                          <span class="avatar avatar-md avatar-away"><img src="${avatar}" class="media-object rounded-circle width-30 height-30"/></span>
-                        </div>
-                        <div class="media-body">
-                          <h6 class="list-group-item-heading">${name}<span class="font-small-3 float-xs-right primary">${date}</span></h6>
-                          <p id="${room_id}-messages" class="list-group-item-text text-muted"><i class="ft-corner-down-left font-small-2"></i> ${mostRecentMessage}</p>
-                        </div>
-                      </a>`
-                    );
-                  }
+          }
+          //displaying all chatable users
+          connectedUsers.forEach(user => {
+            let room_id = user.id;
+            let name = user.name;
+            let avatar = user.avatar;
+            let recentMessages = allMessages.filter(message => (message.creator === currentSocketID && message.recipient === name) || (message.creator === room_id && message.recipient === currentSocket.name));
+            //sorting recent mutual messages by time
+            recentMessages.sort((a, b) => {
+              return a.sort_value - b.sort_value;
+            })
+            //displaying chat menu on right side
+            if(users_list.children().length < connectedUsers.length) {
+              if(recentMessages.length > 0) {
+                let mostRecentMessage = recentMessages[recentMessages.length - 1].message;
+                let lastSent = recentMessages[recentMessages.length - 1].created_at + "";
+                if(mostRecentMessage.length > 15) {
+                  mostRecentMessage = mostRecentMessage.substr(0, 15) + '...';
+                }
+                let date = lastSent.substr(0, 10);
+                //conditions to show different icons and info
+                if(recentMessages[recentMessages.length - 1].creator === room_id) {
+                  users_list.append(
+                    `<a id="${room_id}" class="list-group-item list-group-item-action media no-border">
+                      <div class="media-left">
+                        <span class="avatar avatar-md avatar-away"><img src="${avatar}" class="media-object rounded-circle width-30 height-30"/></span>
+                      </div>
+                      <div class="media-body">
+                        <h6 class="list-group-item-heading">${name}<span class="font-small-3 float-xs-right primary">${date}</span></h6>
+                        <p id="${room_id}-messages" class="list-group-item-text text-muted"><i class="ft-corner-down-right font-small-2"></i> ${mostRecentMessage}</p>
+                      </div>
+                    </a>`
+                  );
                 } else {
                   users_list.append(
                     `<a id="${room_id}" class="list-group-item list-group-item-action media no-border">
@@ -211,85 +198,81 @@
                         <span class="avatar avatar-md avatar-away"><img src="${avatar}" class="media-object rounded-circle width-30 height-30"/></span>
                       </div>
                       <div class="media-body">
-                        <h6 class="list-group-item-heading">${name}<span class="font-small-3 float-xs-right primary"></span></h6>
-                        <p id="${room_id}-messages" class="list-group-item-text text-muted"><i class="ft-check font-small-2"></i> no messages yet</p>
+                        <h6 class="list-group-item-heading">${name}<span class="font-small-3 float-xs-right primary">${date}</span></h6>
+                        <p id="${room_id}-messages" class="list-group-item-text text-muted"><i class="ft-corner-down-left font-small-2"></i> ${mostRecentMessage}</p>
                       </div>
                     </a>`
                   );
                 }
+              } else {
+                users_list.append(
+                  `<a id="${room_id}" class="list-group-item list-group-item-action media no-border">
+                    <div class="media-left">
+                      <span class="avatar avatar-md avatar-away"><img src="${avatar}" class="media-object rounded-circle width-30 height-30"/></span>
+                    </div>
+                    <div class="media-body">
+                      <h6 class="list-group-item-heading">${name}<span class="font-small-3 float-xs-right primary"></span></h6>
+                      <p id="${room_id}-messages" class="list-group-item-text text-muted"><i class="ft-check font-small-2"></i> no messages yet</p>
+                    </div>
+                  </a>`
+                );
               }
+            }
+            //add functionality to chat menu
+            let mutualMessages = allMessages.filter(message => ((message.creator === currentSocketID && message.recipient === name) || (message.creator === room_id && message.recipient === currentSocket.name)));
+            mutualMessages.sort((a, b) => {
+              return a.sort_value - b.sort_value;
+            })
+            let button_id = '#' + room_id;
+            //when a user is clicked
+            $(button_id).bind('click', () => {
+              //some stuff for css
+              setTimeout(() => {
+                chatroom.scrollTop(chatroom.prop('scrollHeight'));
+              }, 0);
+              users_list.children().attr('style', 'background-color: #FFFFFF');
+              $(button_id).attr('style', 'background-color: #F5F5F5');
+              if(chatroom.children().length > 0) {
+                chatroom.children().remove();
+              }
+              current_chat.show();
+              current_chat.html(name);
 
-              let mutualMessages = allMessages.filter(message => ((message.creator === currentSocketID && message.recipient === name) || (message.creator === room_id && message.recipient === currentSocket.name)));
-              mutualMessages.sort((a, b) => {
-                return a.sort_value - b.sort_value;
-              })
-              let button_id = '#' + room_id;
-              //when a user is clicked
-              $(button_id).bind('click', () => {
-                setTimeout(() => {
-                  chatroom.scrollTop(chatroom.prop('scrollHeight'));
-                }, 0);
-                users_list.children().attr('style', 'background-color: #FFFFFF');
-                $(button_id).attr('style', 'background-color: #F5F5F5');
-                if(chatroom.children().length > 0) {
-                  chatroom.children().remove();
+              //actual important code
+              mutualMessages.forEach(item => {
+                if(item.creator === currentSocketID) {
+                  let message = item.message;
+                  let date = item.created_at;
+                  let new_log = `
+                    <div class="chat">
+                      <div class="chat-body">
+                        <div class="chat-content" style="text-align: right; position: relative; display: block; float: right; padding: 8px 15px; margin: 0 20px 10px 0; clear: both; color: #fff; background-color: #00B5B8; border-radius: 4px; max-width: 50%">
+                          <p>${message}</p>
+                        </div>
+                      </div>
+                    </div>
+                  `;
+                  //displaying message user sent
+                  chatroom.append('<li>' + new_log + '</li>');
+                } else {
+                  item.read = true;
+                  let message = item.message;
+                  let date = item.created_at;
+                  let new_log = `
+                    <div class="chat chat-left" style="right: auto; left: -10px; border-right-color: #edeef0; border-left-color: transparent;">
+                      <div class="chat-body">
+                        <div class="chat-content" style="text-align: left; float: left; margin: 0 0 10px 20px; color: #404E67; background-color: #edeef0; position: relative; display: block; padding: 8px 15px; clear: both; max-width: 50%">
+                          <p>${message}</p>
+                        </div>
+                      </div>
+                    </div>
+                  `;
+                  //displaying messages user received
+                  chatroom.append('<li>' + new_log + '</li>');
                 }
-                current_chat.show();
-                current_chat.html(name);
-                mutualMessages.forEach(item => {
-                  if(item.creator === currentSocketID) {
-                    let message = item.message;
-                    let date = item.created_at;
-                    let new_log = `
-                      <div class="chat">
-                        <div class="chat-body">
-                          <div class="chat-content" style="text-align: right; position: relative; display: block; float: right; padding: 8px 15px; margin: 0 20px 10px 0; clear: both; color: #fff; background-color: #00B5B8; border-radius: 4px; max-width: 50%">
-                            <p>${message}</p>
-                          </div>
-                        </div>
-                      </div>
-                    `;
-                    //displaying message user sent
-                    chatroom.append('<li>' + new_log + '</li>');
-                  } else {
-                    item.read = true;
-                    let message = item.message;
-                    let date = item.created_at;
-                    let new_log = `
-                      <div class="chat chat-left" style="right: auto; left: -10px; border-right-color: #edeef0; border-left-color: transparent;">
-                        <div class="chat-body">
-                          <div class="chat-content" style="text-align: left; float: left; margin: 0 0 10px 20px; color: #404E67; background-color: #edeef0; position: relative; display: block; padding: 8px 15px; clear: both; max-width: 50%">
-                            <p>${message}</p>
-                          </div>
-                        </div>
-                      </div>
-                    `;
-                    //displaying messages user received
-                    chatroom.append('<li>' + new_log + '</li>');
-                  }
-                });
               });
             });
-          } else if(type === 2) {
-            connectedUsers.forEach(user => {
-
-              let room_id = user.id;
-              let name = user.name;
-              let avatar = user.avatar;
-
-              users_list.append(
-                `<a id="${room_id}" class="list-group-item list-group-item-action media no-border">
-                  <div class="media-left">
-                    <span class="avatar avatar-md avatar-away"><img src="${avatar}" class="media-object rounded-circle width-30 height-30"/></span>
-                  </div>
-                  <div class="media-body">
-                    <h6 class="list-group-item-heading">${name}<span class="font-small-3 float-xs-right primary"></span></h6>
-                    <p id="${room_id}-messages" class="list-group-item-text text-muted"><i class="ft-check font-small-2"></i> no messages yet</p>
-                  </div>
-                </a>`
-              );
-            });
-          }
+          });
         }
       });
     });
@@ -320,6 +303,9 @@
       let room_id = data.room_id;
       let button_id = '#' + room_id + '-messages';
       let button_id2 = '#' + creator + '-messages';
+      if(message.length > 15) {
+        message = message.substr(0, 15) + '...';
+      }
 
       if(creator === currentSocketID) {
         let new_log = `
@@ -354,6 +340,6 @@
     //disconnection
     socket.on('disconnect', () => {
       socket.emit('disconnect', {currentSocketID});
-    })
-  })
+    });
+  });
 </script>

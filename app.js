@@ -106,179 +106,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(passport.authenticate('remember-me'));
 
-// Socket.IO
-const http = require('http');
-const server = http.Server(app);
-const socketIO = require('socket.io');
-const io = socketIO(server);
-var mSocket;
-var mAccountType;
-var connectedUsers = [];
-var currentSocket = {};
-//record of all connections
-var chatSession = [];
-var allMessages = [];
-
-io.on('connection', (socket) => {
-  console.log('a user connected');
-  // console.log(connectedUsers);
-  console.log(chatSession[0]);
-  // console.log(allMessages);
-
-  // For orgs
-  socket.on('room', (room) => {
-    console.log(room);
-    socket.join(room);
-  });
-  // For users
-  socket.on('rooms', (rooms) => {
-    let noti_rooms = rooms.split(',');
-    //console.log(noti_rooms);
-    socket.join(noti_rooms);
-  });
-
-  //send the record of sessions to new user
-  socket.emit('new connection', {chatSession, allMessages});
-
-  //join own room based on account id
-  socket.on('connect self', (data) => {
-    let currentSocketID = data.currentSocketID;
-    socket.join(currentSocketID, () => {
-      console.log(Object.keys(socket.rooms));
-    });
-  });
-
-  //when this socket sends a private message
-  socket.on('private message', (data) => {
-    let message = data.message;
-    let sender = data.sender;
-    let recipient = data.recipient;
-    let currentSocketID = data.currentSocketID;
-    let rooms = Object.keys(socket.rooms);
-    let room_id;
-    let account_type;
-    chatSession.forEach(session => {
-      if(session.sessionID == currentSocketID) {
-        connectedUsers = session.connectedUsers.slice();
-        connectedUsers.forEach(user => {
-          if(user.name === recipient) {
-            room_id = user.id;
-            account_type = user.type;
-          }
-        });
-      }
-    });
-    console.log(`Room ID: ${room_id}`);
-    console.log(`Sender: ${sender}`);
-    console.log(`Recipient: ${recipient}`);
-    socket.join(room_id, () => {
-      console.log(Object.keys(socket.rooms));
-    });
-    let newMessage = new Message({
-      _id: new mongoose.Types.ObjectId(),
-      creator: currentSocketID,
-      sender: sender,
-      recipient: recipient,
-      created_at: new Date(),
-      sort_value: new Date().valueOf(),
-      message: message,
-      read: false,
-    });
-    newMessage.save((err, message) => {
-      console.log(message);
-
-
-      //saving and emitting message to recipient
-      User.findOne({'_id': room_id}, (err, user) => {
-        if(err) {
-          console.log(err);
-        }
-        user.messages.push(message._id);
-        user.save().then(result => {
-          socket.to(room_id).emit('private message', {message, room_id});
-        }).catch(err => {
-          console.log(err);
-        });
-        console.log(user.messages);
-      });
-      //saving and emitting message to sender
-      User.findOne({'_id': currentSocketID}, (err, user) => {
-        if(err) {
-          console.log(err);
-        }
-        user.messages.push(message._id);
-        user.save().then(result => {
-          socket.emit('private message', {message, room_id});
-        }).catch(err => {
-          console.log(err);
-        });
-        console.log(user.messages);
-      });
-    });
-    setTimeout(() => {
-      Message.find((err, messages) => {
-        allMessages = messages;
-        io.sockets.emit('new connection', {chatSession, allMessages});
-        socket.to(room_id).emit('update noti', {currentSocketID, room_id, chatSession, allMessages});
-      });
-    }, 2000);
-  });
-
-  //leave all rooms when another online user sends a message
-  socket.on('leave rooms', (data) => {
-    let currentSocketID = data.currentSocketID;
-    let rooms = Object.keys(socket.rooms);
-    rooms.forEach(room => {
-      if(room != currentSocketID) {
-        socket.leave(room);
-      }
-    });
-  });
-
-  //disconnect
-  socket.on('disconnect', (data) => {
-    let currentSocketID = data.currentSocketID;
-    chatSession.forEach(session => {
-      if(session.sessionID == currentSocketID) {
-        chatSession.splice(chatSession.indexOf(session.sessionID));
-        console.log(chatSession);
-      }
-    });
-  });
-
-  mSocket = socket;
-});
-
-// Make io accessible to our router
-app.use((req,res,next)  => {
-  req.socketio = mSocket;
-  next();
-});
-
-app.use((req,res,next)  => {
-  req.chatSession = chatSession;
-  next();
-});
-
-/* ***** Routes ***** */
-
-// Get notifications numbers
-app.use((req, res, next) => {
-  if(req.isAuthenticated()) {
-    Notification.find({'accounts': req.user.username}, (err, notis) => {
-      if(err) {
-        console.log(err);
-        return;
-      }
-      req.notis = [];
-      if(notis.length > 0) {
-        req.notis = notis;
-      }
-    });
-  }
-  next();
-});
-
 app.use((req, res, next) => {
   if(req.isAuthenticated()) {
     Message.find((err, messages) => {
@@ -682,6 +509,235 @@ app.get('/', (req, res) => {
 };
 });
 
+// Socket.IO
+const http = require('http');
+const server = http.Server(app);
+const socketIO = require('socket.io');
+const io = socketIO(server);
+var mSocket;
+var mAccountType;
+var connectedUsers = [];
+var currentSocket = {};
+//record of all connections
+var chatSession = [];
+var allMessages = [];
+
+io.on('connection', (socket) => {
+  console.log('a user connected');
+  // console.log(connectedUsers);
+  console.log(chatSession);
+
+  // For orgs
+  socket.on('room', (room) => {
+    console.log(room);
+    socket.join(room);
+  });
+  // For users
+  socket.on('rooms', (rooms) => {
+    let noti_rooms = rooms.split(',');
+    //console.log(noti_rooms);
+    socket.join(noti_rooms);
+  });
+
+  //send the record of sessions to new user
+  socket.emit('new connection', {chatSession, allMessages});
+
+  //join own room based on account id
+  socket.on('connect self', (data) => {
+    let currentSocketID = data.currentSocketID;
+    socket.join(currentSocketID, () => {
+      console.log(Object.keys(socket.rooms));
+    });
+  });
+
+  //when this socket sends a private message
+  socket.on('private message', (data) => {
+    let message = data.message;
+    let sender = data.sender;
+    let recipient = data.recipient;
+    let currentSocketID = data.currentSocketID;
+    let rooms = Object.keys(socket.rooms);
+    let room_id;
+    let sender_type;
+    let recipient_type;
+    chatSession.forEach(session => {
+      if(session.sessionID == currentSocketID) {
+        connectedUsers = session.connectedUsers.slice();
+        connectedUsers.forEach(user => {
+          if(user.name === recipient) {
+            room_id = user.id;
+            recipient_type = user.type;
+          }
+        });
+        sender_type = session.currentSocket.type;
+      }
+    });
+    console.log(`Room ID: ${room_id}`);
+    console.log(`Sender: ${sender}, type: ${sender_type}`);
+    console.log(`Recipient: ${recipient}, type: ${recipient_type}`);
+    socket.join(room_id, () => {
+      console.log(Object.keys(socket.rooms));
+    });
+    let newMessage = new Message({
+      _id: new mongoose.Types.ObjectId(),
+      creator: currentSocketID,
+      sender: sender,
+      recipient: recipient,
+      created_at: new Date(),
+      sort_value: new Date().valueOf(),
+      message: message,
+      read: false,
+    });
+    newMessage.save((err, message) => {
+      console.log(message);
+
+      if(sender_type === 1 && recipient_type === 1) {
+        //saving and emitting message to recipient
+        User.findOne({'_id': room_id}, (err, user) => {
+          if(err) {
+            console.log(err);
+          }
+          user.messages.push(message._id);
+          user.save().then(result => {
+            socket.to(room_id).emit('private message', {message, room_id});
+          }).catch(err => {
+            console.log(err);
+          });
+          console.log(user.messages);
+        });
+        //saving and emitting message to sender
+        User.findOne({'_id': currentSocketID}, (err, user) => {
+          if(err) {
+            console.log(err);
+          }
+          user.messages.push(message._id);
+          user.save().then(result => {
+            socket.emit('private message', {message, room_id});
+          }).catch(err => {
+            console.log(err);
+          });
+          console.log(user.messages);
+        });
+      }
+      if(sender_type === 1 && recipient_type === 2) {
+        //saving and emitting message to recipient
+        Org.findOne({'_id': room_id}, (err, org) => {
+          if(err) {
+            console.log(err);
+          }
+          org.messages.push(message._id);
+          org.save().then(result => {
+            socket.to(room_id).emit('private message', {message, room_id});
+          }).catch(err => {
+            console.log(err);
+          });
+          console.log(org.messages);
+        });
+        //saving and emitting message to sender
+        User.findOne({'_id': currentSocketID}, (err, user) => {
+          if(err) {
+            console.log(err);
+          }
+          user.messages.push(message._id);
+          user.save().then(result => {
+            socket.emit('private message', {message, room_id});
+          }).catch(err => {
+            console.log(err);
+          });
+          console.log(user.messages);
+        });
+      }
+      if(sender_type === 2 && recipient_type === 1) {
+        //saving and emitting message to recipient
+        User.findOne({'_id': room_id}, (err, user) => {
+          if(err) {
+            console.log(err);
+          }
+          user.messages.push(message._id);
+          user.save().then(result => {
+            socket.to(room_id).emit('private message', {message, room_id});
+          }).catch(err => {
+            console.log(err);
+          });
+          console.log(user.messages);
+        });
+        //saving and emitting message to sender
+        Org.findOne({'_id': currentSocketID}, (err, org) => {
+          if(err) {
+            console.log(err);
+          }
+          org.messages.push(message._id);
+          org.save().then(result => {
+            socket.emit('private message', {message, room_id});
+          }).catch(err => {
+            console.log(err);
+          });
+          console.log(org.messages);
+        });
+      }
+    });
+    setTimeout(() => {
+      Message.find((err, messages) => {
+        allMessages = messages;
+        io.sockets.emit('new connection', {chatSession, allMessages});
+      });
+    }, 3000);
+  });
+
+  //leave all rooms when another online user sends a message
+  socket.on('leave rooms', (data) => {
+    let currentSocketID = data.currentSocketID;
+    let rooms = Object.keys(socket.rooms);
+    rooms.forEach(room => {
+      if(room != currentSocketID) {
+        socket.leave(room);
+      }
+    });
+  });
+
+  //disconnect
+  socket.on('disconnect', (data) => {
+    let currentSocketID = data.currentSocketID;
+    chatSession.forEach(session => {
+      if(session.sessionID == currentSocketID) {
+        chatSession.splice(chatSession.indexOf(session.sessionID));
+        console.log(chatSession);
+      }
+    });
+  });
+
+  mSocket = socket;
+});
+
+// Make io accessible to our router
+app.use((req,res,next)  => {
+  req.socketio = mSocket;
+  next();
+});
+
+app.use((req,res,next)  => {
+  req.chatSession = chatSession;
+  next();
+});
+
+/* ***** Routes ***** */
+
+// Get notifications numbers
+app.use((req, res, next) => {
+  if(req.isAuthenticated()) {
+    Notification.find({'accounts': req.user.username}, (err, notis) => {
+      if(err) {
+        console.log(err);
+        return;
+      }
+      req.notis = [];
+      if(notis.length > 0) {
+        req.notis = notis;
+      }
+    });
+  }
+  next();
+});
 
 // Route controllers
 

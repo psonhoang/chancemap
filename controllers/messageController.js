@@ -76,6 +76,7 @@ router.get('/', (req, res) => {
             connected: connected,
             notis: req.notis,
             messages: messages,
+            users: users,
           });
         });
       });
@@ -94,6 +95,7 @@ router.get('/', (req, res) => {
             connected: followers,
             notis: req.notis,
             messages: messages,
+            users: users,
           });
         });
       });

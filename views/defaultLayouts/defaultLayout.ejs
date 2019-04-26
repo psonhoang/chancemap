@@ -91,7 +91,7 @@
                   <li id="connect_noti" class="list-group scrollable-container ps-container ps-theme-dark ps-active-y" data-ps-id="f63177ae-103d-18cc-b7ba-6373aaa089ef">
                     <% let connectRequests = users.filter(user => currentAcc.connect_received.indexOf(user.username) >= 0) %>
                     <% connectRequests.forEach(user => { %>
-                    <%  if (currentAcc.connected.indexOf(user.username) < 0 && currentAcc.connect_sent.indexOf(user.username) < 0 && currentAcc.connect_received.indexOf(user.username)>= 0) { %>
+                    <%  if (account_type == 0 && currentAcc.connected.indexOf(user.username) < 0 && currentAcc.connect_sent.indexOf(user.username) < 0 && currentAcc.connect_received.indexOf(user.username)>= 0) { %>
                     <a id="<%=user._id%>-connect" href="javascript:void(0)" class="list-group-item">
                       <div class="media-body">
                         <div class="media-left valign-middle">

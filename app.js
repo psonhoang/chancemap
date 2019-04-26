@@ -546,7 +546,7 @@ io.on('connection', (socket) => {
   socket.on('connect self', (data) => {
     let currentSocketID = data.currentSocketID;
     socket.join(currentSocketID, () => {
-      console.log(Object.keys(socket.rooms));
+      // console.log(Object.keys(socket.rooms));
     });
   });
 

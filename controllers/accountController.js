@@ -657,6 +657,7 @@ router.post('/profile/user', upload.fields([{name: 'avatar', maxCount: 1}, {name
 // 	});
 // });
 
+// users connecting function
 router.post('/connect', upload.single(), (req, res) => {
 	let user_id = req.body.user_id;
 	let account_id = req.body.account_id;
@@ -751,6 +752,51 @@ router.post('/connect', upload.single(), (req, res) => {
   }
 });
 
+// add events/jobs/opportunities function
+router.post('add_items', upload.single(), (req, res) => {
+  let account_id = req.body.account_id;
+  let status = req.body.status;
+
+  User.findOne({'_id': account_id}, (err, user) => {
+    console.log(user);
+    if (status === 'add_event') {
+      let event_id = req.body.event_id;
+      user.events.push(event_id);
+      user.updated_at = new Date();
+      user.save().then(result => {
+        console.log(user.events);
+      })
+    } else if (status === 'add_job') {
+      let job_id = req.body.job_id;
+      user.jobs.push(job_id);
+      user.updated_at = new Date();
+      user.save().then(result => {
+        console.log(user.jobs);
+      })
+    } else if (status === 'add_opp') {
+      let opp_id = req.body.opp_id;
+      user.opportunities.push(opp_id);
+      user.updated_at = new Date();
+      user.save().then(result => {
+        console.log(user.opportunities);
+      })
+    }
+  })
+})
+
+// remove events/jobs/opportunities function
+router.post('remove_items', upload.single(), (req, res) => {
+  let account_id = req.body.account_id;
+  let status = req.body.status;
+
+  if (status === 'add_event') {
+
+  } else if (status === 'add_job') {
+
+  } else if (status === 'add_opp') {
+
+  }
+})
 
 
 // @route POST

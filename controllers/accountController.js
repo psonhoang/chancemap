@@ -573,48 +573,171 @@ router.post('/profile/user', upload.fields([{name: 'avatar', maxCount: 1}, {name
 	});
 });
 
+// router.post('/connect', upload.single(), (req, res) => {
+// 	let user_id = req.body.user_id;
+// 	let account_id = req.body.account_id;
+// 	let connect = req.body.connect;
+// 	console.log(req.body);
+// 	if (connect == "true") {
+// 		User.findOne({'_id': account_id}, (err, currentAcc) => {
+// 			User.findOne({'_id': user_id}, (err, user) => {
+// 				if (currentAcc.connected.indexOf(user.username) < 0) {
+// 					currentAcc.connected.push(user.username);
+// 					currentAcc.updated_at = new Date();
+// 					currentAcc.save().then(result => {
+// 						console.log("Successfully connected!");
+// 						user.connected.push(currentAcc.username);
+// 						user.updated_at = new Date();
+// 						user.save().then(result => {
+// 							console.log("Successfully Connected With User!");
+// 							res.end();
+// 						}).catch(err => {
+// 							res.send(err);
+// 						});
+// 					});
+// 				}
+// 			})
+// 		});
+// 	}
+// 	else if (connect == "false") {
+// 		User.findOne({'_id': account_id}, (err, currentAcc) => {
+// 			User.findOne({'_id': user_id}, (err, user) => {
+// 				if (currentAcc.connected.indexOf(user.username) >= 0)
+// 				{
+// 					let i = currentAcc.connected.indexOf(user.username);
+// 					currentAcc.connected.splice(i, 1);
+// 					currentAcc.updated_at = new Date();
+// 					currentAcc.save().then(result => {
+// 						console.log("Successfully disconnected");
+// 						let i = user.connected.indexOf(currentAcc.username);
+// 						user.connected.splice(i, 1);
+// 						user.updated_at = new Date();
+// 						user.save().then(result => {
+// 							console.log("Successfully removed connection!");
+// 							res.end();
+// 						}).catch(err => {
+// 							res.send(err);
+// 						});
+// 					});
+// 				}
+// 			}).catch(err => {
+// 				res.send(err);
+// 			});
+// 		});
+// 	}
+// });
+
+// router.post('/connect_request', upload.single(), (req, res) => {
+//   let user_id = req.body.user_id;
+// 	let account_id = req.body.account_id;
+// 	User.findOne({'_id': account_id}, (err, currentAcc) => {
+// 		User.findOne({'_id': user_id}, (err, user) => {
+//       console.log(`Sender: ${currentAcc}`);
+//       console.log(`Recipient: ${user}`);
+// 			if (currentAcc.connect_sent.indexOf(user.username) < 0) {
+//         //update sender
+// 				currentAcc.connect_sent.push(user.username);
+// 				currentAcc.updated_at = new Date();
+// 				currentAcc.save().then(result => {
+//           console.log(currentAcc.connect_sent);
+//
+//           //update recipient
+// 					user.connect_received.push(currentAcc.username);
+// 					user.updated_at = new Date();
+// 					user.save().then(result => {
+//             console.log(user.connect_received);
+//             console.log("Successfully connected!");
+// 						res.end();
+// 					}).catch(err => {
+// 						res.send(err);
+// 					});
+// 				});
+// 			}
+// 		});
+// 	});
+// });
+
 router.post('/connect', upload.single(), (req, res) => {
 	let user_id = req.body.user_id;
 	let account_id = req.body.account_id;
-	let connect = req.body.connect;
+	let status = req.body.status;
 	console.log(req.body);
-	if (connect == "true") {
-		User.findOne({'_id': account_id}, (err, currentAcc) => {
+
+	if (status === 'connect_request') {
+    User.findOne({'_id': account_id}, (err, currentAcc) => {
+  		User.findOne({'_id': user_id}, (err, user) => {
+        console.log(`Sender: ${currentAcc}`);
+        console.log(`Recipient: ${user}`);
+  			if (currentAcc.connect_sent.indexOf(user.username) < 0) {
+          //update sender
+  				currentAcc.connect_sent.push(user.username);
+  				currentAcc.updated_at = new Date();
+  				currentAcc.save().then(result => {
+            console.log(currentAcc.connect_sent);
+
+            //update recipient
+  					user.connect_received.push(currentAcc.username);
+  					user.updated_at = new Date();
+  					user.save().then(result => {
+              console.log(user.connect_received);
+              console.log("Successfully connected!");
+  						res.end();
+  					}).catch(err => {
+  						res.send(err);
+  					});
+  				});
+  			}
+        req.socketio.to(user._id).emit('connect noti', {user_id: user._id, name: user.name, avatar: user.avatar});
+  		});
+  	});
+	} else if (status === 'connect_accept') {
+    User.findOne({'_id': account_id}, (err, currentAcc) => {
+  		User.findOne({'_id': user_id}, (err, user) => {
+        console.log(`Sender: ${currentAcc.name}`);
+        console.log(`Recipient: ${user.name}`);
+
+  			if (currentAcc.connected.indexOf(user.username) < 0 && currentAcc.connect_received.indexOf(user.username) >= 0) {
+          //update sender
+          let i = currentAcc.connect_received.indexOf(user.username);
+          currentAcc.connect_received.splice(i, 1);
+  				currentAcc.connected.push(user.username);
+  				currentAcc.updated_at = new Date();
+  				currentAcc.save().then(result => {
+            console.log(currentAcc.connected);
+
+            //update recipient
+            let i = user.connect_sent.indexOf(currentAcc.username);
+            user.connect_sent.splice(i, 1);
+  					user.connected.push(currentAcc.username);
+  					user.updated_at = new Date();
+  					user.save().then(result => {
+              console.log(user.connected);
+              console.log("Successfully connected!");
+  						res.end();
+  					}).catch(err => {
+  						res.send(err);
+  					});
+  				});
+  			}
+  		});
+  	});
+	} else if (status === 'disconnect') {
+    User.findOne({'_id': account_id}, (err, currentAcc) => {
 			User.findOne({'_id': user_id}, (err, user) => {
-				if (currentAcc.connected.indexOf(user.username) < 0) {
-					currentAcc.connected.push(user.username);
-					currentAcc.updated_at = new Date();
-					currentAcc.save().then(result => {
-						console.log("Successfully connected!");
-						user.connected.push(currentAcc.username);
-						user.updated_at = new Date();
-						user.save().then(result => {
-							console.log("Successfully Connected With User!");
-							res.end();
-						}).catch(err => {
-							res.send(err);
-						});
-					});
-				}
-			})
-		});
-	}
-	else if (connect == "false")
-	{
-		User.findOne({'_id': account_id}, (err, currentAcc) => {
-			User.findOne({'_id': user_id}, (err, user) => {
-				if (currentAcc.connected.indexOf(user.username) >= 0)
-				{
+
+				if (currentAcc.connected.indexOf(user.username) >= 0) {
+          //update sender
 					let i = currentAcc.connected.indexOf(user.username);
 					currentAcc.connected.splice(i, 1);
 					currentAcc.updated_at = new Date();
 					currentAcc.save().then(result => {
 						console.log("Successfully disconnected");
+
+            //update recipient
 						let i = user.connected.indexOf(currentAcc.username);
 						user.connected.splice(i, 1);
 						user.updated_at = new Date();
 						user.save().then(result => {
-							console.log("Successfully removed connection!");
 							res.end();
 						}).catch(err => {
 							res.send(err);
@@ -625,7 +748,7 @@ router.post('/connect', upload.single(), (req, res) => {
 				res.send(err);
 			});
 		});
-	}
+  }
 });
 
 

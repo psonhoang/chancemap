@@ -18,6 +18,8 @@ const userSchema = mongoose.Schema({
 	website: String,
 	following: [String], // contain org's usernames
 	connected: [String],
+	connect_sent: [String],
+	connect_received: [String],
 	avatar: String,
 	new_notis: [mongoose.Schema.Types.ObjectId],
 	messages: [mongoose.Schema.Types.ObjectId],

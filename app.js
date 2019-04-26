@@ -106,6 +106,19 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(passport.authenticate('remember-me'));
 
+// Socket.IO
+const http = require('http');
+const server = http.Server(app);
+const socketIO = require('socket.io');
+const io = socketIO(server);
+var mSocket;
+var mAccountType;
+var connectedUsers = [];
+var currentSocket = {};
+//record of all connections
+var chatSession = [];
+var allMessages = [];
+
 app.use((req, res, next) => {
   if(req.isAuthenticated()) {
     Message.find((err, messages) => {
@@ -508,19 +521,6 @@ app.get('/', (req, res) => {
   });
 };
 });
-
-// Socket.IO
-const http = require('http');
-const server = http.Server(app);
-const socketIO = require('socket.io');
-const io = socketIO(server);
-var mSocket;
-var mAccountType;
-var connectedUsers = [];
-var currentSocket = {};
-//record of all connections
-var chatSession = [];
-var allMessages = [];
 
 io.on('connection', (socket) => {
   console.log('a user connected');

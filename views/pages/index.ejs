@@ -293,10 +293,14 @@
                       <h6 style="margin-bottom: 10px"><i class="ft-globe"></i> <%= user.website; %></h6>
                     <% } %>
                     <div class="media-left">
-                      <% if(account_type == 0 && (currentAcc.connected.indexOf(user.username) < 0)) { %>
-                          <button id="<%=user._id%>2" onclick="connect(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)" class="btn btn-info">Connect</button>
-                      <% } else if (account_type == 0 && (currentAcc.connected.indexOf(user.username) >= 0)) { %>
-                          <button id="<%=user._id%>2" onclick="disconnect(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)" class="btn btn-success">Connected</button>
+                      <% if (account_type == 0 && currentAcc.connected.indexOf(user.username) < 0 && currentAcc.connect_sent.indexOf(user.username) < 0 && currentAcc.connect_received.indexOf(user.username) < 0) { %>
+                          <button id="<%=user._id%>2" class="connect_button btn btn-info" onclick="sendRequest(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)"> Connect</button>
+                      <% } else if (account_type == 0 && currentAcc.connected.indexOf(user.username) < 0 && currentAcc.connect_sent.indexOf(user.username) >= 0 && currentAcc.connect_received.indexOf(user.username) < 0) { %>
+                          <button id="<%=user._id%>2" class="connect_button btn btn-info">Pending...</button>
+                      <% } else if (account_type == 0 && currentAcc.connected.indexOf(user.username) >= 0 && currentAcc.connect_sent.indexOf(user.username) < 0 && currentAcc.connect_received.indexOf(user.username) < 0) { %>
+                          <button id="<%=user._id%>2" class="connect_button btn btn-success" onclick="disconnect(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)">Connected</button>
+                      <% } else if (account_type == 0 && currentAcc.connected.indexOf(user.username) < 0 && currentAcc.connect_sent.indexOf(user.username) < 0 && currentAcc.connect_received.indexOf(user.username) >= 0) { %>
+                          <button id="<%=user._id%>2" class="connect_button btn btn-info" onclick="acceptRequest(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)">Accept</button>
                       <% } %>
                     </div>
                     <div class="media-body">
@@ -348,7 +352,10 @@
 <script>
   $(document).ready(function() {
     var socket = io();
-    socket.emit('connection');
+
+    socket.on('success', () => {
+      toastr.success(user_username + ' Accepted your connect request!');
+    })
 
     $('#search-input').tagging('removeAll');
     toastr.info("You're logged in as " + <%- JSON.stringify(currentAcc.username) %>, 'Welcome!', {positionClass: 'toast-top-center', containerId: 'toast-top-center'});
@@ -360,9 +367,33 @@
     $(button_id).toggle();
   }
 
-  function connect(account_id, user_id, user_username) {
-
+  function sendRequest(account_id, user_id, user_username) {
     let button_id = '#' + user_id + '2';
+    $(button_id).html('Pending...');
+
+    let formData = new FormData();
+    formData.append("user_id", user_id);
+    formData.append("account_id", account_id);
+    formData.append('status', 'connect_request');
+
+    $.ajax({
+      async: true,
+      url: '/connect',
+      method: 'POST',
+      processData: false,
+      contentType: false,
+      data: formData,
+      success: (data) => {
+        toastr.success(`Connect request sent to ${user_username}!`);
+      }
+    });
+  }
+
+  function acceptRequest(account_id, user_id, user_username) {
+    let button_id = '#' + user_id + '2';
+    let button_id2 = '#' + user_id + '-connect';
+
+    $(button_id2).remove();
     $(button_id).removeClass('btn-info');
     $(button_id).addClass('btn-success');
     $(button_id).html('Connected');
@@ -371,7 +402,7 @@
     let formData = new FormData();
     formData.append("user_id", user_id);
     formData.append("account_id", account_id);
-    formData.append('connect', true);
+    formData.append('status', 'connect_accept');
 
     $.ajax({
       async: true,
@@ -391,12 +422,12 @@
     $(button_id).removeClass('btn-success');
     $(button_id).addClass('btn-info');
     $(button_id).html('Connect');
-    $(button_id).attr('onclick', 'connect("' + account_id + '","' + user_id +'","' + user_username +'")');
+    $(button_id).attr('onclick', 'sendRequest("' + account_id + '","' + user_id +'","' + user_username +'")');
 
     let formData = new FormData();
     formData.append("user_id", user_id);
     formData.append("account_id", account_id);
-    formData.append("connect", false);
+    formData.append("status", 'disconnect');
 
     $.ajax({
       async: true,

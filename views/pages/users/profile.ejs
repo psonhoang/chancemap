@@ -296,24 +296,16 @@
               </a>
             </div>
             <div style="display: block; max-height: 400px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="card-body collapse-in" id="usersBody">
-              <% opportunities.forEach(opportunity => { %>
-              <% cardId = opportunity._id; %>
-              <tr class="btn-secondary" data-toggle="modal" data-target="#<%= cardId %>">
-                  <% if(opportunity.app_deadline) { %>
-                  <th scope="row"><%= months[opportunity.app_deadline.getMonth()] + ' ' + opportunity.app_deadline.getDate() + ', ' + opportunity.app_deadline.getFullYear() %></th>
-                  <% } else { %>
-                  <th scope="row">N/A</th>
-                  <% } %>
-                  <td>
-                      <li style="font-size: 16px"><strong><%= opportunity.name %></strong></li>
-                      <li style="font-style: italic"><%= opportunity.org_name %></li>
-                      <% if(opportunity.start_date) { %>
-                      <li style="font-size: small">Date: <%= months[opportunity.start_date.getMonth()] + ' ' + opportunity.start_date.getDate() + ', ' + opportunity.start_date.getFullYear() %></li>
-                      <% } %>
-                  </td>
-              </tr>
+              <% opportunities.forEach(opp => { %>
+              <% cardId = opp._id; %>
+              <div style="padding: 10px; border-bottom: 1px solid #E8E8E8" class="container-fluid btn-secondary" data-toggle="modal" data-target="#<%= cardId %>">
+                <h4><strong><%= opp.name %></strong></h4>
+                <h5 style="font-style: italic"><%= opp.org_name %></h5>
+                <h6>Deadline: <%= months[opp.app_deadline.getMonth()] + ' ' + opp.app_deadline.getDate() + ', ' + opp.app_deadline.getFullYear() %></h6>
+                <h6>Date: <%= months[opp.start_date.getMonth()] + ' ' + opp.start_date.getDate() + ', ' + opp.start_date.getFullYear() %></h6>
+              </div>
               <!-- Opportunity Modal Starts -->
-              <%- include('opportunityCardModal', {opportunity: opportunity, months: months}); %>
+              <%- include('opportunityCardModal', {opportunity: opp, months: months}); %>
               <% }); %>
               <!-- Opportunity Modal Ends-->
             </div>

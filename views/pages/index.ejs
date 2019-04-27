@@ -32,13 +32,6 @@
               <div class="card-body collapse-in">
                 <div style="display: block; max-height: 500px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="table-responsive">
                   <table class="table">
-                    <thead style="color: white" class="thead bg-blue-grey bg-darken-3">
-                      <tr>
-                        <th style="width: 10%; text-align: center">Avatar</th>
-                        <th style="width: 50%; text-align: center">Organization</th> <!-- Includes info: event name, org, location, time, tags -->
-                        <th style="width: 40%; text-align: center">#</th>
-                      </tr>
-                    </thead>
                     <tbody id="orgsBody">
                       <% orgs.forEach(org => { %>
                         <% if (org.username != currentAcc.username) { %>
@@ -192,11 +185,6 @@
             <div class="card" style="display: block; max-height: 500px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;">
                 <div class="table-responsive">
                     <table class="table">
-                        <thead style="color: white" class="thead bg-blue-grey bg-darken-3">
-                            <th>Deadline</th>
-                            <th>Event</th>
-                            <th>Hashtags</th>
-                        </thead>
                         <tbody id="eventsBody">
                             <% events.forEach(event => { %>
                             <% cardId = event._id; %>
@@ -219,7 +207,11 @@
                                     <button class="btn btn-info" onclick="showEventHashtags(<%= JSON.stringify(event._id) %>)">Show hashtags</button>
                                   </div>
                                   <div class="media-body">
+                                  <% if (account_type == 0 && currentAcc.events.indexOf(event._id) < 0) { %>
                                     <button id="<%= event._id %>3" class="btn btn-info" onclick="addEvent(<%= JSON.stringify(event._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
+                                  <% } else if (account_type == 0 && currentAcc.events.indexOf(event._id) >= 0) { %>
+                                    <button id="<%= event._id %>3" class="btn btn-success" onclick="removeEvent(<%= JSON.stringify(event._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
+                                  <% } %>
                                   </div>
                                   <br>
                                   <div id="<%= event._id %>2" class="hashes">
@@ -269,7 +261,11 @@
                     <button class="btn btn-info" onclick="showJobHashtags(<%= JSON.stringify(job._id) %>)">Show hashtags</button>
                   </div>
                   <div class="media-body">
+                  <% if (account_type == 0 && currentAcc.jobs.indexOf(job._id) < 0) { %>
                     <button id="<%= job._id %>3" class="btn btn-info" onclick="addJob(<%= JSON.stringify(job._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
+                  <% } else if (account_type == 0 && currentAcc.jobs.indexOf(job._id) >= 0) { %>
+                    <button id="<%= job._id %>3" class="btn btn-success" onclick="removeJob(<%= JSON.stringify(job._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
+                  <% } %>
                   </div>
                   <br>
                   <div id="<%= job._id %>2" class="hashes">
@@ -309,55 +305,54 @@
             <div class="card">
               <div style="display: block; max-height: 400px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar; " class="table-responsive">
                 <table class="table">
-                  <thead style="color: white" class="thead bg-blue-grey bg-darken-3">
-                      <th>Deadline</th>
-                      <th>Opportunity</th>
-                      <th>Hashtags</th>
-                  </thead>
                   <tbody id="opportunitiesBody">
-                      <% opportunities.forEach(opportunity => { %>
-                      <% cardId = opportunity._id; %>
-                      <tr class="btn-secondary">
-                          <% if(opportunity.app_deadline) { %>
-                          <th style="max-width: 40px"><%= months[opportunity.app_deadline.getMonth()] + ' ' + opportunity.app_deadline.getDate() + ', ' + opportunity.app_deadline.getFullYear() %></th>
-                          <% } else { %>
-                          <th style="max-width: 40px">N/A</th>
+                    <% opportunities.forEach(opportunity => { %>
+                    <% cardId = opportunity._id; %>
+                    <tr class="btn-secondary">
+                        <% if(opportunity.app_deadline) { %>
+                        <th style="max-width: 40px"><%= months[opportunity.app_deadline.getMonth()] + ' ' + opportunity.app_deadline.getDate() + ', ' + opportunity.app_deadline.getFullYear() %></th>
+                        <% } else { %>
+                        <th style="max-width: 40px">N/A</th>
+                        <% } %>
+                        <td style="max-width: 250px">
+                            <li style="font-size: 16px" data-toggle="modal" data-target="#<%= cardId %>"><strong><%= opportunity.name %></strong></li>
+                            <li style="font-style: italic"><%= opportunity.org_name %></li>
+                            <% if(opportunity.start_date) { %>
+                            <li style="font-size: small">Date: <%= months[opportunity.start_date.getMonth()] + ' ' + opportunity.start_date.getDate() + ', ' + opportunity.start_date.getFullYear() %></li>
+                            <% } %>
+                        </td>
+                        <td style="max-width: 120px; padding-right: 30px">
+                          <div class="media-left">
+                            <button class="btn btn-info" onclick="showOpportunityHashtags(<%= JSON.stringify(opportunity._id) %>)">Show hashtags</button>
+                          </div>
+                          <div class="media-body">
+                          <% if (account_type == 0 && currentAcc.opps.indexOf(opportunity._id) < 0) { %>
+                            <button id="<%= opportunity._id %>3" class="btn btn-info" onclick="addOpportunity(<%= JSON.stringify(opportunity._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
+                          <% } else if (account_type == 0 && currentAcc.opps.indexOf(opportunity._id) >= 0) { %>
+                            <button id="<%= opportunity._id %>3" class="btn btn-success" onclick="removeOpportunity(<%= JSON.stringify(opportunity._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
                           <% } %>
-                          <td style="max-width: 250px">
-                              <li style="font-size: 16px" data-toggle="modal" data-target="#<%= cardId %>"><strong><%= opportunity.name %></strong></li>
-                              <li style="font-style: italic"><%= opportunity.org_name %></li>
-                              <% if(opportunity.start_date) { %>
-                              <li style="font-size: small">Date: <%= months[opportunity.start_date.getMonth()] + ' ' + opportunity.start_date.getDate() + ', ' + opportunity.start_date.getFullYear() %></li>
+                          </div>
+                          <br>
+                          <div id="<%= opportunity._id %>2" class="hashes">
+                          <% opportunity.hashtags.forEach(hashtag => { %>
+                              <% var isMatch = false; %>
+                              <% criteriaList.forEach(criteria => { %>
+                              <% if (hashtag.includes(criteria) && !isMatch) { %>
+                                  <% isMatch = true; %>
+                                  <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
                               <% } %>
-                          </td>
-                          <td style="max-width: 80px">
-                            <div class="media-left">
-                              <button class="btn btn-info" onclick="showOpportunityHashtags(<%= JSON.stringify(opportunity._id) %>)">Show hashtags</button>
-                            </div>
-                            <div class="media-body">
-                              <button id="<%= opportunity._id %>3" class="btn btn-info" onclick="addOpportunity(<%= JSON.stringify(opportunity._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
-                            </div>
-                            <br>
-                            <div id="<%= opportunity._id %>2" class="hashes">
-                            <% opportunity.hashtags.forEach(hashtag => { %>
-                                <% var isMatch = false; %>
-                                <% criteriaList.forEach(criteria => { %>
-                                <% if (hashtag.includes(criteria) && !isMatch) { %>
-                                    <% isMatch = true; %>
-                                    <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
-                                <% } %>
-                                <% }); %>
-                                <% if (!isMatch) { %>
-                                <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
-                                <% } %>
-                            <% }); %>
-                            </div>
-                          </td>
-                      </tr>
-                      <!-- Opportunity Modal Starts -->
-                      <%- include('opportunityCardModal', {opportunity: opportunity, months: months}); %>
-                      <% }); %>
-                      <!-- Opportunity Modal Ends-->
+                              <% }); %>
+                              <% if (!isMatch) { %>
+                              <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
+                              <% } %>
+                          <% }); %>
+                          </div>
+                        </td>
+                    </tr>
+                    <!-- Opportunity Modal Starts -->
+                    <%- include('opportunityCardModal', {opportunity: opportunity, months: months}); %>
+                    <% }); %>
+                    <!-- Opportunity Modal Ends-->
                   </tbody>
                 </table>
               </div>
@@ -424,7 +419,7 @@
     let button_id = '#' + event_id + '3';
     $(button_id).removeClass('btn-info');
     $(button_id).addClass('btn-success');
-    $(button_id).attr('onclick', `removeEvent(${event_id})`);
+    $(button_id).attr('onclick', 'removeEvent("'+ event_id + '","' + account_id + '")');
 
     let formData = new FormData();
     formData.append("event_id", event_id);
@@ -449,7 +444,7 @@
     let button_id = '#' + job_id + '3';
     $(button_id).removeClass('btn-info');
     $(button_id).addClass('btn-success');
-    $(button_id).attr('onclick', `removeJob(${job_id})`);
+    $(button_id).attr('onclick', 'removeJob("'+ job_id + '","' + account_id + '")');
 
     let formData = new FormData();
     formData.append("job_id", job_id);
@@ -473,7 +468,7 @@
     let button_id = '#' + opp_id + '3';
     $(button_id).removeClass('btn-info');
     $(button_id).addClass('btn-success');
-    $(button_id).attr('onclick', `removeOpportunity(${opp_id})`);
+    $(button_id).attr('onclick', 'removeOpportunity("' + opp_id + '","' + account_id + '")');
 
     let formData = new FormData();
     formData.append("opp_id", opp_id);
@@ -497,7 +492,7 @@
     let button_id = '#' + event_id + '3';
     $(button_id).removeClass('btn-success');
     $(button_id).addClass('btn-info');
-    $(button_id).attr('onclick', `addEvent(${event_id})`);
+    $(button_id).attr('onclick', 'addEvent("'+ event_id + '","' + account_id + '")');
 
     let formData = new FormData();
     formData.append("event_id", event_id);
@@ -512,7 +507,7 @@
       contentType: false,
       data: formData,
       success: (data) => {
-        toastr.success(`Event removed!`);
+        toastr.warning(`Event removed!`);
       }
     });
   }
@@ -521,7 +516,7 @@
     let button_id = '#' + job_id + '3';
     $(button_id).removeClass('btn-success');
     $(button_id).addClass('btn-info');
-    $(button_id).attr('onclick', `addJob(${job_id})`);
+    $(button_id).attr('onclick', 'addJob("'+ job_id + '","' + account_id + '")');
 
     let formData = new FormData();
     formData.append("job_id", job_id);
@@ -536,7 +531,7 @@
       contentType: false,
       data: formData,
       success: (data) => {
-        toastr.success(`Job removed!`);
+        toastr.warning(`Job removed!`);
       }
     });
   }
@@ -545,7 +540,7 @@
     let button_id = '#' + opp_id + '3';
     $(button_id).removeClass('btn-success');
     $(button_id).addClass('btn-info');
-    $(button_id).attr('onclick', `addOpportunity(${opp_id})`);
+    $(button_id).attr('onclick', 'addOpportunity("' + opp_id + '","' + account_id + '")');
 
     let formData = new FormData();
     formData.append("opp_id", opp_id);
@@ -560,7 +555,7 @@
       contentType: false,
       data: formData,
       success: (data) => {
-        toastr.success(`Opportunity removed!`);
+        toastr.warning(`Opportunity removed!`);
       }
     });
   }

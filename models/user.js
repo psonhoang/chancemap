@@ -13,7 +13,6 @@ const userSchema = mongoose.Schema({
 	intro: String,
 	school: String,
 	resume_file: String, // stores resume file's link (optional)
-	// jobs: [mongoose.Schema.Types.ObjectId],
 	facebook: String,
 	website: String,
 	following: [String], // contain org's usernames
@@ -23,10 +22,9 @@ const userSchema = mongoose.Schema({
 	avatar: String,
 	new_notis: [mongoose.Schema.Types.ObjectId],
 	messages: [mongoose.Schema.Types.ObjectId],
-	// msg_noti: Number,
 	events: [mongoose.Schema.Types.ObjectId],
+	opps: [mongoose.Schema.Types.ObjectId],
 	jobs: [mongoose.Schema.Types.ObjectId],
-	opportunities: [mongoose.Schema.Types.ObjectId],
 });
 
 // Export User model

@@ -467,13 +467,16 @@ router.get('/profile', (req, res) => {
                 Message.find((err, messages) => {
                   let following = orgs.filter(org => currentUser.following.indexOf(org.username) >= 0);
                   let connected = users.filter(user => currentUser.connected.indexOf(user.username) >= 0);
+                  let interestedEvent = events.filter(event => currentUser.events.indexOf(event._id) >= 0);
+                  let interestedJob = jobs.filter(job => currentUser.jobs.indexOf(job._id) >= 0);
+                  let interestedOpp = opportunities.filter(opp => currentUser.opps.indexOf(opp._id) >= 0);
                   res.render('users/profile', {
                     title: 'ChanceMap | Following',
           					orgs: following,
                     users: connected,
-                    events: events,
-                    jobs: jobs,
-                    opportunities: opportunities,
+                    events: interestedEvent,
+                    jobs: interestedJob,
+                    opportunities: interestedOpp,
           					account_type: currentAcc.account_type,
           					account_id: currentAcc.account_id,
                     currentAcc: currentUser,
@@ -573,90 +576,6 @@ router.post('/profile/user', upload.fields([{name: 'avatar', maxCount: 1}, {name
 	});
 });
 
-// router.post('/connect', upload.single(), (req, res) => {
-// 	let user_id = req.body.user_id;
-// 	let account_id = req.body.account_id;
-// 	let connect = req.body.connect;
-// 	console.log(req.body);
-// 	if (connect == "true") {
-// 		User.findOne({'_id': account_id}, (err, currentAcc) => {
-// 			User.findOne({'_id': user_id}, (err, user) => {
-// 				if (currentAcc.connected.indexOf(user.username) < 0) {
-// 					currentAcc.connected.push(user.username);
-// 					currentAcc.updated_at = new Date();
-// 					currentAcc.save().then(result => {
-// 						console.log("Successfully connected!");
-// 						user.connected.push(currentAcc.username);
-// 						user.updated_at = new Date();
-// 						user.save().then(result => {
-// 							console.log("Successfully Connected With User!");
-// 							res.end();
-// 						}).catch(err => {
-// 							res.send(err);
-// 						});
-// 					});
-// 				}
-// 			})
-// 		});
-// 	}
-// 	else if (connect == "false") {
-// 		User.findOne({'_id': account_id}, (err, currentAcc) => {
-// 			User.findOne({'_id': user_id}, (err, user) => {
-// 				if (currentAcc.connected.indexOf(user.username) >= 0)
-// 				{
-// 					let i = currentAcc.connected.indexOf(user.username);
-// 					currentAcc.connected.splice(i, 1);
-// 					currentAcc.updated_at = new Date();
-// 					currentAcc.save().then(result => {
-// 						console.log("Successfully disconnected");
-// 						let i = user.connected.indexOf(currentAcc.username);
-// 						user.connected.splice(i, 1);
-// 						user.updated_at = new Date();
-// 						user.save().then(result => {
-// 							console.log("Successfully removed connection!");
-// 							res.end();
-// 						}).catch(err => {
-// 							res.send(err);
-// 						});
-// 					});
-// 				}
-// 			}).catch(err => {
-// 				res.send(err);
-// 			});
-// 		});
-// 	}
-// });
-
-// router.post('/connect_request', upload.single(), (req, res) => {
-//   let user_id = req.body.user_id;
-// 	let account_id = req.body.account_id;
-// 	User.findOne({'_id': account_id}, (err, currentAcc) => {
-// 		User.findOne({'_id': user_id}, (err, user) => {
-//       console.log(`Sender: ${currentAcc}`);
-//       console.log(`Recipient: ${user}`);
-// 			if (currentAcc.connect_sent.indexOf(user.username) < 0) {
-//         //update sender
-// 				currentAcc.connect_sent.push(user.username);
-// 				currentAcc.updated_at = new Date();
-// 				currentAcc.save().then(result => {
-//           console.log(currentAcc.connect_sent);
-//
-//           //update recipient
-// 					user.connect_received.push(currentAcc.username);
-// 					user.updated_at = new Date();
-// 					user.save().then(result => {
-//             console.log(user.connect_received);
-//             console.log("Successfully connected!");
-// 						res.end();
-// 					}).catch(err => {
-// 						res.send(err);
-// 					});
-// 				});
-// 			}
-// 		});
-// 	});
-// });
-
 // users connecting function
 router.post('/connect', upload.single(), (req, res) => {
 	let user_id = req.body.user_id;
@@ -681,7 +600,7 @@ router.post('/connect', upload.single(), (req, res) => {
   					user.updated_at = new Date();
   					user.save().then(result => {
               console.log(user.connect_received);
-              console.log("Successfully connected!");
+              console.log("Connect request sent!");
   						res.end();
   					}).catch(err => {
   						res.send(err);
@@ -753,50 +672,79 @@ router.post('/connect', upload.single(), (req, res) => {
 });
 
 // add events/jobs/opportunities function
-router.post('add_items', upload.single(), (req, res) => {
+router.post('/add_items', upload.single(), (req, res) => {
   let account_id = req.body.account_id;
   let status = req.body.status;
+  console.log(status);
 
   User.findOne({'_id': account_id}, (err, user) => {
-    console.log(user);
-    if (status === 'add_event') {
+    if (status === 'add_event' && user.events.indexOf(req.body.event_id) < 0) {
       let event_id = req.body.event_id;
       user.events.push(event_id);
       user.updated_at = new Date();
       user.save().then(result => {
         console.log(user.events);
       })
-    } else if (status === 'add_job') {
+    } else if (status === 'add_job' && user.jobs.indexOf(req.body.job_id) < 0) {
       let job_id = req.body.job_id;
       user.jobs.push(job_id);
       user.updated_at = new Date();
       user.save().then(result => {
         console.log(user.jobs);
       })
-    } else if (status === 'add_opp') {
+    } else if (status === 'add_opp' && user.opps.indexOf(req.body.opp_id) < 0) {
       let opp_id = req.body.opp_id;
-      user.opportunities.push(opp_id);
+      user.opps.push(opp_id);
       user.updated_at = new Date();
       user.save().then(result => {
-        console.log(user.opportunities);
+        console.log(user.opps);
       })
     }
   })
 })
 
 // remove events/jobs/opportunities function
-router.post('remove_items', upload.single(), (req, res) => {
+router.post('/remove_items', upload.single(), (req, res) => {
   let account_id = req.body.account_id;
   let status = req.body.status;
+  console.log(status);
+  console.log(account_id);
 
-  if (status === 'add_event') {
-
-  } else if (status === 'add_job') {
-
-  } else if (status === 'add_opp') {
-
-  }
-})
+  User.findOne({'_id': account_id}, (err, user) => {
+    // console.log(user);
+    if (status === 'remove_event' && user.events.indexOf(req.body.event_id) >= 0) {
+      let event_id = req.body.event_id;
+      let i = user.events.indexOf(event_id);
+      user.events.splice(i, 1);
+      user.updated_at = new Date();
+      user.save().then(result => {
+        console.log('Event removed')
+        console.log(user.events);
+      });
+    } else if (status === 'remove_job' && user.jobs.indexOf(req.body.job_id) >= 0) {
+      let job_id = req.body.job_id;
+      let i = user.jobs.indexOf(job_id);
+      user.jobs.splice(i, 1);
+      user.updated_at = new Date();
+      user.save().then(result => {
+        console.log('Job removed')
+        console.log(user.jobs);
+      });
+    } else if (status === 'remove_opp' && user.opps.indexOf(req.body.opp_id) >= 0) {
+      let opp_id = req.body.opp_id;
+      console.log(opp_id);
+      console.log(user.opps);
+      let i = user.opps.indexOf(opp_id);
+      console.log(i);
+      user.opps.splice(i, 1);
+      user.updated_at = new Date();
+      user.save().then(result => {
+        console.log('Opportunity removed')
+        console.log(user.opps);
+      });
+    }
+  });
+});
 
 
 // @route POST

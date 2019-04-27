@@ -448,29 +448,24 @@ router.post('/register/org', upload.single('avatar'), (req, res) => {
 
 // user profile
 router.get('/profile', (req, res) => {
-  console.log(req.query.criteriaList);
 	let currentAcc = req.user;
   let account_type = currentAcc.account_type;
 	console.log(currentAcc);
   if(account_type == 0) {
     User.findOne({'_id': currentAcc.account_id}, (err, currentUser) => {
-      let criteriaList = currentUser.interests.concat(currentUser.skills);
-      if(err) {
-  			console.log(err);
-  			return;
-  		}
       Org.find((err, orgs) => {
         User.find((err, users) => {
           Event.find((err, events) => {
             Job.find((err, jobs) => {
               Opportunity.find((err, opportunities) => {
                 Message.find((err, messages) => {
+                  let criteriaList = currentUser.interests.concat(currentUser.skills);
                   let following = orgs.filter(org => currentUser.following.indexOf(org.username) >= 0);
                   let connected = users.filter(user => currentUser.connected.indexOf(user.username) >= 0);
                   let interestedEvent = events.filter(event => currentUser.events.indexOf(event._id) >= 0);
                   let interestedJob = jobs.filter(job => currentUser.jobs.indexOf(job._id) >= 0);
                   let interestedOpp = opportunities.filter(opp => currentUser.opps.indexOf(opp._id) >= 0);
-                  res.render('users/profile', {
+                  res.render('users/myProfile', {
                     title: 'ChanceMap | Following',
           					orgs: following,
                     users: connected,
@@ -508,6 +503,52 @@ router.get('/profile', (req, res) => {
           currentAcc: org,
           page: page,
           notis: req.notis
+        });
+      });
+    });
+  }
+});
+
+router.get('/profile/:id', (req, res) => {
+  let account_id = req.user.account_id;
+  let user_id = req.params.id;
+
+  if(account_id != user_id) {
+    User.findOne({'_id': account_id}, (err, currentAcc) => {
+      User.findOne({'_id': user_id}, (err, currentUser) => {
+        Org.find((err, orgs) => {
+          User.find((err, users) => {
+            Event.find((err, events) => {
+              Job.find((err, jobs) => {
+                Opportunity.find((err, opportunities) => {
+                  Message.find((err, messages) => {
+                    let criteriaList = currentUser.interests.concat(currentUser.skills);
+                    let following = orgs.filter(org => currentUser.following.indexOf(org.username) >= 0);
+                    let connected = users.filter(user => currentUser.connected.indexOf(user.username) >= 0);
+                    let interestedEvent = events.filter(event => currentUser.events.indexOf(event._id) >= 0);
+                    let interestedJob = jobs.filter(job => currentUser.jobs.indexOf(job._id) >= 0);
+                    let interestedOpp = opportunities.filter(opp => currentUser.opps.indexOf(opp._id) >= 0);
+                    res.render('users/othersProfile', {
+                      title: 'ChanceMap | Following',
+                      orgs: following,
+                      users: connected,
+                      account_type: currentUser.account_type,
+                      account_id: currentUser.account_id,
+                      currentUser: currentUser,
+                      currentAcc: currentAcc,
+                      notis: req.notis,
+                      criteriaList: criteriaList,
+                      connected: connected,
+                      messages: messages,
+                      events: interestedEvent,
+                      jobs: interestedJob,
+                      opportunities: interestedOpp,
+                    })
+                  });
+                });
+              });
+            });
+          });
         });
       });
     });

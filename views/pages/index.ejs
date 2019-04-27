@@ -108,16 +108,15 @@
             </div>
             <div style="display: block; max-height: 500px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="card-body collapse-in" id="usersBody">
               <% users.forEach( user => { %>
-              <% cardId = user._id; %>
                 <% if (currentAcc.username != user.username) { %>
-                  <div style="padding: 10px; border-bottom: 1px solid #E8E8E8" class="container-fluid btn-secondary">
+                  <div style="padding: 10px; border-bottom: 1px solid #E8E8E8" class="container-fluid">
                     <div style="margin-bottom: 20px;" class="media">
                       <div class="media-left">
                         <img src="<%= user.avatar; %>" class="media-object rounded-circle width-50 height-50" alt="org avatar" >
                       </div>
-                      <div class="media-body" data-toggle="modal" data-target="#<%= cardId %>">
+                      <div class="media-body">
                           <p class="list-group-item-heading" style="font-size: 16px;">
-                            <strong><%= user.name; %></strong>
+                            <a href="/profile/<%= user._id %>"><strong><%= user.name; %></strong></a>
                           </p>
                           <h6 class="list-group-item-text" style="font-style: italic">
                             @<%= user.username; %>
@@ -163,9 +162,6 @@
                     </div>
                   </div>
                 <% } %>
-                <!-- User Modal Starts -->
-                <%- include('userCardModal', {user: user}); %>
-                <!-- User Modal Ends -->
               <% }); %>
             </div>
           </div>

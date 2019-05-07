@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // Org Profile Schema
-const orgPageSchema = mongoose.Schema({
+const orgProfileSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     created_at: {type: Date},
 	updated_at: {type: Date},
@@ -12,4 +12,4 @@ const orgPageSchema = mongoose.Schema({
 });
 
 // Export Org model
-module.exports = mongoose.model('OrgPage', orgPageSchema);
+module.exports = mongoose.model('OrgProfile', orgProfileSchema);

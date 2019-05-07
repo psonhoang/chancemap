@@ -1,0 +1,525 @@
+<% extend('../../defaultLayouts/defaultLayout.ejs'); %>
+<% var months = ["January", "February", "March", "April", "May", "June", "July","August", "September", "October","November", "December"]; %>
+<div class="app-content content container-fluid">
+    
+    <div class="content-wrapper">
+        <div class="content-header row">
+            <div class="content-header-left col-md-6 col-xs-12 mb-2">
+                <h3 class="content-header-title mb-0">Organizations</h3>
+                <div class="row breadcrumbs-top">
+                <div class="breadcrumb-wrapper col-xs-12">
+                    <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="/orgs">Dashboard</a>
+                    </li>
+                    <li class="breadcrumb-item active"><%= org.name %>
+                    </li>
+                    </ol>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-body">
+
+            <div class="row"> <!-- Overview Card -->
+                <div class="col-md-3 col-lg-3 text-xs-center">
+                        <img id="avatar" src='<%=  org.avatar; %>' class="rounded-circle width-200 height-200" alt="Card image">
+                        <br><br>
+                        <% if(account_type == 0 && (currentAcc.following.indexOf(org.username) < 0)) { %>
+                            <buton id="<%= org._id %>" onclick="follow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)" class="btn btn-lg btn-info"><i class="fa fa-eye"></i> Follow</buton>
+                        <% } else if (account_type == 0 && (currentAcc.following.indexOf(org.username) >= 0)) { %>
+                            <buton id="<%= org._id %>" onclick="unfollow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)"class="btn btn-lg btn-success"><i class="fa fa-check"></i> Followed</buton>
+                        <% } %>
+                </div>
+                <div class="col-lg-9 col-md-9">
+                    <div class="card">
+                        <div style="color: white" class="card-header bg-darken bg-teal"> <!-- Card Header -->
+                            <h4 class="card-title">OVERVIEW</h4>
+                            <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-large-3"></i></a>
+                            <div class="heading-elements">
+                                <ul class="list-inline mb-0">
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body collapse in">
+                            <div class="card-block">
+                                <p><lable>Name: </lable><b style="font-size: 30"><%= org.name %></b></p>
+                                <p><label>Hashtags:</label>
+                                    <% var hashtags = org.hashtags; %>
+                                        <% hashtags.forEach (hashtag => { %>
+                                            <% var isMatch = false; %>
+                                            <% criteriaList.forEach(criteria => { %>
+                                            <% if (hashtag.includes(criteria) && !isMatch) { %>
+                                                <% isMatch = true; %>
+                                                <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
+                                            <% } %>
+                                            <% }); %>
+                                            <% if (!isMatch) { %>
+                                            <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
+                                        <% } %>
+                                    <% }); %>
+                                </p>
+                                <p><label>Our Facebook: </label>
+                                    <b>
+                                    <a href="<%= org.facebook %>" style="font-style: medium">
+                                    <% if (org.facebook != "") { %>
+                                        <%= org.facebook %>
+                                    <% } else { %>
+                                        N/A
+                                    <% } %>
+                                    </a>    
+                                    </b>
+                                </p>
+                                <p><label>Our Website: </label>
+                                    <b>
+                                        <% if (org.website != "") { %>
+                                            <%= org.website %>
+                                        <% } else { %>
+                                            Not available
+                                        <% } %>
+                                    </b>
+                                </p>
+                                <p><label>Our Email: </label>
+                                    <b>
+                                        <% if (org.email != "") { %>
+                                            <%= org.email %>
+                                        <% } else { %>
+                                            N/A
+                                        <% } %>
+                                    </b>
+                                </p>
+                                <p><label>Our story:</label><b> <%= org.desc %></b></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+
+            <div class="row match-height"> <!-- Who we are + Facebook + Our Team-->
+                <!-- Facebook embed -->
+                <div class="fb-page col-lg-5 col-md-5" data-width="470px" data-height="700px" data-href="<%= org.facebook %>" data-tabs="timeline, events" data-small-header="false" data-adapt-container-width="false" data-hide-cover="false" data-show-facepile="true"></div>
+                <div class="col-lg-7 col-md-7">
+                    <div class="row" id="who-we-are"> <!-- Who we are -->
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div style="color: white" class="card-header bg-red"> <!-- Card Header -->
+                                    <h4 class="card-title">WHO WE ARE</h4>
+                                    <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-large-3"></i></a>
+                                </div> 
+                                <div class="heading-elements">
+                                    <ul class="list-inline mb-0">
+                                    </ul>
+                                </div>
+                                <div class="card-body collapse-in">
+                                    <div class="card-block">
+                                        <div style="font-size: 15px"><label><b>What we do:</label></b>
+                                            <% let orgDesc = profile.what_we_do; %>
+                                            <% let res = orgDesc.split("/"); %>
+                                            <% res.forEach(para => { %>
+                                                <p> <%= para %> </p>
+                                            <% }); %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-xs-12">
+                            <div class="card" id="our-team">
+                                <div style="color: white" class="card-header bg-pink">
+                                    <h4 class="card-title"><i class="ft-users"></i> Our Team</h4>
+                                    <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
+                                    <div class="heading-elements">
+                                        <ul class="list-inline mb-0">
+                                        </ul>
+                                    </div>     
+                                </div>
+                                <div class="card-body collapse-in">
+                                    <div class="card-block">
+                                        <p><b><label>Our Team:</label></b> <%= profile.our_team %></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            
+            <div class="container">
+                <div class="row"> <!-- Carousel -->
+                    <div class="col-md-12 col-sm-12 col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">PICTURES</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-block">
+                                    <div id="org-carousel" class="carousel slide" data-ride="carousel" data-interval="false">
+                                        <ol class="carousel-indicators">
+                                            <li data-target="#org-carousel" data-slide-to="0" class="active"></li>
+                                            <li data-target="#org-carousel" data-slide-to="1"></li>
+                                            <li data-target="#org-carousel" data-slide-to="2"></li>
+                                        </ol>
+                                        <div class="carousel-inner" role="listbox"> 
+                                            <div class="carousel-item active" style="text-align: center">                                         
+                                                <img src="https://image.freepik.com/free-vector/abstract-dynamic-pattern-wallpaper-vector_53876-59131.jpg" alt="First slide" style="height: 500px">
+                                            </div>
+                                            <div class="carousel-item" style="text-align: center">
+                                                <img src="https://images.unsplash.com/photo-1502759683299-cdcd6974244f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80" alt="Second slide" style="height: 500px">
+                                            </div>
+                                            <div class="carousel-item" style="text-align: center">
+                                                <img src="https://image.freepik.com/free-vector/abstract-dynamic-pattern-wallpaper-vector_53876-59131.jpg" alt="Third slide" style="height: 500px">
+                                            </div>
+                                        </div>
+                                        <a class="left carousel-control" href="#org-carousel" role="button" data-slide="prev">
+                                            <span class="icon-prev" aria-hidden="true"></span>
+                                            <span class="sr-only">Previous</span>
+                                        </a>
+                                        <a class="right carousel-control" href="#org-carousel" role="button" data-slide="next">
+                                            <span class="icon-next" aria-hidden="true"></span>
+                                            <span class="sr-only">Next</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+
+            <div class="row"> <!-- Jobs and events -->
+                <div class="col-lg-6 col-xl-6 col-md-6"> 
+                </div>
+                <div class="col-lg-6 col-xl-6 col-md-6"> 
+                    <div class="row"> <!-- Jobs -->
+                        <div class="col-lg-12 col-md-12 col-sm-12">
+                            <div class="card">
+                                <div style="color: white" class="card-header bg-blue bg-accent-2">
+                                    <h4 class="card-title"><i class="ft-clipboard"></i> Jobs</h4>
+                                    <a class="heading-elements-toggle">
+                                        <i class="fa fa-ellipsis-v font-medium-3"></i>
+                                    </a>
+                                </div>
+                                <div style="display: block; max-height: 300px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="card-body collapse-in">
+                                    <% let jobCount = 0; %>
+                                    <% jobs.forEach(job => { %>
+                                        <% if(job.org_name == org.name) { %>
+                                        <div style="margin: 5px; padding: 10px; border-bottom: 2px solid #92a8d1" class="container-fluid">
+                                            <h4><strong><%= job.name %></strong></h4>
+                                            <h5 style="font-style: italic">-<%= job.org_name %>-</h5>
+                                            <h6>Deadline: <%= months[job.app_deadline.getMonth()] + ' ' + job.app_deadline.getDate() + ', ' + job.app_deadline.getFullYear() %></h6>
+                                            <% job.hashtags.forEach(hashtag => { %>
+                                                <% var isMatch = false; %>
+                                                <% criteriaList.forEach(criteria => { %>
+                                                    <% if (hashtag.includes(criteria) && !isMatch) { %>
+                                                        <% isMatch = true; %>
+                                                        <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
+                                                    <% } %>
+                                                <% }); %>
+                                                <% if (!isMatch) { %>
+                                                    <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
+                                                <% } %>
+                                            <% }); %>
+                                        </div>
+                                        <% jobCount += 1; %>
+                                        <% } %>
+                                        <!-- Job Modal Starts -->
+                                        <%- include('../../partials/jobCardModal', { job: job, admin: false, months: months, cardId: job._id }); %>
+                                        <!-- Job Modal Ends -->
+                                    <% }); %>
+                                    <% if (jobCount == 0) { %>
+                                        <div style="margin: 5px; padding: 10px; border-bottom: 2px solid #92a8d1" class="container-fluid">
+                                            <h4>This organisation has no jobs available</h4>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row"> <!-- Events -->
+                        <div class="col-lg-12 col-md-12 col-sm-12">
+                            <div class="card">
+                                <div style="color: white" class="card-header bg-amber bg-darken-1">
+                                    <h4 class="card-title"><i class="ft-calendar"></i> Events</h4>
+                                    <a class="heading-elements-toggle">
+                                        <i class="fa fa-ellipsis-v font-medium-3"></i>
+                                    </a>
+                                </div>
+                                <div class="card"
+                                    style="display: block; max-height: 500px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;">
+                                    <div class="table-responsive">
+                                        <table class="table" style="margin-bottom: 0px">
+                                            <tbody id="eventsBody">
+                                                <% let eventCount = 0; %>
+                                                <% events.forEach(event => { %>
+                                                <tr class="btn-secondary">
+                                                    <% if(event.reg_deadline) { %>
+                                                    <th style="width:50px">
+                                                        <%= months[event.reg_deadline.getMonth()] + ' ' + event.reg_deadline.getDate() + ', ' + event.reg_deadline.getFullYear() %>
+                                                    </th>
+                                                    <% } else { %>
+                                                    <th style="width:50px">N/A</th>
+                                                    <% } %>
+                                                    <td style="max-width: 130px">
+                                                        <li style="font-size: 16px"><strong><%= event.name %></strong></li>
+                                                        <li style="font-style: italic"><%= event.org_name %></li>
+                                                        <% if(event.start_date) { %>
+                                                        <li style="font-size: small">Date:
+                                                            <%= months[event.start_date.getMonth()] + ' ' + event.start_date.getDate() + ', ' + event.start_date.getFullYear() %>
+                                                        </li>
+                                                        <% } %>
+                                                        <li style="font-size: small">At: <%= event.address %></li>
+                                                    </td>
+                                                    <td style="max-width: 120px">
+                                                        <div class="media-left">
+                                                            <button class="btn btn-info"
+                                                                onclick="showEventHashtags(<%= JSON.stringify(event._id) %>)">Show hashtags</button>
+                                                        </div>
+                                                        <div class="media-body">
+                                                            <% if (account_type == 0 && currentAcc.events.indexOf(event._id) < 0) { %>
+                                                            <button id="<%= event._id %>3" class="btn btn-info"
+                                                                onclick="addEvent(<%= JSON.stringify(event._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
+                                                            <% } else if (account_type == 0 && currentAcc.events.indexOf(event._id) >= 0) { %>
+                                                            <button id="<%= event._id %>3" class="btn btn-success"
+                                                                onclick="removeEvent(<%= JSON.stringify(event._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
+                                                            <% } %>
+                                                        </div>
+                                                        <br>
+                                                        <div id="<%= event._id %>2" class="hashes">
+                                                            <% event.hashtags.forEach(hashtag => { %>
+                                                            <% var isMatch = false; %>
+                                                            <% criteriaList.forEach(criteria => { %>
+                                                            <% if (hashtag.includes(criteria) && !isMatch) { %>
+                                                            <% isMatch = true; %>
+                                                            <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
+                                                            <% } %>
+                                                            <% }); %>
+                                                            <% if (!isMatch) { %>
+                                                            <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
+                                                            <% } %>
+                                                            <% }); %>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <% eventCount++; %>
+                                                <!-- Event modal starts-->
+                                                <%- include('eventCardModal', {event: event, months: months, cardId: event._id}); %>
+                                                <!-- Event modal ends -->
+                                                <% }); %>
+                                                <% if(eventCount == 0) { %>
+                                                <tr style="border-bottom: 2px solid #ec6416;">
+                                                    <th style="padding-right: 10px">
+                                                        This organization has no event at the moment.
+                                                    </th>
+                                                </tr>
+                                                <% } %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+
+            <div class="row">  <!-- Similar Orgs -->
+                <div class="col-lg-3 col-md-3">
+                    <div class="content-header">
+                        <div style="color: white" class="card-header bg-info bg-darken-3">
+                            <h4 class="card-title"><i class="ft-clipboard"></i>  Similar Organizations</h4>
+                            <a class="heading-elements-toggle">
+                            <i class="fa fa-ellipsis-v font-medium-3"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+
+            <section>  <!-- Similar Orgs -->
+                <% let i = 0; %>
+                <% while (i < 4) { %>
+                <% if(i == 2 || i == 0) { %>
+                <div class="row match-height">
+                <% } %>
+                    <div class="col-md-6 col-lg-6">
+                        <div class="card">
+                            <div class="card-body collapse-in">
+                                <div class="card-block">
+                                    <div class="col-md-4 text-xs-center">
+                                        <a><img onclick="window.location.href='/<%= orgs[i].username %>'" src="<%= orgs[i].avatar %>" class="btn-secondary rounded-circle width-75 height-75" alt="org avatar"></a>
+                                        <% if(account_type == 0 && (currentAcc.following.indexOf(org.username) < 0)) { %>
+                                            <br><br>
+                                            <buton id="<%= orgs[i]._id %>" onclick="follow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)" class="btn btn-info"><i class="fa fa-eye"></i> Follow</buton>
+                                        <% } else if (account_type == 0 && (currentAcc.following.indexOf(org.username) >= 0)) { %>
+                                            <br><br>
+                                            <buton id="<%= orgs[i]._id %>" onclick="unfollow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)"class="btn btn-success"><i class="fa fa-check"></i> Followed</buton>
+                                        <% } %>                                    
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p style="font-size: 16px"><strong><a href="/orgs/<%= orgs[i].username %>"><%= orgs[i].name %></a></strong></p>
+                                        <% orgs[i].hashtags.forEach(hashtag => { %>
+                                            <% var isMatch = false; %>
+                                            <% criteriaList.forEach(criteria => { %>
+                                                <% if (hashtag.includes(criteria) && !isMatch) { %>
+                                                <% isMatch = true; %>
+                                                <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
+                                                <% } %>
+                                            <% }); %>
+                                            <% if (!isMatch) { %>
+                                                <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
+                                            <% } %>
+                                        <% }); %>                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% if (i == 1 || i == 3) { %>
+                </div>
+                <% } %>
+                <% i++; } %>
+            </section>
+            <br>
+
+        </div>  
+    </div>
+
+</div>
+
+<!-- Facebook embed script starts -->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0';
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<!-- Facebook embed script ends -->
+
+<!-- ChanceMap Code -->
+<script>
+function follow(user_id, org_id, org_username) {
+    let button_id = '#' + org_id;
+    $(button_id).removeClass('btn-info');
+    $(button_id).addClass('btn-success');
+    $(button_id).html('<i class="fa fa-check"></i> Followed');
+    $(button_id).attr('onclick', 'unfollow("'+ user_id + '","' + org_id +'","' + org_username +'")');
+
+    let formData = new FormData();
+    formData.append("org_id", org_id);
+    formData.append("user_id", user_id);
+    formData.append('follow', "true");
+
+    $.ajax({
+        async: true,
+        url: '/follow',
+        method: 'POST',
+        processData: false,
+        contentType: false,
+        data: formData,
+        success: (data) => {
+            toastr.success('You started following ' + org_username, 'Followed!');
+        }
+    });
+}
+
+function unfollow(user_id, org_id, org_username) {
+    let button_id = '#' + org_id;
+    $(button_id).removeClass('btn-success');
+    $(button_id).addClass('btn-info');
+    $(button_id).html('<i class="fa fa-eye"></i> Follow');
+    $(button_id).attr('onclick', 'follow("' + user_id + '","' + org_id +'","' + org_username +'")');
+
+    let formData = new FormData();
+    formData.append("org_id", org_id);
+    formData.append("user_id", user_id);
+    formData.append("follow", 'false');
+
+    $.ajax({
+        async: true,
+        url: '/follow',
+        method: 'POST',
+        processData: false,
+        contentType: false,
+        data: formData,
+        success: (data) => {
+            toastr.warning('You have unfollowed ' + org_username, 'Unfollowed!');
+        }
+        });
+}
+
+function showJobHashtags(job_id) {
+    let button_id = '#' + job_id + '2';
+    $(button_id).toggle();
+}
+
+function showEventHashtags(event_id) {
+    let button_id = '#' + event_id + '2';
+    $(button_id).toggle();
+}
+
+function addEvent(event_id, account_id) {
+    let button_id = '#' + event_id + '3';
+    $(button_id).removeClass('btn-info');
+    $(button_id).addClass('btn-success');
+    $(button_id).attr('onclick', 'removeEvent("'+ event_id + '","' + account_id + '")');
+
+    let formData = new FormData();
+    formData.append("event_id", event_id);
+    formData.append("account_id", account_id);
+    formData.append('status', 'add_event');
+
+    $.ajax({
+        async: true,
+        url: '/add_items',
+        method: 'POST',
+        processData: false,
+        contentType: false,
+        data: formData,
+        success: (data) => {
+        toastr.success(`Event added!`);
+        alert('event added')
+        }
+    });
+}
+
+function addJob(job_id, account_id) {
+    let button_id = '#' + job_id + '3';
+    $(button_id).removeClass('btn-info');
+    $(button_id).addClass('btn-success');
+    $(button_id).attr('onclick', 'removeJob("'+ job_id + '","' + account_id + '")');
+
+    let formData = new FormData();
+    formData.append("job_id", job_id);
+    formData.append("account_id", account_id);
+    formData.append('status', 'add_job');
+
+    $.ajax({
+        async: true,
+        url: '/add_items',
+        method: 'POST',
+        processData: false,
+        contentType: false,
+        data: formData,
+        success: (data) => {
+        toastr.success(`Job added!`);
+        }
+    });
+}
+
+$(document).ready(function() {
+    $('.fb-page').attr("data-height", $('#who-we-are').height() + $('#our-team').innerHeight());
+    $('.fb-page').attr("data-width", $('.fb-page').innerWidth());
+});
+
+</script>

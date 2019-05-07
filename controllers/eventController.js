@@ -10,6 +10,7 @@ const Org = require('../models/org');
 const User = require('../models/user');
 const Notification = require('../models/notification');
 const Admin = require('../models/admin');
+const Message = require('../models/message');
 
 // Database connection
 const connection = mongoose.connection;
@@ -23,12 +24,21 @@ router.get('/create', (req, res) => {
     let account_id = req.user.account_id;
     if(account_type == 1) {
         Org.findOne({'_id': account_id}, (err, org) => {
-            res.render('events/orgs/create', {
-                title: 'ChanceMap | Add a new Event',
-                account_type: account_type,
-                account_id: account_id,
-                currentAcc: org,
-                notis: req.notis
+            User.find((err, users) => {
+                Message.find((err, messages) => {
+                    let currentAcc = org;
+                    let followers = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
+                    res.render('events/orgs/create', {
+                        title: 'ChanceMap | Add a new Event',
+                        account_type: account_type,
+                        account_id: account_id,
+                        currentAcc: org,
+                        messages: messages,
+                        users: users,
+                        connected: followers,
+                        notis: req.notis
+                    });
+                });
             });
         });
     } else if (account_type == 2) {
@@ -150,6 +160,7 @@ router.get('/', (req, res) => {
   } else {
     let account_type = req.user.account_type;
     let account_id = req.user.account_id;
+
     Event.find((err, events) => {
         if(err) {
           console.log(err);
@@ -169,29 +180,44 @@ router.get('/', (req, res) => {
                     });
                 });
                 events.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-                res.render('events/dashboard', {
-                    title: 'ChanceMap | Events',
-                    account_type: account_type,
-                    account_id: account_id,
-                    currentAcc: org,
-                    events: events,
-                    criteriaList: criteriaList,
-                    notis: req.notis
-                });
+                User.find((err, users) => {
+                    Message.find((err, messages) => {
+                        let currentAcc = org;
+                        let followers = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
+                        res.render('events/dashboard', {
+                            title: 'ChanceMap | Events',
+                            account_type: account_type,
+                            account_id: account_id,
+                            currentAcc: org,
+                            users: users,
+                            messages: messages,
+                            connected: followers,
+                            events: events,
+                            criteriaList: criteriaList,
+                            notis: req.notis
+                        });
+                    });                 
+                });         
             });
-        } else if (account_type == 2){
-          Admin.findOne({'_id': account_id}, (err, admin) => {
-              let criteriaList = [];
-              res.render('events/dashboard', {
-                  title: 'ChanceMap | Events',
-                  account_type: account_type,
-                  account_id: account_id,
-                  currentAcc: admin,
-                  events: events,
-                  criteriaList: criteriaList,
-                  notis: req.notis
-              });
-          });
+        } else if (account_type == 2) {
+            Admin.findOne({'_id': account_id}, (err, admin) => {
+                let criteriaList = [];
+                User.find((err, users) => {
+                    Message.find((err, messages) => {
+                        res.render('events/dashboard', {
+                            title: 'ChanceMap | Events',
+                            account_type: account_type,
+                            account_id: account_id,
+                            currentAcc: admin,
+                            users: users,
+                            messages: messages,
+                            events: events,
+                            criteriaList: criteriaList,
+                            notis: req.notis
+                        });
+                    });                 
+                });         
+            });
         } else {
             User.findOne({'_id': account_id}, (err, user) => {
                 let criteriaList = user.interests.concat(user.skills);
@@ -206,14 +232,23 @@ router.get('/', (req, res) => {
                     });
                 });
                 events.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-                res.render('events/dashboard', {
-                    title: 'ChanceMap | Events',
-                    account_type: account_type,
-                    account_id: account_id,
-                    currentAcc: user,
-                    events: events,
-                    criteriaList: criteriaList,
-                    notis: req.notis
+                User.find((err, users) => {
+                    Message.find((err, messages) => {
+                        let currentAcc = user;
+                        let connected = users.filter(user => currentAcc.connected.indexOf(user.username) >= 0);
+                        res.render('events/dashboard', {
+                            title: 'ChanceMap | Events',
+                            account_type: account_type,
+                            account_id: account_id,
+                            currentAcc: user,
+                            users: users,
+                            connected: connected,
+                            messages: messages,
+                            events: events,
+                            criteriaList: criteriaList,
+                            notis: req.notis
+                        });
+                    });                 
                 });
             });
         }
@@ -228,27 +263,38 @@ router.get('/manage', (req, res) => {
   } else {
     let account_type = req.user.account_type;
     let account_id = req.user.account_id;
+    let currentAcc = req.user;
+
     if (account_type == 1) {
-      Event.find({org_id: account_id}, (err, events) => {
+        Event.find({org_id: account_id}, (err, events) => {
           if(err) {
             console.log(err);
             return;
           }
-          Org.findOne({'_id': account_id}, (err, org) => {
-              if(err) {
-                  console.log(err);
-                  return;
-              }
-              res.render('events/orgs/manage', {
-                  title: 'ChanceMap | My Events',
-                  account_type: account_type,
-                  account_id: account_id,
-                  currentAcc: org,
-                  events: events,
-                  notis: req.notis
-              });
-          });
-      });
+            Org.findOne({'_id': account_id}, (err, org) => {
+                if(err) {
+                    console.log(err);
+                    return;
+                }
+                User.find((err, users) => {
+                    Message.find((err, messages) => {
+                        let currentAcc = org;
+                        let followers = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
+                        res.render('events/orgs/manage', {
+                            title: 'ChanceMap | My Events',
+                            account_type: account_type,
+                            account_id: account_id,
+                            currentAcc: org,
+                            events: events,
+                            notis: req.notis,
+                            messages: messages,
+                            users: users,
+                            connected: followers,
+                        });
+                    });
+                });
+            });
+        });
     } else if (account_type == 2) {
         Event.find({},(err,events) => {
           Admin.findOne({}, (err, admin) => {
@@ -340,16 +386,22 @@ router.get('/edit/:id', (req, res) => {
               return;
           }
           if(account_type == 1 ) {
-              Org.findOne({'_id': account_id}, (err, org) => {
-                  res.render('events/orgs/edit', {
-                      title: 'ChanceMap | My Events',
-                      account_type: account_type,
-                      account_id: account_id,
-                      currentAcc: org,
-                      event: event,
-                      notis: req.notis
-                  })
-              })
+                Org.findOne({'_id': account_id}, (err, org) => {
+                User.find((err, users) => {
+                    Message.find((err, messages) => {
+                        let currentAcc = org;
+                        let followers = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
+                        res.render('events/orgs/edit', {
+                            title: 'ChanceMap | My Events',
+                            account_type: account_type,
+                            account_id: account_id,
+                            currentAcc: org,
+                            event: event,
+                            notis: req.notis
+                        });
+                    });
+                });
+            });
           } else if (account_type == 2){
               Admin.findOne({'_id': account_id}, (err, admin) => {
                   res.render('events/orgs/edit', {

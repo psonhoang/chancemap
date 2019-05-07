@@ -37,7 +37,7 @@ const Event = require('./models/event');
 const Job = require('./models/job');
 const Notification = require('./models/notification');
 const Opportunity = require('./models/opportunity');
-const OrgPage = require('./models/org_page');
+const OrgProfile = require('./models/orgProfile');
 const Message = require('./models/message');
 
 // View engine

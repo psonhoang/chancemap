@@ -20,7 +20,7 @@ const Org = require('../models/org');
 const Event = require('../models/event');
 const Job = require('../models/job');
 const Opportunity = require('../models/opportunity');
-const OrgPage = require('../models/org_page');
+const OrgProfile = require('../models/orgProfile');
 const Notification = require('../models/notification');
 const Message = require('../models/message');
 
@@ -308,144 +308,6 @@ router.post('/register/org', upload.single('avatar'), (req, res) => {
 
 });
 
-
-// @route GET
-// @desc edit current account's profile
-// router.get('/profile', (req, res) => {
-// 	if(!req.isAuthenticated()) {
-//     res.redirect('/login');
-//   } else {
-//     let account_type = req.user.account_type;
-//     let account_id = req.user.account_id;
-//     Notification.find({'accounts': req.user.username}, (err, notis) => {
-//     	if(err) {
-//     		console.log(err);
-//     		return;
-//     	}
-//       if(account_type === 0) {
-// 	      User.findOne({'_id': account_id}, (err, user) => {
-//         // user.following.find((err, orgs) => {
-//           res.render('profile', {
-// 	          title: 'ChanceMap | My Profile',
-// 	          account_type: account_type,
-// 	          account_id: account_id,
-// 	          currentAcc: user,
-//             // orgs: orgs,
-// 	          notis: req.notis
-// 	        });
-//           if(err) {
-//             console.log(err);
-//             res.redirect('/');
-//           }
-//         });
-// 	    } else {
-// 	      Org.findOne({'_id': account_id}, (err, org) => {
-// 	          res.render('profile', {
-// 	            title: 'ChanceMap | My Profile',
-// 	            account_type: account_type,
-// 	            account_id: account_id,
-// 	            currentAcc: org,
-// 	            notis: req.notis
-// 	          });
-// 	      });
-//       }
-//       if(req.query.isFollowing) {
-//         let following = sortedOrgs.filter(org => user.following.indexOf(org.username) >= 0);
-//         res.render('following', {
-//           title: 'ChanceMap | Following',
-//           orgs: following,
-//           criteriaList: criteriaList,
-//           account_type: currentAcc.account_type,
-//           account_id: currentAcc.account_id,
-//           currentAcc: user
-//         });
-//       }
-//     });
-//    }
-// });
-
-
-
-// router.get('/profile', (req, res) => {
-// 	console.log(req.query.criteriaList);
-// 	let criteriaList = req.query.criteriaList;
-// 	let currentAcc = req.user;
-// 	console.log(currentAcc);
-// 	Org.find((err, orgs) => {
-// 		if(err) {
-// 			console.log(err);
-// 			return;
-// 		}
-// 		console.log("Orgs: " + orgs.length);
-// 		var sortedOrgs = [];
-//
-// 		orgs.forEach(org => {
-// 			org.matches = 0;
-// 			criteriaList.forEach(criteria => {
-// 				if(org.username.toLowerCase().includes(criteria) || org.name.toLowerCase().includes(criteria)) {
-// 					org.matches++;
-// 				}
-// 				org.hashtags.forEach(hashtag => {
-// 					if(hashtag.includes(criteria)) {
-// 						org.matches++;
-// 					}
-// 				});
-// 			});
-// 			if(org.matches > 0) {
-// 				sortedOrgs.push(org);
-// 			}
-// 		});
-// 		sortedOrgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-//
-// 		if(currentAcc.account_type == 1) {
-// 			Org.findOne({'_id': currentAcc.account_id}, (err, org) => {
-// 				if(err) {
-// 					console.log(err);
-// 				}
-// 				console.log(org);
-// 				res.render('orgs/dashboard', {
-// 					title: 'ChanceMap | Orgs',
-// 					orgs: sortedOrgs,
-// 					criteriaList: criteriaList,
-// 					account_type: currentAcc.account_type,
-// 					account_id: currentAcc.account_id,
-// 					currentAcc: org,
-// 					notis: req.notis
-// 				});
-// 			});
-// 		} else {
-// 			User.findOne({'_id': currentAcc.account_id}, (err, user) => {
-// 				if(err) {
-// 					console.log(err);
-// 				}
-// 				console.log(user);
-// 				if(req.query.isFollowing) {
-// 					let following = sortedOrgs.filter(org => user.following.indexOf(org.username) >= 0);
-// 					res.render('following', {
-// 						title: 'ChanceMap | Following',
-// 						orgs: following,
-// 						criteriaList: criteriaList,
-// 						account_type: currentAcc.account_type,
-// 						account_id: currentAcc.account_id,
-// 						currentAcc: user,
-//             notis: req.notis
-// 					});
-// 				} else {
-// 					res.render('orgs/dashboard', {
-// 						title: 'ChanceMap | Orgs',
-// 						orgs: sortedOrgs,
-// 						criteriaList: criteriaList,
-// 						account_type: currentAcc.account_type,
-// 						account_id: currentAcc.account_id,
-// 						currentAcc: user,
-// 						notis: req.notis
-// 					});
-// 				}
-// 			});
-// 		}
-// 	});
-// });
-
 // user profile
 router.get('/profile', (req, res) => {
 	let currentAcc = req.user;
@@ -493,17 +355,32 @@ router.get('/profile', (req, res) => {
         console.log(err);
         return;
       }
-      OrgPage.findOne({'org_id': org._id}, (err, page) => {
-				console.log("we got here and we have a page");
-				console.log(page);
-        res.render('profile', {
-          title: 'ChanceMap | My Profile',
-          account_type: currentAcc.account_type,
-          account_id: currentAcc.account_id,
-          currentAcc: org,
-          page: page,
-          notis: req.notis
-        });
+      OrgProfile.findOne({'org_id': org._id}, (err, profile) => {
+				User.find((err, users) => {
+					Job.find({'org_id': org._id}, (err, jobs) => {
+						Event.find({'org_id': org._id}, (err, events) => {
+							Message.find((err, messages) => {
+								let currentAcc = org;
+								let followers = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
+								let criteriaList = org.hashtags;
+								res.render('orgs/edit', {
+									title: 'ChanceMap | My Profile',
+									account_type: currentAcc.account_type,
+									account_id: currentAcc.account_id,
+									currentAcc: currentAcc,
+									profile: profile,
+									users: users,
+									jobs: jobs,
+									events: events,
+									connected: followers,
+									messages: messages,
+									notis: req.notis,
+									criteriaList: criteriaList
+								});
+							});
+						});
+					});
+				});
       });
     });
   }
@@ -552,7 +429,9 @@ router.get('/profile/:id', (req, res) => {
         });
       });
     });
-  }
+	} else {
+		res.redirect('/profile');
+	}
 });
 
 // @route POST
@@ -830,7 +709,43 @@ router.post('/profile/org', upload.single('avatar'), (req, res) => {
 
 		org.save().then(result => {
 			console.log(result);
-			res.redirect('/profile');
+			OrgProfile.findOne({'org_id': org._id}, (err, profile) => {
+				if(err) {
+					res.send('Database error...');
+					console.log(err);
+					return;	
+				} 
+				console.log(profile);
+				if (profile != null) {
+					profile.what_we_do = data.what_we_do;
+					profile.our_team = data.our_team;
+					profile.save().then(result => {
+						console.log(result);
+						res.redirect('/orgs/' + org.username);
+					}).catch(err => {
+						res.send(err);
+					});
+				}	else {
+					var newProfile = new OrgProfile({
+						_id: new mongoose.Types.ObjectId(),
+						created_at: new Date(),
+						updated_at: new Date(),
+						org_id : org._id,
+						org_name: org.name,
+						what_we_do: data.what_we_do, //contain description of org
+						our_team: data.our_team, //contain description of org's team						
+					});
+
+					newProfile.save((err, profile) => {
+						if(err) {
+							console.log(err);
+							return;
+						}
+						console.log(profile);
+						res.redirect("/orgs/" + org.username);
+					});
+				}			
+			});
 		}).catch(err => {
 			res.send(err);
 		});

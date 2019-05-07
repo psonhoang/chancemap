@@ -168,7 +168,7 @@
         </div>
       </div>
 
-      <div class="row">
+      <div class="row match-height">
         <!-- Events -->
         <div class="col-xl-8 col-lg-12">
           <div class="card">
@@ -180,7 +180,7 @@
             </div>
             <div class="card" style="display: block; max-height: 500px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;">
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" style="margin-bottom: 0px">
                         <tbody id="eventsBody">
                             <% events.forEach(event => { %>
                             <% cardId = event._id; %>
@@ -235,7 +235,7 @@
                 </div>
             </div>
           </div>
-      </div>
+        </div>
 
         <!-- Jobs -->
         <div class="col-xl-4 col-lg-12">
@@ -300,7 +300,7 @@
             </div>
             <div class="card">
               <div style="display: block; max-height: 400px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar; " class="table-responsive">
-                <table class="table">
+                <table class="table" style="margin-bottom: 0px">
                   <tbody id="opportunitiesBody">
                     <% opportunities.forEach(opportunity => { %>
                     <% cardId = opportunity._id; %>

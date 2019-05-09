@@ -37,11 +37,6 @@
                     <div class="card">
                         <div style="color: white" class="card-header bg-darken bg-teal"> <!-- Card Header -->
                             <h4 class="card-title">OVERVIEW</h4>
-                            <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-large-3"></i></a>
-                            <div class="heading-elements">
-                                <ul class="list-inline mb-0">
-                                </ul>
-                            </div>
                         </div>
                         <div class="card-body collapse in">
                             <div class="card-block">
@@ -106,22 +101,15 @@
                         <div class="col-lg-12">
                             <div class="card">
                                 <div style="color: white" class="card-header bg-red"> <!-- Card Header -->
-                                    <h4 class="card-title">WHO WE ARE</h4>
-                                    <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-large-3"></i></a>
+                                    <h4 class="card-title"><i class="ft-info"></i> WHO WE ARE</h4>
                                 </div> 
-                                <div class="heading-elements">
-                                    <ul class="list-inline mb-0">
-                                    </ul>
-                                </div>
                                 <div class="card-body collapse-in">
                                     <div class="card-block">
-                                        <div style="font-size: 15px"><label><b>What we do:</label></b>
-                                            <% let orgDesc = profile.what_we_do; %>
-                                            <% let res = orgDesc.split("/"); %>
-                                            <% res.forEach(para => { %>
-                                                <p> <%= para %> </p>
-                                            <% }); %>
-                                        </div>
+                                        <% let desc1 = profile.what_we_do; %>
+                                        <% let res1 = desc1.split("<br>"); %>
+                                        <% res1.forEach(para => { %>
+                                            <p> <%= para %> </p>
+                                        <% }); %>
                                     </div>
                                 </div>
                             </div>
@@ -132,15 +120,14 @@
                             <div class="card" id="our-team">
                                 <div style="color: white" class="card-header bg-pink">
                                     <h4 class="card-title"><i class="ft-users"></i> Our Team</h4>
-                                    <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
-                                    <div class="heading-elements">
-                                        <ul class="list-inline mb-0">
-                                        </ul>
-                                    </div>     
                                 </div>
                                 <div class="card-body collapse-in">
                                     <div class="card-block">
-                                        <p><b><label>Our Team:</label></b> <%= profile.our_team %></p>
+                                        <% let desc2 = profile.our_team; %>
+                                        <% let res2 = desc2.split("<br>"); %>
+                                        <% res2.forEach(para => { %>
+                                            <p> <%= para %> </p>
+                                        <% }); %>
                                     </div>
                                 </div>
                             </div>
@@ -150,41 +137,54 @@
             </div>
             <br>
             
-            <div class="container">
-                <div class="row"> <!-- Carousel -->
-                    <div class="col-md-12 col-sm-12 col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4 class="card-title">PICTURES</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="card-block">
-                                    <div id="org-carousel" class="carousel slide" data-ride="carousel" data-interval="false">
-                                        <ol class="carousel-indicators">
-                                            <li data-target="#org-carousel" data-slide-to="0" class="active"></li>
-                                            <li data-target="#org-carousel" data-slide-to="1"></li>
-                                            <li data-target="#org-carousel" data-slide-to="2"></li>
-                                        </ol>
-                                        <div class="carousel-inner" role="listbox"> 
-                                            <div class="carousel-item active" style="text-align: center">                                         
-                                                <img src="https://image.freepik.com/free-vector/abstract-dynamic-pattern-wallpaper-vector_53876-59131.jpg" alt="First slide" style="height: 500px">
-                                            </div>
-                                            <div class="carousel-item" style="text-align: center">
-                                                <img src="https://images.unsplash.com/photo-1502759683299-cdcd6974244f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80" alt="Second slide" style="height: 500px">
-                                            </div>
-                                            <div class="carousel-item" style="text-align: center">
-                                                <img src="https://image.freepik.com/free-vector/abstract-dynamic-pattern-wallpaper-vector_53876-59131.jpg" alt="Third slide" style="height: 500px">
-                                            </div>
-                                        </div>
-                                        <a class="left carousel-control" href="#org-carousel" role="button" data-slide="prev">
-                                            <span class="icon-prev" aria-hidden="true"></span>
-                                            <span class="sr-only">Previous</span>
-                                        </a>
-                                        <a class="right carousel-control" href="#org-carousel" role="button" data-slide="next">
-                                            <span class="icon-next" aria-hidden="true"></span>
-                                            <span class="sr-only">Next</span>
-                                        </a>
+            <div class="row"> <!-- Carousel -->
+                <div class="col-md-12 col-sm-12 col-lg-12">
+                    <div class="card">
+                        <div  style="color: white" class="card-header bg-purple">
+                            <h4 class="card-title">PICTURES</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-block">
+                                <div id="org-carousel" class="carousel slide" data-ride="carousel" data-interval="false">
+                                    <ol class="carousel-indicators">
+                                        <li data-target="#org-carousel" data-slide-to="0" class="active"></li>
+                                        <li data-target="#org-carousel" data-slide-to="1"></li>
+                                        <li data-target="#org-carousel" data-slide-to="2"></li>
+                                    </ol>
+                                    <div class="carousel-inner" role="listbox"> 
+                                        <div class="carousel-item container active" style="text-align: center">                                         
+                                            <% if(profile.carousel[0] != null) { %>
+                                                <img id="carousel_pic_1" src="<%= profile.carousel[0] %>"
+                                                    alt="First slide" style="height: 360px">
+                                            <% } else { %>
+                                                <img id="carousel_pic_1" src="../images/placeholder_orgprofile_carousel.png"
+                                                alt="First slide" style="height: 360px">           
+                                            <% } %>                                        </div>
+                                        <div class="carousel-item container" style="text-align: center">
+                                            <% if(profile.carousel[1] != null) { %>
+                                                <img id="carousel_pic_2" src="<%= profile.carousel[1] %>"
+                                                    alt="First slide" style="height: 360px">
+                                                <% } else { %>
+                                                <img id="carousel_pic_2" src="../images/placeholder_orgprofile_carousel.png"
+                                                alt="First slide" style="height: 360px">           
+                                            <% } %>                                          </div>
+                                        <div class="carousel-item container" style="text-align: center">
+                                            <% if(profile.carousel[2] != null) { %>
+                                                <img id="carousel_pic_3" src="<%= profile.carousel[2] %>"
+                                                    alt="First slide" style="height: 360px">
+                                                <% } else { %>
+                                                <img id="carousel_pic_3" src="../images/placeholder_orgprofile_carousel.png"
+                                                alt="First slide" style="height: 360px">           
+                                            <% } %>                                          </div>
                                     </div>
+                                    <a class="left carousel-control" href="#org-carousel" role="button" data-slide="prev">
+                                        <span class="icon-prev" aria-hidden="true"></span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                    <a class="right carousel-control" href="#org-carousel" role="button" data-slide="next">
+                                        <span class="icon-next" aria-hidden="true"></span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -354,31 +354,33 @@
                         <div class="card">
                             <div class="card-body collapse-in">
                                 <div class="card-block">
-                                    <div class="col-md-4 text-xs-center">
-                                        <a><img onclick="window.location.href='/<%= orgs[i].username %>'" src="<%= orgs[i].avatar %>" class="btn-secondary rounded-circle width-75 height-75" alt="org avatar"></a>
-                                        <% if(account_type == 0 && (currentAcc.following.indexOf(org.username) < 0)) { %>
-                                            <br><br>
-                                            <buton id="<%= orgs[i]._id %>" onclick="follow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)" class="btn btn-info"><i class="fa fa-eye"></i> Follow</buton>
-                                        <% } else if (account_type == 0 && (currentAcc.following.indexOf(org.username) >= 0)) { %>
-                                            <br><br>
-                                            <buton id="<%= orgs[i]._id %>" onclick="unfollow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)"class="btn btn-success"><i class="fa fa-check"></i> Followed</buton>
-                                        <% } %>                                    
-                                    </div>
-                                    <div class="col-md-6">
-                                        <p style="font-size: 16px"><strong><a href="/orgs/<%= orgs[i].username %>"><%= orgs[i].name %></a></strong></p>
-                                        <% orgs[i].hashtags.forEach(hashtag => { %>
-                                            <% var isMatch = false; %>
-                                            <% criteriaList.forEach(criteria => { %>
-                                                <% if (hashtag.includes(criteria) && !isMatch) { %>
-                                                <% isMatch = true; %>
-                                                <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
+                                    <div class="media">
+                                        <div class="media-left">
+                                            <a><img onclick="window.location.href='/<%= orgs[i].username %>'" src="<%= orgs[i].avatar %>" class="btn-secondary rounded-circle" style="width: 100px; height: 100px"  alt="org avatar"></a>
+                                            <% if(account_type == 0 && (currentAcc.following.indexOf(org.username) < 0)) { %>
+                                                <br><br>
+                                                <buton id="<%= orgs[i]._id %>" onclick="follow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)" class="btn btn-info"><i class="fa fa-eye"></i> Follow</buton>
+                                            <% } else if (account_type == 0 && (currentAcc.following.indexOf(org.username) >= 0)) { %>
+                                                <br><br>
+                                                <buton id="<%= orgs[i]._id %>" onclick="unfollow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)"class="btn btn-success"><i class="fa fa-check"></i> Followed</buton>
+                                            <% } %>     
+                                        </div>
+                                        <div class="media-body">
+                                            <h5><strong><a href="/orgs/<%= orgs[i].username %>"><%= orgs[i].name %></a></strong></h5>
+                                            <% orgs[i].hashtags.forEach(hashtag => { %>
+                                                <% var isMatch = false; %>
+                                                <% criteriaList.forEach(criteria => { %>
+                                                    <% if (hashtag.includes(criteria) && !isMatch) { %>
+                                                    <% isMatch = true; %>
+                                                    <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
+                                                    <% } %>
+                                                <% }); %>
+                                                <% if (!isMatch) { %>
+                                                    <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
                                                 <% } %>
-                                            <% }); %>
-                                            <% if (!isMatch) { %>
-                                                <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
-                                            <% } %>
-                                        <% }); %>                                        
-                                    </div>
+                                            <% }); %>                
+                                        </div>                             
+                                    </div>                        
                                 </div>
                             </div>
                         </div>

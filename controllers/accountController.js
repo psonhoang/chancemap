@@ -312,7 +312,6 @@ router.post('/register/org', upload.single('avatar'), (req, res) => {
 router.get('/profile', (req, res) => {
 	let currentAcc = req.user;
   let account_type = currentAcc.account_type;
-	console.log(currentAcc);
   if(account_type == 0) {
     User.findOne({'_id': currentAcc.account_id}, (err, currentUser) => {
       Org.find((err, orgs) => {
@@ -669,7 +668,7 @@ router.post('/remove_items', upload.single(), (req, res) => {
 
 // @route POST
 // @desc save edits to current org account's profile
-router.post('/profile/org', upload.single('avatar'), (req, res) => {
+router.post('/profile/org', upload.fields([{name: 'avatar', maxCount: 1}, {name: 'carousel1', maxCount: 1}, {name: 'carousel2', maxCount: 1}, {name: 'carousel3', maxCount: 1}]), (req, res) => {
 	let data = req.body;
 	const currentAcc = req.user;
 
@@ -683,8 +682,8 @@ router.post('/profile/org', upload.single('avatar'), (req, res) => {
 			return;
 		}
 		console.log(org);
-		if(req.file) {
-			if(	org.avatar != 'https://cdn0.iconfinder.com/data/icons/users-android-l-lollipop-icon-pack/24/group2-512.png') {
+		if(req.files['avatar']) {
+			if(org.avatar != 'https://cdn0.iconfinder.com/data/icons/users-android-l-lollipop-icon-pack/24/group2-512.png') {
 				// delete existing avatar file
 				gfs.remove({filename: org.avatar.split('files/')[1], root: 'uploads'}, (err, result) => {
 					if(err) {
@@ -694,7 +693,7 @@ router.post('/profile/org', upload.single('avatar'), (req, res) => {
 					}
 				});
 			}
- 			org.avatar = '/files/' + req.file.filename;
+ 			org.avatar = '/files/' + req.files['avatar'][0].filename;
 		}
 		org.name = data.name;
 		org.email = data.email;
@@ -715,10 +714,24 @@ router.post('/profile/org', upload.single('avatar'), (req, res) => {
 					console.log(err);
 					return;	
 				} 
-				console.log(profile);
 				if (profile != null) {
 					profile.what_we_do = data.what_we_do;
 					profile.our_team = data.our_team;
+					for(i = 0; i < 3; i++) {
+						if(req.files['carousel' + (i+1).toString()]) {
+							if(	profile.carousel[i] != null) {
+							// delete existing avatar file
+								gfs.remove({filename: profile.carousel[i].split('files/')[1], root: 'uploads'}, (err, result) => {
+									if(err) {
+										console.log(err);
+									} else {
+										console.log(result);
+									}
+								});
+							}
+							profile.carousel[i] = '/files/' + req.files['carousel' + (i + 1).toString()][0].filename;
+						}
+					}
 					profile.save().then(result => {
 						console.log(result);
 						res.redirect('/orgs/' + org.username);

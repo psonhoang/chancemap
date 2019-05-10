@@ -742,7 +742,8 @@ app.use((req, res, next) => {
 // Route controllers
 
 app.use((req, res, next) => {
-  if(req.isUnauthenticated() && req.url != '/login') {
+  var acceptedURLs = ['/login', '/register', '/register/org', '/register/user'];
+  if(req.isUnauthenticated() && acceptedURLs.indexOf(req.url) < 0) {
     res.redirect('/login');
   } else {
     next();

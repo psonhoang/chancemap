@@ -7,8 +7,8 @@ const orgProfileSchema = mongoose.Schema({
 	updated_at: {type: Date},
     org_id : {type: String, required: true},
 	org_name: {type: String, required: true},
-    what_we_do: {type: String, required: true}, //contain description of org
-    our_team: {type: String, required: true}, //contain description of org's team
+    what_we_do: {type: String}, //contain description of org
+    our_team: {type: String}, //contain description of org's team
     carousel: {type: [String]}
 });
 

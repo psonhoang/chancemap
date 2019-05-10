@@ -228,6 +228,7 @@ router.post('/register/user', upload.fields([{name: 'avatar', maxCount: 1}, {nam
 // @route POST
 // @desc Register new org account
 router.post('/register/org', upload.single('avatar'), (req, res) => {
+	console.log("POST on /register/org");
 	let data = req.body;
 	let name = data.name;
 	let username = data.username.trim();
@@ -272,6 +273,25 @@ router.post('/register/org', upload.single('avatar'), (req, res) => {
 			  return;
 			}
 			console.log(acc);
+			});
+
+			var newProfile = new OrgProfile({
+				_id: new mongoose.Types.ObjectId(),
+				created_at: new Date(),
+				updated_at: new Date(),
+				org_id : newOrg._id,
+				org_name: newOrg._name,
+				what_we_do: "", //contain description of org
+				our_team: "", //contain description of org's team
+				carousel: []
+			});
+
+			newProfile.save((err, profile) => {
+				if(err) {
+					console.log(err);
+					return;
+				}
+				console.log(profile);
 			});
 
 			var newAccount = new Account({
@@ -739,6 +759,12 @@ router.post('/profile/org', upload.fields([{name: 'avatar', maxCount: 1}, {name:
 						res.send(err);
 					});
 				}	else {
+					var carousels = [];
+					for(i = 0; i < 3; i++) {
+						if(req.files['carousel' + (i+1).toString()]) {
+							carousels[i] = '/files/' + req.files['carousel' + (i + 1).toString()][0].filename;
+						}
+					}					
 					var newProfile = new OrgProfile({
 						_id: new mongoose.Types.ObjectId(),
 						created_at: new Date(),
@@ -746,7 +772,8 @@ router.post('/profile/org', upload.fields([{name: 'avatar', maxCount: 1}, {name:
 						org_id : org._id,
 						org_name: org.name,
 						what_we_do: data.what_we_do, //contain description of org
-						our_team: data.our_team, //contain description of org's team						
+						our_team: data.our_team, //contain description of org's team		
+						carousel: carousels
 					});
 
 					newProfile.save((err, profile) => {

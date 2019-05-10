@@ -166,7 +166,7 @@
                                                     <div>
                                                         <% if(profile != null) { %>
                                                         <textarea class="form-control col-md-12 col-lg-12"
-                                                            value="<%= profile.what_we_do %>" id="what-we-do"
+                                                            value="<%= profile.what_we_do %>" id="what-we-do-content"
                                                             name="what_we_do"
                                                             style="height: 400px; font-size: 15px"><%= profile.what_we_do %></textarea>
                                                         <div class="form-control-position">
@@ -176,7 +176,7 @@
                                                         <% } else { %>
                                                         <textarea class="form-control col-md-12 col-lg-12"
                                                             placeholder="Describe your organization's mission"
-                                                            id="what_we_do" name="what_we_do"
+                                                            id="what-we-do-content" name="what_we_do"
                                                             style="height: 400px; font-size: 15px"></textarea>
                                                         <div class="form-control-position">
                                                             <i class="ft-info"
@@ -216,7 +216,7 @@
                                                         </div>
                                                         <% } else { %>
                                                         <textarea class="form-control col-md-12 col-lg-12"
-                                                            placeholder="Describe your organization's mission"
+                                                            placeholder="Describe your organization's team"
                                                             id="our-team-content" name="our_team"
                                                             style="height: 65px; font-size: 15px"></textarea>
                                                         <div class="form-control-position">
@@ -253,59 +253,100 @@
                                                 <li data-target="#org-carousel" data-slide-to="2"></li>
                                             </ol>
                                             <div class="carousel-inner" role="listbox">
-                                                <div class="carousel-item active" style="text-align: center">
-                                                    <div class="container" style="position: relative">
-                                                        <% if(profile.carousel[0] != null) { %>
-                                                        <img id="carousel_pic_1" src="<%= profile.carousel[0] %>"
-                                                            alt="First slide" style="height: 360px">
-                                                        <% } else { %>
-                                                        <img id="carousel_pic_1" src="../images/placeholder_orgprofile_carousel.png"
-                                                        alt="First slide" style="height: 360px">           
-                                                        <% } %>                                                 
-                                                        <input type="file" accept="image/*" name="carousel1"
-                                                            onchange="previewImage(event, 'carousel_pic_1')" style="position: absolute; top: 75%; left: 50%; transform: translate(-50%, -50%); -ms-transform: translate(-50%, -50%);
-                                                        padding: 12px 24px;
-                                                        border: none;
-                                                        border-radius: 5px;
-                                                        background: #ffffffb2;">
-                                                    </div>
-                                                </div>
-                                                <div class="carousel-item container" style="text-align: center">
-                                                    <div class="container">
-                                                        <% if(profile.carousel[1] != null) { %>
-                                                            <img id="carousel_pic_2" src="<%= profile.carousel[1] %>"
+                                                <% if (profile != null) { %>
+                                                    <div class="carousel-item active" style="text-align: center">
+                                                        <div class="container" style="position: relative">
+                                                            <% if (profile.carousel[0] != null) { %>
+                                                            <img id="carousel_pic_1" src="<%= profile.carousel[0] %>"
                                                                 alt="First slide" style="height: 360px">
                                                             <% } else { %>
+                                                            <img id="carousel_pic_1" src="../images/placeholder_orgprofile_carousel.png"
+                                                            alt="First slide" style="height: 360px">           
+                                                            <% } %>                                                 
+                                                            <input type="file" accept="image/*" name="carousel1"
+                                                                onchange="previewImage(event, 'carousel_pic_1')" style="position: absolute; top: 75%; left: 50%; transform: translate(-50%, -50%); -ms-transform: translate(-50%, -50%);
+                                                            padding: 12px 24px;
+                                                            border: none;
+                                                            border-radius: 5px;
+                                                            background: #ffffffb2;">
+                                                        </div>
+                                                    </div>
+                                                    <div class="carousel-item" style="text-align: center">
+                                                        <div class="container">
+                                                            <% if(profile.carousel[1] != null) { %>
+                                                                <img id="carousel_pic_2" src="<%= profile.carousel[1] %>"
+                                                                    alt="First slide" style="height: 360px">
+                                                                <% } else { %>
+                                                                <img id="carousel_pic_2" src="../images/placeholder_orgprofile_carousel.png"
+                                                                alt="First slide" style="height: 360px">           
+                                                            <% } %>  
+                                                            <input type="file" accept="image/*" name="carousel2"
+                                                                onchange="previewImage(event, 'carousel_pic_2')" style="position: absolute; top: 75%; left: 50%; transform: translate(-50%, -50%); -ms-transform: translate(-50%, -50%);
+                                                                padding: 12px 24px;
+                                                                border: none;
+                                                                border-radius: 5px;
+                                                                background: #ffffffb2;
+                                                                text-align: right;">
+                                                        </div>
+                                                    </div>
+                                                    <div class="carousel-item" style="text-align: center">
+                                                        <div class="container">
+                                                            <% if(profile.carousel[2] != null) { %>
+                                                                <img id="carousel_pic_3" src="<%= profile.carousel[2] %>"
+                                                                    alt="First slide" style="height: 360px">
+                                                                <% } else { %>
+                                                                <img id="carousel_pic_3" src="../images/placeholder_orgprofile_carousel.png"
+                                                                alt="First slide" style="height: 360px">           
+                                                            <% } %>  
+                                                            <input type="file" accept="image/*" name="carousel3"
+                                                                onchange="previewImage(event, 'carousel_pic_3')"style="position: absolute; top: 75%; left: 50%; transform: translate(-50%, -50%); -ms-transform: translate(-50%, -50%);
+                                                                padding: 12px 24px;
+                                                                border: none;
+                                                                border-radius: 5px;
+                                                                background: #ffffffb2;
+                                                                text-align: right;">
+                                                        </div>
+                                                    </div>
+                                                <% } else { %>
+                                                    <div class="carousel-item active" style="text-align: center">
+                                                        <div class="container" style="position: relative">
+                                                            <img id="carousel_pic_1" src="../images/placeholder_orgprofile_carousel.png"
+                                                            alt="First slide" style="height: 360px">           
+                                                            <input type="file" accept="image/*" name="carousel1"
+                                                                onchange="previewImage(event, 'carousel_pic_1')" style="position: absolute; top: 75%; left: 50%; transform: translate(-50%, -50%); -ms-transform: translate(-50%, -50%);
+                                                            padding: 12px 24px;
+                                                            border: none;
+                                                            border-radius: 5px;
+                                                            background: #ffffffb2;">
+                                                        </div>
+                                                    </div>
+                                                    <div class="carousel-item" style="text-align: center">
+                                                        <div class="container">
                                                             <img id="carousel_pic_2" src="../images/placeholder_orgprofile_carousel.png"
                                                             alt="First slide" style="height: 360px">           
-                                                        <% } %>  
-                                                        <input type="file" accept="image/*" name="carousel2"
-                                                            onchange="previewImage(event, 'carousel_pic_2')" style="position: absolute; top: 75%; left: 50%; transform: translate(-50%, -50%); -ms-transform: translate(-50%, -50%);
-                                                            padding: 12px 24px;
-                                                            border: none;
-                                                            border-radius: 5px;
-                                                            background: #ffffffb2;
-                                                            text-align: right;">
+                                                            <input type="file" accept="image/*" name="carousel2"
+                                                                onchange="previewImage(event, 'carousel_pic_2')" style="position: absolute; top: 75%; left: 50%; transform: translate(-50%, -50%); -ms-transform: translate(-50%, -50%);
+                                                                padding: 12px 24px;
+                                                                border: none;
+                                                                border-radius: 5px;
+                                                                background: #ffffffb2;
+                                                                text-align: right;">
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="carousel-item container" style="text-align: center">
-                                                    <div class="container">
-                                                        <% if(profile.carousel[2] != null) { %>
-                                                            <img id="carousel_pic_3" src="<%= profile.carousel[2] %>"
-                                                                alt="First slide" style="height: 360px">
-                                                            <% } else { %>
+                                                    <div class="carousel-item" style="text-align: center">
+                                                        <div class="container">
                                                             <img id="carousel_pic_3" src="../images/placeholder_orgprofile_carousel.png"
                                                             alt="First slide" style="height: 360px">           
-                                                        <% } %>  
-                                                        <input type="file" accept="image/*" name="carousel3"
-                                                            onchange="previewImage(event, 'carousel_pic_3')"style="position: absolute; top: 75%; left: 50%; transform: translate(-50%, -50%); -ms-transform: translate(-50%, -50%);
-                                                            padding: 12px 24px;
-                                                            border: none;
-                                                            border-radius: 5px;
-                                                            background: #ffffffb2;
-                                                            text-align: right;">
-                                                    </div>
-                                                </div>
+                                                            <input type="file" accept="image/*" name="carousel3"
+                                                                onchange="previewImage(event, 'carousel_pic_3')"style="position: absolute; top: 75%; left: 50%; transform: translate(-50%, -50%); -ms-transform: translate(-50%, -50%);
+                                                                padding: 12px 24px;
+                                                                border: none;
+                                                                border-radius: 5px;
+                                                                background: #ffffffb2;
+                                                                text-align: right;">
+                                                        </div>
+                                                    </div>    
+                                                <% } %>                                                
                                             </div>
                                             <a class="left carousel-control" href="#org-carousel" role="button"
                                                 data-slide="prev">
@@ -566,7 +607,7 @@
     function freezeBtn() {
         $('#submitBtn').disabled = true;
         //turn new lines into <br>
-        var text = JSON.stringify($('#what-we-do').val());
+        var text = JSON.stringify($('#what-we-do-content').val());
         text = text.replace(/\\n/g, "<br>");
         $('#what-we-do').val(JSON.parse(text));
         text = JSON.stringify($('#our-team-content').val());

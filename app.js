@@ -119,17 +119,6 @@ var currentSocket = {};
 var chatSession = [];
 var allMessages = [];
 
-app.use((req, res, next) => {
-  if(req.isAuthenticated()) {
-    Message.find((err, messages) => {
-      if(err) {
-        console.log(err);
-      }
-      req.messages = messages;
-    })
-  }
-  next();
-});
 
 // Home routes
 app.get('/', (req, res) => {
@@ -338,7 +327,7 @@ app.get('/', (req, res) => {
                       opportunities: opportunities,
                       criteriaList: criteriaList,
                       notis: req.notis,
-                      messages: req.messages,
+                      messages: messages,
                       connected: connected,
                     });
                   });
@@ -352,28 +341,6 @@ app.get('/', (req, res) => {
                       let name = user.name;
                       let avatar = user.avatar;
                       let messages = user.messages;
-                      // if(connectedUsers.length == 0) {
-                      //   temp.push({
-                      //     type: 1,
-                      //     id: id,
-                      //     name: name,
-                      //     avatar: avatar,
-                      //     messages: messages,
-                      //   })
-                      // } else {
-                      //   for(let i = 0; i < connectedUsers.length; i++) {
-                      //     if(connectedUsers[i].id != user.id) {
-                      //       temp.push({
-                      //         type: 1,
-                      //         id: id,
-                      //         name: name,
-                      //         avatar: avatar,
-                      //         messages: messages,
-                      //       })
-                      //       break;
-                      //     }
-                      //   }
-                      // }
                       temp.push({
                         type: 1,
                         id: id,
@@ -489,7 +456,7 @@ app.get('/', (req, res) => {
                       opportunities: opportunities,
                       criteriaList: org.hashtags,
                       notis: req.notis,
-                      messages: req.messages,
+                      messages: messages,
                       connected: followers,
                     });
                   });
@@ -508,7 +475,7 @@ app.get('/', (req, res) => {
                       opportunities: opportunities,
                       criteriaList: criteriaList,
                       notis: req.notis,
-                      messages: req.messages,
+                      messages: messages,
                       connected: connected,
                     });
                   })
@@ -739,8 +706,19 @@ app.use((req, res, next) => {
   next();
 });
 
-// Route controllers
+// app.use((req, res, next) => {
+//   if(req.isAuthenticated()) {
+//     Message.find((err, messages) => {
+//       if(err) {
+//         console.log(err);
+//       }
+//       req.messages = messages;
+//     })
+//   }
+//   next();
+// });
 
+// Route controllers
 app.use((req, res, next) => {
   var acceptedURLs = ['/login', '/register', '/register/org', '/register/user'];
   if(req.isUnauthenticated() && acceptedURLs.indexOf(req.url) < 0) {

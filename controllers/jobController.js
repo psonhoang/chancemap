@@ -17,6 +17,7 @@ const Job = require('../models/job');
 const Org = require('../models/org');
 const Admin = require('../models/admin');
 const Notification = require('../models/notification');
+const Message = require('../models/message');
 
 // Database connection
 const connection = mongoose.connection;
@@ -56,40 +57,44 @@ router.get('/manage', (req, res) => {
 	if(!req.isAuthenticated()) {
 		res.redirect('/login');
 	} else {
-		if (req.user.account_type == 1)
-		{
-			Job.find({org_id: req.user.account_id}, (err, jobs) => {
-				//console.log(jobs);
-				Org.findOne({_id: req.user.account_id}, (err, org) => {
-					res.render('jobs/orgs/manage', {
-						title: 'ChanceMap | My Jobs',
-						account_type: req.user.account_type,
-						account_id: req.user.account_id,
-						currentAcc: org,
-						jobs: jobs,
-						notis: req.notis
+		Message.find((err, messages) => {
+			if (req.user.account_type == 1) {
+					Job.find({org_id: req.user.account_id}, (err, jobs) => {
+						//console.log(jobs);
+						Org.findOne({_id: req.user.account_id}, (err, org) => {
+							let followers = users.filter(user => org.followers.indexOf(user.username) >= 0);
+							res.render('jobs/orgs/manage', {
+								title: 'ChanceMap | My Jobs',
+								account_type: req.user.account_type,
+								account_id: req.user.account_id,
+								currentAcc: org,
+								jobs: jobs,
+								notis: req.notis,
+								messages: messages,
+								connected: followers,
+							});
+						});
 					});
-				});
-			});
-		} else if (req.user.account_type == 2){
-			Job.find({}, (err, jobs) => {
-				//console.log(jobs);
-				Admin.findOne({_id: req.user.account_id}, (err, admin) => {
-					res.render('jobs/orgs/manage', {
-						title: 'ChanceMap | Manage Jobs',
-						account_type: req.user.account_type,
-						account_id: req.user.account_id,
-						currentAcc: admin,
-						jobs: jobs,
-						notis: req.notis
+			} else if (req.user.account_type == 2) {
+					Job.find({}, (err, jobs) => {
+						Admin.findOne({_id: req.user.account_id}, (err, admin) => {
+							res.render('jobs/orgs/manage', {
+								title: 'ChanceMap | Manage Jobs',
+								account_type: req.user.account_type,
+								account_id: req.user.account_id,
+								currentAcc: admin,
+								jobs: jobs,
+								notis: req.notis,
+								messages: messages,
+							});
+						});
 					});
-				});
-			});
-		}
-		else
-		{
-			res.redirect("/");
-		}
+			}
+			else
+			{
+				res.redirect("/");
+			}
+		});
 	}
 });
 
@@ -98,73 +103,80 @@ router.get('/', (req, res) => {
 	if(!req.isAuthenticated()) {
 		res.redirect('/login');
 	} else {
-		Job.find({}, (err, jobs) => {
-			if (req.user.account_type == 1)
-			{
-				Org.findOne({_id: req.user.account_id}, (err, org) => {
-					let criteriaList = org.hashtags;
-	                jobs.forEach(job => {
-	                    job.matches = 0;
-	                    job.hashtags.forEach(hashtag => {
-	                        criteriaList.forEach(criteria => {
-	                            if(hashtag.includes(criteria)) {
-	                            	job.matches++;
-	                            }
-	                        });
-	                    });
-	                });
-	                jobs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-					res.render('jobs/dashboard', {
-						title: 'ChanceMap | Jobs',
-						account_type: req.user.account_type,
-						account_id: req.user.account_id,
-						currentAcc: org,
-						criteriaList: criteriaList,
-						jobs: jobs,
-						notis: req.notis
-					});
+		User.find((err, users) => {
+			Job.find((err, jobs) => {
+				Message.find((err, messages) => {
+					if (req.user.account_type == 1) {
+						Org.findOne({_id: req.user.account_id}, (err, org) => {
+							let followers = users.filter(user => org.followers.indexOf(user.username) >= 0);
+							let criteriaList = org.hashtags;
+			                jobs.forEach(job => {
+			                    job.matches = 0;
+			                    job.hashtags.forEach(hashtag => {
+			                        criteriaList.forEach(criteria => {
+			                            if(hashtag.includes(criteria)) {
+			                            	job.matches++;
+			                            }
+			                        });
+			                    });
+			                });
+			                jobs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+							res.render('jobs/dashboard', {
+								title: 'ChanceMap | Jobs',
+								account_type: req.user.account_type,
+								account_id: req.user.account_id,
+								currentAcc: org,
+								criteriaList: criteriaList,
+								jobs: jobs,
+								notis: req.notis,
+								messages: messages,
+								connected: followers,
+							});
+						});
+					}	else if (req.user.account_type == 2) {
+						Admin.findOne({_id: req.user.account_id}, (err, admin) => {
+							let criteriaList = [];
+							res.render('jobs/dashboard', {
+								title: 'ChanceMap | Jobs',
+								account_type: req.user.account_type,
+								account_id: req.user.account_id,
+								currentAcc: admin,
+								criteriaList: criteriaList,
+								jobs: jobs,
+								notis: req.notis,
+								messages: messages,
+							});
+						});
+					} else {
+						User.findOne({_id: req.user.account_id}, (err, user) => {
+							let criteriaList = user.interests.concat(user.skills);
+							let connected = users.filter(client => user.connected.indexOf(client.username) >= 0);
+		          jobs.forEach(job => {
+		              job.matches = 0;
+		              job.hashtags.forEach(hashtag => {
+		                  criteriaList.forEach(criteria => {
+		                      if(hashtag.includes(criteria)) {
+		                      	job.matches++;
+		                      }
+		                  });
+		              });
+		          });
+		          jobs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+							res.render('jobs/dashboard', {
+								title: 'ChanceMap | Jobs',
+								account_type: req.user.account_type,
+								account_id: req.user.account_id,
+								currentAcc: user,
+								criteriaList: criteriaList,
+								jobs: jobs,
+								notis: req.notis,
+								messages: messages,
+								connected: connected,
+							});
+						});
+					}
 				});
-			}
-			else if (req.user.account_type == 2){
-				Admin.findOne({_id: req.user.account_id}, (err, admin) => {
-					let criteriaList = [];
-					res.render('jobs/dashboard', {
-						title: 'ChanceMap | Jobs',
-						account_type: req.user.account_type,
-						account_id: req.user.account_id,
-						currentAcc: admin,
-						criteriaList: criteriaList,
-						jobs: jobs,
-						notis: req.notis
-					});
-				});
-			}
-			else
-			{
-				User.findOne({_id: req.user.account_id}, (err, user) => {
-					let criteriaList = user.interests.concat(user.skills);
-	                jobs.forEach(job => {
-	                    job.matches = 0;
-	                    job.hashtags.forEach(hashtag => {
-	                        criteriaList.forEach(criteria => {
-	                            if(hashtag.includes(criteria)) {
-	                            	job.matches++;
-	                            }
-	                        });
-	                    });
-	                });
-	                jobs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-					res.render('jobs/dashboard', {
-						title: 'ChanceMap | Jobs',
-						account_type: req.user.account_type,
-						account_id: req.user.account_id,
-						currentAcc: user,
-						criteriaList: criteriaList,
-						jobs: jobs,
-						notis: req.notis
-					});
-				});
-			}
+			});
 		});
 	}
 });
@@ -174,29 +186,35 @@ router.get('/create', (req, res) => {
 	if(!req.isAuthenticated()) {
 		res.redirect('/login');
 	} else {
-		if (req.user.account_type == 0) {
-			res.redirect('/');
-		} else if (req.user.account_type == 1) {
-			Org.findOne({_id: req.user.account_id}, (err, org) => {
-				res.render('jobs/orgs/create', {
-					title: 'ChanceMap | Add a new Job',
-					account_type: req.user.account_type,
-					account_id: req.user.account_id,
-					currentAcc: org,
-					notis: req.notis
+		Message.find((err, messages) => {
+			if (req.user.account_type == 0) {
+				res.redirect('/');
+			} else if (req.user.account_type == 1) {
+				Org.findOne({_id: req.user.account_id}, (err, org) => {
+					let followers = users.filter(user => org.followers.indexOf(user.username) >= 0);
+					res.render('jobs/orgs/create', {
+						title: 'ChanceMap | Add a new Job',
+						account_type: req.user.account_type,
+						account_id: req.user.account_id,
+						currentAcc: org,
+						notis: req.notis,
+						messages: messages,
+						connected: followers,
+					});
 				});
-			});
-		} else {
-			Admin.findOne({_id: req.user.account_id}, (err, admin) => {
-				res.render('jobs/orgs/create', {
-					title: 'ChanceMap | Add a new Job',
-					account_type: req.user.account_type,
-					account_id: req.user.account_id,
-					currentAcc: admin,
-					notis: req.notis
+			} else {
+				Admin.findOne({_id: req.user.account_id}, (err, admin) => {
+					res.render('jobs/orgs/create', {
+						title: 'ChanceMap | Add a new Job',
+						account_type: req.user.account_type,
+						account_id: req.user.account_id,
+						currentAcc: admin,
+						notis: req.notis,
+						messages: messages,
+					});
 				});
-			});
-		}
+			}
+		})
 	}
 });
 
@@ -283,35 +301,41 @@ router.post('/create', (req, res) => {
 
 // edit an existing job
 router.get('/manage/edit/:ID', (req, res) => {
-	if(!req.isAuthenticated()) {
-		res.redirect('/login');
-	} else if ( req.user.account_type == 1 ){
-		Job.findOne({_id: req.params.ID}, (err, job) => {
-			Org.findOne({_id: req.user.account_id}, (err, org) => {
-				res.render('jobs/orgs/edit', {
-					title: 'ChanceMap | Edit Job',
-					account_type: req.user.account_type,
-					account_id: req.user.account_id,
-					currentAcc: org,
-					job: job,
-					notis: req.notis
+	Message.find((err, messages) => {
+		if(!req.isAuthenticated()) {
+			res.redirect('/login');
+		} else if ( req.user.account_type == 1 ){
+			Job.findOne({_id: req.params.ID}, (err, job) => {
+				Org.findOne({_id: req.user.account_id}, (err, org) => {
+					let followers = users.filter(user => org.followers.indexOf(user.username) >= 0);
+					res.render('jobs/orgs/edit', {
+						title: 'ChanceMap | Edit Job',
+						account_type: req.user.account_type,
+						account_id: req.user.account_id,
+						currentAcc: org,
+						job: job,
+						notis: req.notis,
+						messages: messages,
+						connected: followers,
+					});
 				});
 			});
-		});
-	} else if ( req.user.account_type == 2 ){
-		Job.findOne({_id: req.params.ID}, (err, job) => {
-			Admin.findOne({_id: req.user.account_id}, (err, admin) => {
-				res.render('jobs/orgs/edit', {
-					title: 'ChanceMap | Edit Job',
-					account_type: req.user.account_type,
-					account_id: req.user.account_id,
-					currentAcc: admin,
-					job: job,
-					notis: req.notis
+		} else if ( req.user.account_type == 2 ){
+			Job.findOne({_id: req.params.ID}, (err, job) => {
+				Admin.findOne({_id: req.user.account_id}, (err, admin) => {
+					res.render('jobs/orgs/edit', {
+						title: 'ChanceMap | Edit Job',
+						account_type: req.user.account_type,
+						account_id: req.user.account_id,
+						currentAcc: admin,
+						job: job,
+						notis: req.notis,
+						messages: messages,
+					});
 				});
 			});
-		});
-	}
+		}
+	})
 });
 
 router.post('/edit/:id', (req, res) => {
@@ -425,7 +449,7 @@ router.post('/delete', (req, res) => {
 								image: 'job',
 								accounts: accounts
 							});
-	
+
 							newNoti.save((err, noti) => {
 								if(err) {
 									console.log(err);

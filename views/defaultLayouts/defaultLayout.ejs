@@ -115,7 +115,7 @@
                       <div class="ps-scrollbar-y" tabindex="0" style="top: 0px; height: 167px;"></div>
                     </div>
                   </li>
-                  <li class="dropdown-menu-footer"><a href="/messages" class="dropdown-item text-muted text-xs-center">See all connect requests</a></li>
+                  <li class="dropdown-menu-footer"><a href="/" class="dropdown-item text-muted text-xs-center">See all requests</a></li>
                 </ul>
                 <% } %>
               </li>
@@ -135,14 +135,18 @@
                     <% }) %>
                     <% let allConversations = connected.filter(user => chatters.indexOf(user.name) >= 0) %>
                     <% allConversations.forEach(conversation => { %>
-                    <%  let user_id = conversation.id %>
+
+                    <%  let user_id = conversation._id %>
                     <%  let avatar = conversation.avatar %>
+
                     <%  let receivedMessages = myMessages.filter(message => message.sender === conversation.name) %>
                     <%  receivedMessages.sort((a, b) => { %>
                     <%    return a.sort_value - b.sort_value; %>
                     <%  }) %>
+
                     <%  let lastMessage = receivedMessages[receivedMessages.length - 1].message %>
                     <%  let name = receivedMessages[receivedMessages.length - 1].sender %>
+
                     <%  conversations.push({avatar, user_id, name, lastMessage}) %>
                     <% }) %>
                     <% conversations.forEach(conversation => { %>
@@ -491,7 +495,6 @@
             // }
     </script>
     <!-- END -->
-
   </body>
 
 </html>

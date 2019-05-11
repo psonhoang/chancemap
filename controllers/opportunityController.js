@@ -10,6 +10,7 @@ const Org = require('../models/org');
 const User = require('../models/user');
 const Admin = require('../models/admin');
 const Event = require('../models/event');
+const Message = require('../models/message');
 
 
 // Database connection
@@ -20,24 +21,27 @@ router.get('/manage', (req, res) => {
 	if(!req.isAuthenticated()) {
 		res.redirect('/login');
 	} else {
-		if (req.user.account_type == 2){
-			Opportunity.find({}, (err, opportunities) => {
-				Admin.findOne({_id: req.user.account_id}, (err, admin) => {
-					res.render('opportunities/manage', {
-						title: 'ChanceMap | Manage Opportunities',
-						account_type: req.user.account_type,
-						account_id: req.user.account_id,
-						currentAcc: admin,
-						opportunities: opportunities,
-						notis: req.notis
+		Message.find((err, messages) => {
+			if (req.user.account_type == 2){
+				Opportunity.find({}, (err, opportunities) => {
+					Admin.findOne({_id: req.user.account_id}, (err, admin) => {
+						res.render('opportunities/manage', {
+							title: 'ChanceMap | Manage Opportunities',
+							account_type: req.user.account_type,
+							account_id: req.user.account_id,
+							currentAcc: admin,
+							opportunities: opportunities,
+							notis: req.notis,
+							messages: messages,
+						});
 					});
 				});
-			});
-		}
-		else
-		{
-			res.redirect("/");
-		}
+			}
+			else
+			{
+				res.redirect("/");
+			}
+		})
 	}
 });
 
@@ -50,13 +54,16 @@ router.get('/create', (req, res) => {
     let account_id = req.user.account_id;
       if(account_type == 2) {
           Admin.findOne({'_id': account_id}, (err, admin) => {
-              res.render('opportunities/create', {
+						Message.find((err, messages) => {
+							res.render('opportunities/create', {
                   title: 'ChanceMap | Add a new Opportunity',
                   account_type: account_type,
                   account_id: account_id,
                   currentAcc: admin,
-                  notis: req.notis
+                  notis: req.notis,
+									messages: messages,
               });
+						})
           });
       }
     }
@@ -109,74 +116,85 @@ router.get('/', (req, res) => {
   } else {
     let account_type = req.user.account_type;
     let account_id = req.user.account_id;
-    Opportunity.find((err, opportunities) => {
-        if(err) {
-          console.log(err);
-          return;
-        }
-        if(account_type == 1) {
-            Org.findOne({'_id': account_id}, (err, org) => {
-                let criteriaList = org.hashtags;
-                opportunities.forEach(opportunity => {
-                    opportunity.matches = 0;
-                    opportunity.hashtags.forEach(hashtag => {
-                        criteriaList.forEach(criteria => {
-                            if(hashtag.includes(criteria)) {
-                            opportunity.matches++;
-                            }
-                        });
-                    });
-                });
-                opportunities.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-                res.render('opportunities/dashboard', {
-                    title: 'ChanceMap | Opportunities',
-                    account_type: account_type,
-                    account_id: account_id,
-                    currentAcc: org,
-                    opportunities: opportunities,
-                    criteriaList: criteriaList,
-                    notis: req.notis
-                });
-            });
-        } else if (account_type == 2) {
-          Admin.findOne({'_id': account_id}, (err, admin) => {
-              let criteriaList = [];
-              res.render('opportunities/dashboard', {
-                  title: 'ChanceMap | Opportunities',
-                  account_type: account_type,
-                  account_id: account_id,
-                  currentAcc: admin,
-                  opportunities: opportunities,
-                  criteriaList: criteriaList,
-                  notis: req.notis
-              });
-          });
-        }else {
-            User.findOne({'_id': account_id}, (err, user) => {
-                let criteriaList = user.interests.concat(user.skills);
-                opportunities.forEach(opportunity => {
-                    opportunity.matches = 0;
-                    opportunity.hashtags.forEach(hashtag => {
-                        criteriaList.forEach(criteria => {
-                            if(hashtag.includes(criteria)) {
-                            opportunity.matches++;
-                            }
-                        });
-                    });
-                });
-                opportunities.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-                res.render('opportunities/dashboard', {
-                    title: 'ChanceMap | Opportunities',
-                    account_type: account_type,
-                    account_id: account_id,
-                    currentAcc: user,
-                    opportunities: opportunities,
-                    criteriaList: criteriaList,
-                    notis: req.notis
-                });
-            });
-        }
-    });
+		User.find((err, users) => {
+			Opportunity.find((err, opportunities) => {
+	        if(err) {
+	          console.log(err);
+	          return;
+	        }
+					Message.find((err, messages) => {
+						if(account_type == 1) {
+		            Org.findOne({'_id': account_id}, (err, org) => {
+										let followers = users.filter(user => org.followers.indexOf(user.username) >= 0);
+		                let criteriaList = org.hashtags;
+		                opportunities.forEach(opportunity => {
+		                    opportunity.matches = 0;
+		                    opportunity.hashtags.forEach(hashtag => {
+		                        criteriaList.forEach(criteria => {
+		                            if(hashtag.includes(criteria)) {
+		                            opportunity.matches++;
+		                            }
+		                        });
+		                    });
+		                });
+		                opportunities.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+		                res.render('opportunities/dashboard', {
+		                    title: 'ChanceMap | Opportunities',
+		                    account_type: account_type,
+		                    account_id: account_id,
+		                    currentAcc: org,
+		                    opportunities: opportunities,
+		                    criteriaList: criteriaList,
+		                    notis: req.notis,
+												messages: messages,
+												connected: followers,
+		                });
+		            });
+		        } else if (account_type == 2) {
+		          Admin.findOne({'_id': account_id}, (err, admin) => {
+		              let criteriaList = [];
+		              res.render('opportunities/dashboard', {
+		                  title: 'ChanceMap | Opportunities',
+		                  account_type: account_type,
+		                  account_id: account_id,
+		                  currentAcc: admin,
+		                  opportunities: opportunities,
+		                  criteriaList: criteriaList,
+		                  notis: req.notis,
+											messages: messages,
+		              });
+		          });
+		        } else {
+		            User.findOne({'_id': account_id}, (err, user) => {
+										let connected = users.filter(client => user.connected.indexOf(client.username) >= 0);
+		                let criteriaList = user.interests.concat(user.skills);
+		                opportunities.forEach(opportunity => {
+		                    opportunity.matches = 0;
+		                    opportunity.hashtags.forEach(hashtag => {
+		                        criteriaList.forEach(criteria => {
+		                            if(hashtag.includes(criteria)) {
+		                            opportunity.matches++;
+		                            }
+		                        });
+		                    });
+		                });
+		                opportunities.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+		                res.render('opportunities/dashboard', {
+		                    title: 'ChanceMap | Opportunities',
+		                    account_type: account_type,
+		                    account_id: account_id,
+		                    currentAcc: user,
+		                    opportunities: opportunities,
+		                    criteriaList: criteriaList,
+		                    notis: req.notis,
+												messages: messages,
+												connected: connected,
+		                });
+		            });
+		        }
+					})
+	    });
+		});  
   }
 });
 
@@ -219,24 +237,26 @@ router.get('/edit/:id', (req, res) => {
       let account_id = req.user.account_id;
       Opportunity.findOne({_id: req.params.id}, (err, opportunity) => {
         if(err) {
-              console.log(err);
-              return;
-          } else {
-	        if (account_type == 2){
-	              Admin.findOne({'_id': account_id}, (err, admin) => {
-	                  res.render('opportunities/edit', {
-	                      title: 'ChanceMap | Manage Opportunities',
-	                      account_type: account_type,
-	                      account_id: account_id,
-	                      currentAcc: admin,
-	                      opportunity: opportunity,
-	                      notis: req.notis
-	                  })
+          console.log(err);
+          return;
+        }
+        if (account_type == 2) {
+					Message.find((err, messages) => {
+						Admin.findOne({'_id': account_id}, (err, admin) => {
+	              res.render('opportunities/edit', {
+	                  title: 'ChanceMap | Manage Opportunities',
+	                  account_type: account_type,
+	                  account_id: account_id,
+	                  currentAcc: admin,
+	                  opportunity: opportunity,
+	                  notis: req.notis,
+										messages: messages,
 	              })
-	          }else {
-	              res.redirect('/');
-          }
-				}
+	          })
+					})
+        } else {
+        	res.redirect('/');
+        }
       });
     }
 });

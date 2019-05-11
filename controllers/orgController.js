@@ -61,7 +61,7 @@ router.get('/', (req, res) => {
 	  let account_type = req.user.account_type;
 		let account_id = req.user.account_id;
 		let criteriaList;
-		
+
 	  Org.find((err, orgs) => {
 	    if(err) {
 	      console.log(err);
@@ -102,7 +102,7 @@ router.get('/', (req, res) => {
 										notis: req.notis
 									});
 								});
-							});				
+							});
 						});
 	        });
 	      });
@@ -129,13 +129,12 @@ router.get('/', (req, res) => {
 										notis: req.notis
 									});
 								});
-							});		
+							});
 						});
 					});
 				});
 			}
-			else
-			{
+			else {
 	      User.findOne({'_id': account_id}, (err, user) => {
 					criteriaList = user.interests.concat(user.skills);
 					orgs.forEach(org => {
@@ -167,7 +166,7 @@ router.get('/', (req, res) => {
 										jobs: jobs,
 										events: events,
 										criteriaList: criteriaList,
-										notis: req.notis
+										notis: req.notis,
 									});
 								});
 							});
@@ -199,7 +198,7 @@ router.get('/:username', (req, res) => {
 											if (hashtag.includes(criteria)) {
 												similarOrg.matches++;
 											}
-										});				
+										});
 									});
 								});
 								orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
@@ -224,7 +223,7 @@ router.get('/:username', (req, res) => {
 											notis: req.notis
 										});
 									});
-								});					
+								});
 							});
 						});
 					});
@@ -240,6 +239,7 @@ router.get('/:username', (req, res) => {
 					Job.find({'org_id': org._id}, (err, jobs) => {
 						Event.find({'org_id': org._id}, (err, events) => {
 							OrgProfile.findOne({'org_id': org._id}, (err, profile) => {
+								console.log(profile);
 								orgs.forEach(similarOrg => {
 									similarOrg.matches = 0;
 									similarOrg.hashtags.forEach(hashtag => {
@@ -247,7 +247,7 @@ router.get('/:username', (req, res) => {
 											if (hashtag.includes(criteria)) {
 												similarOrg.matches++;
 											}
-										});				
+										});
 									});
 								});
 								orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));

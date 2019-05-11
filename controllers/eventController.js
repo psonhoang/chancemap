@@ -42,19 +42,18 @@ router.get('/create', (req, res) => {
             });
         });
     } else if (account_type == 2) {
-      let account_type = req.user.account_type;
-      let account_id = req.user.account_id;
-      if(account_type == 2) {
-          Admin.findOne({'_id': account_id}, (err, admin) => {
-              res.render('events/orgs/create', {
-                  title: 'ChanceMap | Add a new Event',
-                  account_type: account_type,
-                  account_id: account_id,
-                  currentAcc: admin,
-                  notis: req.notis
-              });
+        Admin.findOne({'_id': account_id}, (err, admin) => {
+          Message.find((err, messages) => {
+            res.render('events/orgs/create', {
+                title: 'ChanceMap | Add a new Event',
+                account_type: account_type,
+                account_id: account_id,
+                currentAcc: admin,
+                notis: req.notis,
+                messages: messages,
+            });
           });
-      }
+        });
     }
   }
 });
@@ -196,8 +195,8 @@ router.get('/', (req, res) => {
                             criteriaList: criteriaList,
                             notis: req.notis
                         });
-                    });                 
-                });         
+                    });
+                });
             });
         } else if (account_type == 2) {
             Admin.findOne({'_id': account_id}, (err, admin) => {
@@ -215,8 +214,8 @@ router.get('/', (req, res) => {
                             criteriaList: criteriaList,
                             notis: req.notis
                         });
-                    });                 
-                });         
+                    });
+                });
             });
         } else {
             User.findOne({'_id': account_id}, (err, user) => {
@@ -248,7 +247,7 @@ router.get('/', (req, res) => {
                             criteriaList: criteriaList,
                             notis: req.notis
                         });
-                    });                 
+                    });
                 });
             });
         }

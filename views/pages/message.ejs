@@ -304,7 +304,7 @@
       let button_id = '#' + room_id + '-messages';
       let button_id2 = '#' + creator + '-messages';
       if(message.length > 15) {
-        message = message.substr(0, 15) + '...';
+        message_shortened = message.substr(0, 15) + '...';
       }
 
       if(creator === currentSocketID) {
@@ -318,7 +318,7 @@
           </div>
         `;
         chatroom.append('<li>' + new_log + '</li>');
-        $(button_id).html(`<i class="ft-corner-down-left font-small-2"></i> ${message}`);
+        $(button_id).html(`<i class="ft-corner-down-left font-small-2"></i> ${message_shortened}`);
       } else {
         current_chat.show();
         current_chat.html(sender);
@@ -332,7 +332,7 @@
           </div>
         `;
         chatroom.append('<li>' + new_log + '</li>');
-        $(button_id2).html(`<i class="ft-corner-down-right font-small-2"></i> ${message}`);
+        $(button_id2).html(`<i class="ft-corner-down-right font-small-2"></i> ${message_shortened}`);
       }
       chatroom.scrollTop(chatroom.prop('scrollHeight'));
     });

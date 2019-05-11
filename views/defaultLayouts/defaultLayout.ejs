@@ -76,7 +76,8 @@
 
               <!-- user connect noti -->
               <li class="dropdown dropdown-notification nav-item">
-                <a href="#" data-toggle="dropdown" class="nav-link nav-link-label"><i class="ficon ft-users"></i>
+                <a id="msg_noti" href="#" data-toggle="dropdown" class="nav-link nav-link-label"><i class="ficon ft-users"></i>
+                  <!-- <span class="noti_count tag tag-pill tag-default tag-danger tag-default tag-up">0</span> -->
                   <% if(currentAcc.connect_received) { %>
                   <span class="noti_count tag tag-pill tag-default tag-danger tag-default tag-up">
                     <%= currentAcc.connect_received.length %>
@@ -87,12 +88,15 @@
                   </span>
                   <% } %>
                 </a>
-                <% if(currentAcc.account_type == 0) { %>
+
                 <ul class="dropdown-menu dropdown-menu-media dropdown-menu-right">
+                  <li class="dropdown-menu-header">
+                    <h6 class="dropdown-header m-0"><span class="grey darken-2">Requests</span>
+                  </li>
                   <li id="connect_noti" class="list-group scrollable-container ps-container ps-theme-dark ps-active-y" data-ps-id="f63177ae-103d-18cc-b7ba-6373aaa089ef">
                     <% let connectRequests = users.filter(user => currentAcc.connect_received.indexOf(user.username) >= 0) %>
                     <% connectRequests.forEach(user => { %>
-                    <%  if (account_type == 0 && currentAcc.connected.indexOf(user.username) < 0 && currentAcc.connect_sent.indexOf(user.username) < 0 && currentAcc.connect_received.indexOf(user.username)>= 0) { %>
+                    <% if (account_type == 0 && currentAcc.connected.indexOf(user.username) < 0 && currentAcc.connect_sent.indexOf(user.username) < 0 && currentAcc.connect_received.indexOf(user.username) >= 0) { %>
                     <a id="<%=user._id%>-connect" href="javascript:void(0)" class="list-group-item">
                       <div class="media-body">
                         <div class="media-left valign-middle">
@@ -102,12 +106,14 @@
                           <strong>
                             <%= user.name %>
                           </strong>
-                          <button style="margin-left: 60px" class="connect_button btn btn-info" onclick="acceptRequest(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)">Accept</button>
+                          <br><br>
+                          <button class="connect_button btn btn-info" onclick="acceptRequest(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)">Accept</button>
                         </div>
                       </div>
                     </a>
                     <%  } %>
                     <% }) %>
+
                     <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 3px;">
                       <div class="ps-scrollbar-x" tabindex="0" style="left: 0px; width: 0px;"></div>
                     </div>
@@ -115,10 +121,10 @@
                       <div class="ps-scrollbar-y" tabindex="0" style="top: 0px; height: 167px;"></div>
                     </div>
                   </li>
-                  <li class="dropdown-menu-footer"><a href="/" class="dropdown-item text-muted text-xs-center">See all requests</a></li>
+                  <li class="dropdown-menu-footer"><a href="/messages" class="dropdown-item text-muted text-xs-center">See all requests</a></li>
                 </ul>
-                <% } %>
               </li>
+
 
               <!-- messages noti -->
               <li onclick="clearMsgNoti()" class="dropdown dropdown-notification nav-item">
@@ -127,13 +133,18 @@
                   <span class="noti_count tag tag-pill tag-default tag-danger tag-default tag-up">0</span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-media dropdown-menu-right">
+                  <li class="dropdown-menu-header">
+                    <h6 class="dropdown-header m-0"><span class="grey darken-2">Messages</span>
+                  </li>
                   <li id="msg_noti_box" class="list-group scrollable-container ps-container ps-theme-dark ps-active-y" data-ps-id="f63177ae-103d-18cc-b7ba-6373aaa089ef">
                     <% let chatters = [] %>
                     <% let conversations = [] %>
+
                     <% myMessages.forEach(message => { %>
                     <%  chatters.push(message.sender) %>
                     <% }) %>
                     <% let allConversations = connected.filter(user => chatters.indexOf(user.name) >= 0) %>
+
                     <% allConversations.forEach(conversation => { %>
 
                     <%  let user_id = conversation._id %>
@@ -149,11 +160,13 @@
 
                     <%  conversations.push({avatar, user_id, name, lastMessage}) %>
                     <% }) %>
+
+
                     <% conversations.forEach(conversation => { %>
                     <a href="javascript:void(0)" class="list-group-item">
                       <div class="media">
                         <div class="media-left valign-middle">
-                          <img src="<%= conversation.avatar %>" class="media-object rounded-circle" style="max-width: 40px; max-height: 40px" />
+                          <img src="<%= conversation.avatar %>" class="media-object rounded-circle" style="max-width: 30px; max-height: 40px" />
                         </div>
                         <div id="<%= conversation.user_id %>-noti" class="media-body">
                           <p class="font-small-3 text-muted">
@@ -166,6 +179,7 @@
                       </div>
                     </a>
                     <% }) %>
+
                     <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 3px;">
                       <div class="ps-scrollbar-x" tabindex="0" style="left: 0px; width: 0px;"></div>
                     </div>
@@ -176,6 +190,8 @@
                   <li class="dropdown-menu-footer"><a href="/messages" class="dropdown-item text-muted text-xs-center">See all messages</a></li>
                 </ul>
               </li>
+
+
 
               <!-- events and jobs noti -->
               <li onclick="clearNoti()" class="dropdown dropdown-notification nav-item">
@@ -227,54 +243,7 @@
                     </a>
                     <%});%>
                     <% } %>
-                    <!-- <a href="javascript:void(0)" class="list-group-item">
-                  <div class="media">
-                    <div class="media-left valign-middle"><i class="ft-plus-square icon-bg-circle bg-cyan"></i></div>
-                    <div class="media-body">
-                      <h6 class="media-heading">You have new order!</h6>
-                      <p class="notification-text font-small-3 text-muted">Lorem ipsum dolor sit amet, consectetuer elit.</p><small>
-                            <time datetime="2015-06-11T18:29:20+08:00" class="media-meta text-muted">30 minutes ago</time></small>
-                    </div>
-                  </div>
-                </a>
-                <a href="javascript:void(0)" class="list-group-item">
-                  <div class="media">
-                    <div class="media-left valign-middle"><i class="ft-download-cloud icon-bg-circle bg-red bg-darken-1"></i></div>
-                    <div class="media-body">
-                      <h6 class="media-heading red darken-1">99% Server load</h6>
-                      <p class="notification-text font-small-3 text-muted">Aliquam tincidunt mauris eu risus.</p><small>
-                            <time datetime="2015-06-11T18:29:20+08:00" class="media-meta text-muted">Five hour ago</time></small>
-                    </div>
-                  </div>
-                </a>
-                <a href="javascript:void(0)" class="list-group-item">
-                  <div class="media">
-                    <div class="media-left valign-middle"><i class="ft-alert-triangle icon-bg-circle bg-yellow bg-darken-3"></i></div>
-                    <div class="media-body">
-                      <h6 class="media-heading yellow darken-3">Warning notifixation</h6>
-                      <p class="notification-text font-small-3 text-muted">Vestibulum auctor dapibus neque.</p><small>
-                            <time datetime="2015-06-11T18:29:20+08:00" class="media-meta text-muted">Today</time></small>
-                    </div>
-                  </div>
-                </a>
-                <a href="javascript:void(0)" class="list-group-item">
-                  <div class="media">
-                    <div class="media-left valign-middle"><i class="ft-check-circle icon-bg-circle bg-cyan"></i></div>
-                    <div class="media-body">
-                      <h6 class="media-heading">Complete the task</h6><small>
-                            <time datetime="2015-06-11T18:29:20+08:00" class="media-meta text-muted">Last week</time></small>
-                    </div>
-                  </div>
-                </a>
-                <a href="javascript:void(0)" class="list-group-item">
-                  <div class="media">
-                    <div class="media-left valign-middle"><i class="ft-file icon-bg-circle bg-teal"></i></div>
-                    <div class="media-body">
-                      <h6 class="media-heading">Generate monthly report</h6><small>
-                            <time datetime="2015-06-11T18:29:20+08:00" class="media-meta text-muted">Last month</time></small>
-                    </div>
-                  </div>
-                </a> -->
+
                     <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 3px;">
                       <div class="ps-scrollbar-x" tabindex="0" style="left: 0px; width: 0px;"></div>
                     </div>
@@ -285,6 +254,7 @@
                   <li class="dropdown-menu-footer"><a href="/notifications" class="dropdown-item text-muted text-xs-center">Read all notifications</a></li>
                 </ul>
               </li>
+
 
               <li class="dropdown dropdown-user nav-item"><a href="#" data-toggle="dropdown" class="dropdown-toggle nav-link dropdown-user-link">
                   <span class="avatar avatar-online">

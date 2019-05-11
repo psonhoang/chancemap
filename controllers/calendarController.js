@@ -58,6 +58,7 @@ router.get('/', (req, res) => {
                                   notis: req.notis,
                                   messages: messages,
                                   connected: connected,
+                                  users: users,
                               });
                           });
                       } else if(account_type == 1) {
@@ -74,6 +75,7 @@ router.get('/', (req, res) => {
                                   notis: req.notis,
                                   messages: messages,
                                   connected: followers,
+                                  users: users,
                               });
                           });
                       } else {
@@ -89,6 +91,7 @@ router.get('/', (req, res) => {
                                   notis: req.notis,
                                   messages: messages,
                                   connected: connected,
+                                  users: users,
                               });
                           });
                       }

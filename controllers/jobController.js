@@ -131,6 +131,7 @@ router.get('/', (req, res) => {
 								notis: req.notis,
 								messages: messages,
 								connected: followers,
+								users: users,
 							});
 						});
 					}	else if (req.user.account_type == 2) {
@@ -145,6 +146,7 @@ router.get('/', (req, res) => {
 								jobs: jobs,
 								notis: req.notis,
 								messages: messages,
+								users: users,
 							});
 						});
 					} else {
@@ -172,6 +174,7 @@ router.get('/', (req, res) => {
 								notis: req.notis,
 								messages: messages,
 								connected: connected,
+								users: users,
 							});
 						});
 					}

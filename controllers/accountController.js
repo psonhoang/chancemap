@@ -967,6 +967,7 @@ router.get('/notifications', (req, res) => {
     					notis: notis,
               messages: messages,
               connected: connected,
+              users: users,
     				});
     			});
     		} else {
@@ -980,12 +981,13 @@ router.get('/notifications', (req, res) => {
     					notis: notis,
               messages: messages,
               connected: followers,
+              users: users,
     				});
     			});
     		}
     		});
       });
-    });  
+    });
 	} else {
 		res.redirect('/login');
 	}

@@ -73,7 +73,7 @@
             </ul>
             <ul style="margin-right: 50px" class="nav navbar-nav float-xs-right">
 
-
+              <% if(!currentAcc.hashtags) { %>
               <!-- user connect noti -->
               <li class="dropdown dropdown-notification nav-item">
                 <a id="msg_noti" href="#" data-toggle="dropdown" class="nav-link nav-link-label"><i class="ficon ft-users"></i>
@@ -124,6 +124,7 @@
                   <li class="dropdown-menu-footer"><a href="/messages" class="dropdown-item text-muted text-xs-center">See all requests</a></li>
                 </ul>
               </li>
+              <% } %>
 
 
               <!-- messages noti -->

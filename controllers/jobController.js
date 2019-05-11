@@ -57,43 +57,47 @@ router.get('/manage', (req, res) => {
 	if(!req.isAuthenticated()) {
 		res.redirect('/login');
 	} else {
-		Message.find((err, messages) => {
-			if (req.user.account_type == 1) {
-					Job.find({org_id: req.user.account_id}, (err, jobs) => {
-						//console.log(jobs);
-						Org.findOne({_id: req.user.account_id}, (err, org) => {
-							let followers = users.filter(user => org.followers.indexOf(user.username) >= 0);
-							res.render('jobs/orgs/manage', {
-								title: 'ChanceMap | My Jobs',
-								account_type: req.user.account_type,
-								account_id: req.user.account_id,
-								currentAcc: org,
-								jobs: jobs,
-								notis: req.notis,
-								messages: messages,
-								connected: followers,
+		User.find((err, users) => {
+			Message.find((err, messages) => {
+				if (req.user.account_type == 1) {
+						Job.find({org_id: req.user.account_id}, (err, jobs) => {
+							//console.log(jobs);
+							Org.findOne({_id: req.user.account_id}, (err, org) => {
+								let followers = users.filter(user => org.followers.indexOf(user.username) >= 0);
+								res.render('jobs/orgs/manage', {
+									title: 'ChanceMap | My Jobs',
+									account_type: req.user.account_type,
+									account_id: req.user.account_id,
+									currentAcc: org,
+									jobs: jobs,
+									notis: req.notis,
+									messages: messages,
+									connected: followers,
+									users: users,
+								});
 							});
 						});
-					});
-			} else if (req.user.account_type == 2) {
-					Job.find({}, (err, jobs) => {
-						Admin.findOne({_id: req.user.account_id}, (err, admin) => {
-							res.render('jobs/orgs/manage', {
-								title: 'ChanceMap | Manage Jobs',
-								account_type: req.user.account_type,
-								account_id: req.user.account_id,
-								currentAcc: admin,
-								jobs: jobs,
-								notis: req.notis,
-								messages: messages,
+				} else if (req.user.account_type == 2) {
+						Job.find({}, (err, jobs) => {
+							Admin.findOne({_id: req.user.account_id}, (err, admin) => {
+								res.render('jobs/orgs/manage', {
+									title: 'ChanceMap | Manage Jobs',
+									account_type: req.user.account_type,
+									account_id: req.user.account_id,
+									currentAcc: admin,
+									jobs: jobs,
+									notis: req.notis,
+									messages: messages,
+									users: users,
+								});
 							});
 						});
-					});
-			}
-			else
-			{
-				res.redirect("/");
-			}
+				}
+				else
+				{
+					res.redirect("/");
+				}
+			});
 		});
 	}
 });

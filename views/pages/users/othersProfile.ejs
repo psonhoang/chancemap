@@ -17,13 +17,26 @@
                 <div style="display: block; max-height: 620px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="table-responsive">
                   <div class="col-xl-6">
                     <!-- Avatar -->
-                    <fieldset>
+                    <div style="padding-bottom: 180px">
                       <div class="col-md-1" style="margin-left: 30%; margin-top: 10px">
                         <div style="padding: 10px">
                           <img id="ava_preview" src="<%= currentUser.avatar; %>" class="rounded-circle width-150 height-150" alt="Card image" readonly>
                         </div>
                       </div>
-                    </fieldset>
+                    </div>
+                    <br>
+                    <!-- connect button -->
+                    <div style="margin-left: 0px">
+                      <% if (currentAcc.connected.indexOf(currentUser.username) < 0 && currentAcc.connect_sent.indexOf(currentUser.username) < 0 && currentAcc.connect_received.indexOf(currentUser.username) < 0) { %>
+                          <button id="<%=currentUser._id%>2" class="connect_button btn btn-info" onclick="sendRequest(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(currentUser._id) %>, <%= JSON.stringify(currentUser.username) %>)">Connect</button>
+                      <% } else if (currentAcc.connected.indexOf(currentUser.username) < 0 && currentAcc.connect_sent.indexOf(currentUser.username) >= 0 && currentAcc.connect_received.indexOf(currentUser.username) < 0) { %>
+                          <button id="<%=currentUser._id%>2" class="connect_button btn btn-info">Pending...</button>
+                      <% } else if (currentAcc.connected.indexOf(currentUser.username) >= 0 && currentAcc.connect_sent.indexOf(currentUser.username) < 0 && currentAcc.connect_received.indexOf(currentUser.username) < 0) { %>
+                          <button id="<%=currentUser._id%>2" class="connect_button btn btn-success" onclick="disconnect(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(currentUser._id) %>, <%= JSON.stringify(currentUser.username) %>)">Connected</button>
+                      <% } else if (currentAcc.connected.indexOf(currentUser.username) < 0 && currentAcc.connect_sent.indexOf(currentUser.username) < 0 && currentAcc.connect_received.indexOf(currentUser.username) >= 0) { %>
+                          <button id="<%=currentUser._id%>2" class="connect_button btn btn-info" onclick="acceptRequest(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(currentUser._id) %>, <%= JSON.stringify(currentUser.username) %>)">Accept</button>
+                      <% } %>
+                    </div>
                     <!-- Name -->
                     <div>
                       <label for="name" style="padding: 5px">Name</label>
@@ -38,6 +51,18 @@
                     <div>
                       <label style="padding: 5px">Interests</label>
                         <div id="interests-input">
+                          <% currentUser.interests.forEach (interest => { %>
+                            <% var isMatch = false; %>
+                            <% criteriaList.forEach(criteria => { %>
+                              <% if (interest.includes(criteria) && !isMatch) { %>
+                                <% isMatch = true; %>
+                                <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= interest; %></span>
+                              <% } %>
+                            <% }); %>
+                            <% if (!isMatch) { %>
+                              <span style="font-size: 14px" class="tag tag-pill tag-info"><%= interest; %></span>
+                            <% } %>
+                          <% }); %>
                         </div>
                         <span style="font-style: italic" class="small">Enter your interests in keywords (ex: charity) and 'Enter'</span>
                     </div>
@@ -45,6 +70,18 @@
                     <div>
                       <label style="padding: 5px">Skills</label>
                         <div id="skills-input">
+                          <% currentUser.skills.forEach (skill => { %>
+                            <% var isMatch = false; %>
+                            <% criteriaList.forEach(criteria => { %>
+                              <% if (skill.includes(criteria) && !isMatch) { %>
+                                <% isMatch = true; %>
+                                <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= skill; %></span>
+                              <% } %>
+                            <% }); %>
+                            <% if (!isMatch) { %>
+                              <span style="font-size: 14px" class="tag tag-pill tag-info"><%= skill; %></span>
+                            <% } %>
+                          <% }); %>
                         </div>
                         <span style="font-style: italic" class="small">Enter your skills in keywords (ex: designer) and 'Enter'</span>
                     </div>
@@ -306,17 +343,17 @@
   $(document).ready(function() {
     $('#search-input').tagging('removeAll');
     $('.hashes').hide();
-    let interests = <%- JSON.stringify(currentUser.interests) %>;
-    $('#interests-input').tagging('removeAll');
-    interests.forEach(interest => {
-      $('#interests-input').tagging('add', interest);
-    });
+    // let interests = <%- JSON.stringify(currentUser.interests) %>;
+    // $('#interests-input').tagging('removeAll');
+    // interests.forEach(interest => {
+    //   $('#interests-input').tagging('add', interest);
+    // });
 
-    let skills = <%- JSON.stringify(currentUser.skills) %>;
-    $('#skills-input').tagging('removeAll');
-    skills.forEach(skill => {
-      $('#skills-input').tagging('add', skill);
-    });
+    // let skills = <%- JSON.stringify(currentUser.skills) %>;
+    // $('#skills-input').tagging('removeAll');
+    // skills.forEach(skill => {
+    //   $('#skills-input').tagging('add', skill);
+    // });
   });
 
   function showHashtags(user_id) {
@@ -324,17 +361,42 @@
     $(button_id).toggle();
   }
 
-  function connect(account_id, user_id, user_username) {
+  function sendRequest(account_id, user_id, user_username) {
     let button_id = '#' + user_id + '2';
+    $(button_id).html('Pending...');
+
+    let formData = new FormData();
+    formData.append("user_id", user_id);
+    formData.append("account_id", account_id);
+    formData.append('status', 'connect_request');
+
+    $.ajax({
+      async: true,
+      url: '/connect',
+      method: 'POST',
+      processData: false,
+      contentType: false,
+      data: formData,
+      success: (data) => {
+        toastr.success(`Connect request sent to ${user_username}!`);
+      }
+    });
+  }
+
+  function acceptRequest(account_id, user_id, user_username) {
+    let button_id = '#' + user_id + '2';
+    let button_id2 = '#' + user_id + '-connect';
+
+    $(button_id2).remove();
     $(button_id).removeClass('btn-info');
     $(button_id).addClass('btn-success');
-    $(button_id).html('<i class="fa fa-check"></i> Connected');
+    $(button_id).html('Connected');
     $(button_id).attr('onclick', 'disconnect("'+ account_id + '","' + user_id +'","' + user_username +'")');
 
     let formData = new FormData();
     formData.append("user_id", user_id);
     formData.append("account_id", account_id);
-    formData.append('connect', true);
+    formData.append('status', 'connect_accept');
 
     $.ajax({
       async: true,
@@ -354,12 +416,12 @@
     $(button_id).removeClass('btn-success');
     $(button_id).addClass('btn-info');
     $(button_id).html('Connect');
-    $(button_id).attr('onclick', 'connect("' + account_id + '","' + user_id +'","' + user_username +'")');
+    $(button_id).attr('onclick', 'sendRequest("' + account_id + '","' + user_id +'","' + user_username +'")');
 
     let formData = new FormData();
     formData.append("user_id", user_id);
     formData.append("account_id", account_id);
-    formData.append("connect", false);
+    formData.append("status", 'disconnect');
 
     $.ajax({
       async: true,
@@ -369,7 +431,7 @@
       contentType: false,
       data: formData,
       success: (data) => {
-        toastr.warning('You have unfollowed ' + user_username, 'Unfollowed!');
+        toastr.warning('You have disconnected with ' + user_username, 'Unfollowed!');
       }
     });
   }

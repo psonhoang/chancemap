@@ -228,7 +228,7 @@ app.get('/', (req, res) => {
                     let id = user._id;
                     let name = user.name;
                     let messages = user.messages;
-                    console.log(user.messages);
+                    // console.log(user.messages);
                     var client = {
                       type: type,
                       id: id,
@@ -490,13 +490,13 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-  console.log('a user connected');
+  // console.log('a user connected');
   // console.log(connectedUsers);
-  console.log(chatSession);
+  // console.log(chatSession);
 
   // For orgs
   socket.on('room', (room) => {
-    console.log(room);
+    // console.log(room);
     socket.join(room);
   });
   // For users
@@ -539,11 +539,11 @@ io.on('connection', (socket) => {
         sender_type = session.currentSocket.type;
       }
     });
-    console.log(`Room ID: ${room_id}`);
-    console.log(`Sender: ${sender}, type: ${sender_type}`);
-    console.log(`Recipient: ${recipient}, type: ${recipient_type}`);
+    // console.log(`Room ID: ${room_id}`);
+    // console.log(`Sender: ${sender}, type: ${sender_type}`);
+    // console.log(`Recipient: ${recipient}, type: ${recipient_type}`);
     socket.join(room_id, () => {
-      console.log(Object.keys(socket.rooms));
+      // console.log(Object.keys(socket.rooms));
     });
     let newMessage = new Message({
       _id: new mongoose.Types.ObjectId(),
@@ -556,7 +556,7 @@ io.on('connection', (socket) => {
       read: false,
     });
     newMessage.save((err, message) => {
-      console.log(message);
+      // console.log(message);
 
       if(sender_type === 1 && recipient_type === 1) {
         //saving and emitting message to recipient
@@ -570,7 +570,7 @@ io.on('connection', (socket) => {
           }).catch(err => {
             console.log(err);
           });
-          console.log(user.messages);
+          // console.log(user.messages);
         });
         //saving and emitting message to sender
         User.findOne({'_id': currentSocketID}, (err, user) => {
@@ -583,7 +583,7 @@ io.on('connection', (socket) => {
           }).catch(err => {
             console.log(err);
           });
-          console.log(user.messages);
+          // console.log(user.messages);
         });
       }
       if(sender_type === 1 && recipient_type === 2) {
@@ -598,7 +598,7 @@ io.on('connection', (socket) => {
           }).catch(err => {
             console.log(err);
           });
-          console.log(org.messages);
+          // console.log(org.messages);
         });
         //saving and emitting message to sender
         User.findOne({'_id': currentSocketID}, (err, user) => {
@@ -611,7 +611,7 @@ io.on('connection', (socket) => {
           }).catch(err => {
             console.log(err);
           });
-          console.log(user.messages);
+          // console.log(user.messages);
         });
       }
       if(sender_type === 2 && recipient_type === 1) {
@@ -626,7 +626,7 @@ io.on('connection', (socket) => {
           }).catch(err => {
             console.log(err);
           });
-          console.log(user.messages);
+          // console.log(user.messages);
         });
         //saving and emitting message to sender
         Org.findOne({'_id': currentSocketID}, (err, org) => {
@@ -639,7 +639,7 @@ io.on('connection', (socket) => {
           }).catch(err => {
             console.log(err);
           });
-          console.log(org.messages);
+          // console.log(org.messages);
         });
       }
     });
@@ -668,7 +668,7 @@ io.on('connection', (socket) => {
     chatSession.forEach(session => {
       if(session.sessionID == currentSocketID) {
         chatSession.splice(chatSession.indexOf(session.sessionID));
-        console.log(chatSession);
+        // console.log(chatSession);
       }
     });
   });

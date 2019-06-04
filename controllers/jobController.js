@@ -198,15 +198,18 @@ router.get('/create', (req, res) => {
 				res.redirect('/');
 			} else if (req.user.account_type == 1) {
 				Org.findOne({_id: req.user.account_id}, (err, org) => {
-					let followers = users.filter(user => org.followers.indexOf(user.username) >= 0);
-					res.render('jobs/orgs/create', {
-						title: 'ChanceMap | Add a new Job',
-						account_type: req.user.account_type,
-						account_id: req.user.account_id,
-						currentAcc: org,
-						notis: req.notis,
-						messages: messages,
-						connected: followers,
+					User.find((err, users) => {
+						let followers = users.filter(user => org.followers.indexOf(user.username) >= 0);
+						res.render('jobs/orgs/create', {
+							title: 'ChanceMap | Add a new Job',
+							account_type: req.user.account_type,
+							account_id: req.user.account_id,
+							currentAcc: org,
+							notis: req.notis,
+							messages: messages,
+							connected: followers,
+							users: users
+						});
 					});
 				});
 			} else {

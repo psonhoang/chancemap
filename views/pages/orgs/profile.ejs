@@ -193,142 +193,157 @@
             </div>
             <br>
 
-            <div class="row"> <!-- Jobs and events -->
-                <div class="col-lg-6 col-xl-6 col-md-6"> 
-                </div>
-                <div class="col-lg-6 col-xl-6 col-md-6"> 
-                    <div class="row"> <!-- Jobs -->
-                        <div class="col-lg-12 col-md-12 col-sm-12">
-                            <div class="card">
-                                <div style="color: white" class="card-header bg-blue bg-accent-2">
-                                    <h4 class="card-title"><i class="ft-clipboard"></i> Jobs</h4>
-                                    <a class="heading-elements-toggle">
-                                        <i class="fa fa-ellipsis-v font-medium-3"></i>
-                                    </a>
-                                </div>
-                                <div style="display: block; max-height: 300px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="card-body collapse-in">
-                                    <% let jobCount = 0; %>
-                                    <% jobs.forEach(job => { %>
-                                        <% if(job.org_name == org.name) { %>
-                                        <div style="margin: 5px; padding: 10px; border-bottom: 2px solid #92a8d1" class="container-fluid">
-                                            <h4><strong><%= job.name %></strong></h4>
-                                            <h5 style="font-style: italic">-<%= job.org_name %>-</h5>
-                                            <h6>Deadline: <%= months[job.app_deadline.getMonth()] + ' ' + job.app_deadline.getDate() + ', ' + job.app_deadline.getFullYear() %></h6>
-                                            <% job.hashtags.forEach(hashtag => { %>
-                                                <% var isMatch = false; %>
-                                                <% criteriaList.forEach(criteria => { %>
-                                                    <% if (hashtag.includes(criteria) && !isMatch) { %>
-                                                        <% isMatch = true; %>
-                                                        <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
-                                                    <% } %>
-                                                <% }); %>
-                                                <% if (!isMatch) { %>
-                                                    <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
-                                                <% } %>
-                                            <% }); %>
-                                        </div>
-                                        <% jobCount += 1; %>
+            <div class="row match-height"> <!-- Jobs and events an pastwork -->
+                <div class="col-lg-4 col-md-4 col-sm-12"> 
+                    <div class="card">
+                        <div style="color: white" class="card-header bg-blue bg-accent-2">
+                            <h4 class="card-title"><i class="ft-clipboard"></i> Jobs</h4>
+                            <a class="heading-elements-toggle">
+                                <i class="fa fa-ellipsis-v font-medium-3"></i>
+                            </a>
+                        </div>
+                        <div style="display: block; max-height: 300px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="card-body collapse-in">
+                            <% let jobCount = 0; %>
+                            <% jobs.forEach(job => { %>
+                                <% if(job.org_name == org.name) { %>
+                                <div style="margin: 5px; padding: 10px; border-bottom: 2px solid #92a8d1" class="container-fluid">
+                                    <h4><strong><%= job.name %></strong></h4>
+                                    <h5 style="font-style: italic">-<%= job.org_name %>-</h5>
+                                    <h6>Deadline: <%= months[job.app_deadline.getMonth()] + ' ' + job.app_deadline.getDate() + ', ' + job.app_deadline.getFullYear() %></h6>
+                                    <% job.hashtags.forEach(hashtag => { %>
+                                        <% var isMatch = false; %>
+                                        <% criteriaList.forEach(criteria => { %>
+                                            <% if (hashtag.includes(criteria) && !isMatch) { %>
+                                                <% isMatch = true; %>
+                                                <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
+                                            <% } %>
+                                        <% }); %>
+                                        <% if (!isMatch) { %>
+                                            <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
                                         <% } %>
-                                        <!-- Job Modal Starts -->
-                                        <%- include('../../partials/jobCardModal', { job: job, admin: false, months: months, cardId: job._id }); %>
-                                        <!-- Job Modal Ends -->
                                     <% }); %>
-                                    <% if (jobCount == 0) { %>
-                                        <div style="margin: 5px; padding: 10px; border-bottom: 2px solid #92a8d1" class="container-fluid">
-                                            <h4>This organisation has no jobs available</h4>
-                                        </div>
-                                    <% } %>
                                 </div>
-                            </div>
+                                <% jobCount += 1; %>
+                                <% } %>
+                                <!-- Job Modal Starts -->
+                                <%- include('../../partials/jobCardModal', { job: job, admin: false, months: months, cardId: job._id }); %>
+                                <!-- Job Modal Ends -->
+                            <% }); %>
+                            <% if (jobCount == 0) { %>
+                                <div style="margin: 5px; padding: 10px; border-bottom: 2px solid #92a8d1" class="container-fluid">
+                                    <h4>This organisation has no jobs available</h4>
+                                </div>
+                            <% } %>
                         </div>
                     </div>
-                    <div class="row"> <!-- Events -->
-                        <div class="col-lg-12 col-md-12 col-sm-12">
-                            <div class="card">
-                                <div style="color: white" class="card-header bg-amber bg-darken-1">
-                                    <h4 class="card-title"><i class="ft-calendar"></i> Events</h4>
-                                    <a class="heading-elements-toggle">
-                                        <i class="fa fa-ellipsis-v font-medium-3"></i>
-                                    </a>
-                                </div>
-                                <div class="card"
-                                    style="display: block; max-height: 500px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;">
-                                    <div class="table-responsive">
-                                        <table class="table" style="margin-bottom: 0px">
-                                            <tbody id="eventsBody">
-                                                <% let eventCount = 0; %>
-                                                <% events.forEach(event => { %>
-                                                <tr class="btn-secondary">
-                                                    <% if(event.reg_deadline) { %>
-                                                    <th style="width:50px">
-                                                        <%= months[event.reg_deadline.getMonth()] + ' ' + event.reg_deadline.getDate() + ', ' + event.reg_deadline.getFullYear() %>
-                                                    </th>
-                                                    <% } else { %>
-                                                    <th style="width:50px">N/A</th>
-                                                    <% } %>
-                                                    <td style="max-width: 130px">
-                                                        <li style="font-size: 16px"><strong><%= event.name %></strong></li>
-                                                        <li style="font-style: italic"><%= event.org_name %></li>
-                                                        <% if(event.start_date) { %>
-                                                        <li style="font-size: small">Date:
-                                                            <%= months[event.start_date.getMonth()] + ' ' + event.start_date.getDate() + ', ' + event.start_date.getFullYear() %>
-                                                        </li>
-                                                        <% } %>
-                                                        <li style="font-size: small">At: <%= event.address %></li>
-                                                    </td>
-                                                    <td style="max-width: 120px">
-                                                        <div class="media-left">
-                                                            <button class="btn btn-info"
-                                                                onclick="showEventHashtags(<%= JSON.stringify(event._id) %>)">Show hashtags</button>
-                                                        </div>
-                                                        <div class="media-body">
-                                                            <% if (account_type == 0 && currentAcc.events.indexOf(event._id) < 0) { %>
-                                                            <button id="<%= event._id %>3" class="btn btn-info"
-                                                                onclick="addEvent(<%= JSON.stringify(event._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
-                                                            <% } else if (account_type == 0 && currentAcc.events.indexOf(event._id) >= 0) { %>
-                                                            <button id="<%= event._id %>3" class="btn btn-success"
-                                                                onclick="removeEvent(<%= JSON.stringify(event._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
-                                                            <% } %>
-                                                        </div>
-                                                        <br>
-                                                        <div id="<%= event._id %>2" class="hashes">
-                                                            <% event.hashtags.forEach(hashtag => { %>
-                                                            <% var isMatch = false; %>
-                                                            <% criteriaList.forEach(criteria => { %>
-                                                            <% if (hashtag.includes(criteria) && !isMatch) { %>
-                                                            <% isMatch = true; %>
-                                                            <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
-                                                            <% } %>
-                                                            <% }); %>
-                                                            <% if (!isMatch) { %>
-                                                            <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
-                                                            <% } %>
-                                                            <% }); %>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <% eventCount++; %>
-                                                <!-- Event modal starts-->
-                                                <%- include('eventCardModal', {event: event, months: months, cardId: event._id}); %>
-                                                <!-- Event modal ends -->
-                                                <% }); %>
-                                                <% if(eventCount == 0) { %>
-                                                <tr style="border-bottom: 2px solid #ec6416;">
-                                                    <th style="padding-right: 10px">
-                                                        This organization has no event at the moment.
-                                                    </th>
-                                                </tr>
+                </div>
+                <!-- Events -->
+                <div class="col-lg-8 col-md-8 col-sm-12">
+                    <div class="card">
+                        <div style="color: white" class="card-header bg-amber bg-darken-1">
+                            <h4 class="card-title"><i class="ft-calendar"></i> Events</h4>
+                            <a class="heading-elements-toggle">
+                                <i class="fa fa-ellipsis-v font-medium-3"></i>
+                            </a>
+                        </div>
+                        <div class="card"
+                            style="display: block; max-height: 500px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;">
+                            <div class="table-responsive">
+                                <table class="table" style="margin-bottom: 0px">
+                                    <tbody id="eventsBody">
+                                        <% let eventCount = 0; %>
+                                        <% events.forEach(event => { %>
+                                        <tr class="btn-secondary">
+                                            <% if(event.reg_deadline) { %>
+                                            <th style="width:50px">
+                                                <%= months[event.reg_deadline.getMonth()] + ' ' + event.reg_deadline.getDate() + ', ' + event.reg_deadline.getFullYear() %>
+                                            </th>
+                                            <% } else { %>
+                                            <th style="width:50px">N/A</th>
+                                            <% } %>
+                                            <td style="max-width: 130px">
+                                                <li style="font-size: 16px"><strong><%= event.name %></strong></li>
+                                                <li style="font-style: italic"><%= event.org_name %></li>
+                                                <% if(event.start_date) { %>
+                                                <li style="font-size: small">Date:
+                                                    <%= months[event.start_date.getMonth()] + ' ' + event.start_date.getDate() + ', ' + event.start_date.getFullYear() %>
+                                                </li>
                                                 <% } %>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                                                <li style="font-size: small">At: <%= event.address %></li>
+                                            </td>
+                                            <td style="max-width: 120px">
+                                                <div class="media-left">
+                                                    <button class="btn btn-info"
+                                                        onclick="showEventHashtags(<%= JSON.stringify(event._id) %>)">Show hashtags</button>
+                                                </div>
+                                                <div class="media-body">
+                                                    <% if (account_type == 0 && currentAcc.events.indexOf(event._id) < 0) { %>
+                                                    <button id="<%= event._id %>3" class="btn btn-info"
+                                                        onclick="addEvent(<%= JSON.stringify(event._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
+                                                    <% } else if (account_type == 0 && currentAcc.events.indexOf(event._id) >= 0) { %>
+                                                    <button id="<%= event._id %>3" class="btn btn-success"
+                                                        onclick="removeEvent(<%= JSON.stringify(event._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
+                                                    <% } %>
+                                                </div>
+                                                <br>
+                                                <div id="<%= event._id %>2" class="hashes">
+                                                    <% event.hashtags.forEach(hashtag => { %>
+                                                    <% var isMatch = false; %>
+                                                    <% criteriaList.forEach(criteria => { %>
+                                                    <% if (hashtag.includes(criteria) && !isMatch) { %>
+                                                    <% isMatch = true; %>
+                                                    <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
+                                                    <% } %>
+                                                    <% }); %>
+                                                    <% if (!isMatch) { %>
+                                                    <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
+                                                    <% } %>
+                                                    <% }); %>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <% eventCount++; %>
+                                        <!-- Event modal starts-->
+                                        <%- include('eventCardModal', {event: event, months: months, cardId: event._id}); %>
+                                        <!-- Event modal ends -->
+                                        <% }); %>
+                                        <% if(eventCount == 0) { %>
+                                        <tr style="border-bottom: 2px solid #ec6416;">
+                                            <th style="padding-right: 10px">
+                                                This organization has no event at the moment.
+                                            </th>
+                                        </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <br>
+
+            <div class="row">
+                <div class="col-lg-12 col-xl-12 col-md-12"> 
+                    <div class="card">
+                        <div class="card-header bg-success bg-darken-1" style="color: white">
+                            <h4 class="card-title"><i class="ft-clipboard"></i> Past work</h4>
+                            <a class="heading-elements-toggle">
+                                <i class="fa fa-ellipsis-v font-medium-3"></i>
+                            </a>
+                        </div>
+                        <div class="card-body collapse-in">
+                            <div class="card-block">
+                                <% let desc3 = profile.past_work; %>
+                                <% let res3 = desc3.split("<br>"); %>
+                                <% res3.forEach(para => { %>
+                                    <p> <%= para %> </p>
+                                <% }); %>                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="row">  <!-- Similar Orgs -->
                 <div class="col-lg-3 col-md-3">

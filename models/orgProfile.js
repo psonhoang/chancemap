@@ -9,7 +9,8 @@ const orgProfileSchema = mongoose.Schema({
   org_name: {type: String, required: true},
   what_we_do: {type: String}, //contain description of org
   our_team: {type: String}, //contain description of org's team
-  carousel: {type: [String]}
+  past_work: {type: String},
+  carousel: {type: [String]} //contain org's pictures
 });
 
 // Export Org model

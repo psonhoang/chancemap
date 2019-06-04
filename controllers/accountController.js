@@ -737,6 +737,7 @@ router.post('/profile/org', upload.fields([{name: 'avatar', maxCount: 1}, {name:
 				if (profile != null) {
 					profile.what_we_do = data.what_we_do;
 					profile.our_team = data.our_team;
+					profile.past_work = data.past_work;
 					for(i = 0; i < 3; i++) {
 						if(req.files['carousel' + (i+1).toString()]) {
 							if(	profile.carousel[i] != null) {
@@ -773,6 +774,7 @@ router.post('/profile/org', upload.fields([{name: 'avatar', maxCount: 1}, {name:
 						org_name: org.name,
 						what_we_do: data.what_we_do, //contain description of org
 						our_team: data.our_team, //contain description of org's team
+						past_work: data.past_work,
 						carousel: carousels
 					});
 

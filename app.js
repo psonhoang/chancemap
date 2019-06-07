@@ -9,14 +9,14 @@ const cookieParser = require('cookie-parser');
 const expressValidator = require('express-validator');
 const flash = require('connect-flash');
 const session = require('express-session');
-const bcrypt = require('bcryptjs');
+// const bcrypt = require('bcryptjs');
 const passport = require('passport');
 // For file uploading
-const crypto = require('crypto');
-const multer = require('multer');
-const Grid = require('gridfs-stream');
+// const crypto = require('crypto');
+// const multer = require('multer');
+// const Grid = require('gridfs-stream');
 const methodOverride = require('method-override');
-const JSON = require('circular-json')
+// const JSON = require('circular-json');
 
 // Database
 const mongoose = require('mongoose');
@@ -40,6 +40,10 @@ const Opportunity = require('./models/opportunity');
 const OrgProfile = require('./models/orgProfile');
 const Message = require('./models/message');
 
+// Public static
+app.use(express.static(path.join(__dirname, 'public'))); // Static files root directory
+// app.use(express.static('uploads')); // Upload files root directory
+
 // View engine
 app.set('view engine', 'ejs');
 app.set('views', [path.join(__dirname, 'views'),
@@ -62,10 +66,6 @@ app.use(bodyParser.urlencoded({
 
 // Cookie-parser
 app.use(cookieParser());
-
-// Public static
-app.use(express.static(path.join(__dirname, 'public'))); // Static files root directory
-// app.use(express.static('uploads')); // Upload files root directory
 
 // Express Session Middleware
 app.use(session({

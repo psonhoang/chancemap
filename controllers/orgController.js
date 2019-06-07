@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const path = require('path');
-const config = require('../config/database.js');
-// For file uploading
-const crypto = require('crypto');
-const multer = require('multer');
-const GridFsStorage = require('multer-gridfs-storage');
+// const bcrypt = require('bcryptjs');
+// const path = require('path');
+// const config = require('../config/database.js');
+// // For file uploading
+// const crypto = require('crypto');
+// const multer = require('multer');
+// const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
 
 // Models
@@ -32,57 +32,57 @@ connection.once('open', () => {
 });
 
 // Create storage engine
-const storage = new GridFsStorage({
-  url: config.database,
-  file: (req, file) => {
-    return new Promise((resolve, reject) => {
-      crypto.randomBytes(16, (err, buf) => {
-        if (err) {
-          return reject(err);
-        }
-        const filename = buf.toString('hex') + path.extname(file.originalname);
-        const fileInfo = {
-          filename: filename,
-          bucketName: 'uploads'
-        };
-        resolve(fileInfo);
-      });
-    });
-  }
-});
-const upload = multer({ storage });
+// const storage = new GridFsStorage({
+// 	url: config.database,
+// 	file: (req, file) => {
+// 		return new Promise((resolve, reject) => {
+// 			crypto.randomBytes(16, (err, buf) => {
+// 				if (err) {
+// 					return reject(err);
+// 				}
+// 				const filename = buf.toString('hex') + path.extname(file.originalname);
+// 				const fileInfo = {
+// 					filename: filename,
+// 					bucketName: 'uploads'
+// 				};
+// 				resolve(fileInfo);
+// 			});
+// 		});
+// 	}
+// });
+// const upload = multer({ storage });
 
 
 // @Routes
 router.get('/', (req, res) => {
-	if(!req.isAuthenticated()) {
+	if (!req.isAuthenticated()) {
 		res.redirect('/login');
 	} else {
-	  let account_type = req.user.account_type;
+		let account_type = req.user.account_type;
 		let account_id = req.user.account_id;
 		let criteriaList;
 
-	  Org.find((err, orgs) => {
-	    if(err) {
-	      console.log(err);
-	      return;
-	    }
-	    if(account_type == 1) {
-	      Org.findOne({'_id': account_id}, (err, org) => {
-	        criteriaList = org.hashtags;
-	        orgs.forEach(org => {
-	          org.matches = 0;
-	          org.hashtags.forEach(hashtag => {
-	            criteriaList.forEach(criteria => {
-	              if(hashtag.includes(criteria)) {
-	                org.matches++;
-	              }
-	            });
-	          });
-	        });
+		Org.find((err, orgs) => {
+			if (err) {
+				console.log(err);
+				return;
+			}
+			if (account_type == 1) {
+				Org.findOne({ '_id': account_id }, (err, org) => {
+					criteriaList = org.hashtags;
+					orgs.forEach(org => {
+						org.matches = 0;
+						org.hashtags.forEach(hashtag => {
+							criteriaList.forEach(criteria => {
+								if (hashtag.includes(criteria)) {
+									org.matches++;
+								}
+							});
+						});
+					});
 					orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-					Job.find({'org_id': {$ne: account_id}}, (err, jobs) => {
-						Event.find({'org_id': {$ne: account_id}}, (err, events) => {
+					Job.find({ 'org_id': { $ne: account_id } }, (err, jobs) => {
+						Event.find({ 'org_id': { $ne: account_id } }, (err, events) => {
 							User.find((err, users) => {
 								Message.find((err, messages) => {
 									let currentAcc = org;
@@ -104,15 +104,15 @@ router.get('/', (req, res) => {
 								});
 							});
 						});
-	        });
-	      });
+					});
+				});
 			}
-			else if (account_type == 2){
-				Admin.findOne({'_id': account_id}, (err, admin) => {
+			else if (account_type == 2) {
+				Admin.findOne({ '_id': account_id }, (err, admin) => {
 					criteriaList = [];
 					orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-					Job.find({'org_id': {$ne: account_id}}, (err, jobs) => {
-						Event.find({'org_id': {$ne: account_id}}, (err, events) => {
+					Job.find({ 'org_id': { $ne: account_id } }, (err, jobs) => {
+						Event.find({ 'org_id': { $ne: account_id } }, (err, events) => {
 							User.find((err, users) => {
 								Message.find((err, messages) => {
 									res.render('orgs/dashboard', {
@@ -135,13 +135,13 @@ router.get('/', (req, res) => {
 				});
 			}
 			else {
-	      User.findOne({'_id': account_id}, (err, user) => {
+				User.findOne({ '_id': account_id }, (err, user) => {
 					criteriaList = user.interests.concat(user.skills);
 					orgs.forEach(org => {
 						org.matches = 0;
 						org.hashtags.forEach(hashtag => {
 							criteriaList.forEach(criteria => {
-								if(hashtag.includes(criteria)) {
+								if (hashtag.includes(criteria)) {
 									org.matches++;
 								}
 							});
@@ -149,7 +149,7 @@ router.get('/', (req, res) => {
 					});
 					orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
 					Job.find((err, jobs) => {
-						Event.find({'org_id': {$ne: account_id}}, (err, events) => {
+						Event.find({ 'org_id': { $ne: account_id } }, (err, events) => {
 							User.find((err, users) => {
 								Message.find((err, messages) => {
 									let currentAcc = user;
@@ -172,9 +172,9 @@ router.get('/', (req, res) => {
 							});
 						});
 					});
-	      });
-	    }
-	  });
+				});
+			}
+		});
 	}
 });
 
@@ -183,14 +183,13 @@ router.get('/:username', (req, res) => {
 	let account_id = req.user.account_id;
 	let orgUsername = req.params.username;
 
-	if (account_type == 1)
-	{
-		Org.findOne({'_id': account_id}, (err, user) => {
-			Org.findOne({'username': orgUsername}, (err, org) => {
-				Org.find({'_id': {$ne: org._id}}, (err, orgs) => {
-					Job.find({'org_id': org._id}, (err, jobs) => {
-						Event.find({'org_id': org._id}, (err, events) => {
-							OrgProfile.findOne({'org_id': org._id}, (err, profile) => {
+	if (account_type == 1) {
+		Org.findOne({ '_id': account_id }, (err, user) => {
+			Org.findOne({ 'username': orgUsername }, (err, org) => {
+				Org.find({ '_id': { $ne: org._id } }, (err, orgs) => {
+					Job.find({ 'org_id': org._id }, (err, jobs) => {
+						Event.find({ 'org_id': org._id }, (err, events) => {
+							OrgProfile.findOne({ 'org_id': org._id }, (err, profile) => {
 								orgs.forEach(similarOrg => {
 									similarOrg.matches = 0;
 									similarOrg.hashtags.forEach(hashtag => {
@@ -231,14 +230,13 @@ router.get('/:username', (req, res) => {
 			});
 		});
 	}
-	else
-	{
-		User.findOne({'_id': account_id}, (err, user) => {
-			Org.findOne({'username': orgUsername}, (err, org) => {
-				Org.find({'_id': {$ne: org._id}}, (err, orgs) => {
-					Job.find({'org_id': org._id}, (err, jobs) => {
-						Event.find({'org_id': org._id}, (err, events) => {
-							OrgProfile.findOne({'org_id': org._id}, (err, profile) => {
+	else {
+		User.findOne({ '_id': account_id }, (err, user) => {
+			Org.findOne({ 'username': orgUsername }, (err, org) => {
+				Org.find({ '_id': { $ne: org._id } }, (err, orgs) => {
+					Job.find({ 'org_id': org._id }, (err, jobs) => {
+						Event.find({ 'org_id': org._id }, (err, events) => {
+							OrgProfile.findOne({ 'org_id': org._id }, (err, profile) => {
 								console.log(profile);
 								orgs.forEach(similarOrg => {
 									similarOrg.matches = 0;

@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const path = require('path');
-const config = require('../config/database.js');
-const bodyParser = require('body-parser');
+// const path = require('path');
+// const config = require('../config/database.js');
+// const bodyParser = require('body-parser');
 
 const Event = require('../models/event');
 const Org = require('../models/org');
@@ -13,7 +13,7 @@ const Admin = require('../models/admin');
 const Message = require('../models/message');
 
 // Database connection
-const connection = mongoose.connection;
+// const connection = mongoose.connection;
 
 // creating a new event
 router.get('/create', (req, res) => {

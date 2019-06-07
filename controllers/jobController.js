@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const path = require('path');
-const config = require('../config/database.js');
-// For file uploading
-const crypto = require('crypto');
-const multer = require('multer');
-const GridFsStorage = require('multer-gridfs-storage');
+// const bcrypt = require('bcryptjs');
+// const path = require('path');
+// const config = require('../config/database.js');
+// // For file uploading
+// const crypto = require('crypto');
+// const multer = require('multer');
+// const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
 
 // Models
@@ -31,25 +31,25 @@ connection.once('open', () => {
 });
 
 // Create storage engine
-const storage = new GridFsStorage({
-  url: config.database,
-  file: (req, file) => {
-    return new Promise((resolve, reject) => {
-      crypto.randomBytes(16, (err, buf) => {
-        if (err) {
-          return reject(err);
-        }
-        const filename = buf.toString('hex') + path.extname(file.originalname);
-        const fileInfo = {
-          filename: filename,
-          bucketName: 'uploads'
-        };
-        resolve(fileInfo);
-      });
-    });
-  }
-});
-const upload = multer({ storage });
+// const storage = new GridFsStorage({
+//   url: config.database,
+//   file: (req, file) => {
+//     return new Promise((resolve, reject) => {
+//       crypto.randomBytes(16, (err, buf) => {
+//         if (err) {
+//           return reject(err);
+//         }
+//         const filename = buf.toString('hex') + path.extname(file.originalname);
+//         const fileInfo = {
+//           filename: filename,
+//           bucketName: 'uploads'
+//         };
+//         resolve(fileInfo);
+//       });
+//     });
+//   }
+// });
+// const upload = multer({ storage });
 
 
 // @Routes

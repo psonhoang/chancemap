@@ -50,15 +50,15 @@
                                     <% if(currentAcc.username != user.username) { %>
                                         <tr class="btn-secondary" style="border: 0" data-toggle="modal" data-target="#<%= cardId %>">
                                             <th scope="row">
-                                                <div class="user-avatar">
-                                                    <a href="#">
+                                                <div class="text-xs center">
+                                                    <a href="/profile/<%= user._id %>">
                                                     <img src="<%= user.avatar; %>" class="rounded-circle width-50 height-50" alt="org avatar">
                                                     </a>
                                                 </div>
                                             </th>
                                             <td width="400px">
                                               <ul align="left">
-                                                  <li style="font-size: 16px"><strong><%= user.name %></strong></li>
+                                                  <li style="font-size: 16px"><strong><a href="/profile/<%= user._id %>"><%= user.name %></a></strong></li>
                                                   <li style="font-style: italic">
                                                     @<%= user.username %>
                                                     <% if (user.facebook) { %>

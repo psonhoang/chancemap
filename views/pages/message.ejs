@@ -319,6 +319,7 @@
         `;
         chatroom.append('<li>' + new_log + '</li>');
         $(button_id).html(`<i class="ft-corner-down-left font-small-2"></i> ${message_shortened}`);
+        chatroom.scrollTop(chatroom.prop('scrollHeight'));
       } else {
         current_chat.show();
         current_chat.html(sender);
@@ -333,8 +334,8 @@
         `;
         chatroom.append('<li>' + new_log + '</li>');
         $(button_id2).html(`<i class="ft-corner-down-right font-small-2"></i> ${message_shortened}`);
+        chatroom.scrollTop(chatroom.prop('scrollHeight'));
       }
-      chatroom.scrollTop(chatroom.prop('scrollHeight'));
     });
 
     //disconnection

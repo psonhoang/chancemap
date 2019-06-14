@@ -45,29 +45,41 @@
     
     let eventsData = [], jobsData = [], opportunitiesData = [];
 
+    // toTitleCase() helper function
+    // const toTitleCase = (phrase) => {
+    //     return phrase
+    //         .toLowerCase()
+    //         .split(' ')
+    //         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    //         .join(' ');
+    // }
+
     // Plug data into calendar
     events.forEach(event => {
+        let calDate = event.reg_deadline ? event.reg_deadline : event.start_date;
         let data = {
             title: event.name,
-            start: event.reg_deadline ? event.reg_deadline : event.start_date,
+            start: calDate.substr(0, calDate.indexOf('T')),
             color: '#FFB300'
         };
         eventsData.push(data);
     });
 
     jobs.forEach(job => {
+        let calDate = job.app_deadline;
         let data = {
             title: job.name,
-            start: job.app_deadline,
+            start: calDate.substr(0, calDate.indexOf('T')),
             color: '#42A5F5'
         };
         jobsData.push(data);
     });
 
     opportunities.forEach(opportunity => {
+        let calDate = opportunity.app_deadline ? opportunity.app_deadline : opportunity.start_date;
         let data = {
             title: opportunity.name,
-            start: opportunity.app_deadline ? opportunity.app_deadline : opportunity.start_date,
+            start: calDate.substr(0, calDate.indexOf('T')),
             color: '#FF5252'
         };
         opportunitiesData.push(data);

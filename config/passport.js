@@ -3,6 +3,7 @@ const RememberMeStrategy = require('passport-remember-me').Strategy;
 const Account = require('../models/account');
 const databaseConfig = require('./database');
 const bcrypt = require('bcryptjs');
+const utils = require('../utils.js');
 
 module.exports = function(passport) {
   // check email

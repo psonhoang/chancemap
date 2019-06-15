@@ -1,5 +1,5 @@
 <% extend('../defaultLayouts/defaultLayout') %>
-<% var months = ["January", "February", "March", "April", "May", "June", "July","August", "September", "October","November", "December"]; %>
+<% const months = ["January", "February", "March", "April", "May", "June", "July","August", "September", "October","November", "December"]; %>
 
 <div class="app-content content container-fluid">
   <div class="content-wrapper">
@@ -227,7 +227,7 @@
                                 </td>
                             </tr>
                             <!-- Event Modal Starts -->
-                            <%- include('eventCardModal', {event: event, months: months}); %>
+                            <%- include('eventCardModal', {event: event, months: months, cardId: cardId}); %>
                             <% }); %>
                             <!-- Event Modal Ends-->
                         </tbody>
@@ -346,7 +346,7 @@
                         </td>
                     </tr>
                     <!-- Opportunity Modal Starts -->
-                    <%- include('opportunityCardModal', {opportunity: opportunity, months: months}); %>
+                    <%- include('opportunityCardModal', {opportunity: opportunity, months: months, cardId: cardId}); %>
                     <% }); %>
                     <!-- Opportunity Modal Ends-->
                   </tbody>

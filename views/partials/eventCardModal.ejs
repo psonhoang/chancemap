@@ -32,7 +32,7 @@
                                 <% if(event.reg_deadline) { %>
                                 <strong><%= months[event.reg_deadline.getMonth()] + ' ' + event.reg_deadline.getDate() + ', ' + event.reg_deadline.getFullYear() %></strong>
                                 <% } else { %>
-                                <strong>N/A</strong>
+                                    N/A
                                 <% } %></p>
                                 <p><label>Start date:</label>  <strong><%= months[event.start_date.getMonth()] + ' ' + event.start_date.getDate() + ', ' + event.start_date.getFullYear(), %></strong></p>
                                 <% if(event.end_date) { %>
@@ -40,9 +40,13 @@
                                 <% } %>
                                 <% if(event.start_time) { %>
                                     <p><label>Start time:</label>  <strong><%= event.start_time %></strong></p>
-                                <%} %>
+                                <% } else { %>
+                                    N/A
+                                <% } %>
                                 <% if(event.end_time) { %>
                                     <p><label>End time:</label>  <strong><%= event.end_time %></strong></p>
+                                <% } else { %>
+                                    N/A
                                 <% } %>
                                 <% if(event.facebook) { %>
                                     <p><label>Facebook:</label> <a href="<%= event.facebook %>"><i class="ft-facebook"></i></a></p>
@@ -54,9 +58,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-5 col-sm-12">
-                    <div class="fb-post card" data-href="<%= event.facebook %>" data-width="500" data-show-text="true"></div>
-                </div>
+                <% if(event.facebook) { %>
+                    <div class="col-md-5 col-sm-12">
+                        <div class="fb-post card" data-href="<%= event.facebook %>" data-width="500" data-show-text="true"></div>
+                    </div>
+                <% } %>
             </div>
             <!-- Modal content ends -->
 

@@ -1,4 +1,15 @@
 <% extend('../defaultLayouts/defaultLayout') %>
+<% const months = ["January", "February", "March", "April", "May", "June", "July","August", "September", "October","November", "December"]; %>
+
+<!-- Facebook Embedding Script -->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0';
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 
 <div class="app-content content container-fluid">
 	<div class="content-wrapper">
@@ -33,12 +44,30 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Event Modal Starts -->
+            <% events.forEach(event => { %>
+                <%- include('eventCardModal', {event: event, months: months, cardId: event._id}); %>
+            <% }); %>
+            <!-- Event Modal Ends-->
+            
+            <!-- Job Modal Starts -->
+            <% jobs.forEach(job => { %>
+                <%- include('jobCardModal', { job: job, admin: false, months: months, cardId: job._id }); %>
+            <% }); %>
+            <!-- Job Modal Ends -->
+
+            <!-- Opportunity Modal Starts -->
+            <% opportunities.forEach(opportunity => { %>
+                <%- include('opportunityCardModal', {opportunity: opportunity, months: months, cardId: opportunity._id}); %>
+            <% }); %>
+            <!-- Opportunity Modal Ends-->
         </div>
     </div>
 </div>
 
 <!-- BEGIN CODEDAO SCRIPT -->
-<script type="text/javascript">
+<script type="module">
     const events = <%- JSON.stringify(events) %>;
     const jobs = <%- JSON.stringify(jobs) %>;
     const opportunities = <%- JSON.stringify(opportunities) %>;
@@ -60,7 +89,9 @@
         let data = {
             title: event.name,
             start: calDate.substr(0, calDate.indexOf('T')),
-            color: '#FFB300'
+            color: '#FFB300',
+            id: event._id,
+            description: event.org_name + ' - ' + event.name
         };
         eventsData.push(data);
     });
@@ -70,7 +101,9 @@
         let data = {
             title: job.name,
             start: calDate.substr(0, calDate.indexOf('T')),
-            color: '#42A5F5'
+            color: '#42A5F5',
+            id: job._id,
+            description: job.org_name + ' - ' + job.name
         };
         jobsData.push(data);
     });
@@ -80,7 +113,9 @@
         let data = {
             title: opportunity.name,
             start: calDate.substr(0, calDate.indexOf('T')),
-            color: '#FF5252'
+            color: '#FF5252',
+            id: opportunity._id,
+            description: opportunity.org_name + ' - ' + opportunity.name
         };
         opportunitiesData.push(data);
     });
@@ -90,7 +125,16 @@
     $(document).ready(function () {
         // fullCalendar
         $('#fc-default').fullCalendar({
-            events: calendarData
+            events: calendarData,
+            eventClick: function(calEvent, jsEvent, view) {
+                $('#'+ calEvent.id).modal();
+            },
+            eventAfterRender: function(event, element) {
+                $(element).tooltip({
+                    title: event.description,
+                    container: "body"
+                });
+            }
         });
     });
 </script>

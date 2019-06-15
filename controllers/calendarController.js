@@ -47,6 +47,7 @@ router.get('/', (req, res) => {
                       if(account_type == 0 ) {
                           User.findOne({'_id': account_id}, (err, user) => {
                               let connected = users.filter(client => user.connected.indexOf(client.username) >= 0);
+                              const criteriaList = user.interests.concat(user.skills);
                               res.render('calendar', {
                                   title: "ChanceMap | Calendar",
                                   account_type: req.user.account_type,
@@ -59,11 +60,13 @@ router.get('/', (req, res) => {
                                   messages: messages,
                                   connected: connected,
                                   users: users,
+                                  criteriaList: criteriaList
                               });
                           });
                       } else if(account_type == 1) {
                           Org.findOne({'_id': account_id}, (err, org) => {
                               let followers = users.filter(user => org.followers.indexOf(user.username) >= 0);
+                              const criteriaList = org.hashtags;
                               res.render('calendar', {
                                   title: "ChanceMap | Calendar",
                                   account_type: req.user.account_type,
@@ -76,6 +79,7 @@ router.get('/', (req, res) => {
                                   messages: messages,
                                   connected: followers,
                                   users: users,
+                                  criteriaList: criteriaList
                               });
                           });
                       } else {
@@ -92,6 +96,7 @@ router.get('/', (req, res) => {
                                   messages: messages,
                                   connected: connected,
                                   users: users,
+                                  criteriaList: []
                               });
                           });
                       }

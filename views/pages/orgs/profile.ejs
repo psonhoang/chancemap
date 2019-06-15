@@ -371,7 +371,7 @@
                                 <div class="card-block">
                                     <div class="media">
                                         <div class="media-left">
-                                            <a><img onclick="window.location.href='/<%= orgs[i].username %>'" src="<%= orgs[i].avatar %>" class="btn-secondary rounded-circle" style="width: 100px; height: 100px"  alt="org avatar"></a>
+                                            <a><img onclick="window.location.href='/orgs/<%= orgs[i].username %>'" src="<%= orgs[i].avatar %>" class="btn-secondary rounded-circle" style="width: 100px; height: 100px"  alt="org avatar"></a>
                                             <% if(account_type == 0 && (currentAcc.following.indexOf(org.username) < 0)) { %>
                                                 <br><br>
                                                 <buton id="<%= orgs[i]._id %>" onclick="follow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)" class="btn btn-info"><i class="fa fa-eye"></i> Follow</buton>

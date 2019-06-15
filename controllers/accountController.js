@@ -706,7 +706,7 @@ router.post('/profile/org', upload.fields([{name: 'avatar', maxCount: 1}, {name:
 	const currentAcc = req.user;
 
 	console.log('POST on /profile/org');
-	console.log(data);
+	// console.log(data);
 
 	Org.findOne({'username': currentAcc.username}, (err, org) => {
 		if(err) {
@@ -714,7 +714,7 @@ router.post('/profile/org', upload.fields([{name: 'avatar', maxCount: 1}, {name:
 			console.log(err);
 			return;
 		}
-		console.log(org);
+		// console.log(org);
 		if(req.files['avatar']) {
 			if(org.avatar != 'https://cdn0.iconfinder.com/data/icons/users-android-l-lollipop-icon-pack/24/group2-512.png') {
 				// delete existing avatar file
@@ -740,7 +740,7 @@ router.post('/profile/org', upload.fields([{name: 'avatar', maxCount: 1}, {name:
 		org.updated_at = new Date();
 
 		org.save().then(result => {
-			console.log(result);
+			console.log("Org save success!");
 			OrgProfile.findOne({'org_id': org._id}, (err, profile) => {
 				if(err) {
 					res.send('Database error...');
@@ -753,31 +753,31 @@ router.post('/profile/org', upload.fields([{name: 'avatar', maxCount: 1}, {name:
 					profile.past_work = data.past_work;
 					for(i = 0; i < 3; i++) {
 						if(req.files['carousel' + (i+1).toString()]) {
-							if(	profile.carousel[i] != null) {
-							// delete existing avatar file
+							if(	profile.carousel[i] != null ) {
+							// delete existing carousel file
 								gfs.remove({filename: profile.carousel[i].split('files/')[1], root: 'uploads'}, (err, result) => {
 									if(err) {
 										console.log(err);
 									} else {
 										console.log(result);
 									}
-								});
+								});	
 							}
-							profile.carousel[i] = '/files/' + req.files['carousel' + (i + 1).toString()][0].filename;
+							profile.carousel.splice(i, 1, '/files/' + req.files['carousel' + (i + 1).toString()][0].filename);
 						}
 					}
-					profile.save().then(result => {
-						console.log(result);
-						res.redirect('/orgs/' + org.username);
-					}).catch(err => {
-						res.send(err);
+					console.log(profile.carousel);
+					profile.updated_at = new Date();
+					profile.save((err, profile) => {
+						console.log("profile  save success!");
+						// console.log(profile);
 					});
 				}	else {
 					var carousels = [];
 					for(i = 0; i < 3; i++) {
 						if(req.files['carousel' + (i+1).toString()]) {
 							carousels[i] = '/files/' + req.files['carousel' + (i + 1).toString()][0].filename;
-						}
+						} 
 					}
 					var newProfile = new OrgProfile({
 						_id: new mongoose.Types.ObjectId(),
@@ -796,6 +796,7 @@ router.post('/profile/org', upload.fields([{name: 'avatar', maxCount: 1}, {name:
 							console.log(err);
 							return;
 						}
+						console.log("profile save success!");
 						console.log(profile);
 						res.redirect("/orgs/" + org.username);
 					});

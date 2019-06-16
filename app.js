@@ -519,7 +519,7 @@ app.get('/', (req, res) => {
                       connected: connected,
                     });
                   });
-                } else if (account_type == 1){
+                } else if (account_type == 1) {
                   Org.findOne({'_id': account_id}, (err, org) => {
                     let temp = [];
                     let followers = users.filter(user => org.followers.indexOf(user.username) >= 0);
@@ -650,7 +650,10 @@ app.get('/', (req, res) => {
                   });
                 } else {
                   Admin.findOne({'_id': account_id}, (err, admin) => {
-                    let criteriaList = [];
+                    if(err) {
+                      console.log(err);
+                      return;
+                    }
                     res.render('index', {
                       title: 'ChanceMap | Home',
                       account_type: account_type,
@@ -661,10 +664,10 @@ app.get('/', (req, res) => {
                       orgs: orgs,
                       users: users,
                       opportunities: opportunities,
-                      criteriaList: criteriaList,
+                      criteriaList: [],
                       notis: req.notis,
                       messages: messages,
-                      connected: connected,
+                      connected: [],
                     });
                   })
                 };

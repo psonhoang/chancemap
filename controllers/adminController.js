@@ -84,6 +84,7 @@ router.get('/', (req, res) => {
 										criteriaList: criteriaList,
 										notis: req.notis,
 										messages: messages,
+										connected: []
 									});
 								});
 							});
@@ -98,9 +99,6 @@ router.get('/', (req, res) => {
 router.get('/:Id', (req, res) => {
 	let account_type = req.user.account_type;
 	let account_id = req.user.account_id;
-	let criteriaList;
-	var thisUser;
-	let adminId = req.params.Id;
 
 	if (account_type == 2)
 	{
@@ -121,6 +119,7 @@ router.get('/:Id', (req, res) => {
 								currentAcc: user,
 								notis: req.notis,
 								messages: messages,
+								connected: []
 							});
 						});
 					});

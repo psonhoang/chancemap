@@ -73,7 +73,7 @@
             </ul>
             <ul style="margin-right: 50px" class="nav navbar-nav float-xs-right">
 
-              <% if(!currentAcc.hashtags) { %>
+              <% if(currentAcc.username !== 'chancemap_admin') { %>
               <!-- user connect noti -->
               <li class="dropdown dropdown-notification nav-item">
                 <a id="msg_noti" href="#" data-toggle="dropdown" class="nav-link nav-link-label"><i class="ficon ft-users"></i>
@@ -94,6 +94,7 @@
                     <h6 class="dropdown-header m-0"><span class="grey darken-2">Requests</span>
                   </li>
                   <li id="connect_noti" class="list-group scrollable-container ps-container ps-theme-dark ps-active-y" data-ps-id="f63177ae-103d-18cc-b7ba-6373aaa089ef">
+                   
                     <% let connectRequests = users.filter(user => currentAcc.connect_received.indexOf(user.username) >= 0) %>
                     <% connectRequests.forEach(user => { %>
                     <% if (account_type == 0 && currentAcc.connected.indexOf(user.username) < 0 && currentAcc.connect_sent.indexOf(user.username) < 0 && currentAcc.connect_received.indexOf(user.username) >= 0) { %>
@@ -112,7 +113,7 @@
                       </div>
                     </a>
                     <%  } %>
-                    <% }) %>
+                    <% }); %>
 
                     <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 3px;">
                       <div class="ps-scrollbar-x" tabindex="0" style="left: 0px; width: 0px;"></div>
@@ -124,8 +125,6 @@
                   <li class="dropdown-menu-footer"><a href="/messages" class="dropdown-item text-muted text-xs-center">See all requests</a></li>
                 </ul>
               </li>
-              <% } %>
-
 
               <!-- messages noti -->
               <li onclick="clearMsgNoti()" class="dropdown dropdown-notification nav-item">
@@ -191,7 +190,7 @@
                   <li class="dropdown-menu-footer"><a href="/messages" class="dropdown-item text-muted text-xs-center">See all messages</a></li>
                 </ul>
               </li>
-
+              <% } %>
 
 
               <!-- events and jobs noti -->

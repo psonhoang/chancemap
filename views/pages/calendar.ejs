@@ -1,0 +1,141 @@
+<% extend('../defaultLayouts/defaultLayout') %>
+<% const months = ["January", "February", "March", "April", "May", "June", "July","August", "September", "October","November", "December"]; %>
+
+<!-- Facebook Embedding Script -->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0';
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<div class="app-content content container-fluid">
+	<div class="content-wrapper">
+	    <div class="content-body">
+            <section id="basic-examples">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Calendar</h3>
+                                <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
+                                <div class="heading-elements">
+                                    <ul class="list-inline mb-0">
+                                        <li><a data-action="collapse"><i class="ft-minus"></i></a></li>
+                                        <li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
+                                        <li><a data-action="close"><i class="ft-x"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="card-body collapse in">
+                                <div class="card-block">
+                                    <p style="font-size: 16px" class="card-body"><strong>*NOTE:&nbsp;</strong>
+                                        <span><i style="color:#FFB300" class="ft-activity"></i>&nbsp;Event</span>&nbsp;&nbsp;
+                                        <span><i style="color:#42A5F5" class="ft-activity"></i>&nbsp;Job</span>&nbsp;&nbsp;
+                                        <span><i style="color:#FF5252" class="ft-activity"></i>&nbsp;Opportunity</span>
+                                    </p>
+                                    <br>
+                                    <div id='fc-default'></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Event Modal Starts -->
+            <% events.forEach(event => { %>
+                <%- include('eventCardModal', {event: event, months: months, cardId: event._id}); %>
+            <% }); %>
+            <!-- Event Modal Ends-->
+            
+            <!-- Job Modal Starts -->
+            <% jobs.forEach(job => { %>
+                <%- include('jobCardModal', { job: job, admin: false, months: months, cardId: job._id }); %>
+            <% }); %>
+            <!-- Job Modal Ends -->
+
+            <!-- Opportunity Modal Starts -->
+            <% opportunities.forEach(opportunity => { %>
+                <%- include('opportunityCardModal', {opportunity: opportunity, months: months, cardId: opportunity._id}); %>
+            <% }); %>
+            <!-- Opportunity Modal Ends-->
+        </div>
+    </div>
+</div>
+
+<!-- BEGIN CODEDAO SCRIPT -->
+<script type="module">
+    const events = <%- JSON.stringify(events) %>;
+    const jobs = <%- JSON.stringify(jobs) %>;
+    const opportunities = <%- JSON.stringify(opportunities) %>;
+    
+    let eventsData = [], jobsData = [], opportunitiesData = [];
+
+    // toTitleCase() helper function
+    // const toTitleCase = (phrase) => {
+    //     return phrase
+    //         .toLowerCase()
+    //         .split(' ')
+    //         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    //         .join(' ');
+    // }
+
+    // Plug data into calendar
+    events.forEach(event => {
+        let calDate = event.reg_deadline ? event.reg_deadline : event.start_date;
+        let data = {
+            title: event.name,
+            start: calDate.substr(0, calDate.indexOf('T')),
+            color: '#FFB300',
+            id: event._id,
+            description: event.org_name + ' - ' + event.name
+        };
+        eventsData.push(data);
+    });
+
+    jobs.forEach(job => {
+        let calDate = job.app_deadline;
+        let data = {
+            title: job.name,
+            start: calDate.substr(0, calDate.indexOf('T')),
+            color: '#42A5F5',
+            id: job._id,
+            description: job.org_name + ' - ' + job.name
+        };
+        jobsData.push(data);
+    });
+
+    opportunities.forEach(opportunity => {
+        let calDate = opportunity.app_deadline ? opportunity.app_deadline : opportunity.start_date;
+        let data = {
+            title: opportunity.name,
+            start: calDate.substr(0, calDate.indexOf('T')),
+            color: '#FF5252',
+            id: opportunity._id,
+            description: opportunity.org_name + ' - ' + opportunity.name
+        };
+        opportunitiesData.push(data);
+    });
+
+    const calendarData = eventsData.concat(jobsData, opportunitiesData);
+    
+    $(document).ready(function () {
+        // fullCalendar
+        $('#fc-default').fullCalendar({
+            events: calendarData,
+            eventClick: function(calEvent, jsEvent, view) {
+                $('#'+ calEvent.id).modal();
+            },
+            eventAfterRender: function(event, element) {
+                $(element).tooltip({
+                    title: event.description,
+                    container: "body"
+                });
+            }
+        });
+    });
+</script>
+<!-- END -->

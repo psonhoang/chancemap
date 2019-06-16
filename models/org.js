@@ -16,7 +16,8 @@ const orgSchema = mongoose.Schema({
 	facebook: String,
 	website: String,
 	avatar: String,
-	new_notis: [mongoose.Schema.Types.ObjectId]
+	new_notis: [mongoose.Schema.Types.ObjectId],
+	messages: [mongoose.Schema.Types.ObjectId],
 });
 
 // Export Org model

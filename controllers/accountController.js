@@ -15,9 +15,15 @@ const Grid = require('gridfs-stream');
 
 // Models
 const Account = require('../models/account');
+const Admin = require('../models/admin');
 const User = require('../models/user');
 const Org = require('../models/org');
+const Event = require('../models/event');
+const Job = require('../models/job');
+const Opportunity = require('../models/opportunity');
+const OrgProfile = require('../models/orgProfile');
 const Notification = require('../models/notification');
+const Message = require('../models/message');
 
 // Utils
 const utils = require('../utils');
@@ -62,7 +68,7 @@ router.get('/login', (req, res) => {
 	res.render('login', {title: "ChanceMap | Login", message: req.flash('error')});
 });
 
-router.post('/login', passport.authenticate('local', {failureRedirect: '/login', failureFlash: true}), 
+router.post('/login', passport.authenticate('local', {failureRedirect: '/login', failureFlash: true}),
 	(req, res, next) => {
 		// issue a remember me cookie if the option was checked
     if (!req.body.remember_me) { return next(); }
@@ -223,6 +229,7 @@ router.post('/register/user', upload.fields([{name: 'avatar', maxCount: 1}, {nam
 // @route POST
 // @desc Register new org account
 router.post('/register/org', upload.single('avatar'), (req, res) => {
+	console.log("POST on /register/org");
 	let data = req.body;
 	let name = data.name;
 	let username = data.username.trim();
@@ -269,6 +276,25 @@ router.post('/register/org', upload.single('avatar'), (req, res) => {
 			console.log(acc);
 			});
 
+			var newProfile = new OrgProfile({
+				_id: new mongoose.Types.ObjectId(),
+				created_at: new Date(),
+				updated_at: new Date(),
+				org_id : newOrg._id,
+				org_name: newOrg._name,
+				what_we_do: "", //contain description of org
+				our_team: "", //contain description of org's team
+				carousel: []
+			});
+
+			newProfile.save((err, profile) => {
+				if(err) {
+					console.log(err);
+					return;
+				}
+				console.log(profile);
+			});
+
 			var newAccount = new Account({
 				_id: new mongoose.Types.ObjectId(),
 				created_at: new Date(),
@@ -303,52 +329,150 @@ router.post('/register/org', upload.single('avatar'), (req, res) => {
 
 });
 
-
-// @route GET
-// @desc edit current account's profile
+// user profile
 router.get('/profile', (req, res) => {
-	if(!req.isAuthenticated()) {
-    res.redirect('/login');
+	let currentAcc = req.user;
+  let account_type = currentAcc.account_type;
+  if(account_type == 0) {
+    User.findOne({'_id': currentAcc.account_id}, (err, currentUser) => {
+      Org.find((err, orgs) => {
+        User.find((err, users) => {
+          Event.find((err, events) => {
+            Job.find((err, jobs) => {
+              Opportunity.find((err, opportunities) => {
+                Message.find((err, messages) => {
+                  let criteriaList = currentUser.interests.concat(currentUser.skills);
+                  let following = orgs.filter(org => currentUser.following.indexOf(org.username) >= 0);
+                  let connected = users.filter(user => currentUser.connected.indexOf(user.username) >= 0);
+                  let interestedEvent = events.filter(event => currentUser.events.indexOf(event._id) >= 0);
+                  let interestedJob = jobs.filter(job => currentUser.jobs.indexOf(job._id) >= 0);
+                  let interestedOpp = opportunities.filter(opp => currentUser.opps.indexOf(opp._id) >= 0);
+                  res.render('users/myProfile', {
+                    title: 'ChanceMap | Following',
+          					orgs: following,
+                    users: connected,
+                    events: interestedEvent,
+                    jobs: interestedJob,
+                    opportunities: interestedOpp,
+          					account_type: currentAcc.account_type,
+          					account_id: currentAcc.account_id,
+                    currentAcc: currentUser,
+                    notis: req.notis,
+                    criteriaList: criteriaList,
+                    connected: connected,
+                    messages: messages,
+                  })
+                });
+              });
+            });
+          });
+        });
+      });
+    });
   } else {
-    let account_type = req.user.account_type;
-    let account_id = req.user.account_id;
-    Notification.find({'accounts': req.user.username}, (err, notis) => {
-    	if(err) {
-    		console.log(err);
-    		return;
-    	}
-    	if(account_type == 0) {
-	      User.findOne({'_id': account_id}, (err, user) => {
-	        res.render('profile', {
-	          title: 'ChanceMap | My Profile',
-	          account_type: account_type,
-	          account_id: account_id,
-	          currentAcc: user,
-	          notis: req.notis
-	        });
-	      });
-	    } else {
-	      Org.findOne({'_id': account_id}, (err, org) => {
-	          res.render('profile', {
-	            title: 'ChanceMap | My Profile',
-	            account_type: account_type,
-	            account_id: account_id,
-	            currentAcc: org,
-	            notis: req.notis
-	          });
-	      });
-	    }
+    Org.findOne({'_id': currentAcc.account_id}, (err, org) => {
+      if(err) {
+        console.log(err);
+        return;
+      }
+      OrgProfile.findOne({'org_id': org._id}, (err, profile) => {
+				User.find((err, users) => {
+					Job.find({'org_id': org._id}, (err, jobs) => {
+						Event.find({'org_id': org._id}, (err, events) => {
+							Message.find((err, messages) => {
+								let currentAcc = org;
+								let followers = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
+								let criteriaList = org.hashtags;
+								res.render('orgs/edit', {
+									title: 'ChanceMap | My Profile',
+									account_type: currentAcc.account_type,
+									account_id: currentAcc.account_id,
+									currentAcc: currentAcc,
+									profile: profile,
+									users: users,
+									jobs: jobs,
+									events: events,
+									connected: followers,
+									messages: messages,
+									notis: req.notis,
+									criteriaList: criteriaList
+								});
+							});
+						});
+					});
+				});
+      });
     });
   }
+});
+
+router.get('/profile/:id', (req, res) => {
+	let account_id = req.user.account_id;
+	let account_type = req.user.account_type;
+	var currentAcc;
+  let user_id = req.params.id;
+
+  if(account_id != user_id) {
+		if (account_type == 1) {
+			Org.findOne({'_id': account_id}, (err, org) => {
+				currentAcc = org;
+			});
+		} else if (account_type == 0) {
+			User.findOne({'_id': account_id}, (err, user) => {
+				currentAcc = user;
+			});
+		} else {
+			Admin.findOne({'_id': account_id}, (err, admin) => {
+				currentAcc = admin;
+			});
+		}
+
+		User.findOne({'_id': user_id}, (err, currentUser) => {
+			Org.find((err, orgs) => {
+				User.find((err, users) => {
+					Event.find((err, events) => {
+						Job.find((err, jobs) => {
+							Opportunity.find((err, opportunities) => {
+								Message.find((err, messages) => {
+									let criteriaList = currentUser.interests.concat(currentUser.skills);
+									let following = orgs.filter(org => currentUser.following.indexOf(org.username) >= 0);
+									let connected = users.filter(user => currentUser.connected.indexOf(user.username) >= 0);
+									let interestedEvent = events.filter(event => currentUser.events.indexOf(event._id) >= 0);
+									let interestedJob = jobs.filter(job => currentUser.jobs.indexOf(job._id) >= 0);
+									let interestedOpp = opportunities.filter(opp => currentUser.opps.indexOf(opp._id) >= 0);
+									res.render('users/othersProfile', {
+										title: 'ChanceMap | Following',
+										orgs: following,
+										users: connected,
+										account_type: account_type,
+										account_id: account_id,
+										currentUser: currentUser,
+										currentAcc: currentAcc,
+										notis: req.notis,
+										criteriaList: criteriaList,
+										connected: connected,
+										messages: messages,
+										events: interestedEvent,
+										jobs: interestedJob,
+										opportunities: interestedOpp,
+									})
+								});
+							});
+						});
+					});
+				});
+			});
+		});
+	}
 });
 
 // @route POST
 // @desc save edits to current user account's profile
 router.post('/profile/user', upload.fields([{name: 'avatar', maxCount: 1}, {name: 'resume_file', maxCount: 1}]), (req, res) => {
 	let data = req.body;
-	const currentAcc = req.user;
+  let currentAcc = req.user;
 
-	User.findOne({'username': currentAcc.username}, (err, user) => {
+	User.findOne({'_id': currentAcc.account_id}, (err, user) => {
 		if(err) {
 			res.send('Database error...');
 			console.log(err);
@@ -404,13 +528,185 @@ router.post('/profile/user', upload.fields([{name: 'avatar', maxCount: 1}, {name
 	});
 });
 
+// users connecting function
+router.post('/connect', upload.single(), (req, res) => {
+	let user_id = req.body.user_id;
+	let account_id = req.body.account_id;
+	let status = req.body.status;
+	console.log(req.body);
+
+	if (status === 'connect_request') {
+    User.findOne({'_id': account_id}, (err, currentAcc) => {
+  		User.findOne({'_id': user_id}, (err, user) => {
+        console.log(`Sender: ${currentAcc}`);
+        console.log(`Recipient: ${user}`);
+  			if (currentAcc.connect_sent.indexOf(user.username) < 0) {
+          //update sender
+  				currentAcc.connect_sent.push(user.username);
+  				currentAcc.updated_at = new Date();
+  				currentAcc.save().then(result => {
+            console.log(currentAcc.connect_sent);
+
+            //update recipient
+  					user.connect_received.push(currentAcc.username);
+  					user.updated_at = new Date();
+  					user.save().then(result => {
+              console.log(user.connect_received);
+              console.log("Connect request sent!");
+  						res.end();
+  					}).catch(err => {
+  						res.send(err);
+  					});
+  				});
+  			}
+        req.socketio.to(user._id).emit('connect noti', {user_id: user._id, name: user.name, avatar: user.avatar});
+  		});
+  	});
+	} else if (status === 'connect_accept') {
+    User.findOne({'_id': account_id}, (err, currentAcc) => {
+  		User.findOne({'_id': user_id}, (err, user) => {
+        console.log(`Sender: ${currentAcc.name}`);
+        console.log(`Recipient: ${user.name}`);
+
+  			if (currentAcc.connected.indexOf(user.username) < 0 && currentAcc.connect_received.indexOf(user.username) >= 0) {
+          //update sender
+          let i = currentAcc.connect_received.indexOf(user.username);
+          currentAcc.connect_received.splice(i, 1);
+  				currentAcc.connected.push(user.username);
+  				currentAcc.updated_at = new Date();
+  				currentAcc.save().then(result => {
+            console.log(currentAcc.connected);
+
+            //update recipient
+            let i = user.connect_sent.indexOf(currentAcc.username);
+            user.connect_sent.splice(i, 1);
+  					user.connected.push(currentAcc.username);
+  					user.updated_at = new Date();
+  					user.save().then(result => {
+              console.log(user.connected);
+              console.log("Successfully connected!");
+  						res.end();
+  					}).catch(err => {
+  						res.send(err);
+  					});
+  				});
+  			}
+  		});
+  	});
+	} else if (status === 'disconnect') {
+    User.findOne({'_id': account_id}, (err, currentAcc) => {
+			User.findOne({'_id': user_id}, (err, user) => {
+
+				if (currentAcc.connected.indexOf(user.username) >= 0) {
+          //update sender
+					let i = currentAcc.connected.indexOf(user.username);
+					currentAcc.connected.splice(i, 1);
+					currentAcc.updated_at = new Date();
+					currentAcc.save().then(result => {
+						console.log("Successfully disconnected");
+
+            //update recipient
+						let i = user.connected.indexOf(currentAcc.username);
+						user.connected.splice(i, 1);
+						user.updated_at = new Date();
+						user.save().then(result => {
+							res.end();
+						}).catch(err => {
+							res.send(err);
+						});
+					});
+				}
+			}).catch(err => {
+				res.send(err);
+			});
+		});
+  }
+});
+
+// add events/jobs/opportunities function
+router.post('/add_items', upload.single(), (req, res) => {
+  let account_id = req.body.account_id;
+  let status = req.body.status;
+  console.log(status);
+
+  User.findOne({'_id': account_id}, (err, user) => {
+    if (status === 'add_event' && user.events.indexOf(req.body.event_id) < 0) {
+      let event_id = req.body.event_id;
+      user.events.push(event_id);
+      user.updated_at = new Date();
+      user.save().then(result => {
+        console.log(user.events);
+      })
+    } else if (status === 'add_job' && user.jobs.indexOf(req.body.job_id) < 0) {
+      let job_id = req.body.job_id;
+      user.jobs.push(job_id);
+      user.updated_at = new Date();
+      user.save().then(result => {
+        console.log(user.jobs);
+      })
+    } else if (status === 'add_opp' && user.opps.indexOf(req.body.opp_id) < 0) {
+      let opp_id = req.body.opp_id;
+      user.opps.push(opp_id);
+      user.updated_at = new Date();
+      user.save().then(result => {
+        console.log(user.opps);
+      })
+    }
+  })
+})
+
+// remove events/jobs/opportunities function
+router.post('/remove_items', upload.single(), (req, res) => {
+  let account_id = req.body.account_id;
+  let status = req.body.status;
+  console.log(status);
+  console.log(account_id);
+
+  User.findOne({'_id': account_id}, (err, user) => {
+    // console.log(user);
+    if (status === 'remove_event' && user.events.indexOf(req.body.event_id) >= 0) {
+      let event_id = req.body.event_id;
+      let i = user.events.indexOf(event_id);
+      user.events.splice(i, 1);
+      user.updated_at = new Date();
+      user.save().then(result => {
+        console.log('Event removed')
+        console.log(user.events);
+      });
+    } else if (status === 'remove_job' && user.jobs.indexOf(req.body.job_id) >= 0) {
+      let job_id = req.body.job_id;
+      let i = user.jobs.indexOf(job_id);
+      user.jobs.splice(i, 1);
+      user.updated_at = new Date();
+      user.save().then(result => {
+        console.log('Job removed')
+        console.log(user.jobs);
+      });
+    } else if (status === 'remove_opp' && user.opps.indexOf(req.body.opp_id) >= 0) {
+      let opp_id = req.body.opp_id;
+      console.log(opp_id);
+      console.log(user.opps);
+      let i = user.opps.indexOf(opp_id);
+      console.log(i);
+      user.opps.splice(i, 1);
+      user.updated_at = new Date();
+      user.save().then(result => {
+        console.log('Opportunity removed')
+        console.log(user.opps);
+      });
+    }
+  });
+});
+
+
 // @route POST
 // @desc save edits to current org account's profile
-router.post('/profile/org', upload.single('avatar'), (req, res) => {
+router.post('/profile/org', upload.fields([{name: 'avatar', maxCount: 1}, {name: 'carousel1', maxCount: 1}, {name: 'carousel2', maxCount: 1}, {name: 'carousel3', maxCount: 1}]), (req, res) => {
 	let data = req.body;
 	const currentAcc = req.user;
 
 	console.log('POST on /profile/org');
+	// console.log(data);
 
 	Org.findOne({'username': currentAcc.username}, (err, org) => {
 		if(err) {
@@ -418,9 +714,9 @@ router.post('/profile/org', upload.single('avatar'), (req, res) => {
 			console.log(err);
 			return;
 		}
-		console.log(org);
-		if(req.file) {
-			if(	org.avatar != 'https://cdn0.iconfinder.com/data/icons/users-android-l-lollipop-icon-pack/24/group2-512.png') {
+		// console.log(org);
+		if(req.files['avatar']) {
+			if(org.avatar != 'https://cdn0.iconfinder.com/data/icons/users-android-l-lollipop-icon-pack/24/group2-512.png') {
 				// delete existing avatar file
 				gfs.remove({filename: org.avatar.split('files/')[1], root: 'uploads'}, (err, result) => {
 					if(err) {
@@ -430,7 +726,7 @@ router.post('/profile/org', upload.single('avatar'), (req, res) => {
 					}
 				});
 			}
- 			org.avatar = '/files/' + req.file.filename;
+ 			org.avatar = '/files/' + req.files['avatar'][0].filename;
 		}
 		org.name = data.name;
 		org.email = data.email;
@@ -444,20 +740,77 @@ router.post('/profile/org', upload.single('avatar'), (req, res) => {
 		org.updated_at = new Date();
 
 		org.save().then(result => {
-			console.log(result);
-			res.redirect('/profile');
+			console.log("Org save success!");
+			OrgProfile.findOne({'org_id': org._id}, (err, profile) => {
+				if(err) {
+					res.send('Database error...');
+					console.log(err);
+					return;
+				}
+				if (profile != null) {
+					profile.what_we_do = data.what_we_do;
+					profile.our_team = data.our_team;
+					profile.past_work = data.past_work;
+					for(i = 0; i < 3; i++) {
+						if(req.files['carousel' + (i+1).toString()]) {
+							if(	profile.carousel[i] != null ) {
+							// delete existing carousel file
+								gfs.remove({filename: profile.carousel[i].split('files/')[1], root: 'uploads'}, (err, result) => {
+									if(err) {
+										console.log(err);
+									} else {
+										console.log(result);
+									}
+								});	
+							}
+							profile.carousel.splice(i, 1, '/files/' + req.files['carousel' + (i + 1).toString()][0].filename);
+						}
+					}
+					console.log(profile.carousel);
+					profile.updated_at = new Date();
+					profile.save((err, profile) => {
+						console.log("profile  save success!");
+						// console.log(profile);
+					});
+				}	else {
+					var carousels = [];
+					for(i = 0; i < 3; i++) {
+						if(req.files['carousel' + (i+1).toString()]) {
+							carousels[i] = '/files/' + req.files['carousel' + (i + 1).toString()][0].filename;
+						} 
+					}
+					var newProfile = new OrgProfile({
+						_id: new mongoose.Types.ObjectId(),
+						created_at: new Date(),
+						updated_at: new Date(),
+						org_id : org._id,
+						org_name: org.name,
+						what_we_do: data.what_we_do, //contain description of org
+						our_team: data.our_team, //contain description of org's team
+						past_work: data.past_work,
+						carousel: carousels
+					});
+
+					newProfile.save((err, profile) => {
+						if(err) {
+							console.log(err);
+							return;
+						}
+						console.log("profile save success!");
+						console.log(profile);
+						res.redirect("/orgs/" + org.username);
+					});
+				}
+			});
 		}).catch(err => {
 			res.send(err);
 		});
 	});
 });
 
-// Multer
-router.use(multer().single());
-
 //@route POST
 //@desc Follower/Following func
-router.post('/follow', (req, res) => {
+router.post('/follow', upload.single(), (req, res) => {
 	let org_id = req.body.org_id;
 	let user_id = req.body.user_id;
 	let follow = req.body.follow;
@@ -612,33 +965,45 @@ router.get('/:orgname/followers', (req, res) => {
 // Notifications
 router.get('/notifications', (req, res) => {
 	if(req.isAuthenticated()) {
-		Notification.find({'accounts': req.user.username}, (err, notis) => {
-			if(err) {
-				console.log(err);
-				return;
-			}
-			if(req.user.account_type == 0) {
-			User.findOne({'username': req.user.username}, (err, user) => {
-				res.render('notification', {
-					title: 'ChanceMap | Notifications',
-					currentAcc: user,
-					account_type: req.user.account_type,
-					account_id: req.user.account_id,
-					notis: notis
-				});
-			});
-		} else {
-			Org.findOne({'username': req.user.username}, (err, org) => {
-				res.render('notification', {
-					title: 'ChanceMap | Notifications',
-					currentAcc: org,
-					account_type: req.user.account_type,
-					account_id: req.user.account_id,
-					notis: notis
-				});
-			});
-		}
-		});
+    User.find((err, users) => {
+      Message.find((err, messages) => {
+        Notification.find({'accounts': req.user.username}, (err, notis) => {
+    			if(err) {
+    				console.log(err);
+    				return;
+    			}
+    			if(req.user.account_type == 0) {
+    			User.findOne({'username': req.user.username}, (err, user) => {
+            let connected = users.filter(client => user.connected.indexOf(client.username) >= 0);
+    				res.render('notification', {
+    					title: 'ChanceMap | Notifications',
+    					currentAcc: user,
+    					account_type: req.user.account_type,
+    					account_id: req.user.account_id,
+    					notis: notis,
+              messages: messages,
+              connected: connected,
+              users: users,
+    				});
+    			});
+    		} else {
+    			Org.findOne({'username': req.user.username}, (err, org) => {
+            let followers = users.filter(user => org.followers.indexOf(user.username) >= 0);
+    				res.render('notification', {
+    					title: 'ChanceMap | Notifications',
+    					currentAcc: org,
+    					account_type: req.user.account_type,
+    					account_id: req.user.account_id,
+    					notis: notis,
+              messages: messages,
+              connected: followers,
+              users: users,
+    				});
+    			});
+    		}
+    		});
+      });
+    });
 	} else {
 		res.redirect('/login');
 	}

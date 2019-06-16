@@ -7,19 +7,21 @@
           <div class="card-block">
             <a href="/profile"><img id="avatar" src='<%= currentAcc.avatar; %>' class="rounded-circle width-100 height-100" alt="Card image"></a>
             <br><br>
-            <a href="/profile"><span class="card-subtitle"><%= currentAcc.name; %></span></a>
+            <a href="/profile"><span class="card-subtitle current_user_name"><%= currentAcc.name; %></span></a>
           </div>
         </div></li>
       </ul>
       <li class="nav-item"><a href="/"><i class="ft-home"></i><span data-i18n="" class="menu-title">Home</span></a>
       </li>
+      <li class="nav-item"><a href="/calendar"><i class="ft-calendar"></i><span data-i18n="" class="menu-title">Calendar</span></a>
+      </li>
       <li class="nav-item has-sub"><a><i class="ft-sidebar"></i><span data-i18n="" class="menu-title">Dashboard</span><%#<span class="tag tag tag-primary tag-pill float-xs-right mr-2">3</span>%></a>
         <ul class="menu-content">
-          <li><a href="/events" class="menu-item"><i class="ft-calendar"></i>Events</a>
+          <li><a href="/events" class="menu-item"><i class="ft-map-pin"></i>Events</a>
           </li>
           <li><a href="/jobs" class="menu-item"><i class="ft-clipboard"></i>Jobs</a>
           </li>
-          <li><a href="/orgs" class="menu-item"><i class="ft-users"></i>Orgs</a>
+          <li><a href="/orgs" class="menu-item"><i class="ft-users"></i>Organizations</a>
           </li>
           <li><a href="/users" class="menu-item"><i class="ft-user"></i>Users</a>
           </li>
@@ -38,6 +40,7 @@
       <li class="nav-item"><a href="/profile"><i class="ft-users"></i><span data-i18n="" class="menu-title">Org profile</span></a>
       </li>
       <li class="nav-item"><a href="/<%= currentAcc.username %>/followers"><i class="ft-user-check"></i><span data-i18n="" class="menu-title">Followers</span></a>
+        <li class="nav-item"><a href="/messages"><i class="ft-message-square"></i><span data-i18n="" class="menu-title">Messages</span></a>
       <li class="navigation-header"><span>More</span>
         <%# <i data-toggle="tooltip" data-placement="right" data-original-title="Apps" class=" ft-minus"></i> %>
       </li>

@@ -8,7 +8,7 @@ const accountSchema = mongoose.Schema({
 	email: {type: String, required: true},
 	username: {type: String, required: true},
 	password: {type: String, required: true},
-	account_type: Number, // 0: User account; 1: Org account
+	account_type: Number, // 0: User account; 1: Org account; 2: Admin account
 	account_id: mongoose.Schema.Types.ObjectId, // store either user or org account's _id
 	resetPassToken: String,
 	resetExpiration: Date

@@ -1,5 +1,5 @@
 <% extend('../defaultLayouts/defaultLayout') %>
-<% var months = ["January", "February", "March", "April", "May", "June", "July","August", "September", "October","November", "December"]; %>
+<% const months = ["January", "February", "March", "April", "May", "June", "July","August", "September", "October","November", "December"]; %>
 
 <div class="app-content content container-fluid">
   <div class="content-wrapper">
@@ -20,9 +20,8 @@
       <!-- </div> -->
 
       <div class="row">
-
         <!-- Orgs -->
-        <div class="col-xl-9 col-lg-12">
+        <div class="col-xl-8 col-lg-12">
           <div class="card">
               <div style="color: white" class="card-header bg-teal bg-lighten-1">
                 <h4 class="card-title"><i class="ft-users"></i> Organizations</h4>
@@ -32,21 +31,14 @@
               </div>
               <div class="card-body collapse-in">
                 <div style="display: block; max-height: 500px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="table-responsive">
-                  <table class="table">
-                    <thead style="color: white" class="thead bg-blue-grey bg-darken-3">
-                      <tr>
-                        <th style="width: 10%; text-align: center">Avatar</th>
-                        <th style="width: 50%; text-align: center">Organization</th> <!-- Includes info: event name, org, location, time, tags -->
-                        <th style="width: 40%; text-align: center">#</th>
-                      </tr>
-                    </thead>
+                  <table class="table" style="margin-bottom: 0px">
                     <tbody id="orgsBody">
                       <% orgs.forEach(org => { %>
                         <% if (org.username != currentAcc.username) { %>
                           <% cardId = org._id; %>
-                          <tr style="border: 0px">
-                            <td>
-                              <img data-toggle="modal" data-target="#org<%= cardId %>" src="<%= org.avatar; %>" class="btn-secondary rounded-circle width-100 height-100" alt="org avatar">
+                          <tr style="border: 0px;">
+                            <td style="max-width: 20%; padding-right: 0.1rem">
+                              <a><img src="<%= org.avatar; %>" onclick="window.location.href='/orgs/<%= org.username; %>'" class="btn-secondary rounded-circle width-100 height-100" alt="org avatar"></a>
                               <% if(account_type == 0 && (currentAcc.following.indexOf(org.username) < 0)) { %>
                                     <br><br>
                                     <buton id="<%= org._id %>" onclick="follow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)" class="btn btn-info"><i class="fa fa-eye"></i> Follow</buton>
@@ -55,7 +47,7 @@
                                     <buton id="<%= org._id %>" onclick="unfollow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)"class="btn btn-success"><i class="fa fa-check"></i> Followed</buton>
                                 <% } %>
                             </td>
-                            <td>
+                            <td style="max-width: 60%; padding-left: 0.2rem">
                               <ul>
                                 <li style="font-size: 16px"><strong><%= org.name %></strong></li>
                                 <li style="margin-bottom: 10px; font-style: italic">
@@ -73,19 +65,25 @@
                                 <li style="font-size: small"><i class="ft-info"></i> <strong>About:</strong> <%= org.desc %></li>
                               </ul>
                             </td>
-                            <td>
-                              <% org.hashtags.forEach(hashtag => { %>
-                                <% var isMatch = false; %>
-                                <% criteriaList.forEach(criteria => { %>
-                                  <% if (hashtag.includes(criteria) && !isMatch) { %>
-                                    <% isMatch = true; %>
-                                    <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
-                                  <% } %>
-                                <% }); %>
-                                <% if (!isMatch) { %>
-                                  <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
+                            <td style="max-width: 20%">
+                            <div class="media-body" style="padding-left: 10px;">
+                              <button class="btn btn-info" onclick="showOrgHashtags(<%= JSON.stringify(org._id) %>)">Show hashtags</button>
+                            </div>
+                            <br>
+                            <div id="<%= org._id %>2" class="hashes">
+                            <% org.hashtags.forEach(hashtag => { %>
+                              <% var isMatch = false; %>
+                              <% criteriaList.forEach(criteria => { %>
+                                <% if (hashtag.includes(criteria) && !isMatch) { %>
+                                  <% isMatch = true; %>
+                                  <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
                                 <% } %>
                               <% }); %>
+                              <% if (!isMatch) { %>
+                                <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
+                              <% } %>
+                            <% }); %>
+                            </div>
                             </td>
                           </tr>
                         <% } %>
@@ -93,20 +91,154 @@
                     </tbody>
                   </table>
                   <!-- Org Modal Starts -->
-                  <% orgs.forEach(org => { %>
-                    <% if (org.username != currentAcc.username) { %>
-                      <% cardId = "org" + org._id%>
-                      <%- include('orgCardModal', {org: org, jobs: jobs, events: events, cardId: cardId}); %>
-                    <% } %>
-                  <% }); %>
                   <!-- Org Modal Ends -->
                 </div>
               </div>
           </div>
         </div>
 
+        <!-- Users -->
+        <div class="col-xl-4 col-lg-12">
+          <div class="card">
+            <div style="color: white" class="card-header bg-pink bg-lighten-3">
+              <h4 class="card-title"><i class="ft-user"></i> Users</h4>
+              <a class="heading-elements-toggle">
+                <i class="fa fa-ellipsis-v font-medium-3"></i>
+              </a>
+            </div>
+            <div style="display: block; max-height: 500px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="card-body collapse-in" id="usersBody">
+              <% users.forEach( user => { %>
+                <% if (currentAcc.username != user.username) { %>
+                  <div style="padding: 10px; border-bottom: 1px solid #E8E8E8" class="container-fluid">
+                    <div style="margin-bottom: 20px;" class="media">
+                      <div class="media-left">
+                        <img src="<%= user.avatar; %>" class="media-object rounded-circle width-50 height-50" alt="org avatar" >
+                      </div>
+                      <div class="media-body">
+                          <p class="list-group-item-heading" style="font-size: 16px;">
+                            <a href="/profile/<%= user._id %>"><strong><%= user.name; %></strong></a>
+                          </p>
+                          <h6 class="list-group-item-text" style="font-style: italic">
+                            @<%= user.username; %>
+                            <% if (user.facebook) { %>
+                              <a href="<%= user.facebook; %>"><i class="ft-facebook"></i></a>
+                            <% } %>
+                          </h6>
+                      </div>
+                    </div>
+                    <h6 style="margin-bottom: 10px"><i class="ft-mail"></i> <%= user.email; %></h6>
+                    <% if (user.website) { %>
+                      <h6 style="margin-bottom: 10px"><i class="ft-globe"></i> <%= user.website; %></h6>
+                    <% } %>
+                    <div class="media-left">
+                      <% if (account_type == 0 && currentAcc.connected.indexOf(user.username) < 0 && currentAcc.connect_sent.indexOf(user.username) < 0 && currentAcc.connect_received.indexOf(user.username) < 0) { %>
+                          <button id="<%=user._id%>2" class="connect_button btn btn-info" onclick="sendRequest(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)"> Connect</button>
+                      <% } else if (account_type == 0 && currentAcc.connected.indexOf(user.username) < 0 && currentAcc.connect_sent.indexOf(user.username) >= 0 && currentAcc.connect_received.indexOf(user.username) < 0) { %>
+                          <button id="<%=user._id%>2" class="connect_button btn btn-info">Pending...</button>
+                      <% } else if (account_type == 0 && currentAcc.connected.indexOf(user.username) >= 0 && currentAcc.connect_sent.indexOf(user.username) < 0 && currentAcc.connect_received.indexOf(user.username) < 0) { %>
+                          <button id="<%=user._id%>2" class="connect_button btn btn-success" onclick="disconnect(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)">Connected</button>
+                      <% } else if (account_type == 0 && currentAcc.connected.indexOf(user.username) < 0 && currentAcc.connect_sent.indexOf(user.username) < 0 && currentAcc.connect_received.indexOf(user.username) >= 0) { %>
+                          <button id="<%=user._id%>2" class="connect_button btn btn-info" onclick="acceptRequest(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)">Accept</button>
+                      <% } %>
+                    </div>
+                    <div class="media-body">
+                      <button class="btn btn-warning" onclick="showUserHashtags(<%= JSON.stringify(user._id) %>)">Show hashtags</button>
+                    </div>
+                    <br>
+                    <div id="<%= user._id %>3" class="hashes">
+                      <% var hashtags = user.interests.concat(user.skills); %>
+                      <% hashtags.forEach (hashtag => { %>
+                        <% var isMatch = false; %>
+                        <% criteriaList.forEach(criteria => { %>
+                          <% if (hashtag.includes(criteria) && !isMatch) { %>
+                            <% isMatch = true; %>
+                            <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
+                          <% } %>
+                        <% }); %>
+                        <% if (!isMatch) { %>
+                          <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
+                        <% } %>
+                      <% }); %>
+                    </div>
+                  </div>
+                <% } %>
+              <% }); %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row match-height">
+        <!-- Events -->
+        <div class="col-xl-8 col-lg-12">
+          <div class="card">
+            <div style="color: white" class="card-header bg-amber bg-darken-1">
+            <h4 class="card-title"><i class="ft-calendar"></i> Events</h4>
+            <a class="heading-elements-toggle">
+                <i class="fa fa-ellipsis-v font-medium-3"></i>
+            </a>
+            </div>
+            <div class="card" style="display: block; max-height: 500px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;">
+                <div class="table-responsive">
+                    <table class="table" style="margin-bottom: 0px">
+                        <tbody id="eventsBody">
+                            <% events.forEach(event => { %>
+                            <% cardId = event._id; %>
+                            <tr class="btn-secondary" data-toggle="modal" data-target="#<%= cardId %>">
+                                <% if(event.reg_deadline) { %>
+                                <th style="width:50px"><%= months[event.reg_deadline.getMonth()] + ' ' + event.reg_deadline.getDate() + ', ' + event.reg_deadline.getFullYear() %></th>
+                                <% } else { %>
+                                <th style="width:50px">N/A</th>
+                                <% } %>
+                                <td style="max-width: 130px">
+                                    <li style="font-size: 16px"><strong><%= event.name %></strong></li>
+                                    <li style="font-style: italic"><%= event.org_name %></li>
+                                    <% if(event.start_date) { %>
+                                    <li style="font-size: small">Date: <%= months[event.start_date.getMonth()] + ' ' + event.start_date.getDate() + ', ' + event.start_date.getFullYear() %></li>
+                                    <% } %>
+                                    <li style="font-size: small">At: <%= event.address %></li>
+                                </td>
+                                <td style="max-width: 120px">
+                                  <div class="media-left">
+                                    <button class="btn btn-info" onclick="showEventHashtags(<%= JSON.stringify(event._id) %>)">Show hashtags</button>
+                                  </div>
+                                  <div class="media-body">
+                                  <% if (account_type == 0 && currentAcc.events.indexOf(event._id) < 0) { %>
+                                    <button id="<%= event._id %>3" class="btn btn-info" onclick="addEvent(<%= JSON.stringify(event._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
+                                  <% } else if (account_type == 0 && currentAcc.events.indexOf(event._id) >= 0) { %>
+                                    <button id="<%= event._id %>3" class="btn btn-success" onclick="removeEvent(<%= JSON.stringify(event._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
+                                  <% } %>
+                                  </div>
+                                  <br>
+                                  <div id="<%= event._id %>2" class="hashes">
+                                    <% event.hashtags.forEach(hashtag => { %>
+                                        <% var isMatch = false; %>
+                                        <% criteriaList.forEach(criteria => { %>
+                                        <% if (hashtag.includes(criteria) && !isMatch) { %>
+                                            <% isMatch = true; %>
+                                            <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
+                                        <% } %>
+                                        <% }); %>
+                                        <% if (!isMatch) { %>
+                                        <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
+                                        <% } %>
+                                    <% }); %>
+                                  </div>
+                                </td>
+                            </tr>
+                            <!-- Event Modal Starts -->
+                            <%- include('eventCardModal', {event: event, months: months, cardId: cardId}); %>
+                            <% }); %>
+                            <!-- Event Modal Ends-->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Jobs -->
-        <div class="col-xl-3 col-lg-12">
+        <div class="col-xl-4 col-lg-12">
           <div class="card">
             <div style="color: white" class="card-header bg-blue bg-lighten-1">
               <h4 class="card-title"><i class="ft-clipboard"></i> Jobs</h4>
@@ -117,10 +249,22 @@
             <div class="card-body collapse-in" style="display: block; max-height: 500px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" id="jobsBody">
               <% jobs.forEach(job => { %>
                 <% cardId = job._id; %>
-                <div style="padding: 10px; border-bottom: 2px solid #92a8d1" class="container-fluid btn-secondary" data-toggle="modal" data-target="#<%= cardId %>">
+                <div style="padding: 10px; border-bottom: 1px solid #E8E8E8" class="container-fluid btn-secondary" data-toggle="modal" data-target="#<%= cardId %>">
                   <h4><strong><%= job.name %></strong></h4>
                   <h5 style="font-style: italic">-<%= job.org_name %>-</h5>
                   <h6>Deadline: <%= months[job.app_deadline.getMonth()] + ' ' + job.app_deadline.getDate() + ', ' + job.app_deadline.getFullYear() %></h6>
+                  <div class="media-left">
+                    <button class="btn btn-info" onclick="showJobHashtags(<%= JSON.stringify(job._id) %>)">Show hashtags</button>
+                  </div>
+                  <div class="media-body">
+                  <% if (account_type == 0 && currentAcc.jobs.indexOf(job._id) < 0) { %>
+                    <button id="<%= job._id %>3" class="btn btn-info" onclick="addJob(<%= JSON.stringify(job._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
+                  <% } else if (account_type == 0 && currentAcc.jobs.indexOf(job._id) >= 0) { %>
+                    <button id="<%= job._id %>3" class="btn btn-success" onclick="removeJob(<%= JSON.stringify(job._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
+                  <% } %>
+                  </div>
+                  <br>
+                  <div id="<%= job._id %>2" class="hashes">
                   <% job.hashtags.forEach(hashtag => { %>
                     <% var isMatch = false; %>
                     <% criteriaList.forEach(criteria => { %>
@@ -133,6 +277,7 @@
                       <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
                     <% } %>
                   <% }); %>
+                  </div>
                 </div>
                 <!-- Job Modal Starts -->
                 <%- include('jobCardModal', { job: job, admin: false, months: months, cardId: cardId }); %>
@@ -147,190 +292,70 @@
       <div class="row">
         <div class="col-md-12">
           <div class="card">
-                <div style="color: white" class="card-header bg-red bg-accent-2">
-                <h4 class="card-title"><i class="ft-briefcase"></i> Opportunities</h4>
-                <a class="heading-elements-toggle">
-                    <i class="fa fa-ellipsis-v font-medium-3"></i>
-                </a>
-                </div>
-                <div class="card">
-                  <div style="display: block; max-height: 400px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar; " class="table-responsive">
-                    <table class="table">
-                            <thead style="color: white" class="thead bg-blue-grey bg-darken-3">
-                                <th>Deadline</th>
-                                <th>Opportunity</th>
-                                <th>Hashtags</th>
-                            </thead>
-                            <tbody id="opportunitiesBody">
-                                <% opportunities.forEach(opportunity => { %>
-                                <% cardId = opportunity._id; %>
-                                <tr class="btn-secondary" data-toggle="modal" data-target="#<%= cardId %>">
-                                    <% if(opportunity.app_deadline) { %>
-                                    <th scope="row"><%= months[opportunity.app_deadline.getMonth()] + ' ' + opportunity.app_deadline.getDate() + ', ' + opportunity.app_deadline.getFullYear() %></th>
-                                    <% } else { %>
-                                    <th scope="row">N/A</th>
-                                    <% } %>
-                                    <td>
-                                        <li style="font-size: 16px"><strong><%= opportunity.name %></strong></li>
-                                        <li style="font-style: italic"><%= opportunity.org_name %></li>
-                                        <% if(opportunity.start_date) { %>
-                                        <li style="font-size: small">Date: <%= months[opportunity.start_date.getMonth()] + ' ' + opportunity.start_date.getDate() + ', ' + opportunity.start_date.getFullYear() %></li>
-                                        <% } %>
-                                    </td>
-                                    <td>
-                                    <% opportunity.hashtags.forEach(hashtag => { %>
-                                        <% var isMatch = false; %>
-                                        <% criteriaList.forEach(criteria => { %>
-                                        <% if (hashtag.includes(criteria) && !isMatch) { %>
-                                            <% isMatch = true; %>
-                                            <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
-                                        <% } %>
-                                        <% }); %>
-                                        <% if (!isMatch) { %>
-                                        <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
-                                        <% } %>
-                                    <% }); %>
-                                    </td>
-                                </tr>
-                                <!-- Opportunity Modal Starts -->
-                                <%- include('opportunityCardModal', {opportunity: opportunity, months: months}); %>
-                                <% }); %>
-                                <!-- Opportunity Modal Ends-->
-                            </tbody>
-                    </table>
-                  </div>
-                </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <!-- Events -->
-        <div class="col-xl-8 col-lg-12">
-          <div class="card">
-                <div style="color: white" class="card-header bg-amber bg-darken-1">
-                <h4 class="card-title"><i class="ft-calendar"></i> Events</h4>
-                <a class="heading-elements-toggle">
-                    <i class="fa fa-ellipsis-v font-medium-3"></i>
-                </a>
-                </div>
-                <div class="card">
-                    <div style="display: block; max-height: 400px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="table-responsive">
-                        <table class="table">
-                            <thead style="color: white" class="thead bg-blue-grey bg-darken-3">
-                                <th>Deadline</th>
-                                <th>Event</th>
-                                <th>Hashtags</th>
-                            </thead>
-                            <tbody id="eventsBody">
-                                <% events.forEach(event => { %>
-                                <% cardId = event._id; %>
-                                <tr class="btn-secondary" data-toggle="modal" data-target="#<%= cardId %>">
-                                    <% if(event.reg_deadline) { %>
-                                    <th scope="row"><%= months[event.reg_deadline.getMonth()] + ' ' + event.reg_deadline.getDate() + ', ' + event.reg_deadline.getFullYear() %></th>
-                                    <% } else { %>
-                                    <th scope="row">N/A</th>
-                                    <% } %>
-                                    <td>
-                                        <li style="font-size: 16px"><strong><%= event.name %></strong></li>
-                                        <li style="font-style: italic"><%= event.org_name %></li>
-                                        <% if(event.start_date) { %>
-                                        <li style="font-size: small">Date: <%= months[event.start_date.getMonth()] + ' ' + event.start_date.getDate() + ', ' + event.start_date.getFullYear() %></li>
-                                        <% } %>
-                                        <li style="font-size: small">At: <%= event.address %></li>
-                                    </td>
-                                    <td>
-                                    <% event.hashtags.forEach(hashtag => { %>
-                                        <% var isMatch = false; %>
-                                        <% criteriaList.forEach(criteria => { %>
-                                        <% if (hashtag.includes(criteria) && !isMatch) { %>
-                                            <% isMatch = true; %>
-                                            <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
-                                        <% } %>
-                                        <% }); %>
-                                        <% if (!isMatch) { %>
-                                        <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
-                                        <% } %>
-                                    <% }); %>
-                                    </td>
-                                </tr>
-                                <!-- Event Modal Starts -->
-                                <%- include('eventCardModal', {event: event, months: months}); %>
-                                <% }); %>
-                                <!-- Event Modal Ends-->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-          </div>
-        </div>
-
-
-        <!-- Users -->
-        <div class="col-xl-4 col-lg-12">
-          <div class="card">
-            <div style="color: white" class="card-header bg-pink bg-lighten-3">
-              <h4 class="card-title"><i class="ft-user"></i> Users</h4>
-              <a class="heading-elements-toggle">
+            <div style="color: white" class="card-header bg-red bg-accent-2">
+            <h4 class="card-title"><i class="ft-briefcase"></i> Opportunities</h4>
+            <a class="heading-elements-toggle">
                 <i class="fa fa-ellipsis-v font-medium-3"></i>
-              </a>
+            </a>
             </div>
-            <div style="display: block; max-height: 400px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="card-body collapse-in" id="usersBody">
-              <% users.forEach( user => { %>
-              <% cardId = user._id; %>
-                <% if (currentAcc.username != user.username) { %>
-                  <div style="padding: 10px; border-bottom: 2px solid #F06292" class="container-fluid btn-secondary" style="border: 0" data-toggle="modal" data-target="#<%= cardId %>">
-                    <div style="margin-bottom: 20px;" class="media">
-                      <div class="media-left">
-                        <img src="<%= user.avatar; %>" class="media-object rounded-circle width-50 height-50" alt="org avatar">
-                      </div>
-                      <div class="media-body">
-                        <p class="list-group-item-heading" style="font-size: 16px;"><strong><%= user.name; %></strong></p>
-                        <h6 class="list-group-item-text" style="font-style: italic">
-                          @<%= user.username; %>
-                          <% if (user.facebook) { %>
-                            <a href="<%= user.facebook; %>"><i class="ft-facebook"></i></a>
-                          <% } %>
-                        </h6>
-                      </div>
-                    </div>
-                    <h6 style="margin-bottom: 10px"><i class="ft-mail"></i> <%= user.email; %></h6>
-                    <% if (user.website) { %>
-                      <h6 style="margin-bottom: 10px"><i class="ft-globe"></i> <%= user.website; %></h6>
-                    <% } %>
-                    <% var hashtags = user.interests.concat(user.skills); %>
-                    <% hashtags.forEach (hashtag => { %>
-                      <% var isMatch = false; %>
-                      <% criteriaList.forEach(criteria => { %>
-                        <% if (hashtag.includes(criteria) && !isMatch) { %>
-                          <% isMatch = true; %>
-                          <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
+            <div class="card">
+              <div style="display: block; max-height: 400px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar; " class="table-responsive">
+                <table class="table" style="margin-bottom: 0px">
+                  <tbody id="opportunitiesBody">
+                    <% opportunities.forEach(opportunity => { %>
+                    <% cardId = opportunity._id; %>
+                    <tr class="btn-secondary" data-toggle="modal" data-target="#<%= cardId %>">
+                        <% if(opportunity.app_deadline) { %>
+                        <th style="max-width: 40px"><%= months[opportunity.app_deadline.getMonth()] + ' ' + opportunity.app_deadline.getDate() + ', ' + opportunity.app_deadline.getFullYear() %></th>
+                        <% } else { %>
+                        <th style="max-width: 40px">N/A</th>
                         <% } %>
-                      <% }); %>
-                      <% if (!isMatch) { %>
-                        <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
-                      <% } %>
+                        <td style="max-width: 250px">
+                            <li style="font-size: 16px"><strong><%= opportunity.name %></strong></li>
+                            <li style="font-style: italic"><%= opportunity.org_name %></li>
+                            <% if(opportunity.start_date) { %>
+                            <li style="font-size: small">Date: <%= months[opportunity.start_date.getMonth()] + ' ' + opportunity.start_date.getDate() + ', ' + opportunity.start_date.getFullYear() %></li>
+                            <% } %>
+                        </td>
+                        <td style="max-width: 120px; padding-right: 30px">
+                          <div class="media-left">
+                            <button class="btn btn-info" onclick="showOpportunityHashtags(<%= JSON.stringify(opportunity._id) %>)">Show hashtags</button>
+                          </div>
+                          <div class="media-body">
+                          <% if (account_type == 0 && currentAcc.opps.indexOf(opportunity._id) < 0) { %>
+                            <button id="<%= opportunity._id %>3" class="btn btn-info" onclick="addOpportunity(<%= JSON.stringify(opportunity._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
+                          <% } else if (account_type == 0 && currentAcc.opps.indexOf(opportunity._id) >= 0) { %>
+                            <button id="<%= opportunity._id %>3" class="btn btn-success" onclick="removeOpportunity(<%= JSON.stringify(opportunity._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
+                          <% } %>
+                          </div>
+                          <br>
+                          <div id="<%= opportunity._id %>2" class="hashes">
+                          <% opportunity.hashtags.forEach(hashtag => { %>
+                              <% var isMatch = false; %>
+                              <% criteriaList.forEach(criteria => { %>
+                              <% if (hashtag.includes(criteria) && !isMatch) { %>
+                                  <% isMatch = true; %>
+                                  <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
+                              <% } %>
+                              <% }); %>
+                              <% if (!isMatch) { %>
+                              <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
+                              <% } %>
+                          <% }); %>
+                          </div>
+                        </td>
+                    </tr>
+                    <!-- Opportunity Modal Starts -->
+                    <%- include('opportunityCardModal', {opportunity: opportunity, months: months, cardId: cardId}); %>
                     <% }); %>
-                  </div>
-                <% } %>
-              <% }); %>
-              <!-- User Modal Starts -->
-              <% users.forEach( user => { %>
-                <% cardId = user._id; %>
-                <% if (currentAcc.username != user.username) { %>
-                  <%- include('userCardModal', {user: user}); %>
-                <% } %>
-              <% }); %>
-              <!-- User Modal Ends -->
+                    <!-- Opportunity Modal Ends-->
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
-
       </div>
-
-
-
-
     </div>
   </div>
 </div>
@@ -347,13 +372,264 @@
 
 <!--  BEGIN CODEDAO SCRIPT -->
 <script src="/scripts/suggest.js" type="text/javascript"></script>
+<script src="/socket.io/socket.io.js"></script>
 <script>
   $(document).ready(function() {
+    var socket = io();
+
+    socket.on('success', () => {
+      toastr.success(user_username + ' Accepted your connect request!');
+    })
+
     $('#search-input').tagging('removeAll');
     toastr.info("You're logged in as " + <%- JSON.stringify(currentAcc.username) %>, 'Welcome!', {positionClass: 'toast-top-center', containerId: 'toast-top-center'});
+    $('.hashes').hide();
   });
 
+  function showUserHashtags(user_id) {
+    let button_id = '#' + user_id + '3';
+    $(button_id).toggle();
+  }
 
+  function showOrgHashtags(org_id) {
+    let button_id = '#' + org_id + '2';
+    $(button_id).toggle();
+  }
+
+  function showEventHashtags(event_id) {
+    let button_id = '#' + event_id + '2';
+    $(button_id).toggle();
+  }
+
+  function showJobHashtags(job_id) {
+    let button_id = '#' + job_id + '2';
+    $(button_id).toggle();
+  }
+
+  function showOpportunityHashtags(opp_id) {
+    let button_id = '#' + opp_id + '2';
+    $(button_id).toggle();
+  }
+
+  function addEvent(event_id, account_id) {
+    let button_id = '#' + event_id + '3';
+    $(button_id).removeClass('btn-info');
+    $(button_id).addClass('btn-success');
+    $(button_id).attr('onclick', 'removeEvent("'+ event_id + '","' + account_id + '")');
+
+    let formData = new FormData();
+    formData.append("event_id", event_id);
+    formData.append("account_id", account_id);
+    formData.append('status', 'add_event');
+
+    $.ajax({
+      async: true,
+      url: '/add_items',
+      method: 'POST',
+      processData: false,
+      contentType: false,
+      data: formData,
+      success: (data) => {
+        toastr.success(`Event added!`);
+        alert('event added')
+      }
+    });
+  }
+
+  function addJob(job_id, account_id) {
+    let button_id = '#' + job_id + '3';
+    $(button_id).removeClass('btn-info');
+    $(button_id).addClass('btn-success');
+    $(button_id).attr('onclick', 'removeJob("'+ job_id + '","' + account_id + '")');
+
+    let formData = new FormData();
+    formData.append("job_id", job_id);
+    formData.append("account_id", account_id);
+    formData.append('status', 'add_job');
+
+    $.ajax({
+      async: true,
+      url: '/add_items',
+      method: 'POST',
+      processData: false,
+      contentType: false,
+      data: formData,
+      success: (data) => {
+        toastr.success(`Job added!`);
+      }
+    });
+  }
+
+  function addOpportunity(opp_id, account_id) {
+    let button_id = '#' + opp_id + '3';
+    $(button_id).removeClass('btn-info');
+    $(button_id).addClass('btn-success');
+    $(button_id).attr('onclick', 'removeOpportunity("' + opp_id + '","' + account_id + '")');
+
+    let formData = new FormData();
+    formData.append("opp_id", opp_id);
+    formData.append("account_id", account_id);
+    formData.append('status', 'add_opp');
+
+    $.ajax({
+      async: true,
+      url: '/add_items',
+      method: 'POST',
+      processData: false,
+      contentType: false,
+      data: formData,
+      success: (data) => {
+        toastr.success(`Opportunity added!`);
+      }
+    });
+  }
+
+  function removeEvent(event_id, account_id) {
+    let button_id = '#' + event_id + '3';
+    $(button_id).removeClass('btn-success');
+    $(button_id).addClass('btn-info');
+    $(button_id).attr('onclick', 'addEvent("'+ event_id + '","' + account_id + '")');
+
+    let formData = new FormData();
+    formData.append("event_id", event_id);
+    formData.append("account_id", account_id);
+    formData.append('status', 'remove_event');
+
+    $.ajax({
+      async: true,
+      url: '/remove_items',
+      method: 'POST',
+      processData: false,
+      contentType: false,
+      data: formData,
+      success: (data) => {
+        toastr.warning(`Event removed!`);
+      }
+    });
+  }
+
+  function removeJob(job_id, account_id) {
+    let button_id = '#' + job_id + '3';
+    $(button_id).removeClass('btn-success');
+    $(button_id).addClass('btn-info');
+    $(button_id).attr('onclick', 'addJob("'+ job_id + '","' + account_id + '")');
+
+    let formData = new FormData();
+    formData.append("job_id", job_id);
+    formData.append("account_id", account_id);
+    formData.append('status', 'remove_job');
+
+    $.ajax({
+      async: true,
+      url: '/remove_items',
+      method: 'POST',
+      processData: false,
+      contentType: false,
+      data: formData,
+      success: (data) => {
+        toastr.warning(`Job removed!`);
+      }
+    });
+  }
+
+  function removeOpportunity(opp_id, account_id) {
+    let button_id = '#' + opp_id + '3';
+    $(button_id).removeClass('btn-success');
+    $(button_id).addClass('btn-info');
+    $(button_id).attr('onclick', 'addOpportunity("' + opp_id + '","' + account_id + '")');
+
+    let formData = new FormData();
+    formData.append("opp_id", opp_id);
+    formData.append("account_id", account_id);
+    formData.append('status', 'remove_opp');
+
+    $.ajax({
+      async: true,
+      url: '/remove_items',
+      method: 'POST',
+      processData: false,
+      contentType: false,
+      data: formData,
+      success: (data) => {
+        toastr.warning(`Opportunity removed!`);
+      }
+    });
+  }
+
+  function sendRequest(account_id, user_id, user_username) {
+    let button_id = '#' + user_id + '2';
+    $(button_id).html('Pending...');
+
+    let formData = new FormData();
+    formData.append("user_id", user_id);
+    formData.append("account_id", account_id);
+    formData.append('status', 'connect_request');
+
+    $.ajax({
+      async: true,
+      url: '/connect',
+      method: 'POST',
+      processData: false,
+      contentType: false,
+      data: formData,
+      success: (data) => {
+        toastr.success(`Connect request sent to ${user_username}!`);
+      }
+    });
+  }
+
+  function acceptRequest(account_id, user_id, user_username) {
+    let button_id = '#' + user_id + '2';
+    let button_id2 = '#' + user_id + '-connect';
+
+    $(button_id2).remove();
+    $(button_id).removeClass('btn-info');
+    $(button_id).addClass('btn-success');
+    $(button_id).html('Connected');
+    $(button_id).attr('onclick', 'disconnect("'+ account_id + '","' + user_id +'","' + user_username +'")');
+
+    let formData = new FormData();
+    formData.append("user_id", user_id);
+    formData.append("account_id", account_id);
+    formData.append('status', 'connect_accept');
+
+    $.ajax({
+      async: true,
+      url: '/connect',
+      method: 'POST',
+      processData: false,
+      contentType: false,
+      data: formData,
+      success: (data) => {
+        toastr.success('You have connected with ' + user_username, 'Connected!');
+      }
+    });
+  }
+
+  function disconnect(account_id, user_id, user_username) {
+    let button_id = '#' + user_id + '2';
+    $(button_id).removeClass('btn-success');
+    $(button_id).addClass('btn-info');
+    $(button_id).html('Connect');
+    $(button_id).attr('onclick', 'sendRequest("' + account_id + '","' + user_id +'","' + user_username +'")');
+
+    let formData = new FormData();
+    formData.append("user_id", user_id);
+    formData.append("account_id", account_id);
+    formData.append("status", 'disconnect');
+
+    $.ajax({
+      async: true,
+      url: '/connect',
+      method: 'POST',
+      processData: false,
+      contentType: false,
+      data: formData,
+      success: (data) => {
+        toastr.warning('You have disconnected with ' + user_username, 'Unfollowed!');
+      }
+    });
+  }
 
   function follow(user_id, org_id, org_username) {
     let button_id = '#' + org_id;

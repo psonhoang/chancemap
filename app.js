@@ -9,13 +9,14 @@ const cookieParser = require('cookie-parser');
 const expressValidator = require('express-validator');
 const flash = require('connect-flash');
 const session = require('express-session');
-const bcrypt = require('bcryptjs');
+// const bcrypt = require('bcryptjs');
 const passport = require('passport');
 // For file uploading
-const crypto = require('crypto');
-const multer = require('multer');
-const Grid = require('gridfs-stream');
+// const crypto = require('crypto');
+// const multer = require('multer');
+// const Grid = require('gridfs-stream');
 const methodOverride = require('method-override');
+// const JSON = require('circular-json');
 
 // Database
 const mongoose = require('mongoose');
@@ -36,6 +37,12 @@ const Event = require('./models/event');
 const Job = require('./models/job');
 const Notification = require('./models/notification');
 const Opportunity = require('./models/opportunity');
+const OrgProfile = require('./models/orgProfile');
+const Message = require('./models/message');
+
+// Public static
+app.use(express.static(path.join(__dirname, 'public'))); // Static files root directory
+// app.use(express.static('uploads')); // Upload files root directory
 
 // View engine
 app.set('view engine', 'ejs');
@@ -59,10 +66,6 @@ app.use(bodyParser.urlencoded({
 
 // Cookie-parser
 app.use(cookieParser());
-
-// Public static
-app.use(express.static(path.join(__dirname, 'public'))); // Static files root directory
-// app.use(express.static('uploads')); // Upload files root directory
 
 // Express Session Middleware
 app.use(session({
@@ -110,34 +113,581 @@ const socketIO = require('socket.io');
 const io = socketIO(server);
 var mSocket;
 var mAccountType;
+var connectedUsers = [];
+var currentSocket = {};
+//record of all connections
+var chatSession = [];
+var allMessages = [];
 
 io.on('connection', (socket) => {
   // console.log('a user connected');
-
-  mSocket = socket;
+  // console.log(connectedUsers);
+  // console.log(chatSession);
 
   // For orgs
   socket.on('room', (room) => {
     // console.log(room);
     socket.join(room);
   });
-
   // For users
   socket.on('rooms', (rooms) => {
     let noti_rooms = rooms.split(',');
-    // console.log(noti_rooms);
+    //console.log(noti_rooms);
     socket.join(noti_rooms);
   });
 
-  // Disconnect
-  // socket.on('disconnect', () => {
-  //   console.log('a user disconected');
-  // });
+  //send the record of sessions to new user
+  socket.emit('new connection', {chatSession, allMessages});
+
+  //join own room based on account id
+  socket.on('connect self', (data) => {
+    let currentSocketID = data.currentSocketID;
+    socket.join(currentSocketID, () => {
+      // console.log(Object.keys(socket.rooms));
+    });
+  });
+
+  //when this socket sends a private message
+  socket.on('private message', (data) => {
+    let message = data.message;
+    console.log(message);
+    let sender = data.sender;
+    let recipient = data.recipient;
+    let currentSocketID = data.currentSocketID;
+    let rooms = Object.keys(socket.rooms);
+    let room_id;
+    let sender_type;
+    let recipient_type;
+    chatSession.forEach(session => {
+      if(session.sessionID == currentSocketID) {
+        connectedUsers = session.connectedUsers.slice();
+        connectedUsers.forEach(user => {
+          if(user.name === recipient) {
+            room_id = user.id;
+            recipient_type = user.type;
+          }
+        });
+        sender_type = session.currentSocket.type;
+      }
+    });
+    // console.log(`Room ID: ${room_id}`);
+    // console.log(`Sender: ${sender}, type: ${sender_type}`);
+    // console.log(`Recipient: ${recipient}, type: ${recipient_type}`);
+    socket.join(room_id, () => {
+      // console.log(Object.keys(socket.rooms));
+    });
+    let newMessage = new Message({
+      _id: new mongoose.Types.ObjectId(),
+      creator: currentSocketID,
+      sender: sender,
+      recipient: recipient,
+      created_at: new Date(),
+      sort_value: new Date().valueOf(),
+      message: message,
+      read: false,
+    });
+    newMessage.save((err, message) => {
+      // console.log(message);
+
+      if(sender_type === 1 && recipient_type === 1) {
+        //saving and emitting message to recipient
+        User.findOne({'_id': room_id}, (err, user) => {
+          if(err) {
+            console.log(err);
+          }
+          user.messages.push(message._id);
+          user.save().then(result => {
+            socket.to(room_id).emit('private message', {message, room_id});
+          }).catch(err => {
+            console.log(err);
+          });
+          // console.log(user.messages);
+        });
+        //saving and emitting message to sender
+        User.findOne({'_id': currentSocketID}, (err, user) => {
+          if(err) {
+            console.log(err);
+          }
+          user.messages.push(message._id);
+          user.save().then(result => {
+            socket.emit('private message', {message, room_id});
+          }).catch(err => {
+            console.log(err);
+          });
+          // console.log(user.messages);
+        });
+      }
+      if(sender_type === 1 && recipient_type === 2) {
+        //saving and emitting message to recipient
+        Org.findOne({'_id': room_id}, (err, org) => {
+          if(err) {
+            console.log(err);
+          }
+          org.messages.push(message._id);
+          org.save().then(result => {
+            socket.to(room_id).emit('private message', {message, room_id});
+          }).catch(err => {
+            console.log(err);
+          });
+          // console.log(org.messages);
+        });
+        //saving and emitting message to sender
+        User.findOne({'_id': currentSocketID}, (err, user) => {
+          if(err) {
+            console.log(err);
+          }
+          user.messages.push(message._id);
+          user.save().then(result => {
+            socket.emit('private message', {message, room_id});
+          }).catch(err => {
+            console.log(err);
+          });
+          // console.log(user.messages);
+        });
+      }
+      if(sender_type === 2 && recipient_type === 1) {
+        //saving and emitting message to recipient
+        User.findOne({'_id': room_id}, (err, user) => {
+          if(err) {
+            console.log(err);
+          }
+          user.messages.push(message._id);
+          user.save().then(result => {
+            socket.to(room_id).emit('private message', {message, room_id});
+          }).catch(err => {
+            console.log(err);
+          });
+          // console.log(user.messages);
+        });
+        //saving and emitting message to sender
+        Org.findOne({'_id': currentSocketID}, (err, org) => {
+          if(err) {
+            console.log(err);
+          }
+          org.messages.push(message._id);
+          org.save().then(result => {
+            socket.emit('private message', {message, room_id});
+          }).catch(err => {
+            console.log(err);
+          });
+          // console.log(org.messages);
+        });
+      }
+    });
+    setTimeout(() => {
+      Message.find((err, messages) => {
+        allMessages = messages;
+        io.sockets.emit('new connection', {chatSession, allMessages});
+      });
+    }, 3000);
+  });
+
+  //leave all rooms when another online user sends a message
+  socket.on('leave rooms', (data) => {
+    let currentSocketID = data.currentSocketID;
+    let rooms = Object.keys(socket.rooms);
+    rooms.forEach(room => {
+      if(room != currentSocketID) {
+        socket.leave(room);
+      }
+    });
+  });
+
+  //disconnect
+  socket.on('disconnect', (data) => {
+    let currentSocketID = data.currentSocketID;
+    chatSession.forEach(session => {
+      if(session.sessionID == currentSocketID) {
+        chatSession.splice(chatSession.indexOf(session.sessionID));
+        // console.log(chatSession);
+      }
+    });
+  });
+
+  mSocket = socket;
+});
+
+
+// Home routes
+app.get('/', (req, res) => {
+  if(!req.isAuthenticated()) {
+    res.render('splash', {title: 'ChanceMap'});
+  } else {
+    let account_type = req.user.account_type;
+    let account_id = req.user.account_id;
+    Message.find((err, messages) => {
+      if(err) {
+        console.log(err);
+        return;
+      }
+      allMessages = messages;
+      // console.log(allMessages);
+      Opportunity.find((err, opportunities) => {
+        if(err) {
+          console.log(err);
+          return;
+        }
+        Event.find((err, events) => {
+          if(err) {
+            console.log(err);
+            return;
+          }
+          Job.find((err, jobs) => {
+            if(err) {
+              console.log(err);
+              return;
+            }
+            Org.find((err, orgs) => {
+              if(err) {
+                console.log(err);
+                return;
+              }
+              User.find((err, users) => {
+                if(err) {
+                  console.log(err);
+                  return;
+                }
+                if(account_type == 0) {
+                  User.findOne({'_id': account_id}, (err, user) => {
+                    let temp = [];
+                    let connected = users.filter(client => user.connected.indexOf(client.username) >= 0);
+                    let following = orgs.filter(org => user.following.indexOf(org.username) >= 0);
+                    //array of chatable users
+                    connected.forEach(user => {
+                      let id = user.id;
+                      let name = user.name;
+                      let avatar = user.avatar;
+                      let messages = user.messages;
+                      if(connectedUsers.length == 0) {
+                        temp.push({
+                          type: 1,
+                          id: id,
+                          name: name,
+                          avatar: avatar,
+                          messages: messages,
+                        })
+                      } else {
+                        for(let i = 0; i < connectedUsers.length; i++) {
+                          if(connectedUsers[i].id != user.id) {
+                            temp.push({
+                              type: 1,
+                              id: id,
+                              name: name,
+                              avatar: avatar,
+                              messages: messages,
+                            })
+                            break;
+                          }
+                        }
+                      }
+                    })
+                    //adding orgs to chat
+                    following.forEach(org => {
+                      let id = org.id;
+                      let name = org.name;
+                      let avatar = org.avatar;
+                      let messages = org.messages;
+                      if(connectedUsers.length == 0) {
+                        temp.push({
+                          type: 2,
+                          id: id,
+                          name: name,
+                          avatar: avatar,
+                          messages: messages,
+                        })
+                      } else {
+                        for(let i = 0; i < connectedUsers.length; i++) {
+                          if(connectedUsers[i].id != user.id) {
+                            temp.push({
+                              type: 2,
+                              id: id,
+                              name: name,
+                              avatar: avatar,
+                              messages: messages,
+                            })
+                            break;
+                          }
+                        }
+                      }
+                    })
+                    connectedUsers = temp;
+                    //self info
+                    let type = 1;
+                    let id = user._id;
+                    let name = user.name;
+                    let messages = user.messages;
+                    // console.log(user.messages);
+                    var client = {
+                      type: type,
+                      id: id,
+                      name: name,
+                      messages: messages,
+                    };
+                    currentSocket = client;
+                    //array storing all users' sessions
+                    let tempObject = {
+                      sessionID: currentSocket.id,
+                      currentSocket: currentSocket,
+                      connectedUsers: connectedUsers,
+                    }
+                    if(chatSession.length == 0) {
+                      chatSession.push(tempObject);
+                    } else {
+                      for(let i = 0; i < chatSession.length; i++) {
+                        if(chatSession[i].sessionID != user.id) {
+                          chatSession.push(tempObject);
+                          break;
+                        }
+                      }
+                    }
+                    // res.send(user);
+                    let criteriaList = user.interests.concat(user.skills);
+                    // orgs sort
+                    orgs.forEach(org => {
+                      org.matches = 0;
+                      org.hashtags.forEach(hashtag => {
+                        criteriaList.forEach(criteria => {
+                          if(hashtag.includes(criteria)) {
+                            org.matches++;
+                          }
+                        });
+                      });
+                    });
+                    orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+                    // events sort
+                    events.forEach(event => {
+                      event.matches = 0;
+                      event.hashtags.forEach(hashtag => {
+                        criteriaList.forEach(criteria => {
+                          if(hashtag.includes(criteria)) {
+                            event.matches++;
+                          }
+                        });
+                      });
+                    });
+                    events.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+                    //opportunities sort
+                    opportunities.forEach(opportunity => {
+                      opportunity.matches = 0;
+                      opportunity.hashtags.forEach(hashtag => {
+                        criteriaList.forEach(criteria => {
+                          if(hashtag.includes(criteria)) {
+                            opportunity.matches++;
+                          }
+                        });
+                      });
+                    });
+                    opportunities.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+                    // jobs sort
+                    jobs.forEach(job => {
+                      job.matches = 0;
+                      job.hashtags.forEach(hashtag => {
+                        criteriaList.forEach(criteria => {
+                          if(hashtag.includes(criteria)) {
+                            job.matches++;
+                          }
+                        });
+                      });
+                    });
+                    jobs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+                    // users sort
+                    users.forEach(user => {
+                      user.matches = 0;
+                      let userHashtags = user.interests.concat(user.skills);
+                      userHashtags.forEach(hashtag => {
+                        criteriaList.forEach(criteria => {
+                          if(hashtag.includes(criteria)) {
+                            user.matches++;
+                          }
+                        });
+                      });
+                    });
+                    users.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+                    res.render('index', {
+                      title: 'ChanceMap | Home',
+                      account_type: account_type,
+                      account_id: account_id,
+                      currentAcc: user,
+                      events: events,
+                      jobs: jobs,
+                      orgs: orgs,
+                      users: users,
+                      opportunities: opportunities,
+                      criteriaList: criteriaList,
+                      notis: req.notis,
+                      messages: messages,
+                      connected: connected,
+                    });
+                  });
+                } else if (account_type == 1) {
+                  Org.findOne({'_id': account_id}, (err, org) => {
+                    let temp = [];
+                    let followers = users.filter(user => org.followers.indexOf(user.username) >= 0);
+                    //array of chatable users
+                    followers.forEach(user => {
+                      let id = user.id;
+                      let name = user.name;
+                      let avatar = user.avatar;
+                      let messages = user.messages;
+                      temp.push({
+                        type: 1,
+                        id: id,
+                        name: name,
+                        avatar: avatar,
+                        messages: messages,
+                      })
+                    })
+                    connectedUsers = temp;
+                    // console.log(connectedUsers);
+                    //self info
+                    let type = 2;
+                    let id = org._id;
+                    let name = org.name;
+                    let messages = org.messages;
+                    // console.log(org.messages);
+                    var client = {
+                      type: type,
+                      id: id,
+                      name: name,
+                      messages: messages,
+                    };
+                    currentSocket = client;
+                    //array storing all users' sessions
+                    let tempObject = {
+                      sessionID: currentSocket.id,
+                      currentSocket: currentSocket,
+                      connectedUsers: connectedUsers,
+                    }
+                    if(chatSession.length == 0) {
+                      chatSession.push(tempObject);
+                    } else {
+                      for(let i = 0; i < chatSession.length; i++) {
+                        if(chatSession[i].sessionID != org.id) {
+                          chatSession.push(tempObject);
+                          break;
+                        }
+                      }
+                    }
+                    // console.log(chatSession[0]);
+
+                    let criteriaList = org.hashtags;
+                    // orgs sort
+                    orgs.forEach(org => {
+                      org.matches = 0;
+                      org.hashtags.forEach(hashtag => {
+                        criteriaList.forEach(criteria => {
+                          if(hashtag.includes(criteria)) {
+                            org.matches++;
+                          }
+                        });
+                      });
+                    });
+                    orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+                    // events sort
+                    events.forEach(event => {
+                      event.matches = 0;
+                      event.hashtags.forEach(hashtag => {
+                        criteriaList.forEach(criteria => {
+                          if(hashtag.includes(criteria)) {
+                            event.matches++;
+                          }
+                        });
+                      });
+                    });
+                    events.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+                    // opportunities sort
+                    opportunities.forEach(opportunity => {
+                      opportunity.matches = 0;
+                      opportunity.hashtags.forEach(hashtag => {
+                        criteriaList.forEach(criteria => {
+                          if(hashtag.includes(criteria)) {
+                            opportunity.matches++;
+                          }
+                        });
+                      });
+                    });
+                    opportunities.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+                    // jobs sort
+                    jobs.forEach(job => {
+                      job.matches = 0;
+                      job.hashtags.forEach(hashtag => {
+                        criteriaList.forEach(criteria => {
+                          if(hashtag.includes(criteria)) {
+                            job.matches++;
+                          }
+                        });
+                      });
+                    });
+                    jobs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+                    // users sort
+                    users.forEach(user => {
+                      user.matches = 0;
+                      let userHashtags = user.interests.concat(user.skills);
+                      userHashtags.forEach(hashtag => {
+                        criteriaList.forEach(criteria => {
+                          if(hashtag.includes(criteria)) {
+                            user.matches++;
+                          }
+                        });
+                      });
+                    });
+                    users.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+                    res.render('index', {
+                      title: 'ChanceMap | Home',
+                      account_type: account_type,
+                      account_id: account_id,
+                      currentAcc: org,
+                      events: events,
+                      jobs: jobs,
+                      orgs: orgs,
+                      users: users,
+                      opportunities: opportunities,
+                      criteriaList: org.hashtags,
+                      notis: req.notis,
+                      messages: messages,
+                      connected: followers,
+                    });
+                  });
+                } else {
+                  Admin.findOne({'_id': account_id}, (err, admin) => {
+                    if(err) {
+                      console.log(err);
+                      return;
+                    }
+                    res.render('index', {
+                      title: 'ChanceMap | Home',
+                      account_type: account_type,
+                      account_id: account_id,
+                      currentAcc: admin,
+                      events: events,
+                      jobs: jobs,
+                      orgs: orgs,
+                      users: users,
+                      opportunities: opportunities,
+                      criteriaList: [],
+                      notis: req.notis,
+                      messages: messages,
+                      connected: [],
+                    });
+                  })
+                };
+            });
+          });
+        });
+      });
+    });
+  });
+};
 });
 
 // Make io accessible to our router
 app.use((req,res,next)  => {
   req.socketio = mSocket;
+  next();
+});
+
+app.use((req,res,next)  => {
+  req.chatSession = chatSession;
   next();
 });
 
@@ -160,244 +710,60 @@ app.use((req, res, next) => {
   next();
 });
 
-// Home routes
-app.get('/', (req, res) => {
-  if(!req.isAuthenticated()) {
-    res.render('splash', {title: 'ChanceMap'});
-  } else {
-    let account_type = req.user.account_type;
-    let account_id = req.user.account_id;
-    Opportunity.find((err, opportunities) => {
-      if(err) {
-        console.log(err);
-        return;
-      }
-      Event.find((err, events) => {
-        if(err) {
-          console.log(err);
-          return;
-        }
-        Job.find((err, jobs) => {
-          if(err) {
-            console.log(err);
-            return;
-          }
-          Org.find((err, orgs) => {
-            if(err) {
-              console.log(err);
-              return;
-            }
-            User.find((err, users) => {
-              if(err) {
-                console.log(err);
-                return;
-              }
-              if(account_type == 0) {
-                User.findOne({'_id': account_id}, (err, user) => {
-                  // res.send(user);
-                  let criteriaList = user.interests.concat(user.skills);
-                  // orgs sort
-                  orgs.forEach(org => {
-                    org.matches = 0;
-                    org.hashtags.forEach(hashtag => {
-                      criteriaList.forEach(criteria => {
-                        if(hashtag.includes(criteria)) {
-                          org.matches++;
-                        }
-                      });
-                    });
-                  });
-                  orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-                  // events sort
-                  events.forEach(event => {
-                    event.matches = 0;
-                    event.hashtags.forEach(hashtag => {
-                      criteriaList.forEach(criteria => {
-                        if(hashtag.includes(criteria)) {
-                          event.matches++;
-                        }
-                      });
-                    });
-                  });
-                  events.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-                  //opportunities sort
-                  opportunities.forEach(opportunity => {
-                    opportunity.matches = 0;
-                    opportunity.hashtags.forEach(hashtag => {
-                      criteriaList.forEach(criteria => {
-                        if(hashtag.includes(criteria)) {
-                          opportunity.matches++;
-                        }
-                      });
-                    });
-                  });
-                  opportunities.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-                  // jobs sort
-                  jobs.forEach(job => {
-                    job.matches = 0;
-                    job.hashtags.forEach(hashtag => {
-                      criteriaList.forEach(criteria => {
-                        if(hashtag.includes(criteria)) {
-                          job.matches++;
-                        }
-                      });
-                    });
-                  });
-                  jobs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-                  // users sort
-                  users.forEach(user => {
-                    user.matches = 0;
-                    let userHashtags = user.interests.concat(user.skills);
-                    userHashtags.forEach(hashtag => {
-                      criteriaList.forEach(criteria => {
-                        if(hashtag.includes(criteria)) {
-                          user.matches++;
-                        }
-                      });
-                    });
-                  });
-                  users.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-                  res.render('index', {
-                    title: 'ChanceMap | Home',
-                    account_type: account_type,
-                    account_id: account_id,
-                    currentAcc: user,
-                    events: events,
-                    jobs: jobs,
-                    orgs: orgs,
-                    users: users,
-                    opportunities: opportunities,
-                    criteriaList: criteriaList,
-                    notis: req.notis
-                  });
-                });
-              } else if (account_type ==1 ){
-                Org.findOne({'_id': account_id}, (err, org) => {
-                  let criteriaList = org.hashtags;
-                  // orgs sort
-                  orgs.forEach(org => {
-                    org.matches = 0;
-                    org.hashtags.forEach(hashtag => {
-                      criteriaList.forEach(criteria => {
-                        if(hashtag.includes(criteria)) {
-                          org.matches++;
-                        }
-                      });
-                    });
-                  });
-                  orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-                  // events sort
-                  events.forEach(event => {
-                    event.matches = 0;
-                    event.hashtags.forEach(hashtag => {
-                      criteriaList.forEach(criteria => {
-                        if(hashtag.includes(criteria)) {
-                          event.matches++;
-                        }
-                      });
-                    });
-                  });
-                  events.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-                  // opportunities sort
-                  opportunities.forEach(opportunity => {
-                    opportunity.matches = 0;
-                    opportunity.hashtags.forEach(hashtag => {
-                      criteriaList.forEach(criteria => {
-                        if(hashtag.includes(criteria)) {
-                          opportunity.matches++;
-                        }
-                      });
-                    });
-                  });
-                  opportunities.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-                  // jobs sort
-                  jobs.forEach(job => {
-                    job.matches = 0;
-                    job.hashtags.forEach(hashtag => {
-                      criteriaList.forEach(criteria => {
-                        if(hashtag.includes(criteria)) {
-                          job.matches++;
-                        }
-                      });
-                    });
-                  });
-                  jobs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-                  // users sort
-                  users.forEach(user => {
-                    user.matches = 0;
-                    let userHashtags = user.interests.concat(user.skills);
-                    userHashtags.forEach(hashtag => {
-                      criteriaList.forEach(criteria => {
-                        if(hashtag.includes(criteria)) {
-                          user.matches++;
-                        }
-                      });
-                    });
-                  });
-                  users.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-                  res.render('index', {
-                    title: 'ChanceMap | Home',
-                    account_type: account_type,
-                    account_id: account_id,
-                    currentAcc: org,
-                    events: events,
-                    jobs: jobs,
-                    orgs: orgs,
-                    users: users,
-                    opportunities: opportunities,
-                    criteriaList: org.hashtags,
-                    notis: req.notis
-                  });
-                });
-              } else {
-                Admin.findOne({'_id': account_id}, (err, admin) => {
-                  let criteriaList = [];
-                  res.render('index', {
-                    title: 'ChanceMap | Home',
-                    account_type: account_type,
-                    account_id: account_id,
-                    currentAcc: admin,
-                    events: events,
-                    jobs: jobs,
-                    orgs: orgs,
-                    users: users,
-                    opportunities: opportunities,
-                    criteriaList: criteriaList,
-                    notis: req.notis
-                  });
-                })
-              };
-          });
-        });
-      });
-    });
-  });
-};
-});
-
+// app.use((req, res, next) => {
+//   if(req.isAuthenticated()) {
+//     Message.find((err, messages) => {
+//       if(err) {
+//         console.log(err);
+//       }
+//       req.messages = messages;
+//     })
+//   }
+//   next();
+// });
 
 // Route controllers
+app.use((req, res, next) => {
+  var acceptedURLs = ['/login', '/register', '/register/org', '/register/user'];
+  if(req.isUnauthenticated() && acceptedURLs.indexOf(req.url) < 0) {
+    res.redirect('/login');
+  } else {
+    next();
+  }
+});
+
+// @Account ROUTES
 let accRoutes = require('./controllers/accountController');
 app.use('/', accRoutes);
+// @Event ROUTES
 let eventRoutes = require('./controllers/eventController');
 app.use('/events', eventRoutes);
+// @Job ROUTES
 let jobRoutes = require('./controllers/jobController');
 app.use('/jobs', jobRoutes);
+// @User ROUTES
 let userRoutes = require('./controllers/userController');
 app.use('/users', userRoutes);
+// @Org ROUTES
 let orgRoutes = require('./controllers/orgController');
 app.use('/orgs', orgRoutes);
+// @Opportunity ROUTES
 let opportunitiesRoutes = require('./controllers/opportunityController');
 app.use('/opportunities', opportunitiesRoutes)
+// @Admin ROUTES
 let adminRoutes = require('./controllers/adminController');
 app.use('/admin', adminRoutes);
 // @File ROUTES
 let fileRoutes = require('./controllers/fileController');
 app.use('/files', fileRoutes);
-// @API ROUTES
+// @Search ROUTES
 let searchRoutes = require('./controllers/searchController');
 app.use('/search', searchRoutes);
-
+// @Calendar ROUTES
+let calendarRoutes = require('./controllers/calendarController');
+app.use('/calendar', calendarRoutes);
+let messageRoutes = require('./controllers/messageController');
+app.use('/messages', messageRoutes);
 
 // Export
 module.exports = server;

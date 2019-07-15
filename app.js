@@ -1,8 +1,9 @@
-const compression = require('compression');
 const express = require('express');
+const forceHTTPS = require("expressjs-force-https").forceHTTPS;
 const app = express();
 const config = require('./config/database.js');
 //Modules
+const compression = require('compression');
 const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -18,16 +19,6 @@ const passport = require('passport');
 const methodOverride = require('method-override');
 // const JSON = require('circular-json');
 
-// Database
-const mongoose = require('mongoose');
-mongoose.connect(config.database, {
-  useNewUrlParser: true,
-  connectTimeoutMS: 120000
-}).then().catch(err => {
-  console.error('App starting error:', err.stack);
-  process.exit(1);
-});
-
 // Models
 const Admin = require('./models/admin');
 const User = require('./models/user');
@@ -39,6 +30,9 @@ const Notification = require('./models/notification');
 const Opportunity = require('./models/opportunity');
 const OrgProfile = require('./models/orgProfile');
 const Message = require('./models/message');
+
+//Redirecting incoming unencrypted http requests
+app.use(forceHTTPS);
 
 // Public static
 app.use(express.static(path.join(__dirname, 'public'))); // Static files root directory
@@ -307,6 +301,15 @@ io.on('connection', (socket) => {
   mSocket = socket;
 });
 
+// Database
+const mongoose = require('mongoose');
+mongoose.connect(config.database, {
+  useNewUrlParser: true,
+  connectTimeoutMS: 120000
+}).then().catch(err => {
+  console.error('App starting error:', err.stack);
+  process.exit(1);
+});
 
 // Home routes
 app.get('/', (req, res) => {

@@ -1,5 +1,4 @@
 const express = require('express');
-const forceHTTPS = require("expressjs-force-https").forceHTTPS;
 const app = express();
 const config = require('./config/database.js');
 //Modules
@@ -30,9 +29,6 @@ const Notification = require('./models/notification');
 const Opportunity = require('./models/opportunity');
 const OrgProfile = require('./models/orgProfile');
 const Message = require('./models/message');
-
-//Redirecting incoming unencrypted http requests
-app.use(forceHTTPS);
 
 // Public static
 app.use(express.static(path.join(__dirname, 'public'))); // Static files root directory

@@ -1,74 +1,194 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-// const path = require('path');
-// const config = require('../config/database.js');
-// const bodyParser = require('body-parser');
 
 const Event = require('../models/event');
 const Org = require('../models/org');
 const User = require('../models/user');
 const Notification = require('../models/notification');
 const Admin = require('../models/admin');
-const Message = require('../models/message');
 
-// Database connection
-// const connection = mongoose.connection;
-
-// creating a new event
-router.get('/create', (req, res) => {
-  if(!req.isAuthenticated()) {
-    res.redirect('/login');
-  } else {
-    let account_type = req.user.account_type;
-    let account_id = req.user.account_id;
-    if(account_type == 1) {
-        Org.findOne({'_id': account_id}, (err, org) => {
-            User.find((err, users) => {
-                Message.find((err, messages) => {
-                    let currentAcc = org;
-                    let followers = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
-                    res.render('events/orgs/create', {
-                        title: 'ChanceMap | Add a new Event',
-                        account_type: account_type,
-                        account_id: account_id,
-                        currentAcc: org,
-                        messages: messages,
-                        users: users,
-                        connected: followers,
-                        notis: req.notis
-                    });
+//Utility Functions
+function sortByHashtags(list, properties, criteria) {
+    list.forEach(item => {
+        item.matches = 0;
+        properties.forEach(property => {
+            item[property].forEach(tag => {
+                criteria.forEach(criterion => {
+                    if (tag.includes(criterion)) {
+                        item.matches++;
+                    }
                 });
             });
         });
+    });
+    list.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+    return list;
+}
+
+// Events dashboard
+router.get('/', async (req, res) => {
+
+    let account_type = req.user.account_type;
+    let account_id = req.user.account_id;
+    let events = await Event.find();
+    let users = await User.find();
+
+    var criteriaList;
+    var currentAcc;
+
+    if (account_type == 1) {
+        currentAcc = await Org.findOne({ '_id': account_id });
+        criteriaList = currentAcc.hashtags;
+        events = sortByHashtags(events, ['hashtags'], criteriaList);
+        connected = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
     } else if (account_type == 2) {
-        Admin.findOne({'_id': account_id}, (err, admin) => {
-          Message.find((err, messages) => {
-            res.render('events/orgs/create', {
-                title: 'ChanceMap | Add a new Event',
-                account_type: account_type,
-                account_id: account_id,
-                currentAcc: admin,
-                notis: req.notis,
-                messages: messages,
-            });
-          });
-        });
+        currentAcc = await Admin.findOne({ '_id': account_id });
+        criteriaList = [];
+        connected = [];
+    } else {
+        currentAcc = users.filter(user => user._id == account_id)[0];
+        criteriaList = currentAcc.interests.concat(currentAcc.skills);
+        events = sortByHashtags(events, ['hashtags'], criteriaList);
+        connected = users.filter(user => currentAcc.connected.indexOf(user.username) >= 0);
     }
-  }
+
+    res.render('events/dashboard', {
+        title: 'ChanceMap | Events',
+        account_type: account_type,
+        account_id: account_id,
+        currentAcc: currentAcc,
+        connected: connected,
+        events: events,
+        criteriaList: criteriaList,
+        notis: req.notis
+    });
 });
 
-// TODO: GIVE ADMIN RIGHT TO CREATE EVENT FOR ORGS
-router.post('/create', (req, res) => {
+// Viewing my own events (orgs)
+router.get('/manage', async (req, res) => {
+
+    let account_type = req.user.account_type;
+    let account_id = req.user.account_id;
+
+    var currentAcc;
+    var connected;
+
+    var events = await Event.find();
+
+    if (account_type != 1 && account_type != 2) {
+        res.redirect('/');
+    } else {
+
+        if (account_type == 1) {
+            currentAcc = await Org.findOne({ '_id': account_id });
+            events = events.filter(event => currentAcc.events.indexOf(event._id) >= 0);
+            users = await User.find();
+            connected = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
+        } else if (account_type == 2) {
+            currentAcc = await Admin.findOne({});
+            connected = [];
+        }
+
+        res.render('events/orgs/manage', {
+            title: 'ChanceMap | My Events',
+            account_type: account_type,
+            account_id: account_id,
+            currentAcc: currentAcc,
+            events: events,
+            notis: req.notis,
+            users: users,
+            connected: connected,
+        });
+
+    }
+});
+
+// Rendering new event creator tool
+router.get('/create', async (req, res) => {
+
+    let account_type = req.user.account_type;
+    let account_id = req.user.account_id;
+
+    var currentAcc;
+    var connected;
+
+    if (account_type != 1 && account_type != 2) {
+        res.redirect('/');
+    }
+
+    if (account_type == 1) {
+        currentAcc = await Org.findOne({ '_id': account_id });
+        users = await User.find();
+        connected = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
+    } else if (account_type == 2) {
+        currentAcc = await Admin.findOne({ '_id': account_id });
+        connected = [];
+    }
+
+    res.render('events/orgs/create', {
+        title: 'ChanceMap | Add a new Event',
+        account_type: account_type,
+        account_id: account_id,
+        currentAcc: currentAcc,
+        connected: connected,
+        notis: req.notis
+    });
+});
+
+// Process creating new event/deleting past event
+router.post('/manage', async (req, res) => {
+
     let data = req.body;
+
+    //delete event if status is delete
+    if (data.status != "create") {
+        await Event.findOneAndRemove({ '_id': data.event_id });
+
+        let org = Org.findOne({ '_id': data.account_id });
+
+        let accounts = [];
+        if (org.followers) {
+            accounts = org.followers;
+        }
+        if (accounts.length > 0) {
+
+            let newNoti = new Notification({
+                _id: new mongoose.Types.ObjectId(),
+                created_at: new Date(),
+                updated_at: new Date(),
+                title: org.org_name + ' just removed their event!',
+                body: org.org_name + ' removed ' + event.event_name,
+                image: 'event',
+                accounts: accounts
+            });
+
+            newNoti.save().then(async noti => {
+                let users = await User.find({ 'username': { $in: accounts } });
+                users.forEach(user => {
+                    user.new_notis.push(noti._id);
+                    user.save().then(result => {
+                        console.log(result);
+                    }).catch(err => {
+                        res.send(err);
+                    });
+                });
+                req.socketio.broadcast.to(req.user.username).emit('event', noti);
+                res.redirect('/events/manage');
+            });
+        }
+        res.redirect('/events/manage');
+    }
+
+    //otherwise, create new event
     let name = data.name;
     let org_name = data.org_name;
     let org_id = req.user.account_id;
-    // ADMIN CREATE EVENT CODE
-    if(req.user.account_id == 2) {
-      Org.findOne({'name': org_name}, (err, targetOrg) => {
-        org_id = targetOrg._id;
-      });
+
+    if (req.user.account_type == 2) {
+        Org.findOne({ 'name': org_name }, (err, targetOrg) => {
+            org_id = targetOrg._id;
+        }).catch(err => { throw (err); });
     }
 
     let desc = data.desc;
@@ -104,19 +224,20 @@ router.post('/create', (req, res) => {
         website: website,
         eventImage: eventImage
     });
-    newEvent.save((err, event) => {
-        if(err) {
-            console.log(err);
-            return;
-        }
-        console.log('new event created!');
-        console.log(event);
-        Org.findOne({'_id': org_id}, (err, org) => {
+
+    newEvent.save().then(async event => {
+
+        console.log('New event created!');
+
+        let org = await Org.findOne({ '_id': org_id });
+        org.events.push(event._id);
+        org.save().then(result => {
             let accounts = [];
-            if(org.followers) {
+            if (org.followers) {
                 accounts = org.followers;
             }
-            if(accounts.length > 0) {
+            if (accounts.length > 0) {
+    
                 let newNoti = new Notification({
                     _id: new mongoose.Types.ObjectId(),
                     created_at: new Date(),
@@ -126,13 +247,10 @@ router.post('/create', (req, res) => {
                     image: 'event',
                     accounts: accounts
                 });
-                newNoti.save((err, noti) => {
-                    if(err) {
-                        console.log(err);
-                        return;
-                    }
-                    console.log(noti);
-                    User.find({'username': {$in: accounts}}, (err, users) => {
+    
+                newNoti.save().then(noti => {
+                    //find users to notify
+                    User.find({ 'username': { $in: accounts } }, (err, users) => {
                         users.forEach(user => {
                             user.new_notis.push(noti._id);
                             user.save().then(result => {
@@ -144,278 +262,49 @@ router.post('/create', (req, res) => {
                         req.socketio.broadcast.to(req.user.username).emit('event', noti);
                         res.redirect('/events/manage');
                     });
-                });
+                }).catch(err => { throw (err); });
             } else {
                 res.redirect('/events/manage');
             }
         });
-    });
+    }).catch(err => { throw (err); });
 });
 
-// events dashboard
-router.get('/', (req, res) => {
-  if(!req.isAuthenticated()) {
-    res.redirect('/login');
-  } else {
+// Editing existing events
+router.get('/edit/:id', async (req, res) => {
+
     let account_type = req.user.account_type;
     let account_id = req.user.account_id;
-
-    Event.find((err, events) => {
-        if(err) {
-          console.log(err);
-          return;
-        }
-        if(account_type == 1) {
-            Org.findOne({'_id': account_id}, (err, org) => {
-                let criteriaList = org.hashtags;
-                events.forEach(event => {
-                    event.matches = 0;
-                    event.hashtags.forEach(hashtag => {
-                        criteriaList.forEach(criteria => {
-                            if(hashtag.includes(criteria)) {
-                            event.matches++;
-                            }
-                        });
-                    });
-                });
-                events.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-                User.find((err, users) => {
-                    Message.find((err, messages) => {
-                        let currentAcc = org;
-                        let followers = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
-                        res.render('events/dashboard', {
-                            title: 'ChanceMap | Events',
-                            account_type: account_type,
-                            account_id: account_id,
-                            currentAcc: org,
-                            users: users,
-                            messages: messages,
-                            connected: followers,
-                            events: events,
-                            criteriaList: criteriaList,
-                            notis: req.notis
-                        });
-                    });
-                });
-            });
-        } else if (account_type == 2) {
-            Admin.findOne({'_id': account_id}, (err, admin) => {
-                let criteriaList = [];
-                User.find((err, users) => {
-                    Message.find((err, messages) => {
-                        res.render('events/dashboard', {
-                            title: 'ChanceMap | Events',
-                            account_type: account_type,
-                            account_id: account_id,
-                            currentAcc: admin,
-                            users: users,
-                            messages: messages,
-                            events: events,
-                            criteriaList: criteriaList,
-                            notis: req.notis
-                        });
-                    });
-                });
-            });
-        } else {
-            User.findOne({'_id': account_id}, (err, user) => {
-                let criteriaList = user.interests.concat(user.skills);
-                events.forEach(event => {
-                    event.matches = 0;
-                    event.hashtags.forEach(hashtag => {
-                        criteriaList.forEach(criteria => {
-                            if(hashtag.includes(criteria)) {
-                            event.matches++;
-                            }
-                        });
-                    });
-                });
-                events.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-                User.find((err, users) => {
-                    Message.find((err, messages) => {
-                        let currentAcc = user;
-                        let connected = users.filter(user => currentAcc.connected.indexOf(user.username) >= 0);
-                        res.render('events/dashboard', {
-                            title: 'ChanceMap | Events',
-                            account_type: account_type,
-                            account_id: account_id,
-                            currentAcc: user,
-                            users: users,
-                            connected: connected,
-                            messages: messages,
-                            events: events,
-                            criteriaList: criteriaList,
-                            notis: req.notis
-                        });
-                    });
-                });
-            });
-        }
-    });
-  }
-});
-
-// viewing my own events (orgs)
-router.get('/manage', (req, res) => {
-  if(!req.isAuthenticated()) {
-    res.redirect('/login');
-  } else {
-    let account_type = req.user.account_type;
-    let account_id = req.user.account_id;
-    let currentAcc = req.user;
+    let event = await Event.findOne({ _id: req.params.id });
 
     if (account_type == 1) {
-        Event.find({org_id: account_id}, (err, events) => {
-          if(err) {
-            console.log(err);
-            return;
-          }
-            Org.findOne({'_id': account_id}, (err, org) => {
-                if(err) {
-                    console.log(err);
-                    return;
-                }
-                User.find((err, users) => {
-                    Message.find((err, messages) => {
-                        let currentAcc = org;
-                        let followers = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
-                        res.render('events/orgs/manage', {
-                            title: 'ChanceMap | My Events',
-                            account_type: account_type,
-                            account_id: account_id,
-                            currentAcc: org,
-                            events: events,
-                            notis: req.notis,
-                            messages: messages,
-                            users: users,
-                            connected: followers,
-                        });
-                    });
+        Org.findOne({ '_id': account_id }, (err, org) => {
+            User.find((err, users) => {
+                let currentAcc = org;
+                let connected = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
+                res.render('events/orgs/edit', {
+                    title: 'ChanceMap | My Events',
+                    account_type: account_type,
+                    account_id: account_id,
+                    currentAcc: org,
+                    event: event,
+                    notis: req.notis
                 });
             });
         });
     } else if (account_type == 2) {
-        Event.find({},(err,events) => {
-          Admin.findOne({}, (err, admin) => {
-              let criteriaList = [];
-              res.render('events/orgs/manage', {
-                  title: 'ChanceMap | Manage Events',
-                  account_type: account_type,
-                  account_id: account_id,
-                  currentAcc: admin,
-                  events: events,
-                  criteriaList: criteriaList,
-                  notis: req.notis
-              });
-          });
-        });
-    };
-  }
-});
-
-// deleting events (orgs)
-router.get('/delete/:id', (req, res) => {
-  if(!req.isAuthenticated()) {
-    res.redirect('/login');
-  } else {
-    let account_type = req.user.account_type;
-
-    if(account_type == 1 || account_type == 2) {
-        Event.findOneAndRemove({'_id': req.params.id}, (err, event) => {
-            if(err) {
-                console.log(err);
-            } else {
-                Org.findOne({'_id': event.org_id}, (err, org) => {
-                    let accounts = [];
-                    if(org.org_followers) {
-                        accounts = org.org_followers;
-                    }
-
-                    if(accounts.length > 0) {
-                        let newNoti = new Notification({
-                            _id: new mongoose.Types.ObjectId(),
-                            created_at: new Date(),
-                            updated_at: new Date(),
-                            title: org.org_name + ' just removed their event!',
-                            body: org.org_name + ' removed ' + event.event_name,
-                            image: 'event',
-                            accounts: accounts
-                        });
-
-                        newNoti.save((err, noti) => {
-                            if(err) {
-                                console.log(err);
-                                return;
-                            }
-                            User.find({'username': {$in: accounts}}, (err, users) => {
-                                users.forEach(user => {
-                                    user.new_notis.push(noti._id);
-                                    user.save().then(result => {
-                                        console.log(result);
-                                    }).catch(err => {
-                                        res.send(err);
-                                    });
-                                });
-                                req.socketio.broadcast.to(req.user.username).emit('event', noti);
-                                res.redirect('/events/manage');
-                            });
-                        });
-                    } else {
-                        res.redirect('/events/manage');
-                    }
-                });
-            }
-        });
+        Admin.findOne({ '_id': account_id }, (err, admin) => {
+            res.render('events/orgs/edit', {
+                title: 'ChanceMap | Manage Events',
+                account_type: account_type,
+                account_id: account_id,
+                currentAcc: admin,
+                event: event,
+                notis: req.notis
+            })
+        })
     } else {
         res.redirect('/');
-    }
-  }
-});
-
-// editing existing events
-router.get('/edit/:id', (req, res) => {
-    if(!req.isAuthenticated()) {
-      res.redirect('/login');
-    } else {
-      let account_type = req.user.account_type;
-      let account_id = req.user.account_id;
-      Event.findOne({_id: req.params.id}, (err, event) => {
-          if(err) {
-              console.log(err);
-              return;
-          }
-          if(account_type == 1 ) {
-                Org.findOne({'_id': account_id}, (err, org) => {
-                User.find((err, users) => {
-                    Message.find((err, messages) => {
-                        let currentAcc = org;
-                        let followers = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
-                        res.render('events/orgs/edit', {
-                            title: 'ChanceMap | My Events',
-                            account_type: account_type,
-                            account_id: account_id,
-                            currentAcc: org,
-                            event: event,
-                            notis: req.notis
-                        });
-                    });
-                });
-            });
-          } else if (account_type == 2){
-              Admin.findOne({'_id': account_id}, (err, admin) => {
-                  res.render('events/orgs/edit', {
-                      title: 'ChanceMap | Manage Events',
-                      account_type: account_type,
-                      account_id: account_id,
-                      currentAcc: admin,
-                      event: event,
-                      notis: req.notis
-                  })
-              })
-          }else {
-              res.redirect('/');
-          }
-      });
     }
 });
 
@@ -427,47 +316,43 @@ router.post('/edit/:id', (req, res) => {
     let org_name = data.org_name;
     let desc = data.desc;
     let hashtags = data.hashtags;
-    let app_form = data.app_form;
-    let app_deadline = data.app_deadline;
     let facebook = data.facebook;
     let website = data.website;
-    let jobImage = data.jobImage;
-    let accounts = [];
     let org_followers = data.org_followers;
 
-    Event.findOne({_id: event_id}, (err, event) => {
-    		if(err) {
-    			res.send('Database error...');
-    			console.log(err);
-    			return;
+    Event.findOne({ _id: event_id }, (err, event) => {
+        if (err) {
+            res.send('Database error...');
+            console.log(err);
+            return;
         }
         console.log(event);
-        if(!event.created_at) {
-          event.created_at = new Date();
+        if (!event.created_at) {
+            event.created_at = new Date();
         }
         event.updated_at = new Date();
-        event.name = data.name;
-        event.desc = data.desc;
-        event.hashtags = data.hashtags;
-        event.address = data.address;
-        event.reg_form = data.reg_form;
-        event.reg_deadline = data.reg_deadline;
-        event.start_date = data.start_date;
-        event.end_date = data.end_date;
-        event.start_time = data.start_time;
-        event.end_time = data.end_time;
-        event.facebook = data.facebook;
-        event.website = data.website;
-        event.eventImage = data.eventImage;
+        event.name = name;
+        event.desc = desc;
+        event.hashtags = hashtags;
+        event.address = address;
+        event.reg_form = reg_form;
+        event.reg_deadline = reg_deadline;
+        event.start_date = start_date;
+        event.end_date = end_date;
+        event.start_time = start_time;
+        event.end_time = end_time;
+        event.facebook = facebook;
+        event.website = website;
+        event.eventImage = eventImage;
 
         event.save().then(result => {
             console.log(result);
-            Org.findOne({'_id': org_id}, (err, org) => {
+            Org.findOne({ '_id': org_id }, (err, org) => {
                 let accounts = [];
-                if(org_followers) {
+                if (org_followers) {
                     accounts = org_followers;
                 }
-                if(accounts.length > 0) {
+                if (accounts.length > 0) {
                     let newNoti = new Notification({
                         _id: new mongoose.Types.ObjectId(),
                         created_at: new Date(),
@@ -479,12 +364,12 @@ router.post('/edit/:id', (req, res) => {
                     });
 
                     newNoti.save((err, noti) => {
-                        if(err) {
+                        if (err) {
                             console.log(err);
                             return;
                         }
                         console.log(noti);
-                        User.find({'username': {$in: accounts}}, (err, users) => {
+                        User.find({ 'username': { $in: accounts } }, (err, users) => {
                             users.forEach(user => {
                                 user.new_notis.push(noti._id);
                                 user.save().then(result => {

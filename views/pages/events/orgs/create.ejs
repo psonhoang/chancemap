@@ -18,7 +18,7 @@
 		<div class="card-body collapse in">
 			<div class="card-block">
 
-				<form class="form" method="POST" action="/events/create">
+				<form class="form" method="POST" action="/events/manage">
 					<div class="form-body">
 						<!-- event name -->
 						<div class="row">
@@ -172,6 +172,8 @@
 								</div>
 							</div>
 						</div>
+						<!-- hidden fields-->
+						<input type="hidden" name="status" value="create">
 					</div>
 					<!-- buttons -->
 					<div class="form-actions right">

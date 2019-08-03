@@ -20,42 +20,57 @@
       </div>
     </div>
   </div>
-<div class="content-body">
+  <div class="content-body">
 
-<!-- Submit resume, edit job and add jobs button script-->
-<div class="row col-xs-12">
-		<div role="group" class="btn-group float-md-left" style="margin-left: 35px">
-      <div role="group" class="btn-group">
-          <button type="button" onclick="location.href='/events/create'" class="btn btn-outline-primary"><i class="ft-plus"></i></button>
+    <!-- Add event sign-->
+    <div class="row col-xs-12">
+      <div role="group" class="btn-group float-md-left" style="margin-left: 35px">
+        <div role="group" class="btn-group">
+          <button type="button" onclick="location.href='/events/create'" class="btn btn-outline-primary"><i
+              class="ft-plus"></i></button>
+        </div>
       </div>
-		</div>
+    </div>
+
+
+    <div class='row col-xs-12'><br></div>
+
+    <!-- card actions section start -->
+    <section id="card-actions">
+      <%  var eventCounts = 0; %>
+      <%  events.forEach(event => { %>
+      <%   console.log(event); %>
+      <%   if (eventCounts >= 2) { %>
+             <div class='row'></div>
+      <%     eventCounts = 0; %>
+      <%   } %>
+      <%-  include('eventCard', { event: event, months: months} ); %>
+      <%   eventCounts += 1; %>
+      <% }); %>
+    </section>
+    <!-- // card-actions section end -->
+    
+  </div>
 </div>
 
+<script>
+  function Delete(event_id, account_id) {
 
-<div class='row col-xs-12'><br></div>
+    let formData = new FormData();
+    formData.append("event_id", event_id);
+    formData.append("account_id", account_id);
+    formData.append('status', 'delete');
 
-<!-- card actions section start -->
-<section id="card-actions">
-<%  var eventCounts = 0; %>
-<%  events.forEach(event => { %>
-<%  if (eventCounts >= 2) { %>
-        <div class='row'></div>
-<%      eventCounts = 0; %>
-<%  } %>
-<%- include('eventCard', {
-    event_id: event._id,
-    cardTitle: event.name,
-    cardElement1: event.org_name,
-    hashtags: event.hashtags,
-    regForm: event.reg_form,
-    deadline: event.reg_deadline,
-    cardElement3: event.address,
-    cardElement4: months[event.start_date.getMonth()] + ' ' + event.start_date.getDate() + ', ' + event.start_date.getFullYear(),
-    cardElement5: event.start_time,
-    cardElement6: event.end_date ? months[event.end_date.getMonth()] + ' ' + event.end_date.getDate() + ', ' + event.end_date.getFullYear() : null,
-    cardElement7: event.end_time, 
-    cardElement2: event.desc }); %>
-<%  eventCounts += 1; %>
-<%  }); %>
-</section>
-<!-- // card-actions section end -->
+    $.ajax({
+      async: true,
+      url: '/events/manage',
+      method: 'POST',
+      processData: false,
+      contentType: false,
+      data: formData,
+      success: (data) => {
+        toastr.warning(`Event removed!`);
+      }
+    });
+  }
+</script>

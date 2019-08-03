@@ -1,21 +1,27 @@
 <div data-scroll-to-active="true" class="main-menu menu-fixed menu-light menu-accordion menu-shadow">
-  <div class="main-menu-content ps-container ps-theme-dark ps-active-y" data-ps-id="a0cf5723-e682-b9c3-b228-6640b1cf55c0" style="height: 753px;">
+  <div class="main-menu-content ps-container ps-theme-dark ps-active-y"
+    data-ps-id="a0cf5723-e682-b9c3-b228-6640b1cf55c0" style="height: 753px;">
     <ul id="main-menu-navigation" data-menu="menu-navigation" class="navigation navigation-main">
       <ul class="navigation-header">
         <li><a href="/profile"><i style="color:gray" class="ft-edit"></i></a></li>
-        <li><div id="avatarHeader" class="text-xs-center">
-          <div class="card-block">
-            <a href="/profile"><img id="avatar" src='<%= currentAcc.avatar; %>' class="rounded-circle width-100 height-100" alt="Card image"></a>
-            <br><br>
-            <a href="/profile"><span class="card-subtitle current_user_name"><%= currentAcc.name; %></span></a>
+        <li>
+          <div id="avatarHeader" class="text-xs-center">
+            <div class="card-block">
+              <a href="/profile"><img id="avatar" src='<%= currentAcc.avatar; %>'
+                  class="rounded-circle width-100 height-100" alt="Card image"></a>
+              <br><br>
+              <a href="/profile"><span class="card-subtitle current_user_name"><%= currentAcc.name; %></span></a>
+            </div>
           </div>
-        </div></li>
+        </li>
       </ul>
       <li class="nav-item"><a href="/"><i class="ft-home"></i><span data-i18n="" class="menu-title">Home</span></a>
       </li>
-      <li class="nav-item"><a href="/calendar"><i class="ft-calendar"></i><span data-i18n="" class="menu-title">Calendar</span></a>
+      <li class="nav-item"><a href="/calendar"><i class="ft-calendar"></i><span data-i18n=""
+            class="menu-title">Calendar</span></a>
       </li>
-      <li class="nav-item has-sub"><a><i class="ft-sidebar"></i><span data-i18n="" class="menu-title">Dashboard</span><%#<span class="tag tag tag-primary tag-pill float-xs-right mr-2">3</span>%></a>
+      <li class="nav-item has-sub"><a><i class="ft-sidebar"></i><span data-i18n=""
+            class="menu-title">Dashboard</span><%#<span class="tag tag tag-primary tag-pill float-xs-right mr-2">3</span>%></a>
         <ul class="menu-content">
           <li><a href="/events" class="menu-item"><i class="ft-map-pin"></i>Events</a>
           </li>
@@ -37,17 +43,19 @@
           </li>
         </ul>
       </li>
-      <li class="nav-item"><a href="/profile"><i class="ft-users"></i><span data-i18n="" class="menu-title">Org profile</span></a>
+      <li class="nav-item"><a href="/profile"><i class="ft-users"></i><span data-i18n="" class="menu-title">Org
+            profile</span></a>
       </li>
-      <li class="nav-item"><a href="/<%= currentAcc.username %>/followers"><i class="ft-user-check"></i><span data-i18n="" class="menu-title">Followers</span></a>
-        <li class="nav-item"><a href="/messages"><i class="ft-message-square"></i><span data-i18n="" class="menu-title">Messages</span></a>
+      <li class="nav-item"><a href="orgs/<%= currentAcc.username %>/followers"><i class="ft-user-check"></i><span
+            data-i18n="" class="menu-title">Followers</span></a>
       <li class="navigation-header"><span>More</span>
         <%# <i data-toggle="tooltip" data-placement="right" data-original-title="Apps" class=" ft-minus"></i> %>
       </li>
       </li>
       <!-- <li class=" nav-item"><a href=""><i class="ft-settings"></i><span data-i18n="" class="menu-title">Settings</span></a>
       </li> -->
-      <li class=" nav-item"><a href="/logout"><i class="ft-log-out"></i><span data-i18n="" class="menu-title">Logout</span></a>
+      <li class=" nav-item"><a href="/logout"><i class="ft-log-out"></i><span data-i18n=""
+            class="menu-title">Logout</span></a>
       </li>
     </ul>
     <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 3px;">

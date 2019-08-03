@@ -1,11 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const config = require('../config/database.js');
+
 // For file uploading
-const crypto = require('crypto');
-const multer = require('multer');
-const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
 
 // Database connection
@@ -29,16 +26,6 @@ router.get('/:filename', (req, res) => {
       });
     }
 
-    // Check if image
-    // if (file.contentType === 'image/jpeg' || file.contentType === 'image/png') {
-    //   // Read output to browser
-    //   const readstream = gfs.createReadStream(file.filename);
-    //   readstream.pipe(res);
-    // } else {
-    //   res.status(404).json({
-    //     err: 'Not an image'
-    //   });
-    // }
 		const readstream = gfs.createReadStream(file.filename);
 		readstream.pipe(res);
   });

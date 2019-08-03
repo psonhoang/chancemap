@@ -453,22 +453,6 @@
                                                         </li>
                                                     </td>
                                                     <td style="max-width: 120px">
-                                                        <div class="media-left">
-                                                            <button class="btn btn-info"
-                                                                onclick="showEventHashtags(<%= JSON.stringify(event._id) %>)">Show
-                                                                hashtags</button>
-                                                        </div>
-                                                        <div class="media-body">
-                                                            <% if (account_type == 0 && currentAcc.events.indexOf(event._id) < 0) { %>
-                                                            <button id="<%= event._id %>3" class="btn btn-info"
-                                                                onclick="addEvent(<%= JSON.stringify(event._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
-                                                            <% } else if (account_type == 0 && currentAcc.events.indexOf(event._id) >= 0) { %>
-                                                            <button id="<%= event._id %>3"
-                                                                class="btn btn-success"
-                                                                onclick="removeEvent(<%= JSON.stringify(event._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
-                                                            <% } %>
-                                                        </div>
-                                                        <br>
                                                         <div id="<%= event._id %>2" class="hashes">
                                                             <% event.hashtags.forEach(hashtag => { %>
                                                             <% var isMatch = false; %>

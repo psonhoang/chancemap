@@ -1,93 +1,93 @@
 <% extend('../../defaultLayouts/defaultLayout'); %>
 <% var months = ["January", "February", "March", "April", "May", "June", "July","August", "September", "October","November", "December"]; %>
 <div class="app-content content container-fluid">
-    <div class="content-wrapper">
-        <div class="content-header row">
-            <div class="content-header-left col-md-6 col-xs-12 mb-2">
-              <h3 class="content-header-title mb-0">Opportunities</h3>
-              <div class="row breadcrumbs-top">
-                <div class="breadcrumb-wrapper col-xs-12">
-                  <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/">Home</a>
-                    </li>
-                    <li class="breadcrumb-item"><a href="/jobs">DASHBOARD</a>
-                    </li>
-                    <li class="breadcrumb-item active">OPPORTUNITIES
-                    </li>
-                  </ol>
-                </div>
-              </div>
-            </div>
+  <div class="content-wrapper">
+    <div class="content-header row">
+      <div class="content-header-left col-md-6 col-xs-12 mb-2">
+        <h3 class="content-header-title mb-0">Opportunities</h3>
+        <div class="row breadcrumbs-top">
+          <div class="breadcrumb-wrapper col-xs-12">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="/">Home</a>
+              </li>
+              <li class="breadcrumb-item"><a href="/jobs">DASHBOARD</a>
+              </li>
+              <li class="breadcrumb-item active">OPPORTUNITIES
+              </li>
+            </ol>
+          </div>
         </div>
-
-            <!-- <div class="row"> -->
-              <div style="margin-bottom: 20px;" class="row container-fluid">
-                <div class="col-xl-10 col-xs-12">
-                    <div id="search-input" class="edit-on-delete form-control tagging" data-tags-input-name="add-box">
-                      <input class="type-zone" contenteditable="true">
-                    </div>
-                    <p class="text-muted">Search for opportunities with keywords (Ex: charity, design, culture,...)</p>
-                </div>
-                <button onclick="search()" class="col-xl-2 col-xs-12 btn btn-info" type="button"><i class="ft-search font-md-4"></i> Search</button>
-              </div>
-            <!-- </div> -->
-            <!-- Opportunities -->
-            <div class="card">
-                <div style="color: white" class="card-header bg-red bg-darken-2">
-                <h4 class="card-title"><i class="ft-briefcase"></i> Opportunities</h4>
-                <a class="heading-elements-toggle">
-                    <i class="fa fa-ellipsis-v font-medium-3"></i>
-                </a>
-                </div>
-                <div class="card">
-                    <div class="table-responsive">
-                        <table class="table">
-                          <!-- <thead style="color: white" class="thead bg-blue-grey bg-darken-3">
-                              <th>Deadline</th>
-                              <th>Opportunity</th>
-                              <th>Hashtags</th>
-                          </thead> -->
-                            <tbody id="opportunitiesBody">
-                                <% opportunities.forEach(opportunity => { %>
-                                <% cardId = opportunity._id; %>
-                                <tr class="btn-secondary" style="border: 0" data-toggle="modal" data-target="#<%= cardId %>">
-                                    <% if(opportunity.reg_deadline) { %>
-                                    <th scope="row">Deadline: <%= months[opportunity.reg_deadline.getMonth()] + ' ' + opportunity.reg_deadline.getDate() + ', ' + opportunity.reg_deadline.getFullYear() %></th>
-                                    <% } else { %>
-                                    <th scope="row">Deadline: N/A</th>
-                                    <% } %>
-                                    <td>
-                                        <li style="font-size: 16px"><strong><%= opportunity.name %></strong></li>
-                                        <li style="font-style: italic"><%= opportunity.org_name %></li>
-                                        <% if(opportunity.start_date) { %>
-                                        <li style="font-size: small">Date: <%= months[opportunity.start_date.getMonth()] + ' ' + opportunity.start_date.getDate() + ', ' + opportunity.start_date.getFullYear() %></li>
-                                        <% } %>
-                                        <li style="font-size: small">At: <%= opportunity.address %></li>
-                                    </td>
-                                    <td>
-                                    <% opportunity.hashtags.forEach(hashtag => { %>
-                                        <% var isMatch = false; %>
-                                        <% criteriaList.forEach(criteria => { %>
-                                        <% if (hashtag.includes(criteria) && !isMatch) { %>
-                                            <% isMatch = true; %>
-                                            <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
-                                        <% } %>
-                                        <% }); %>
-                                        <% if (!isMatch) { %>
-                                        <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
-                                        <% } %>
-                                    <% }); %>
-                                    </td>
-                                </tr>
-                                <%- include('opportunityCardModal', {opportunity: opportunity, months: months}); %>
-                                <% }); %>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+
+    <!-- <div class="row"> -->
+    <div style="margin-bottom: 20px;" class="row container-fluid">
+      <div class="col-xl-10 col-xs-12">
+        <div id="search-input" class="edit-on-delete form-control tagging" data-tags-input-name="add-box">
+          <input class="type-zone" contenteditable="true">
+        </div>
+        <p class="text-muted">Search for opportunities with keywords (Ex: charity, design, culture,...)</p>
+      </div>
+      <button onclick="search()" class="col-xl-2 col-xs-12 btn btn-info" type="button"><i
+          class="ft-search font-md-4"></i> Search</button>
+    </div>
+    <!-- </div> -->
+    <!-- Opportunities -->
+    <div class="card">
+      <div style="color: white" class="card-header bg-red bg-darken-2">
+        <h4 class="card-title"><i class="ft-briefcase"></i> Opportunities</h4>
+        <a class="heading-elements-toggle">
+          <i class="fa fa-ellipsis-v font-medium-3"></i>
+        </a>
+      </div>
+      <div class="card">
+        <div class="table-responsive">
+          <table class="table">
+            <tbody id="opportunitiesBody">
+              <% opportunities.forEach(opportunity => { %>
+              <% cardId = opportunity._id; %>
+              <tr class="btn-secondary" style="border: 0" data-toggle="modal" data-target="#<%= cardId %>">
+                <% if(opportunity.reg_deadline) { %>
+                <th scope="row">Deadline:
+                  <%= months[opportunity.reg_deadline.getMonth()] + ' ' + opportunity.reg_deadline.getDate() + ', ' + opportunity.reg_deadline.getFullYear() %>
+                </th>
+                <% } else { %>
+                <th scope="row">Deadline: N/A</th>
+                <% } %>
+                <td>
+                  <li style="font-size: 16px"><strong><%= opportunity.name %></strong></li>
+                  <li style="font-style: italic"><%= opportunity.org_name %></li>
+                  <% if(opportunity.start_date) { %>
+                  <li style="font-size: small">Date:
+                    <%= months[opportunity.start_date.getMonth()] + ' ' + opportunity.start_date.getDate() + ', ' + opportunity.start_date.getFullYear() %>
+                  </li>
+                  <% } %>
+                  <li style="font-size: small">At: <%= opportunity.address %></li>
+                </td>
+                <td>
+                  <% opportunity.hashtags.forEach(hashtag => { %>
+                  <% var isMatch = false; %>
+                  <% criteriaList.forEach(criteria => { %>
+                  <% if (hashtag.includes(criteria) && !isMatch) { %>
+                  <% isMatch = true; %>
+                  <span style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></span>
+                  <% } %>
+                  <% }); %>
+                  <% if (!isMatch) { %>
+                  <span style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></span>
+                  <% } %>
+                  <% }); %>
+                </td>
+              </tr>
+              <%- include('opportunityCardModal', {opportunity: opportunity, months: months}); %>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 </div>
 
 
@@ -95,7 +95,7 @@
 <!--  BEGIN CODEDAO SCRIPT -->
 <script src="/scripts/suggest.js" type="text/javascript"></script>
 <script>
-  $(document).ready(function() {
+  $(document).ready(function () {
     $('#search-input').tagging('removeAll');
   });
 
@@ -109,27 +109,27 @@
       criteriaList.push(inputValue);
     }
     // alert(criteriaList);
-    if(criteriaList.length > 0) {
-        $.ajax({
-          async: true,
-          url: '/search/opportunities',
-          method: 'GET',
-          beforeSend: (req) => {
-            $.blockUI();
-          },
-          data: {
-            criteriaList: criteriaList
-          },
-          success: (data) => {
-            console.log(typeof(data));
-            document.open();
-            document.write(data);
-            document.close();
-            $.unblockUI();
-          }
-        });
+    if (criteriaList.length > 0) {
+      $.ajax({
+        async: true,
+        url: '/search/opportunities',
+        method: 'GET',
+        beforeSend: (req) => {
+          $.blockUI();
+        },
+        data: {
+          criteriaList: criteriaList
+        },
+        success: (data) => {
+          console.log(typeof (data));
+          document.open();
+          document.write(data);
+          document.close();
+          $.unblockUI();
+        }
+      });
     } else {
-      toastr.warning("Your search field can't be empty!", 'Error!', {positionClass: 'toast-top-center', containerId: 'toast-top-center'});
+      toastr.warning("Your search field can't be empty!", 'Error!', { positionClass: 'toast-top-center', containerId: 'toast-top-center' });
     }
   }
 </script>

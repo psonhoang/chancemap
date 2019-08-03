@@ -1,13 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-// const bcrypt = require('bcryptjs');
-// const path = require('path');
-// const config = require('../config/database.js');
-// // For file uploading
-// const crypto = require('crypto');
-// const multer = require('multer');
-// const GridFsStorage = require('multer-gridfs-storage');
+
 const Grid = require('gridfs-stream');
 
 // Models
@@ -31,29 +25,9 @@ connection.once('open', () => {
 	gfs.collection('uploads.files');
 });
 
-// Create storage engine
-// const storage = new GridFsStorage({
-// 	url: config.database,
-// 	file: (req, file) => {
-// 		return new Promise((resolve, reject) => {
-// 			crypto.randomBytes(16, (err, buf) => {
-// 				if (err) {
-// 					return reject(err);
-// 				}
-// 				const filename = buf.toString('hex') + path.extname(file.originalname);
-// 				const fileInfo = {
-// 					filename: filename,
-// 					bucketName: 'uploads'
-// 				};
-// 				resolve(fileInfo);
-// 			});
-// 		});
-// 	}
-// });
-// const upload = multer({ storage });
-
 
 // @Routes
+//View dashboard
 router.get('/', (req, res) => {
 	if (!req.isAuthenticated()) {
 		res.redirect('/login');
@@ -178,6 +152,7 @@ router.get('/', (req, res) => {
 	}
 });
 
+//View Org Profiles
 router.get('/:username', (req, res) => {
 	let account_type = req.user.account_type;
 	let account_id = req.user.account_id;
@@ -279,6 +254,32 @@ router.get('/:username', (req, res) => {
 		});
 	}
 });
+
+//View Followers
+router.get('/:orgname/followers', async (req, res) => {
+
+	let account_type = req.user.account_type;
+	let account_id = req.user.account_id;
+	let orgname = req.params.orgname;
+
+	if (account_type != 1 || orgname != req.user.username) {
+		res.redirect('/');
+	}
+
+	let org = await Org.findOne({ 'username': orgname });
+	let users = await User.find({ 'username': { $in: org.followers } });
+
+	res.render('followers', {
+		title: 'ChanceMap | Followers',
+		currentAcc: org,
+		account_type: account_type,
+		account_id: account_id,
+		criteriaList: org.hashtags,
+		users: users,
+		notis: req.notis
+	});
+});
+
 
 // Exports
 module.exports = router;

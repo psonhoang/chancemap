@@ -1,35 +1,35 @@
 <div class="col-md-6 col-sm-12">
-	<div class="card">
-		<div class="card-header bg-amber bg-darken-3" style="color: white">
-			<h4 class="card-title" id="from-actions-top-bottom-right"><i class="ft-calendar"></i> <%= cardTitle %></h4>
-			<div class="heading-elements">
-				<ul class="list-inline mb-0 ">
+    <div class="card">
+        <div class="card-header bg-amber bg-darken-3" style="color: white">
+            <h4 class="card-title" id="from-actions-top-bottom-right"><i class="ft-calendar"></i> <%= event.name %></h4>
+            <div class="heading-elements">
+                <ul class="list-inline mb-0 ">
                     <li><a data-action="collapse"><i style="color: white" class="ft-minus"></i></a></li>
-					<li><a href="/events/edit/<%= event_id; %>"><i class="ft-edit" style="color: white"></i></a></li>
-                    <li><a href="/events/delete/<%= event_id; %>"><i class="ft-trash" style="color: white"></i></a></li>
-				</ul>
-			</div>
-		</div>
+                    <li><a href="/events/edit/<%= event._id; %>"><i class="ft-edit" style="color: white"></i></a></li>
+                    <li><onclick = "Delete(<%= JSON.stringify(event._id) %>, <%= JSON.stringify(currentAcc._id) %>)"></onclick><i class="ft-trash" style="color: white"></i></li>
+                </ul>
+            </div>
+        </div>
         <div class="card-body collapse in">
             <div class="card-block">
-                <p><label>Organisation name:</label>  <strong><%= cardElement1 %></strong></p>
-                <p><label>Description:</label> <strong> <%= cardElement2 %></strong></p>
+                <p><label>Organisation name:</label> <strong><%= event.org_name %></strong></p>
+                <p><label>Description:</label> <strong> <%= event.desc %></strong></p>
                 <label>Hashtags:</label>
-                <% hashtags.forEach(function(tag) { %>
-                    <p style="font-size: 13px" class="tag tag-pill tag-warning"><%= tag; %></p>
+                <% event.hashtags.forEach(function(tag) { %>
+                <p style="font-size: 13px" class="tag tag-pill tag-warning"><%= tag; %></p>
                 <% }); %>
-				<% if(regForm) { %>
-                    <p><label>Application Form:</label>  <strong><%= regForm %></strong></p> 
-    				<p><label>Deadline:</label>  <strong><%= deadline %></strong></p>
+                <% if(event.regForm) { %>
+                <p><label>Application Form:</label> <strong><%= event.reg_Form %></strong></p>
+                <p><label>Deadline:</label> <strong><%= event.reg_deadline %></strong></p>
                 <% } %>
-                <p><label>Address:</label>  <strong><%= cardElement3 %></strong></p>
-                <p><label>Start date:</label>  <strong><%= cardElement4 %></strong></p>
-                <% if(cardElement6) { %>
-                    <p><label>End date:</label>  <strong><%= cardElement6 %></strong></p>
+                <p><label>Address:</label> <strong><%= event.address %></strong></p>
+                <p><label>Start date:</label> <strong><%= months[event.start_date.getMonth()] + ' ' + event.start_date.getDate() + ', ' + event.start_date.getFullYear() %></strong></p>
+                <% if(event.end_date ? months[event.end_date.getMonth()] + ' ' + event.end_date.getDate() + ', ' + event.end_date.getFullYear() : null) { %>
+                <p><label>End date:</label> <strong><%= event.end_date ? months[event.end_date.getMonth()] + ' ' + event.end_date.getDate() + ', ' + event.end_date.getFullYear() : null %></strong></p>
                 <% } %>
-				<% if(cardElement5 || cardElement7) {%>
-                    <p><label>Start time:</label>  <strong><%= cardElement5 %></strong></p>
-                    <p><label>End time:</label>  <strong><%= cardElement7 %></strong></p>
+                <% if( event.start_time || event.end_time) {%>
+                <p><label>Start time:</label> <strong><%=  event.start_time %></strong></p>
+                <p><label>End time:</label> <strong><%= event.end_time %></strong></p>
                 <% } %>
             </div>
         </div>

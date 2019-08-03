@@ -163,7 +163,7 @@
                       <div style="display: block; max-height: 600px; overflow-y: auto; -ms-overflow-style: -ms-autohiding-scrollbar;" class="table-responsive">
                         <table class="table" width="0.75rem">
                           <tbody id="orgsBody">
-                              <% users.forEach( user => { %>
+                              <% connected.forEach( user => { %>
                               <% cardId = user._id; %>
                                 <% if (currentAcc.username != user.username) { %>
                                   <div style="padding: 10px; border-bottom: 1px solid #E8E8E8" class="container-fluid btn-secondary">

@@ -30,43 +30,41 @@ function sortByHashtags(list, properties, criteria) {
 // @Routes
 //View Dashboard
 router.get('/', async (req, res) => {
+
   let account_id = req.user.account_id;
   let account_type = req.user.account_type;
-  
+  let users = await User.find();
+
   var currentAcc;
   var connected;
   var criteriaList;
 
-  User.find().then(async users => {
+  if (account_type == 1) {
+    currentAcc = await Org.findOne({ '_id': account_id });
+    connected = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
+    criteriaList = currentAcc.hashtags;
+  }
+  else if (account_type == 2) {
+    criteriaList = [''];
+    connected = [];
+    currentAcc = await Admin.findOne({ '_id': account_id });
+  } else {
+    currentAcc = await User.findOne({ '_id': account_id });
+    connected = users.filter(client => currentAcc.connected.indexOf(client.username) >= 0);
+    criteriaList = currentAcc.interests.concat(currentAcc.skills);
+  }
 
-    if (account_type == 1) {
-      currentAcc= await Org.findOne({ '_id': account_id });
-      connected = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
-      criteriaList = currentAcc.hashtags;
-    }
-    else if (account_type == 2) {
-      criteriaList = [''];
-      connected = [];
-      currentAcc = await Admin.findOne({ '_id': account_id});
-    } else {
-      currentAcc = await User.findOne({ '_id': account_id });
-      connected = users.filter(client => user.connected.indexOf(client.username) >= 0);
-      criteriaList = user.interests.concat(user.skills);
-    }
+  users = sortByHashtags(users, ['skills', 'interests'], criteriaList);
 
-    users = sortByHashtags(users, ['skills', 'interests'], criteriaList);
-
-    res.render('users/dashboard', {
-      title: 'ChanceMap | Users',
-      account_type: account_type,
-      account_id: account_id,
-      currentAcc: currentAcc,
-      users: users,
-      criteriaList: criteriaList,
-      notis: req.notis,
-      connected: connected,
-    });
-
+  res.render('users/dashboard', {
+    title: 'ChanceMap | Users',
+    account_type: account_type,
+    account_id: account_id,
+    currentAcc: currentAcc,
+    users: users,
+    criteriaList: criteriaList,
+    notis: req.notis,
+    connected: connected,
   });
 });
 
@@ -126,20 +124,23 @@ router.get('/:username/following', async (req, res) => {
 
   if (account_type != 0 || username != req.user.username) {
     res.redirect('/');
+    return;
   }
 
-  try {
-  var user = await User.findOne({ 'username': username });
-  var orgs = await Org.find({ 'username': { $in: user.following } });
-  } catch {err => {throw(err); }}
+  let users = await User.find();
+  let currentAcc = await User.findOne({ 'username': username });
+  let orgs = await Org.find({ 'username': { $in: currentAcc.following } });
+  let criteriaList =  currentAcc.interests.concat(currentAcc.skills);
 
-  res.render('following', {
+  res.render('orgs/dashboard', {
     title: 'ChanceMap | Following',
-    currentAcc: user,
+    currentAcc: currentAcc,
     account_type: account_type,
     account_id: account_id,
-    criteriaList: user.interests.concat(user.skills),
+    criteriaList: criteriaList,
+    users: users,
     orgs: orgs,
+    type: "follow",
     notis: req.notis
   });
 });

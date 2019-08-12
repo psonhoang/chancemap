@@ -5,14 +5,12 @@ const mongoose = require('mongoose');
 const Grid = require('gridfs-stream');
 
 // Models
-const Account = require('../models/account');
 const Event = require('../models/event');
 const User = require('../models/user');
 const Job = require('../models/job');
 const Org = require('../models/org');
 const Admin = require('../models/admin');
 const OrgProfile = require('../models/orgProfile');
-const Message = require('../models/message');
 
 // Database connection
 const connection = mongoose.connection;
@@ -25,234 +23,123 @@ connection.once('open', () => {
 	gfs.collection('uploads.files');
 });
 
+// Utility Functions
+function sortByHashtags(list, properties, criteria) {
+	list.forEach(item => {
+		item.matches = 0;
+		properties.forEach(property => {
+			item[property].forEach(tag => {
+				criteria.forEach(criterion => {
+					if (tag.includes(criterion)) {
+						item.matches++;
+					}
+				});
+			});
+		});
+	});
+	list.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
+	return list;
+}
 
 // @Routes
 //View dashboard
-router.get('/', (req, res) => {
-	if (!req.isAuthenticated()) {
-		res.redirect('/login');
-	} else {
-		let account_type = req.user.account_type;
-		let account_id = req.user.account_id;
-		let criteriaList;
+router.get('/', async (req, res) => {
 
-		Org.find((err, orgs) => {
-			if (err) {
-				console.log(err);
-				return;
-			}
-			if (account_type == 1) {
-				Org.findOne({ '_id': account_id }, (err, org) => {
-					criteriaList = org.hashtags;
-					orgs.forEach(org => {
-						org.matches = 0;
-						org.hashtags.forEach(hashtag => {
-							criteriaList.forEach(criteria => {
-								if (hashtag.includes(criteria)) {
-									org.matches++;
-								}
-							});
-						});
-					});
-					orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-					Job.find({ 'org_id': { $ne: account_id } }, (err, jobs) => {
-						Event.find({ 'org_id': { $ne: account_id } }, (err, events) => {
-							User.find((err, users) => {
-								Message.find((err, messages) => {
-									let currentAcc = org;
-									let followers = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
-									res.render('orgs/dashboard', {
-										title: 'ChanceMap | Orgs',
-										account_type: account_type,
-										account_id: account_id,
-										currentAcc: currentAcc,
-										orgs: orgs,
-										jobs: jobs,
-										events: events,
-										connected: followers,
-										messages: messages,
-										users: users,
-										criteriaList: criteriaList,
-										notis: req.notis
-									});
-								});
-							});
-						});
-					});
-				});
-			}
-			else if (account_type == 2) {
-				Admin.findOne({ '_id': account_id }, (err, admin) => {
-					criteriaList = [];
-					orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-					Job.find({ 'org_id': { $ne: account_id } }, (err, jobs) => {
-						Event.find({ 'org_id': { $ne: account_id } }, (err, events) => {
-							User.find((err, users) => {
-								Message.find((err, messages) => {
-									res.render('orgs/dashboard', {
-										title: 'ChanceMap | Orgs',
-										account_type: account_type,
-										account_id: account_id,
-										currentAcc: admin,
-										orgs: orgs,
-										jobs: jobs,
-										events: events,
-										messages: messages,
-										users: users,
-										criteriaList: criteriaList,
-										notis: req.notis
-									});
-								});
-							});
-						});
-					});
-				});
-			}
-			else {
-				User.findOne({ '_id': account_id }, (err, user) => {
-					criteriaList = user.interests.concat(user.skills);
-					orgs.forEach(org => {
-						org.matches = 0;
-						org.hashtags.forEach(hashtag => {
-							criteriaList.forEach(criteria => {
-								if (hashtag.includes(criteria)) {
-									org.matches++;
-								}
-							});
-						});
-					});
-					orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-					Job.find((err, jobs) => {
-						Event.find({ 'org_id': { $ne: account_id } }, (err, events) => {
-							User.find((err, users) => {
-								Message.find((err, messages) => {
-									let currentAcc = user;
-									let connected = users.filter(user => currentAcc.connected.indexOf(user.username) >= 0);
-									res.render('orgs/dashboard', {
-										title: 'ChanceMap | Orgs',
-										account_type: account_type,
-										account_id: account_id,
-										currentAcc: currentAcc,
-										orgs: orgs,
-										users: users,
-										connected: connected,
-										messages: messages,
-										jobs: jobs,
-										events: events,
-										criteriaList: criteriaList,
-										notis: req.notis,
-									});
-								});
-							});
-						});
-					});
-				});
-			}
-		});
+	let account_type = req.user.account_type;
+	let account_id = req.user.account_id;
+
+	let orgs = await Org.find();
+	let users = await User.find();
+
+	var criteriaList;
+	var currentAcc;
+	var connected;
+
+	if (account_type == 1) {
+		currentAcc = await Org.findOne({ '_id': account_id });
+		criteriaList = currentAcc.hashtags;
+		orgs = sortByHashtags(orgs, ['hashtags'], criteriaList);
+		connected = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
 	}
+	else if (account_type == 2) {
+		currentAcc = await Admin.findOne({ '_id': account_id });
+		criteriaList = [];
+		connected = [];
+	}
+	else {
+		currentAcc = users.filter(user => JSON.stringify(user._id) == JSON.stringify(account_id))[0];
+		criteriaList = currentAcc.interests.concat(currentAcc.skills);
+		orgs = sortByHashtags(orgs, ['hashtags'], criteriaList);
+		connected = users.filter(user => currentAcc.connected.indexOf(user.username) >= 0);
+	}
+
+	res.render('orgs/dashboard', {
+		title: 'ChanceMap | Orgs',
+		account_type: account_type,
+		account_id: account_id,
+		currentAcc: currentAcc,
+		orgs: orgs,
+		connected: connected,
+		users: users,
+		type: 'orgs',
+		criteriaList: criteriaList,
+		notis: req.notis
+	});
 });
 
 //View Org Profiles
-router.get('/:username', (req, res) => {
+router.get('/:username', async (req, res) => {
+
 	let account_type = req.user.account_type;
 	let account_id = req.user.account_id;
 	let orgUsername = req.params.username;
 
+	let orgs = await Org.find();
+	let users = await User.find();
+	let jobs = await Job.find();
+	let events = await Event.find();
+
+	var orgToView = orgs.filter(org => JSON.stringify(org.username) == JSON.stringify(orgUsername))[0];
+	var similarOrgs = sortByHashtags(orgs, ['hashtags'], orgToView.hashtags).splice(1,5); //Find 4 most similar orgs to the org to viewed
+	events = events.filter(event => orgToView.events.indexOf(event._id) >= 0);
+	jobs = jobs.filter(job => orgToView.jobs.indexOf(job._id) >= 0);
+	var profile = await OrgProfile.findOne({ 'org_id': orgToView._id });
+
+	var currentAcc;
+	var criteriaList;
+	var connected;
+
 	if (account_type == 1) {
-		Org.findOne({ '_id': account_id }, (err, user) => {
-			Org.findOne({ 'username': orgUsername }, (err, org) => {
-				Org.find({ '_id': { $ne: org._id } }, (err, orgs) => {
-					Job.find({ 'org_id': org._id }, (err, jobs) => {
-						Event.find({ 'org_id': org._id }, (err, events) => {
-							OrgProfile.findOne({ 'org_id': org._id }, (err, profile) => {
-								orgs.forEach(similarOrg => {
-									similarOrg.matches = 0;
-									similarOrg.hashtags.forEach(hashtag => {
-										org.hashtags.forEach(criteria => {
-											if (hashtag.includes(criteria)) {
-												similarOrg.matches++;
-											}
-										});
-									});
-								});
-								orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-								User.find((err, users) => {
-									Message.find((err, messages) => {
-										let currentAcc = user;
-										let followers = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
-										res.render('orgs/profile', {
-											title: org.name,
-											account_type: account_type,
-											account_id: account_id,
-											org: org,
-											orgs: orgs,
-											profile: profile,
-											connected: followers,
-											users: users,
-											messages: messages,
-											jobs: jobs,
-											events: events,
-											criteriaList: org.hashtags,
-											currentAcc: currentAcc,
-											notis: req.notis
-										});
-									});
-								});
-							});
-						});
-					});
-				});
-			});
-		});
+		currentAcc = orgs.filter(org => JSON.stringify(org._id) == JSON.stringify(account_id))[0];
+		criteriaList = currentAcc.hashtags;
+		connected = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
 	}
-	else {
-		User.findOne({ '_id': account_id }, (err, user) => {
-			Org.findOne({ 'username': orgUsername }, (err, org) => {
-				Org.find({ '_id': { $ne: org._id } }, (err, orgs) => {
-					Job.find({ 'org_id': org._id }, (err, jobs) => {
-						Event.find({ 'org_id': org._id }, (err, events) => {
-							OrgProfile.findOne({ 'org_id': org._id }, (err, profile) => {
-								console.log(profile);
-								orgs.forEach(similarOrg => {
-									similarOrg.matches = 0;
-									similarOrg.hashtags.forEach(hashtag => {
-										org.hashtags.forEach(criteria => {
-											if (hashtag.includes(criteria)) {
-												similarOrg.matches++;
-											}
-										});
-									});
-								});
-								orgs.sort((a, b) => parseFloat(b.matches) - parseFloat(a.matches));
-								User.find((err, users) => {
-									Message.find((err, messages) => {
-										let currentAcc = user;
-										let connected = users.filter(user => currentAcc.connected.indexOf(user.username) >= 0);
-										res.render('orgs/profile', {
-											title: org.name,
-											account_type: account_type,
-											account_id: account_id,
-											org: org,
-											profile: profile,
-											orgs: orgs,
-											messages: messages,
-											connected: connected,
-											users: users,
-											jobs: jobs,
-											events: events,
-											criteriaList: user.interests.concat(user.skills),
-											currentAcc: currentAcc,
-											notis: req.notis
-										});
-									});
-								});
-							});
-						});
-					});
-				});
-			});
-		});
+	else if (account_type == 0) {
+		currentAcc = users.filter(user => JSON.stringify(user._id) == JSON.stringify(account_id))[0];
+		criteriaList = currentAcc.interests.concat(currentAcc.skills),
+		connected = users.filter(user => currentAcc.connected.indexOf(user.username) >= 0);
 	}
+	else if (account_type == 2) {
+		currentAcc = await Admin.findOne({ '_id': account_id});
+		criteriaList = [];
+		connected = [];
+	}
+
+	res.render('orgs/profile', {
+		title: orgToView.name,
+		account_type: account_type,
+		account_id: account_id,
+		criteriaList: criteriaList,
+		currentAcc: currentAcc,
+		org: orgToView,
+		orgs: similarOrgs,
+		profile: profile,
+		jobs: jobs,
+		events: events,
+		connected: connected,
+		users: users,	
+		notis: req.notis
+	});
 });
 
 //View Followers
@@ -264,17 +151,19 @@ router.get('/:orgname/followers', async (req, res) => {
 
 	if (account_type != 1 || orgname != req.user.username) {
 		res.redirect('/');
+		return;
 	}
 
-	let org = await Org.findOne({ 'username': orgname });
-	let users = await User.find({ 'username': { $in: org.followers } });
+	let currentAcc = await Org.findOne({ 'username': orgname });
+	let users = await User.find({ 'username': { $in: currentAcc.followers } });
+	let criteriaList = currentAcc.hashtags;
 
 	res.render('followers', {
 		title: 'ChanceMap | Followers',
-		currentAcc: org,
+		currentAcc: currentAcc,
 		account_type: account_type,
 		account_id: account_id,
-		criteriaList: org.hashtags,
+		criteriaList: criteriaList,
 		users: users,
 		notis: req.notis
 	});

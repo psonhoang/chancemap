@@ -62,6 +62,7 @@ router.get('/manage', async (req, res) => {
 	}
 	else {
 		res.redirect("/");
+		return;
 	}
 
 	res.render('jobs/orgs/manage', {
@@ -100,7 +101,7 @@ router.get('/', async (req, res) => {
 		connected = [];
 	} else {
 		currentAcc = await User.findOne({ _id: account_id });
-		criteriaList = currentAcc.interests.concat(user.skills);
+		criteriaList = currentAcc.interests.concat(currentAcc.skills);
 		connected = users.filter(client => currentAcc.connected.indexOf(client.username) >= 0);
 		jobs = sortByHashtags(jobs, ['hashtags'], criteriaList);
 	}
@@ -110,7 +111,7 @@ router.get('/', async (req, res) => {
 		account_type: account_type,
 		account_id: account_id,
 		currentAcc: currentAcc,
-		criteriaList: criteiraList,
+		criteriaList: criteriaList,
 		jobs: jobs,
 		notis: req.notis,
 		connected: connected,

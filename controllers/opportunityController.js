@@ -62,6 +62,7 @@ router.get('/', async (req, res) => {
 		currentAcc: currentAcc,
 		opportunities: opportunities,
 		criteriaList: criteriaList,
+		users: users,
 		notis: req.notis,
 		connected: connected,
 	});
@@ -90,6 +91,7 @@ router.get('/manage', async (req, res) => {
 	}
 	else {
 		res.redirect("/");
+		return;
 	}
 });
 
@@ -113,6 +115,7 @@ router.get('/create', async (req, res) => {
 		});
 	} else {
 		res.redirect("/");
+		return;
 	}
 });
 
@@ -171,6 +174,7 @@ router.get('/delete/:id', (req, res) => {
 		});
 	} else {
 		res.redirect('/');
+		return;
 	}
 });
 
@@ -201,6 +205,7 @@ router.get('/edit/:id', (req, res) => {
 	}
 	else {
 		res.redirect('/');
+		return;
 	}
 });
 

@@ -63,6 +63,7 @@ router.get('/orgs', async (req, res) => {
 
 	let account_id = req.user.account_id;
 	let account_type = req.user.account_type;
+	const type = req.query.type;
 
 	let orgs = await Org.find();
 	let users = await User.find();
@@ -77,25 +78,27 @@ router.get('/orgs', async (req, res) => {
 	if (account_type == 1) {
 		currentAcc = await Org.findOne({ '_id': account_id });
 		connected = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
-		view = ['orgs/dashboard', 'Orgs'];
+		view = 'Orgs';
 	} else {
 		currentAcc = await User.findOne({ '_id': account_id });
 		connected = users.filter(client => currentAcc.connected.indexOf(client.username) >= 0);
-		if (req.query.isFollowing) {
+		if (type == "follow") {
 			orgs = orgs.filter(org => currentAcc.following.indexOf(org.username) >= 0);
-			view = ['following', 'Following'];
+			view = 'Following';
 		} else {
-			view = ['orgs/dashboard', 'Orgs'];
+			view = 'Orgs';
 		}
 	}
-	res.render(view[0], {
-		title: 'ChanceMap | ' + view[1],
+	res.render('orgs/dashboard', {
+		title: 'ChanceMap | ' + view,
 		orgs: orgs,
+		users: users,
 		criteriaList: criteriaList,
 		account_type: account_type,
 		account_id: account_id,
 		currentAcc: currentAcc,
 		notis: req.notis,
+		type: type,
 		connected: connected,
 	});
 });
@@ -167,6 +170,7 @@ router.get('/jobs', async (req, res) => {
 	res.render('jobs/dashboard', {
 		title: 'ChanceMap | Jobs',
 		jobs: jobs,
+		users: users,
 		criteriaList: criteriaList,
 		account_type: account_type,
 		account_id: account_id,
@@ -207,6 +211,7 @@ router.get('/events', async (req, res) => {
 		account_id: account_id,
 		currentAcc: currentAcc,
 		notis: req.notis,
+		users: users,
 		connected: connected
 	});
 });
@@ -242,6 +247,7 @@ router.get('/opportunities', async (req, res) => {
 		account_type: account_type,
 		account_id: account_id,
 		currentAcc: currentAcc,
+		users: users,
 		notis: req.notis,
 		connected: connected
 	});

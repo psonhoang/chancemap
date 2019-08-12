@@ -47,7 +47,7 @@ router.get('/', async (req, res) => {
         criteriaList = [];
         connected = [];
     } else {
-        currentAcc = users.filter(user => user._id == account_id)[0];
+        currentAcc = users.filter(user => JSON.stringify(user._id) == JSON.stringify(account_id))[0];
         criteriaList = currentAcc.interests.concat(currentAcc.skills);
         events = sortByHashtags(events, ['hashtags'], criteriaList);
         connected = users.filter(user => currentAcc.connected.indexOf(user.username) >= 0);
@@ -60,6 +60,7 @@ router.get('/', async (req, res) => {
         currentAcc: currentAcc,
         connected: connected,
         events: events,
+        users: users,
         criteriaList: criteriaList,
         notis: req.notis
     });

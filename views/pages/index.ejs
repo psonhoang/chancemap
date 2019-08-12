@@ -642,7 +642,7 @@
     $(button_id).html('Connected');
     $(button_id).attr('onclick', 'disconnect("' + account_id + '","' + user_id + '","' + user_username + '")');
 
-    $('#noti_count').html((parseInt($('#noti_count').html()) -= 1).toString()); 
+    $('#req_count').html(parseInt($('#req_count').html()) - 1);
 
     let formData = new FormData();
     formData.append("user_id", user_id);

@@ -293,7 +293,7 @@ router.post('/register/org', upload.single('avatar'), (req, res) => {
 				created_at: new Date(),
 				updated_at: new Date(),
 				org_id: newOrg._id,
-				org_name: newOrg._name,
+				org_name: newOrg.name,
 				what_we_do: "", //contain description of org
 				our_team: "", //contain description of org's team
 				carousel: []
@@ -486,7 +486,7 @@ router.post('/profile/org', upload.fields([{ name: 'avatar', maxCount: 1 }, { na
 		if (req.files['avatar']) {
 			if (org.avatar != avaOrgDefault) {
 				// delete existing avatar file
-				return gfs.remove({ filename: org.avatar.split('files/')[1], root: 'uploads' })
+				gfs.remove({ filename: org.avatar.split('files/')[1], root: 'uploads' })
 					.then(console.log("Avatar changed!"))
 					.catch(err => res.send(err));
 			}
@@ -524,7 +524,7 @@ router.post('/profile/org', upload.fields([{ name: 'avatar', maxCount: 1 }, { na
 						if (req.files['carousel' + (i + 1).toString()]) {
 							if (profile.carousel[i] != null) {
 								// delete existing carousel file
-								return gfs.remove({ filename: profile.carousel[i].split('files/')[1], root: 'uploads' })
+								gfs.remove({ filename: profile.carousel[i].split('files/')[1], root: 'uploads' })
 									.then(console.log("Carousel " + (i + 1) + " changed"))
 									.catch(err);
 							}
@@ -536,7 +536,7 @@ router.post('/profile/org', upload.fields([{ name: 'avatar', maxCount: 1 }, { na
 					profile.updated_at = new Date();
 					profile.save((err, profile) => {
 						console.log("profile  save success!");
-						// console.log(profile);
+						res.redirect("/orgs/" + org.username);
 					});
 				} else {
 
@@ -932,24 +932,25 @@ router.post('/recover-password', function (req, res, next) {
 			});
 		},
 		function (token, user, done) {
-			var smtpTransport = nodemailer.createTransport({
-				service: 'Gmail',
-				auth: {
-					user: 'chancemap.official@gmail.com',
-					pass: 'Chancemap1234'
-				}
-			});
-			var mailOptions = {
-				to: user.email,
-				from: 'chancemap.official@gmail.com',
-				subject: 'ChanceMap Account - Password Reset',
-				text: 'Click on this link to reset your password: http://' + req.headers.host + '/reset/' + token + '\n\n'
-			};
-			smtpTransport.sendMail(mailOptions, function (err) {
-				console.log('mail sent');
-				req.flash('success', 'An email request has been sent to' + user.email);
-				done(err, 'done');
-			});
+			console.log('http://' + req.headers.host + '/reset/' + token + '\n\n');
+			// var smtpTransport = nodemailer.createTransport({
+			// 	service: 'Gmail',
+			// 	auth: {
+			// 		user: 'chancemap.official@gmail.com',
+			// 		pass: 'Chancemap1234'
+			// 	}
+			// });
+			// var mailOptions = {
+			// 	to: user.email,
+			// 	from: 'chancemap.official@gmail.com',
+			// 	subject: 'ChanceMap Account - Password Reset',
+			// 	text: 'Click on this link to reset your password: http://' + req.headers.host + '/reset/' + token + '\n\n'
+			// };
+			// smtpTransport.sendMail(mailOptions, function (err) {
+			// 	console.log('mail sent');
+			// 	req.flash('success', 'An email request has been sent to' + user.email);
+			// 	done(err, 'done');
+			// });
 		}
 	], function (err) {
 		if (err) return next(err);
@@ -1003,23 +1004,24 @@ router.post('/reset/:token', function (req, res) {
 			});
 		},
 		function (user, done) {
-			var smtpTransport = nodemailer.createTransport({
-				service: 'Gmail',
-				auth: {
-					user: 'chancemap.official@gmail.com',
-					pass: 'Chancemap@1234'
-				}
-			});
-			var mailOptions = {
-				to: user.email,
-				from: 'chancemap.official@gmail.com',
-				subject: 'ChanceMap Account - Password Reset',
-				text: 'Your account password has been successfully reset'
-			};
-			smtpTransport.sendMail(mailOptions, function (err) {
-				req.flash('success', 'Password changed!');
-				done(err);
-			});
+			// var smtpTransport = nodemailer.createTransport({
+			// 	service: 'Gmail',
+			// 	auth: {
+			// 		user: 'chancemap.official@gmail.com',
+			// 		pass: 'Chancemap@1234'
+			// 	}
+			// });
+			// var mailOptions = {
+			// 	to: user.email,
+			// 	from: 'chancemap.official@gmail.com',
+			// 	subject: 'ChanceMap Account - Password Reset',
+			// 	text: 'Your account password has been successfully reset'
+			// };
+			// smtpTransport.sendMail(mailOptions, function (err) {
+			// 	req.flash('success', 'Password changed!');
+			// 	done(err);
+			// });
+			console.log('New password!');
 		}
 	], function (err) {
 		res.redirect('/');

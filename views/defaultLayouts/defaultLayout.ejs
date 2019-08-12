@@ -88,11 +88,11 @@
                   class="ficon ft-users"></i>
                 <!-- <span class="noti_count tag tag-pill tag-default tag-danger tag-default tag-up">0</span> -->
                 <% if(currentAcc.connect_received) { %>
-                <span class="noti_count tag tag-pill tag-default tag-danger tag-default tag-up">
+                <span class="noti_count tag tag-pill tag-default tag-danger tag-default tag-up" id="req_count">
                   <%= currentAcc.connect_received.length %>
                 </span>
                 <% } else { %>
-                <span class="noti_count tag tag-pill tag-default tag-danger tag-default tag-up">
+                <span class="noti_count tag tag-pill tag-default tag-danger tag-default tag-up" id="req_count">
                   0
                 </span>
                 <% } %>

@@ -23,7 +23,7 @@
 
       <div class="row">
         <!-- Orgs -->
-        <div class="col-xl-8 col-lg-12">
+        <div class="col-xl-9 col-lg-12">
           <div class="card">
             <div style="color: white" class="card-header bg-teal bg-lighten-1">
               <h4 class="card-title"><i class="ft-users"></i> Organizations</h4>
@@ -56,7 +56,7 @@
                           class="btn btn-success"><i class="fa fa-check"></i> Followed</buton>
                         <% } %>
                       </td>
-                      <td style="max-width: 60%; padding-left: 0.2rem">
+                      <td style="max-width: 40%; padding-left: 0px; padding-right: 0px">
                         <ul>
                           <li style="font-size: 16px"><strong><%= org.name %></strong></li>
                           <li style="margin-bottom: 10px; font-style: italic">
@@ -77,8 +77,8 @@
                           </li>
                         </ul>
                       </td>
-                      <td style="max-width: 20%">
-                        <div class="media-body" style="padding-left: 10px;">
+                      <td style="max-width: 40%; padding-left: 0px">
+                        <div class="media-body" style="padding-left: 10px; padding-right: 0px">
                           <button class="btn btn-info" onclick="showOrgHashtags(<%= JSON.stringify(org._id) %>)">Show
                             hashtags</button>
                         </div>
@@ -111,7 +111,7 @@
         </div>
 
         <!-- Users -->
-        <div class="col-xl-4 col-lg-12">
+        <div class="col-xl-3 col-lg-12">
           <div class="card">
             <div style="color: white" class="card-header bg-pink bg-lighten-3">
               <h4 class="card-title"><i class="ft-user"></i> Users</h4>
@@ -124,7 +124,7 @@
               class="card-body collapse-in" id="usersBody">
               <% users.forEach( user => { %>
               <% if (currentAcc.username != user.username) { %>
-              <div style="padding: 10px; border-bottom: 1px solid #E8E8E8" class="container-fluid">
+              <div style="padding-top: 10px; padding-right: 0px; margin-right: 0px; border-bottom: 1px solid #E8E8E8" class="container-fluid">
                 <div style="margin-bottom: 20px;" class="media">
                   <div class="media-left">
                     <img src="<%= user.avatar; %>" class="media-object rounded-circle width-50 height-50"
@@ -439,11 +439,13 @@
   function showEventHashtags(event_id) {
     let button_id = '#' + event_id + '2';
     $(button_id).toggle();
+    event.stopPropagation();
   }
 
   function showJobHashtags(job_id) {
     let button_id = '#' + job_id + '2';
     $(button_id).toggle();
+    event.stopPropagation();
   }
 
   function showOpportunityHashtags(opp_id) {
@@ -456,6 +458,8 @@
     $(button_id).removeClass('btn-info');
     $(button_id).addClass('btn-success');
     $(button_id).attr('onclick', 'removeEvent("' + event_id + '","' + account_id + '")');
+
+    event.stopPropagation();
 
     let formData = new FormData();
     formData.append("event_id", event_id);
@@ -487,6 +491,8 @@
     formData.append("account_id", account_id);
     formData.append('status', 'add_job');
 
+    event.stopPropagation();
+
     $.ajax({
       async: true,
       url: '/add_items',
@@ -510,6 +516,8 @@
     formData.append("opp_id", opp_id);
     formData.append("account_id", account_id);
     formData.append('status', 'add_opp');
+
+    event.stopPropagation();
 
     $.ajax({
       async: true,
@@ -535,6 +543,8 @@
     formData.append("account_id", account_id);
     formData.append('status', 'remove_event');
 
+    event.stopPropagation();
+
     $.ajax({
       async: true,
       url: '/remove_items',
@@ -559,6 +569,8 @@
     formData.append("account_id", account_id);
     formData.append('status', 'remove_job');
 
+    event.stopPropagation();
+
     $.ajax({
       async: true,
       url: '/remove_items',
@@ -582,6 +594,8 @@
     formData.append("opp_id", opp_id);
     formData.append("account_id", account_id);
     formData.append('status', 'remove_opp');
+
+    event.stopPropagation();
 
     $.ajax({
       async: true,
@@ -627,6 +641,8 @@
     $(button_id).addClass('btn-success');
     $(button_id).html('Connected');
     $(button_id).attr('onclick', 'disconnect("' + account_id + '","' + user_id + '","' + user_username + '")');
+
+    $('#noti_count').html((parseInt($('#noti_count').html()) -= 1).toString()); 
 
     let formData = new FormData();
     formData.append("user_id", user_id);

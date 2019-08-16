@@ -534,7 +534,7 @@ function addJob(job_id, account_id) {
     });
 }
 
-$(document).ready(function() {
+$(window).on('load', function() {
     $('.fb-page').attr("data-height", $('#who-we-are').height() + $('#our-team').innerHeight());
     $('.fb-page').attr("data-width", $('.fb-page').innerWidth());
 });

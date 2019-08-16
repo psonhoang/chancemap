@@ -118,18 +118,6 @@ app.use(passport.authenticate('remember-me'));
 // Server
 const http = require('http');
 const server = http.Server(app);
-const socketIO = require('socket.io');
-const io = socketIO(server);
-var mSocket;
-
-io.on('connection', (socket) => {
-  socket.on('rooms', (rooms) => {
-    let noti_rooms = rooms.split(',');
-    socket.join(noti_rooms);
-  });
-
-  mSocket = socket;
-});
 
 // Database
 const mongoose = require('mongoose');
@@ -206,12 +194,6 @@ app.get('/', async (req, res) => {
       connected: connected,
     });
   }
-});
-
-//Make our socket available to router
-app.use((req, res, next) => {
-  req.socketio = mSocket;
-  next();
 });
 
 /* ***** Routes ***** */

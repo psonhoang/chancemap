@@ -3,7 +3,6 @@
     data-ps-id="a0cf5723-e682-b9c3-b228-6640b1cf55c0" style="height: 753px;">
     <ul id="main-menu-navigation" data-menu="menu-navigation" class="navigation navigation-main">
       <ul class="navigation-header">
-        <li><a href="/profile"><i style="color:gray" class="ft-edit"></i></a></li>
         <li>
           <div id="avatarHeader" class="text-xs-center">
             <div class="card-block">
@@ -15,6 +14,9 @@
           </div>
         </li>
       </ul>
+      <li class="nav-item"><a href="/profile"><i class="ft-users"></i><span data-i18n="" class="menu-title">My
+            profile</span></a>
+      </li>
       <li class="nav-item"><a href="/"><i class="ft-home"></i><span data-i18n="" class="menu-title">Home</span></a>
       </li>
       <li class="nav-item"><a href="/calendar"><i class="ft-calendar"></i><span data-i18n=""
@@ -33,9 +35,11 @@
           </li>
           <li><a href="/opportunities" class="menu-item"><i class="ft-briefcase"></i>Opportunities</a>
           </li>
+          <li><a href="/orgs/<%= currentAcc.username %>/followers" class="menu-item"><i class="ft-user-check"></i>
+              Followers</a></li>
         </ul>
       </li>
-      <li class="nav-item has-sub"><a><i class="ft-folder"></i><span data-i18n="" class="menu-title">Manage</span></a>
+      <li class="nav-item has-sub"><a><i class="ft-folder"></i><span class="menu-title">Manage</span></a>
         <ul class="menu-content">
           <li><a href="/events/manage" class="menu-item"><i class="ft-calendar"></i>My Events</a>
           </li>
@@ -43,19 +47,10 @@
           </li>
         </ul>
       </li>
-      <li class="nav-item"><a href="/profile"><i class="ft-users"></i><span data-i18n="" class="menu-title">Org
-            profile</span></a>
-      </li>
-      <li class="nav-item"><a href="/orgs/<%= currentAcc.username %>/followers"><i class="ft-user-check"></i><span
-            data-i18n="" class="menu-title">Followers</span></a>
       <li class="navigation-header"><span>More</span>
-        <%# <i data-toggle="tooltip" data-placement="right" data-original-title="Apps" class=" ft-minus"></i> %>
       </li>
       </li>
-      <!-- <li class=" nav-item"><a href=""><i class="ft-settings"></i><span data-i18n="" class="menu-title">Settings</span></a>
-      </li> -->
-      <li class=" nav-item"><a href="/logout"><i class="ft-log-out"></i><span data-i18n=""
-            class="menu-title">Logout</span></a>
+      <li class=" nav-item"><a href="/logout"><i class="ft-log-out"></i><span class="menu-title">Logout</span></a>
       </li>
     </ul>
     <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 3px;">

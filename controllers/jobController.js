@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-
+const config = require('../config/database.js');
 const Grid = require('gridfs-stream');
 
 // Models
@@ -10,6 +10,30 @@ const Job = require('../models/job');
 const Org = require('../models/org');
 const Admin = require('../models/admin');
 const Notification = require('../models/notification');
+
+const multer = require('multer');
+const GridFsStorage = require('multer-gridfs-storage');
+
+// Create storage engine
+const storage = new GridFsStorage({
+	url: config.database,
+	file: (req, file) => {
+		return new Promise((resolve, reject) => {
+			crypto.randomBytes(16, (err, buf) => {
+				if (err) {
+					return reject(err);
+				}
+				const filename = buf.toString('hex') + path.extname(file.originalname);
+				const fileInfo = {
+					filename: filename,
+					bucketName: 'uploads'
+				};
+				resolve(fileInfo);
+			});
+		});
+	}
+});
+const upload = multer({ storage });
 
 // Database connection
 const connection = mongoose.connection;
@@ -153,7 +177,7 @@ router.get('/create', async (req, res) => {
 });
 
 // Process edit information
-router.post('/create', (req, res) => {
+router.post('/create', upload.single(), (req, res) => {
 
 	let data = req.body;
 
@@ -221,7 +245,6 @@ router.post('/create', (req, res) => {
 					res.send(err);
 				});
 			});
-			req.socketio.broadcast.to(req.user.username).emit('event', noti);
 			res.redirect("/jobs/manage");
 		}).catch(err => { throw (err); });
 
@@ -260,7 +283,7 @@ router.get('/manage/edit/:ID', async (req, res) => {
 });
 
 //Process edited information
-router.post('/edit/:id', async (req, res) => {
+router.post('/edit/:id', upload.single(), async (req, res) => {
 
 	let job = await Job.findOne({ '_id': req.params.id });
 	let data = req.body;
@@ -313,8 +336,8 @@ router.post('/edit/:id', async (req, res) => {
 							res.send(err);
 						});
 					});
-					req.socketio.broadcast.to(req.user.username).emit('event', noti);
 					res.redirect("/jobs/manage");
+					return;
 				}).catch(err => { throw (err); });
 			}).catch(err => { throw (err); });
 		});
@@ -322,13 +345,14 @@ router.post('/edit/:id', async (req, res) => {
 });
 
 //Delete a job when requested
-router.post('/delete', (req, res) => {
+router.post('/delete', upload.single(), (req, res) => {
 
 	let account_type = req.user.account_type;
 	let data = req.body;
 
-	if (account_type != 1 || account_type != 2) {
+	if (account_type != 1 && account_type != 2) {
 		res.redirect('/');
+		return;
 	}
 
 	if (data.JobID != undefined) {
@@ -359,17 +383,15 @@ router.post('/delete', (req, res) => {
 							users.forEach(user => {
 								user.new_notis.push(noti._id);
 								user.save().then(result => {
-									console.log(result);
 								}).catch(err => {
-									res.send(err);
+									throw(err);
 								});
 							});
-							req.socketio.broadcast.to(req.user.username).emit('event', noti);
-							res.redirect("/jobs/manage");
-						}).catch(err => { throw (err); });
+							res.redirect('jobs/manage');
+						});
 					}).catch(err => { throw (err); });
 				} else {
-					res.redirect('/jobs/manage');
+					res.redirect('jobs/manage');
 				}
 			});
 		});

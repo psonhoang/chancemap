@@ -39,9 +39,8 @@
     <section id="card-actions">
       <%  var eventCounts = 0; %>
       <%  events.forEach(event => { %>
-      <%   console.log(event); %>
       <%   if (eventCounts >= 2) { %>
-             <div class='row'></div>
+      <div class='row'></div>
       <%     eventCounts = 0; %>
       <%   } %>
       <%-  include('eventCard', { event: event, months: months} ); %>
@@ -49,28 +48,33 @@
       <% }); %>
     </section>
     <!-- // card-actions section end -->
-    
+
   </div>
 </div>
 
 <script>
-  function Delete(event_id, account_id) {
+  function DeleteEvent(event_id, account_id) {
+    var confirm = window.confirm("Do you want to delete this Event? This action can not be undone.");
+    if (confirm == true) {
 
-    let formData = new FormData();
-    formData.append("event_id", event_id);
-    formData.append("account_id", account_id);
-    formData.append('status', 'delete');
+      let formData = new FormData();
+      formData.append("event_id", event_id);
+      formData.append("account_id", account_id);
+      formData.append('status', 'delete');
 
-    $.ajax({
-      async: true,
-      url: '/events/manage',
-      method: 'POST',
-      processData: false,
-      contentType: false,
-      data: formData,
-      success: (data) => {
-        toastr.warning(`Event removed!`);
-      }
-    });
+      $.ajax({
+        async: true,
+        url: '/events/manage',
+        method: 'POST',
+        processData: false,
+        contentType: false,
+        data: formData,
+        success: (data) => {
+          toastr.warning(`Event removed!`);
+        }
+      });
+    } else {
+      return null;
+    }
   }
 </script>

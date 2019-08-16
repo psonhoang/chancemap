@@ -57,18 +57,21 @@
     var confirm = window.confirm("Do you want to delete this job? This action can not be undone.");
     if (confirm == true)
     {
-      //create a form that submits the id of the deleted job:
-      var form = document.createElement("form");
-      form.method = "POST";
-      form.action = "/jobs/delete";
+      let formData = new FormData();
+      formData.append("JobID", Id);
 
-      var input = document.createElement("input");
-      input.value = Id;
-      input.name = "JobID";
-      form.appendChild(input);
+      $.ajax({
+        async: true,
+        url: '/jobs/delete',
+        method: 'POST',
+        processData: false,
+        contentType: false,
+        data: formData,
+        success: (data) => {
+          toastr.warning(`Job removed!`);
+        }
+      });
 
-      document.body.appendChild(form);
-      form.submit();
     }
     else
     {

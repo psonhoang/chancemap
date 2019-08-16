@@ -100,6 +100,10 @@ router.get('/:username', async (req, res) => {
 	let events = await Event.find();
 
 	var orgToView = orgs.filter(org => JSON.stringify(org.username) == JSON.stringify(orgUsername))[0];
+	if (!orgToView) {
+		redirect('/');
+		return;
+	}
 	var similarOrgs = sortByHashtags(orgs, ['hashtags'], orgToView.hashtags).splice(1,5); //Find 4 most similar orgs to the org to viewed
 	events = events.filter(event => orgToView.events.indexOf(event._id) >= 0);
 	jobs = jobs.filter(job => orgToView.jobs.indexOf(job._id) >= 0);

@@ -47,12 +47,12 @@
                         <% if(account_type == 0 && (currentAcc.following.indexOf(org.username) < 0)) { %>
                         <br><br>
                         <buton id="<%= org._id %>"
-                          onclick="follow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)"
+                          onclick='follow(<%- JSON.stringify(currentAcc._id) %>, <%- JSON.stringify(org._id) %>, <%- JSON.stringify(org.username) %>)'
                           class="btn btn-info"><i class="fa fa-eye"></i> Follow</buton>
                         <% } else if (account_type == 0 && (currentAcc.following.indexOf(org.username) >= 0)) { %>
                         <br><br>
                         <buton id="<%= org._id %>"
-                          onclick="unfollow(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(org._id) %>, <%= JSON.stringify(org.username) %>)"
+                          onclick='unfollow(<%- JSON.stringify(currentAcc._id) %>, <%- JSON.stringify(org._id) %>, <%- JSON.stringify(org.username) %>)'
                           class="btn btn-success"><i class="fa fa-check"></i> Followed</buton>
                         <% } %>
                       </td>
@@ -79,11 +79,11 @@
                       </td>
                       <td style="max-width: 40%; padding-left: 0px">
                         <div class="media-body" style="padding-left: 10px; padding-right: 0px">
-                          <button class="btn btn-info" onclick="showOrgHashtags(<%= JSON.stringify(org._id) %>)">Show
+                          <button class="btn btn-info" onclick='showOrgHashtags(<%- JSON.stringify(org._id) %>)'>Show
                             hashtags</button>
                         </div>
                         <br>
-                        <div id="<%= org._id %>2" class="hashes">
+                        <div id="<%= org._id %>2" class="hashes" style="display: none;">
                           <% org.hashtags.forEach(hashtag => { %>
                           <% var isMatch = false; %>
                           <% criteriaList.forEach(criteria => { %>
@@ -149,24 +149,24 @@
                 <div class="media-left">
                   <% if (account_type == 0 && currentAcc.connected.indexOf(user.username) < 0 && currentAcc.connect_sent.indexOf(user.username) < 0 && currentAcc.connect_received.indexOf(user.username) < 0) { %>
                   <button id="<%=user._id%>2" class="connect_button btn btn-info"
-                    onclick="sendRequest(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)">
+                    onclick='sendRequest(<%- JSON.stringify(currentAcc._id) %>, <%- JSON.stringify(user._id) %>, <%- JSON.stringify(user.username) %>)'>
                     Connect</button>
                   <% } else if (account_type == 0 && currentAcc.connected.indexOf(user.username) < 0 && currentAcc.connect_sent.indexOf(user.username) >= 0 && currentAcc.connect_received.indexOf(user.username) < 0) { %>
                   <button id="<%=user._id%>2" class="connect_button btn btn-info">Pending...</button>
                   <% } else if (account_type == 0 && currentAcc.connected.indexOf(user.username) >= 0 && currentAcc.connect_sent.indexOf(user.username) < 0 && currentAcc.connect_received.indexOf(user.username) < 0) { %>
                   <button id="<%=user._id%>2" class="connect_button btn btn-success"
-                    onclick="disconnect(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)">Connected</button>
+                    onclick='disconnect(<%- JSON.stringify(currentAcc._id) %>, <%- JSON.stringify(user._id) %>, <%- JSON.stringify(user.username) %>)'>Connected</button>
                   <% } else if (account_type == 0 && currentAcc.connected.indexOf(user.username) < 0 && currentAcc.connect_sent.indexOf(user.username) < 0 && currentAcc.connect_received.indexOf(user.username) >= 0) { %>
                   <button id="<%=user._id%>2" class="connect_button btn btn-info"
-                    onclick="acceptRequest(<%= JSON.stringify(currentAcc._id) %>, <%= JSON.stringify(user._id) %>, <%= JSON.stringify(user.username) %>)">Accept</button>
+                    onclick='acceptRequest(<%- JSON.stringify(currentAcc._id) %>, <%- JSON.stringify(user._id) %>, <%- JSON.stringify(user.username) %>)'>Accept</button>
                   <% } %>
                 </div>
                 <div class="media-body">
-                  <button class="btn btn-warning" onclick="showUserHashtags(<%= JSON.stringify(user._id) %>)">Show
+                  <button class="btn btn-warning" onclick='showUserHashtags(<%- JSON.stringify(user._id) %>)'>Show
                     hashtags</button>
                 </div>
                 <br>
-                <div id="<%= user._id %>3" class="hashes">
+                <div id="<%= user._id %>3" class="hashes" style="display: none;">
                   <% var hashtags = user.interests.concat(user.skills); %>
                   <% hashtags.forEach (hashtag => { %>
                   <% var isMatch = false; %>
@@ -227,19 +227,19 @@
                       <td style="max-width: 120px">
                         <div class="media-left">
                           <button class="btn btn-info"
-                            onclick="showEventHashtags(<%= JSON.stringify(event._id) %>)">Show hashtags</button>
+                            onclick='showEventHashtags(<%- JSON.stringify(event._id) %>)'>Show hashtags</button>
                         </div>
                         <div class="media-body">
                           <% if (account_type == 0 && currentAcc.events.indexOf(event._id) < 0) { %>
                           <button id="<%= event._id %>3" class="btn btn-info"
-                            onclick="addEvent(<%= JSON.stringify(event._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
+                            onclick='addEvent(<%- JSON.stringify(event._id) %>, <%- JSON.stringify(currentAcc._id) %>)'>Interested</button>
                           <% } else if (account_type == 0 && currentAcc.events.indexOf(event._id) >= 0) { %>
                           <button id="<%= event._id %>3" class="btn btn-success"
-                            onclick="removeEvent(<%= JSON.stringify(event._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
+                            onclick='removeEvent(<%- JSON.stringify(event._id) %>, <%- JSON.stringify(currentAcc._id) %>)'>Interested</button>
                           <% } %>
                         </div>
                         <br>
-                        <div id="<%= event._id %>2" class="hashes">
+                        <div id="<%= event._id %>2" class="hashes" style="display: none;">
                           <% event.hashtags.forEach(hashtag => { %>
                           <% var isMatch = false; %>
                           <% criteriaList.forEach(criteria => { %>
@@ -288,20 +288,20 @@
                   <%= months[job.app_deadline.getMonth()] + ' ' + job.app_deadline.getDate() + ', ' + job.app_deadline.getFullYear() %>
                 </h6>
                 <div class="media-left">
-                  <button class="btn btn-info" onclick="showJobHashtags(<%= JSON.stringify(job._id) %>)">Show
+                  <button class="btn btn-info" onclick='showJobHashtags(<%- JSON.stringify(job._id) %>)'>Show
                     hashtags</button>
                 </div>
                 <div class="media-body">
                   <% if (account_type == 0 && currentAcc.jobs.indexOf(job._id) < 0) { %>
                   <button id="<%= job._id %>3" class="btn btn-info"
-                    onclick="addJob(<%= JSON.stringify(job._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
+                    onclick='addJob(<%- JSON.stringify(job._id) %>, <%- JSON.stringify(currentAcc._id) %>)'>Interested</button>
                   <% } else if (account_type == 0 && currentAcc.jobs.indexOf(job._id) >= 0) { %>
                   <button id="<%= job._id %>3" class="btn btn-success"
-                    onclick="removeJob(<%= JSON.stringify(job._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
+                    onclick='removeJob(<%- JSON.stringify(job._id) %>, <%- JSON.stringify(currentAcc._id) %>)'>Interested</button>
                   <% } %>
                 </div>
                 <br>
-                <div id="<%= job._id %>2" class="hashes">
+                <div id="<%= job._id %>2" class="hashes" style="display: none;">
                   <% job.hashtags.forEach(hashtag => { %>
                   <% var isMatch = false; %>
                   <% criteriaList.forEach(criteria => { %>
@@ -363,20 +363,20 @@
                       <td style="max-width: 120px; padding-right: 30px">
                         <div class="media-left">
                           <button class="btn btn-info"
-                            onclick="showOpportunityHashtags(<%= JSON.stringify(opportunity._id) %>)">Show
+                            onclick='showOpportunityHashtags(<%- JSON.stringify(opportunity._id) %>)'>Show
                             hashtags</button>
                         </div>
                         <div class="media-body">
                           <% if (account_type == 0 && currentAcc.opps.indexOf(opportunity._id) < 0) { %>
                           <button id="<%= opportunity._id %>3" class="btn btn-info"
-                            onclick="addOpportunity(<%= JSON.stringify(opportunity._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
+                            onclick='addOpportunity(<%- JSON.stringify(opportunity._id) %>, <%- JSON.stringify(currentAcc._id) %>)'>Interested</button>
                           <% } else if (account_type == 0 && currentAcc.opps.indexOf(opportunity._id) >= 0) { %>
                           <button id="<%= opportunity._id %>3" class="btn btn-success"
-                            onclick="removeOpportunity(<%= JSON.stringify(opportunity._id) %>, <%= JSON.stringify(currentAcc._id) %>)">Interested</button>
+                            onclick='removeOpportunity(<%- JSON.stringify(opportunity._id) %>, <%- JSON.stringify(currentAcc._id) %>)'>Interested</button>
                           <% } %>
                         </div>
                         <br>
-                        <div id="<%= opportunity._id %>2" class="hashes">
+                        <div id="<%= opportunity._id %>2" class="hashes" style="display: none;">
                           <% opportunity.hashtags.forEach(hashtag => { %>
                           <% var isMatch = false; %>
                           <% criteriaList.forEach(criteria => { %>
@@ -418,7 +418,7 @@
   }(document, 'script', 'facebook-jssdk'));</script>
 
 <!--  BEGIN CODEDAO SCRIPT -->
-<script src="/scripts/suggest.js" type="text/javascript"></script>
+<!-- <script src="/scripts/suggest.js" type="text/javascript"></script> -->
 <script>
   $(document).ready(function () {
     $('#search-input').tagging('removeAll');
@@ -451,6 +451,7 @@
   function showOpportunityHashtags(opp_id) {
     let button_id = '#' + opp_id + '2';
     $(button_id).toggle();
+    event.stopPropagation();
   }
 
   function addEvent(event_id, account_id) {

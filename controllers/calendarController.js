@@ -26,25 +26,19 @@ router.get('/', async (req, res) => {
 
     //find appropriate account, set the right criterial list and connected list
     if (account_type == 0) {
-        await User.findOne({ '_id': account_id }).exec().then(user => {
-            currentAcc = user;
-            connected = users.filter(client => user.connected.indexOf(client.username) >= 0);
-            criteriaList = user.interests.concat(user.skills);
-        }, console.log(err));
+        currentAcc = users.filter(user => JSON.stringify(user._id) == JSON.stringify(account_id))[0];
+        connected = users.filter(client => currentAcc.connected.indexOf(client.username) >= 0);
+        criteriaList = currentAcc.interests.concat(currentAcc.skills);
     }
     else if (account_type == 1) {
-        await Org.findOne({ '_id': account_id }).exec().then(org => {
-            currentAcc = org;
-            connected = users.filter(user => org.followers.indexOf(user.username) >= 0);
-            criteriaList = org.hashtags;
-        });
+        currentAcc = orgs.filter(org => JSON.stringify(org._id) == JSON.stringify(account_id))[0];
+        connected = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
+        criteriaList = currentAcc.hashtags;
     }
     else {
-        await Admin.findOne({ '_id': account_id }).exec().then(admin => {
-            currentAcc = admin;
-            connected = [];
-            criteriaList = [];
-        });
+        currentAcc = await Admin.findOne({ '_id': account_id });
+        connected = [];
+        criteriaList = [];
     }
 
     // render page

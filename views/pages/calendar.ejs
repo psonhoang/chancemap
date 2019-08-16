@@ -121,11 +121,13 @@
     });
 
     const calendarData = eventsData.concat(jobsData, opportunitiesData);
+    console.log(calendarData);
     
     $(document).ready(function () {
         // fullCalendar
         $('#fc-default').fullCalendar({
             events: calendarData,
+            defaultDate: Date(),
             eventClick: function(calEvent, jsEvent, view) {
                 $('#'+ calEvent.id).modal();
             },

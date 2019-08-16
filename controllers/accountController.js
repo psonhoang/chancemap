@@ -608,7 +608,6 @@ router.post('/connect', upload.single(), (req, res) => {
 						});
 					});
 				}
-				req.socketio.to(user._id).emit('connect noti', { user_id: user._id, name: user.name, avatar: user.avatar });
 			});
 		});
 	} else if (status === 'connect_accept') {

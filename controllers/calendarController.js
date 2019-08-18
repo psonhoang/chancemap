@@ -43,7 +43,7 @@ router.get('/', async (req, res) => {
 
     // render page
     res.render('calendar', {
-        title: 'ChanceMap | Home',
+        title: 'ChanceMap | Calendar',
         account_type: account_type,
         account_id: account_id,
         currentAcc: currentAcc,

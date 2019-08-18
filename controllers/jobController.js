@@ -80,8 +80,8 @@ router.get('/manage', async (req, res) => {
 		currentAcc = await Org.findOne({ _id: account_id });
 		connected = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
 	} else if (account_type == 2) {
-		jobs = await Job.find({ org_id: account_id });
-		currentAcc = Admin.findOne({ _id: account_id });
+		jobs = await Job.find();
+		currentAcc = await Admin.findOne({ _id: account_id });
 		connected = [];
 	}
 	else {
@@ -177,12 +177,18 @@ router.get('/create', async (req, res) => {
 });
 
 // Process edit information
-router.post('/create', upload.single(), (req, res) => {
+router.post('/create', upload.single(), async (req, res) => {
 
 	let data = req.body;
+	let org;
 
+	if (req.user.account_type != 2) {
+		org = await Org.findOne({ '_id': req.user.account_id });
+	} else {
+		org = await Org.findOne({ 'name': data.org_name });
+	}
 	let name = data.name;
-	let org_id = req.user.account_id;
+	let org_id = org._id;
 	let org_name = data.org_name;
 	let desc = data.desc;
 	let hashtags = data.hashtags;
@@ -209,16 +215,15 @@ router.post('/create', upload.single(), (req, res) => {
 		jobImage: jobImage
 	});
 
-	newJob.save(async (err, job) => {
+	newJob.save((err, job) => {
 		if (err) {
 			console.log(err);
 			return;
 		}
 		console.log('New job created!');
 
-		let org = await Org.findOne({ '_id': req.user.account_id });
-		org.jobs.push(job._id); 
-		org.save().then().catch(err => {res.send(err);});
+		org.jobs.push(job._id);
+		org.save().then().catch(err => { res.send(err); });
 		let accounts = [];
 
 		if (org.followers) {
@@ -247,7 +252,6 @@ router.post('/create', upload.single(), (req, res) => {
 			});
 			res.redirect("/jobs/manage");
 		}).catch(err => { throw (err); });
-
 	});
 });
 
@@ -287,9 +291,15 @@ router.post('/edit/:id', upload.single(), async (req, res) => {
 
 	let job = await Job.findOne({ '_id': req.params.id });
 	let data = req.body;
+	let org;
 
+	if (req.user.account_type != 2) {
+		org = await Org.findOne({ '_id': req.user.account_id });
+	} else {
+		org = await Org.findOne({ 'name': data.org_name });
+	}
 	let name = data.name;
-	let org_id = req.user.account_id;
+	let org_id = org._id;
 	let org_name = data.org_name;
 	let desc = data.desc;
 	let hashtags = data.hashtags;
@@ -313,34 +323,32 @@ router.post('/edit/:id', upload.single(), async (req, res) => {
 	job.updated_at = new Date();
 
 	job.save().then(result => {
-		Org.findOne({ '_id': job.org_id }, (err, org) => {
-			if (org.followers) {
-				accounts = org.followers;
-			}
-			let newNoti = new Notification({
-				_id: new mongoose.Types.ObjectId(),
-				created_at: new Date(),
-				updated_at: new Date(),
-				title: org_name + ' just editited their job position!',
-				body: org_name + ' made an edit to ' + job.name,
-				image: 'job',
-				accounts: accounts
-			});
-
-			newNoti.save().then(noti => {
-				console.log(noti);
-				User.find({ 'username': { $in: accounts } }, (err, users) => {
-					users.forEach(user => {
-						user.new_notis.push(noti._id);
-						user.save().then().catch(err => {
-							res.send(err);
-						});
-					});
-					res.redirect("/jobs/manage");
-					return;
-				}).catch(err => { throw (err); });
-			}).catch(err => { throw (err); });
+		if (org.followers) {
+			accounts = org.followers;
+		}
+		let newNoti = new Notification({
+			_id: new mongoose.Types.ObjectId(),
+			created_at: new Date(),
+			updated_at: new Date(),
+			title: org_name + ' just editited their job position!',
+			body: org_name + ' made an edit to ' + job.name,
+			image: 'job',
+			accounts: accounts
 		});
+
+		newNoti.save().then(noti => {
+			console.log(noti);
+			User.find({ 'username': { $in: accounts } }, (err, users) => {
+				users.forEach(user => {
+					user.new_notis.push(noti._id);
+					user.save().then().catch(err => {
+						res.send(err);
+					});
+				});
+				res.redirect("/jobs/manage");
+				return;
+			}).catch(err => { throw (err); });
+		}).catch(err => { throw (err); });
 	}).catch(err => { throw (err); });
 });
 
@@ -384,7 +392,7 @@ router.post('/delete', upload.single(), (req, res) => {
 								user.new_notis.push(noti._id);
 								user.save().then(result => {
 								}).catch(err => {
-									throw(err);
+									throw (err);
 								});
 							});
 							res.redirect('jobs/manage');

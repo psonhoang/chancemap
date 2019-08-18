@@ -6,7 +6,7 @@
                 <ul class="list-inline mb-0 ">
                     <li><a data-action="collapse"><i style="color: white" class="ft-minus"></i></a></li>
                     <li><a href="/events/edit/<%= event._id; %>"><i class="ft-edit" style="color: white"></i></a></li>
-                    <li><a onclick = 'DeleteEvent(<%- JSON.stringify(event._id) %>, <%- JSON.stringify(currentAcc._id) %>)'><i class="ft-trash" style="color: white"></i></a></li>
+                    <li><a onclick = 'DeleteEvent(<%- JSON.stringify(event._id) %>, <%- JSON.stringify(event.org_id) %>)'><i class="ft-trash" style="color: white"></i></a></li>
                 </ul>
             </div>
         </div>

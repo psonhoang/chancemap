@@ -113,6 +113,7 @@ router.get('/manage', async (req, res) => {
             connected = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
         } else if (account_type == 2) {
             currentAcc = await Admin.findOne({});
+            users = [];
             connected = [];
         }
 
@@ -199,10 +200,10 @@ router.post('/manage', upload.single(), async (req, res) => {
                             throw (err);
                         });
                     });
-                    res.redirect('events/manage');
+                    res.redirect('/events/manage');
                 });
             }
-            res.redirect('events/manage');
+            res.redirect('/events/manage');
         });
     } else {
 
@@ -284,11 +285,11 @@ router.post('/manage', upload.single(), async (req, res) => {
                                     res.send(err);
                                 });
                             });
-                            res.redirect('events/manage');
+                            res.redirect('/events/manage');
                         });
                     }).catch(err => { throw (err); });
                 } else {
-                    res.redirect('events/manage');
+                    res.redirect('/events/manage');
                 }
             });
         }).catch(err => { throw (err); });
@@ -380,43 +381,47 @@ router.post('/edit/:id', upload.single(), (req, res) => {
         event.website = website;
         event.eventImage = eventImage;
 
-        event.save().then(result => {
-            Org.findOne({ '_id': org_id }, (err, org) => {
-                let accounts = [];
-                if (org.followers) {
-                    accounts = org.followers;
-                }
-                if (accounts.length > 0) {
-                    let newNoti = new Notification({
-                        _id: new mongoose.Types.ObjectId(),
-                        created_at: new Date(),
-                        updated_at: new Date(),
-                        title: org.name + ' just edited their event!',
-                        body: org.name + ' made an edit to ' + event.name,
-                        image: 'event',
-                        accounts: accounts
-                    });
+        event.save().then(async result => {
+            var org;
+            if (account_type == 2) {
+                org = await Org.findOne({ 'name' : org_name});
+            } else {
+                org = await Org.findOne({ '_id': org_id });
+            }
+            let accounts = [];
+            if (org.followers) {
+                accounts = org.followers;
+            }
+            if (accounts.length > 0) {
+                let newNoti = new Notification({
+                    _id: new mongoose.Types.ObjectId(),
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                    title: org.name + ' just edited their event!',
+                    body: org.name + ' made an edit to ' + event.name,
+                    image: 'event',
+                    accounts: accounts
+                });
 
-                    newNoti.save((err, noti) => {
-                        if (err) {
-                            console.log(err);
-                            return;
-                        }
-                        User.find({ 'username': { $in: accounts } }, (err, users) => {
-                            users.forEach(user => {
-                                user.new_notis.push(noti._id);
-                                user.save().then(result => {
-                                }).catch(err => {
-                                    res.send(err);
-                                });
+                newNoti.save((err, noti) => {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+                    User.find({ 'username': { $in: accounts } }, (err, users) => {
+                        users.forEach(user => {
+                            user.new_notis.push(noti._id);
+                            user.save().then(result => {
+                            }).catch(err => {
+                                res.send(err);
                             });
-                            res.redirect('events/manage');
                         });
+                        res.redirect('/events/manage');
                     });
-                } else {
-                    res.redirect('events/manage');
-                }
-            });
+                });
+            } else {
+                res.redirect('/events/manage');
+            }
         }).catch(err => {
             res.send(err);
         });

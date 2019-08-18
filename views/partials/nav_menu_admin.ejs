@@ -2,7 +2,6 @@
   <div class="main-menu-content ps-container ps-theme-dark ps-active-y" data-ps-id="a0cf5723-e682-b9c3-b228-6640b1cf55c0" style="height: 753px;">
     <ul id="main-menu-navigation" data-menu="menu-navigation" class="navigation navigation-main">
       <ul class="navigation-header">
-        <li><a href="javascript:void(0);"><i style="color:gray" class="ft-edit"></i></a></li>
         <li><div id="avatarHeader" class="text-xs-center">
           <div class="card-block">
             <a href="javascript:void(0);"><img id="avatar" src='<%= currentAcc.avatar; %>' class="rounded-circle width-100 height-100" alt="Card image"></a>
@@ -29,19 +28,17 @@
       </li>
       <li class="nav-item has-sub"><a><i class="ft-folder"></i><span data-i18n="" class="menu-title">Manage</span></a>
         <ul class="menu-content">
-          <li><a href="/events/manage" class="menu-item"><i class="ft-calendar"></i>My Events</a>
+          <li><a href="/events/manage" class="menu-item"><i class="ft-calendar"></i>Events</a>
           </li>
-          <li><a href="/jobs/manage" class="menu-item"><i class="ft-clipboard"></i>My Jobs</a>
+          <li><a href="/jobs/manage" class="menu-item"><i class="ft-clipboard"></i>Jobs</a>
           </li>
-          <li><a href="/opportunities/manage" class="menu-item"><i class="ft-briefcase"></i>My Opportunities</a>
+          <li><a href="/opportunities/manage" class="menu-item"><i class="ft-briefcase"></i>Opportunities</a>
           </li>
         </ul>
       </li>
       <li class="navigation-header"><span>More</span>
         <%# <i data-toggle="tooltip" data-placement="right" data-original-title="Apps" class=" ft-minus"></i> %>
       </li>
-      </li>
-      <li class=" nav-item"><a href=""><i class="ft-settings"></i><span data-i18n="" class="menu-title">Settings</span></a>
       </li>
       <li class=" nav-item"><a href="/logout"><i class="ft-log-out"></i><span data-i18n="" class="menu-title">Logout</span></a>
       </li>

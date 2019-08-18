@@ -365,7 +365,7 @@ router.get('/profile', async (req, res) => {
 			opportunities = opportunities.filter(opp => currentUser.opps.indexOf(opp._id) >= 0);
 
 			res.render('users/myProfile', {
-				title: 'ChanceMap | Following',
+				title: 'ChanceMap | My Profile',
 				orgs: following,
 				users: users,
 				events: events,

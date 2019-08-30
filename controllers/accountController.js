@@ -75,11 +75,11 @@ router.post('/login', passport.authenticate('local', { failureRedirect: '/login'
 	// issue a remember me cookie if the option was checked
 	if (!req.body.remember_me) { return next(); }
 	var token = utils.generateToken(64);
-	Token.save(token, { userId: req.user.id }, function (err) {
-		if (err) { return done(err); }
-		res.cookie('remember_me', token, { path: '/', httpOnly: true, maxAge: 604800000 }); // 7 days
-		return next();
-	});
+	// Token.save(token, { userId: req.user.id }, function (err) {
+	// 	if (err) { return done(err); }
+	// 	res.cookie('remember_me', token, { path: '/', httpOnly: true, maxAge: 604800000 }); // 7 days
+	// 	return next();
+	// });
 }, (req, res) => {
 	res.redirect('/');
 });

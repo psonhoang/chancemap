@@ -79,7 +79,7 @@ router.get('/manage', async (req, res) => {
 		jobs = await Job.find({ org_id: account_id });
 		currentAcc = await Org.findOne({ _id: account_id });
 		connected = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
-	} else if (account_type == 2) {
+	} else if (account_type == 2 && req.user.username != "Guest") {
 		jobs = await Job.find();
 		currentAcc = await Admin.findOne({ _id: account_id });
 		connected = [];
@@ -120,7 +120,11 @@ router.get('/', async (req, res) => {
 		criteriaList = currentAcc.hashtags;
 		jobs = sortByHashtags(jobs, ['hashtags'], criteriaList);
 	} else if (account_type == 2) {
-		currentAcc = await Admin.findOne({ _id: account_id });
+		if (req.user.username != "Guest") {
+			currentAcc = await Admin.findOne({ '_id': account_id});
+		} else {
+			currentAcc = users.filter(user => JSON.stringify(user._id) == JSON.stringify(account_id))[0];
+		}
 		criteriaList = [];
 		connected = [];
 	} else {
@@ -270,7 +274,7 @@ router.get('/manage/edit/:ID', async (req, res) => {
 		currentAcc = await Org.findOne({ _id: account_id });
 		let users = await User.find();
 		connected = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
-	} else if (account_type == 2) {
+	} else if (account_type == 2 && req.user.username != "Guest") {
 		connected = [];
 		currentAcc = await Admin.findOne({ _id: account_id });
 	}

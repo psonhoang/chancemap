@@ -45,9 +45,13 @@ router.get('/', async (req, res) => {
     criteriaList = currentAcc.hashtags;
   }
   else if (account_type == 2) {
-    criteriaList = [''];
+    criteriaList = [];
     connected = [];
-    currentAcc = await Admin.findOne({ '_id': account_id });
+    if (req.user.username != "Guest") {
+			currentAcc = await Admin.findOne({ '_id': account_id});
+		} else {
+			currentAcc = users.filter(user => JSON.stringify(user._id) == JSON.stringify(account_id))[0];
+    }
   } else {
     currentAcc = await User.findOne({ '_id': account_id });
     connected = users.filter(client => currentAcc.connected.indexOf(client.username) >= 0);

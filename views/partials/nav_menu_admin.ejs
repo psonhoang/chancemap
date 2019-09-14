@@ -26,6 +26,7 @@
           </li>
         </ul>
       </li>
+      <% if (currentAcc.username != "Guest") { %>
       <li class="nav-item has-sub"><a><i class="ft-folder"></i><span data-i18n="" class="menu-title">Manage</span></a>
         <ul class="menu-content">
           <li><a href="/events/manage" class="menu-item"><i class="ft-calendar"></i>Events</a>
@@ -36,6 +37,7 @@
           </li>
         </ul>
       </li>
+      <% } %>
       <li class="navigation-header"><span>More</span>
         <%# <i data-toggle="tooltip" data-placement="right" data-original-title="Apps" class=" ft-minus"></i> %>
       </li>

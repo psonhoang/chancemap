@@ -100,7 +100,7 @@ router.get('/:Id', (req, res) => {
 	let account_type = req.user.account_type;
 	let account_id = req.user.account_id;
 
-	if (account_type == 2)
+	if (account_type == 2 && req.user.username != "Guest")
 	{
 		Message.find((err, messages) => {
 			Admin.findOne({'admin_id': admin._id}, (err, user) => {

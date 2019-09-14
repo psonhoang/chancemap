@@ -45,7 +45,11 @@ router.get('/', async (req, res) => {
 		criteriaList = currentAcc.hashtags;
 		opportunities = sortByHashtags(opportunities, ['hashtags'], criteriaList);
 	} else if (account_type == 2) {
-		currentAcc = await Admin.findOne({ '_id': account_id });
+		if (req.user.username != "Guest") {
+			currentAcc = await Admin.findOne({ '_id': account_id});
+		} else {
+			currentAcc = users.filter(user => JSON.stringify(user._id) == JSON.stringify(account_id))[0];
+		}
 		criteriaList = [];
 		connected = [];
 	} else {
@@ -74,7 +78,7 @@ router.get('/manage', async (req, res) => {
 	let account_type = req.user.account_type;
 	let account_id = req.user.account_id;
 
-	if (account_type == 2) {
+	if (account_type == 2 && req.user.username != "Guest") {
 
 		const opportunities = await Opportunity.find();
 		const admin = await Admin.findOne({ '_id': req.user.account_id });
@@ -101,7 +105,7 @@ router.get('/create', async (req, res) => {
 	let account_type = req.user.account_type;
 	let account_id = req.user.account_id;
 
-	if (account_type == 2) {
+	if (account_type == 2 && req.user.username != "Guest") {
 
 		const admin = await Admin.findOne({ '_id': account_id });
 
@@ -164,7 +168,7 @@ router.get('/delete/:id', (req, res) => {
 	let account_type = req.user.account_type;
 	let opportunity_id = req.params.id;
 
-	if (account_type == 2) {
+	if (account_type == 2 && req.user.username != "Guest") {
 		Opportunity.findOneAndRemove({ _id: opportunity_id }, (err, opportunity) => {
 			if (err) {
 				console.log(err);
@@ -184,7 +188,7 @@ router.get('/edit/:id', (req, res) => {
 	let account_type = req.user.account_type;
 	let account_id = req.user.account_id;
 
-	if (account_type == 2) {
+	if (account_type == 2 && req.user.username != "Guest") {
 		Opportunity.findOne({ _id: req.params.id }, async (err, opportunity) => {
 			if (err) {
 				console.log(err);

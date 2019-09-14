@@ -62,7 +62,11 @@ router.get('/', async (req, res) => {
 		connected = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
 	}
 	else if (account_type == 2) {
-		currentAcc = await Admin.findOne({ '_id': account_id });
+		if (req.user.username != "Guest") {
+			currentAcc = await Admin.findOne({ '_id': account_id});
+		} else {
+			currentAcc = users.filter(user => JSON.stringify(user._id) == JSON.stringify(account_id))[0];
+		}
 		criteriaList = [];
 		connected = [];
 	}
@@ -124,7 +128,11 @@ router.get('/:username', async (req, res) => {
 		connected = users.filter(user => currentAcc.connected.indexOf(user.username) >= 0);
 	}
 	else if (account_type == 2) {
-		currentAcc = await Admin.findOne({ '_id': account_id});
+		if (req.user.username != "Guest") {
+			currentAcc = await Admin.findOne({ '_id': account_id});
+		} else {
+			currentAcc = users.filter(user => JSON.stringify(user._id) == JSON.stringify(account_id))[0];
+		}
 		criteriaList = [];
 		connected = [];
 	}

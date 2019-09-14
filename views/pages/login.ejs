@@ -55,6 +55,7 @@
             <div class="card-footer">
               <div class="">
                 <p class="text-xs-center m-0">New here? <a style="color: #2489C5" href="/register" class="card-link font-medium-2">Sign Up</a></p>
+                <p class="text-xs-center">Or sign in as a <a style="color: #2489C5" class="card-link font-medium-2" id="guest">GUEST</a></p> 
               </div>
             </div>
           </div>
@@ -71,5 +72,11 @@
       document.getElementById('btnSubmit').disabled = true;
     }
     $("#submitBtn").trigger('click');
+  });
+
+  $('#guest').on('click', function() {
+    $('#user-name').val('Guest');
+    $('#user-password').val('guestuserpass');
+    $('#submitBtn').trigger('click');
   });
 </script>

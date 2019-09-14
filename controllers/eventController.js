@@ -68,7 +68,11 @@ router.get('/', async (req, res) => {
         events = sortByHashtags(events, ['hashtags'], criteriaList);
         connected = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
     } else if (account_type == 2) {
-        currentAcc = await Admin.findOne({ '_id': account_id });
+        if (req.user.username != "Guest") {
+			currentAcc = await Admin.findOne({ '_id': account_id});
+		} else {
+			currentAcc = users.filter(user => JSON.stringify(user._id) == JSON.stringify(account_id))[0];
+        }
         criteriaList = [];
         connected = [];
     } else {
@@ -111,7 +115,7 @@ router.get('/manage', async (req, res) => {
             events = events.filter(event => currentAcc.events.indexOf(event._id) >= 0);
             users = await User.find();
             connected = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
-        } else if (account_type == 2) {
+        } else if (account_type == 2 && req.user.username != "Guest") {
             currentAcc = await Admin.findOne({});
             users = [];
             connected = [];
@@ -148,7 +152,7 @@ router.get('/create', async (req, res) => {
         currentAcc = await Org.findOne({ '_id': account_id });
         users = await User.find();
         connected = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
-    } else if (account_type == 2) {
+    } else if (account_type == 2 && req.user.username != "Guest") {
         currentAcc = await Admin.findOne({ '_id': account_id });
         connected = [];
     }
@@ -318,7 +322,7 @@ router.get('/edit/:id', async (req, res) => {
                 });
             });
         });
-    } else if (account_type == 2) {
+    } else if (account_type == 2 && req.user.username != "Guest"){
         Admin.findOne({ '_id': account_id }, (err, admin) => {
             res.render('events/orgs/edit', {
                 title: 'ChanceMap | Manage Events',

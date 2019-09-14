@@ -164,11 +164,17 @@ app.get('/', async (req, res) => {
       }).catch(err => { throw (err); });
     }
     else {
-      await Admin.findOne({ '_id': account_id }).exec().then(admin => {
-        currentAcc = admin;
-        connected = [];
+      if (req.user.username == 'Guest') {
+        currentAcc = users.filter(user => JSON.stringify(user._id) == JSON.stringify(account_id))[0];
+        connected =[];
         criteriaList = [];
-      }).catch(err => { throw (err); });
+      } else {
+        await Admin.findOne({ '_id': account_id }).exec().then(admin => {
+          currentAcc = admin;
+          connected = [];
+          criteriaList = [];
+        }).catch(err => { throw (err); });
+      }
     }
 
     // sort by hashtags

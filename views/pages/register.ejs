@@ -1,16 +1,15 @@
 <% extend('../defaultLayouts/authLayout'); %>
 <script src="../../../app-assets/js/scripts/forms/form-login-register.js" type="text/javascript"></script>
 
-
 <div class="app-content content container-fluid">
   <div class="content-wrapper">
     <div class="content-header row">
     </div>
     <div class="content-body">
       <section class="flexbox-container">
-        <div class="col-md-4 offset-md-4 col-xs-10 offset-xs-1 box-shadow-2 p-0">
-          <div class="card border-grey border-lighten-3 px-1 py-1 m-0">
-            <div style="margin-top: 25%" class="card-header no-border pb-0">
+        <div class="col-md-4 offset-md-1 col-xs-10 offset-xs-1 box-shadow-2 p-0">
+          <div class="card border-grey border-lighten-3 m-0">
+            <div class="card-header no-border pb-0">
               <div class="card-title text-xs-center">
                 <a href="/"><img class="img-responsive" height="100" width="100" src="images/logo.png"
                     alt="branding logo"></a>
@@ -103,12 +102,79 @@
             </div>
           </div>
         </div>
+        <div class="col-md-2 text-xs-center">
+          <p style="color: white; font-size: 300%; font-family: 'Josefin Sans'; margin-bottom: 0"><strong>OR</strong></p>
+        </div>
+        <div class="col-md-4 col-xs 10 box-shadow-2 p-0">
+            <div class="card border-grey border-lighten-3 m-0">
+              <div class="card-header no-border pb-0">
+                <div class="card-title text-xs-center">
+                  <!-- <a href="/"><img class="img-responsive" height="100" width="100" src="images/logo.png"
+                      alt="branding logo"></a>
+                  <br>
+                  <h2>Chance<strong>Map</strong></h2> -->
+                </div>
+                <!-- <h6 class="card-subtitle line-on-side text-muted text-xs-center font-medium-1 pt-2"><span>Sign Up</span>
+                </h6> -->
+              </div>
+              <div class="card-body collapse in">
+                <div class="card-block text-xs-center">
+                  <h5><strong>BROWSE THROUGH OUR DATABASES</strong></h5>
+                  <h6>Find comprehensive info on npos, events, jobs, and more</h6>
+                </div>
+                <h6 class="line-on-side text-xs-center text-muted"><span>Jump in</span></h6>
+                <div class="card-block text-xs-center">
+                  <p>Sign in as a <a style="color: #2489C5" class="card-link font-medium-2" id="guest">GUEST</a></p>
+                  <p>Sign up for us to match you with what you need</p>
+                </div>
+              </div>
+            </div>
+        </div>
       </section>
-
     </div>
   </div>
 </div>
 
 <!-- BEGIN CODEDAO SCRIPT -->
 <script src="/scripts/register.js" type="text/javascript"></script>
+<script>
+    $('#guest').on('click', function(){
+
+      let formData = new FormData();
+      formData.set("username", "Guest");
+      formData.set("password", "guestuserpass");
+
+      console.log("formData");
+
+      $.ajax({
+        async: true,
+        url: '/login',
+        method: 'POST',
+        processData: false,
+        contentType: false,
+        data: formData,
+        beforeSend: (req) => {
+          $.blockUI({
+            message: '<h1 style="margin-top: 0.5rem; margin-bottom: 0.5rem;">Just a moment...</h1>',
+            css: {
+              padding: 0,
+              margin: 0,
+              width: "20%",
+              top: "40%",
+              left: "40%",
+              textAlign: 'center',
+              color: 'rgb(0, 0, 0)',
+              border: 'none',
+              backgroundColor: 'rgb(255, 255, 255)',
+              cursor: 'wait'
+            }
+          });
+        },
+        success: (data) => {
+          window.location.href = "/";
+          $.unblockUI();
+        }
+      });
+    });
+</script>
 <!-- END -->

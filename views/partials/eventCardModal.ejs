@@ -1,77 +1,79 @@
 <div id="<%= cardId %>" class="modal fade" role="dialog">
     <div class="modal-dialog modal-lg">
-        <div class="col-md-12">
+        <div class="row">
 
             <!-- Modal content-->
-            <div class="row">
-                <div class="col-md-7 col-sm-12">
-                    <div class="card" style="left: -50px">
-                        <div class="card-header bg-amber bg-darken-3" style="color: white">
-                            <h4 class="card-title" id="from-actions-top-bottom-right"><i class="ft-calendar"></i>
-                                <%= event.name %></h4>
-                        </div>
-                        <div class="card-body collapse in">
-                            <div class="card-block">
-                                <p><label>Organisation name:</label> <strong><%= event.org_name %></strong></p>
-                                <p><label>Description:</label><strong><%= event.desc %></strong></p>
-                                <p><label>Hashtags:</label>
-                                    <% event.hashtags.forEach(hashtag => { %>
-                                    <% var isMatch = false; %>
-                                    <% criteriaList.forEach(criteria => { %>
-                                    <% if (hashtag.includes(criteria) && !isMatch) { %>
-                                    <% isMatch = true; %>
-                                    <p style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></p>
-                                    <% } %>
-                                    <% }); %>
-                                    <% if (!isMatch) { %>
-                                    <p style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></p>
-                                    <% } %>
-                                    <% }); %></p>
-                                <p><label>Address:</label> <strong><%= event.address %></strong></p>
-                                <p><label>Registration form:</label> <a><strong><%= event.reg_form %></strong></a></p>
-                                <p><label>Registration deadline:</label>
-                                    <% if(event.reg_deadline) { %>
-                                    <strong><%= months[event.reg_deadline.getMonth()] + ' ' + event.reg_deadline.getDate() + ', ' + event.reg_deadline.getFullYear() %></strong>
-                                    <% } else { %>
-                                    N/A
-                                    <% } %></p>
-                                <p><label>Start date:</label>
-                                    <strong><%= months[event.start_date.getMonth()] + ' ' + event.start_date.getDate() + ', ' + event.start_date.getFullYear(), %></strong>
-                                </p>
-                                <% if(event.end_date) { %>
-                                <p><label>End date:</label>
-                                    <strong><%= months[event.end_date.getMonth()] + ' ' + event.end_date.getDate() + ', ' + event.end_date.getFullYear(), %></strong>
-                                </p>
+            <% if (event.facebook) { %>
+            <div class="col-md-7 col-sm-12">
+            <% } else { %>
+            <div class="col-md 12 col-sm-12">
+            <% } %>
+                <div class="card">
+                    <div class="card-header bg-amber bg-darken-3" style="color: white">
+                        <h4 class="card-title" id="from-actions-top-bottom-right"><i class="ft-calendar"></i>
+                            <%= event.name %></h4>
+                    </div>
+                    <div class="card-body collapse in">
+                        <div class="card-block">
+                            <p><label>Organisation name:</label> <strong><%= event.org_name %></strong></p>
+                            <p><label>Description:</label><strong><%= event.desc %></strong></p>
+                            <p><label>Hashtags:</label>
+                                <% event.hashtags.forEach(hashtag => { %>
+                                <% var isMatch = false; %>
+                                <% criteriaList.forEach(criteria => { %>
+                                <% if (hashtag.includes(criteria) && !isMatch) { %>
+                                <% isMatch = true; %>
+                                <p style="font-size: 14px" class="tag tag-pill tag-warning"><%= hashtag; %></p>
                                 <% } %>
-                                <% if(event.start_time) { %>
-                                <p><label>Start time:</label> <strong><%= event.start_time %></strong></p>
+                                <% }); %>
+                                <% if (!isMatch) { %>
+                                <p style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></p>
+                                <% } %>
+                                <% }); %></p>
+                            <p><label>Address:</label> <strong><%= event.address %></strong></p>
+                            <p><label>Registration form:</label> <a href="<%= event.reg_form %>"><strong><%= event.reg_form %></strong></a></p>
+                            <p><label>Registration deadline:</label>
+                                <% if(event.reg_deadline) { %>
+                                <strong><%= months[event.reg_deadline.getMonth()] + ' ' + event.reg_deadline.getDate() + ', ' + event.reg_deadline.getFullYear() %></strong>
                                 <% } else { %>
                                 N/A
-                                <% } %>
-                                <% if(event.end_time) { %>
-                                <p><label>End time:</label> <strong><%= event.end_time %></strong></p>
-                                <% } else { %>
-                                N/A
-                                <% } %>
-                                <% if(event.facebook) { %>
-                                <p><label>Facebook:</label> <a href="<%= event.facebook %>"><i
-                                            class="ft-facebook"></i></a></p>
-                                <% } %>
-                                <% if(event.website) { %>
-                                <p><label>Website:</label><a href="<%= event.website %>"><i class="ft-globe"></i></a>
-                                </p>
-                                <% } %>
-                            </div>
+                                <% } %></p>
+                            <p><label>Start date:</label>
+                                <strong><%= months[event.start_date.getMonth()] + ' ' + event.start_date.getDate() + ', ' + event.start_date.getFullYear(), %></strong>
+                            </p>
+                            <% if(event.end_date) { %>
+                            <p><label>End date:</label>
+                                <strong><%= months[event.end_date.getMonth()] + ' ' + event.end_date.getDate() + ', ' + event.end_date.getFullYear(), %></strong>
+                            </p>
+                            <% } %>
+                            <% if(event.start_time) { %>
+                            <p><label>Start time:</label> <strong><%= event.start_time %></strong></p>
+                            <% } else { %>
+                            N/A
+                            <% } %>
+                            <% if(event.end_time) { %>
+                            <p><label>End time:</label> <strong><%= event.end_time %></strong></p>
+                            <% } else { %>
+                            N/A
+                            <% } %>
+                            <% if(event.facebook) { %>
+                            <p><label>Facebook:</label> <a href="<%= event.facebook %>"><i
+                                        class="ft-facebook"></i></a></p>
+                            <% } %>
+                            <% if(event.website) { %>
+                            <p><label>Website:</label><a href="<%= event.website %>"><i class="ft-globe"></i></a>
+                            </p>
+                            <% } %>
                         </div>
                     </div>
                 </div>
-                <% if(event.facebook) { %>
-                <div class="col-md-5 col-sm-12">
-                    <div class="fb-post card" style="display: inline-block;" data-href="<%= event.facebook %>" data-width="500" data-show-text="true">
-                    </div>
-                </div>
-                <% } %>
             </div>
+            <% if(event.facebook) { %>
+            <div class="col-md-5 col-sm-12">
+                <div class="fb-post card" style="display: inline-block;" data-href="<%= event.facebook %>" data-width="500" data-show-text="true">
+                </div>
+            </div>
+            <% } %>
             <!-- Modal content ends -->
 
         </div>

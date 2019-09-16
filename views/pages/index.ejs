@@ -754,7 +754,21 @@
         url: '/search',
         method: 'GET',
         beforeSend: (req) => {
-          $.blockUI();
+          $.blockUI({
+            message: '<h1 style="margin-top: 0.5rem; margin-bottom: 0.5rem;">Just a moment...</h1>',
+            css: {
+              padding: 0,
+              margin: 0,
+              width: "20%",
+              top: "40%",
+              left: "40%",
+              textAlign: 'center',
+              color: 'rgb(0, 0, 0)',
+              border: 'none',
+              backgroundColor: 'rgb(255, 255, 255)',
+              cursor: 'wait'
+            }
+          });
         },
         data: {
           criteriaList: criteriaList

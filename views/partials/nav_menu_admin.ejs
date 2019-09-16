@@ -1,18 +1,23 @@
 <div data-scroll-to-active="true" class="main-menu menu-fixed menu-light menu-accordion menu-shadow">
-  <div class="main-menu-content ps-container ps-theme-dark ps-active-y" data-ps-id="a0cf5723-e682-b9c3-b228-6640b1cf55c0" style="height: 753px;">
+  <div class="main-menu-content ps-container ps-theme-dark ps-active-y"
+    data-ps-id="a0cf5723-e682-b9c3-b228-6640b1cf55c0" style="height: 753px;">
     <ul id="main-menu-navigation" data-menu="menu-navigation" class="navigation navigation-main">
       <ul class="navigation-header">
-        <li><div id="avatarHeader" class="text-xs-center">
-          <div class="card-block">
-            <a href="javascript:void(0);"><img id="avatar" src='<%= currentAcc.avatar; %>' class="rounded-circle width-100 height-100" alt="Card image"></a>
-            <br><br>
-            <a href="javascript:void(0);"><span class="card-subtitle"><%= currentAcc.name; %></span></a>
+        <li>
+          <div id="avatarHeader" class="text-xs-center">
+            <div class="card-block">
+              <img id="avatar" src='<%= currentAcc.avatar; %>' class="rounded-circle width-100 height-100"
+                alt="Card image">
+              <br><br>
+              <span class="card-subtitle"><%= currentAcc.name; %></span>
+            </div>
           </div>
-        </div></li>
+        </li>
       </ul>
       <li class="nav-item"><a href="/"><i class="ft-home"></i><span data-i18n="" class="menu-title">Home</span></a>
       </li>
-      <li class="nav-item has-sub"><a><i class="ft-sidebar"></i><span data-i18n="" class="menu-title">Dashboard</span><%#<span class="tag tag tag-primary tag-pill float-xs-right mr-2">4</span>%></a>
+      <li class="nav-item has-sub"><a><i class="ft-sidebar"></i><span data-i18n=""
+            class="menu-title">Dashboard</span><%#<span class="tag tag tag-primary tag-pill float-xs-right mr-2">4</span>%></a>
         <ul class="menu-content">
           <li><a href="/events" class="menu-item"><i class="ft-calendar"></i>Events</a>
           </li>
@@ -26,7 +31,10 @@
           </li>
         </ul>
       </li>
-      <% if (currentAcc.username != "Guest") { %>
+      <% if (currentAcc.username == "Guest") { %>
+      <li class="nav-item"><a href="/calendar"><i class="ft-calendar"></i><span class="menu-title">Calendar</span></a>
+      </li>
+      <% } else { %>
       <li class="nav-item has-sub"><a><i class="ft-folder"></i><span data-i18n="" class="menu-title">Manage</span></a>
         <ul class="menu-content">
           <li><a href="/events/manage" class="menu-item"><i class="ft-calendar"></i>Events</a>
@@ -42,7 +50,13 @@
         <%# <i data-toggle="tooltip" data-placement="right" data-original-title="Apps" class=" ft-minus"></i> %>
       </li>
       </li>
-      <li class=" nav-item"><a href="/logout"><i class="ft-log-out"></i><span data-i18n="" class="menu-title">Logout</span></a>
+      <% if (currentAcc.username == "Guest") { %>
+      <li class="nav-item"><a href="https://chancemap.blogspot.com"><i class="ft-airplay"></i><span
+            class="menu-title">Visit our blog</span></a>
+      </li>
+      <% } %>
+      <li class=" nav-item"><a href="/logout"><i class="ft-log-out"></i><span data-i18n=""
+            class="menu-title">Logout</span></a>
       </li>
     </ul>
     <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 3px;">

@@ -71,7 +71,7 @@ router.get('/login', (req, res) => {
 	res.render('login', { title: "ChanceMap | Login", message: req.flash('error') });
 });
 
-router.post('/login', passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }), (req, res, next) => {
+router.post('/login', upload.single(), passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }), (req, res, next) => {
 	// issue a remember me cookie if the option was checked
 	if (!req.body.remember_me) { return next(); }
 	var token = utils.generateToken(64);
@@ -348,7 +348,7 @@ router.get('/profile', async (req, res) => {
 	let account_type = currentAcc.account_type;
 	let account_id = currentAcc.account_id;
 
-	Org.find().then(async orgs => {
+		var orgs = await Org.find();
 		var users = await User.find();
 		var events = await Event.find();
 		var jobs = await Job.find();
@@ -379,20 +379,20 @@ router.get('/profile', async (req, res) => {
 				connected: connected,
 			});
 
-		} else {
-			const org = await Org.findOne({ '_id': currentAcc.account_id });
-			const profile = await OrgProfile.findOne({ 'org_id': org._id });
+		} else if (account_type == 1) {
+			currentAcc = orgs.filter(org => JSON.stringify(org._id) == JSON.stringify(account_id));
+			const profile = await OrgProfile.findOne({ 'org_id': account_id });
 
-			let followers = users.filter(user => org.followers.indexOf(user.username) >= 0);
-			let criteriaList = org.hashtags;
-			jobs = jobs.filter(job => org.jobs.indexOf(job._id) >= 0);
-			events = events.filter(event => org.events.indexOf(event._id) >= 0);
+			let followers = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);
+			let criteriaList = currentAcc.hashtags;
+			jobs = jobs.filter(job => currentAcc.jobs.indexOf(job._id) >= 0);
+			events = events.filter(event => currentAcc.events.indexOf(event._id) >= 0);
 
 			res.render('orgs/edit', {
 				title: 'ChanceMap | My Profile',
 				account_type: currentAcc.account_type,
 				account_id: currentAcc.account_id,
-				currentAcc: org,
+				currentAcc: currentAcc,
 				profile: profile,
 				users: users,
 				jobs: jobs,
@@ -401,9 +401,10 @@ router.get('/profile', async (req, res) => {
 				notis: req.notis,
 				criteriaList: criteriaList
 			});
+		} else {
+			res.redirect('/');
 		}
 	});
-});
 
 // @route POST
 // @desc save edits to current user account's profile
@@ -923,7 +924,7 @@ router.post('/recover-password', function (req, res, next) {
 				}
 
 				user.resetPassToken = token;
-				user.resetExpiration = Date.now() + 300000; //5 mins
+				user.resetExpiration = Date.now() + 1000*60*60*24*7; //1 week
 
 				user.save(function (err) {
 					done(err, token, user);

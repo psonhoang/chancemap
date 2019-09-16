@@ -97,6 +97,8 @@ router.get('/:username', async (req, res) => {
       currentAcc = await User.findOne({ '_id': currentAcc.account_id });
     } else if (account_type == 1) {
       currentAcc = await Org.findOne({ '_id': currentAcc.account_id });
+    } else if (account_type == 2 && req.user.username == "Guest") {
+      currentAcc = users.filter(user => JSON.stringify(user._id) == JSON.stringify(account_id))[0];
     }
 
     res.render('users/othersProfile', {

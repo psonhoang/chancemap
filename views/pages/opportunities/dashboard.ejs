@@ -47,9 +47,9 @@
               <% opportunities.forEach(opportunity => { %>
               <% cardId = opportunity._id; %>
               <tr class="btn-secondary" style="border: 0" data-toggle="modal" data-target="#<%= cardId %>">
-                <% if(opportunity.reg_deadline) { %>
+                <% if(opportunity.app_deadline) { %>
                 <th scope="row">Deadline:
-                  <%= months[opportunity.reg_deadline.getMonth()] + ' ' + opportunity.reg_deadline.getDate() + ', ' + opportunity.reg_deadline.getFullYear() %>
+                  <%= months[opportunity.app_deadline.getMonth()] + ' ' + opportunity.app_deadline.getDate() + ', ' + opportunity.app_deadline.getFullYear() %>
                 </th>
                 <% } else { %>
                 <th scope="row">Deadline: N/A</th>

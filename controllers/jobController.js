@@ -157,7 +157,7 @@ router.get('/create', async (req, res) => {
 	var connected;
 	var currentAcc;
 
-	if (req.user.account_type == 0) {
+	if (req.user.account_type == 0 || req.user.username == "Guest") {
 		res.redirect('/');
 	}
 
@@ -184,12 +184,26 @@ router.get('/create', async (req, res) => {
 router.post('/create', upload.single(), async (req, res) => {
 
 	let data = req.body;
+	let account_id = req.user.account_id;
+	let account_type = req.user.account_type;
 	let org;
 
-	if (req.user.account_type != 2) {
-		org = await Org.findOne({ '_id': req.user.account_id });
+	if (account_type != 2) {
+		org = await Org.findOne({ '_id': account_id });
 	} else {
 		org = await Org.findOne({ 'name': data.org_name });
+		if (org == null) {
+			currentAcc = await Admin.findOne({ _id: account_id });
+			res.render('jobs/orgs/create', {
+				title: 'ChanceMap | Add a new Job (ERROR)',
+				account_type: account_type,
+				account_id: account_id,
+				currentAcc: currentAcc,
+				notis: req.notis,
+				connected: [],
+			});
+			return;
+		}
 	}
 	let name = data.name;
 	let org_id = org._id;
@@ -235,27 +249,29 @@ router.post('/create', upload.single(), async (req, res) => {
 		}
 
 		// Create notifications
-		let newNoti = new Notification({
-			_id: new mongoose.Types.ObjectId(),
-			created_at: new Date(),
-			updated_at: new Date(),
-			title: org.name + ' added a new job position!',
-			body: org.name + ' is recruiting ' + job.name,
-			image: 'job',
-			accounts: accounts
-		});
+		// let newNoti = new Notification({
+		// 	_id: new mongoose.Types.ObjectId(),
+		// 	created_at: new Date(),
+		// 	updated_at: new Date(),
+		// 	title: org.name + ' added a new job position!',
+		// 	body: org.name + ' is recruiting ' + job.name,
+		// 	image: 'job',
+		// 	accounts: accounts
+		// });
 
-		newNoti.save().then(async noti => {
-			console.log(noti);
-			let users = await User.find({ 'username': { $in: accounts } });
-			users.forEach(user => {
-				user.new_notis.push(noti._id);
-				user.save().then().catch(err => {
-					res.send(err);
-				});
-			});
-			res.redirect("/jobs/manage");
-		}).catch(err => { throw (err); });
+		// newNoti.save().then(async noti => {
+		// 	console.log(noti);
+		// 	let users = await User.find({ 'username': { $in: accounts } });
+		// 	users.forEach(user => {
+		// 		user.new_notis.push(noti._id);
+		// 		user.save().then().catch(err => {
+		// 			res.send(err);
+		// 		});
+		// 	});
+		// 	res.redirect("/jobs/manage");
+		// }).catch(err => { throw (err); });
+
+		res.redirect('/jobs/manage');
 	});
 });
 
@@ -327,33 +343,34 @@ router.post('/edit/:id', upload.single(), async (req, res) => {
 	job.updated_at = new Date();
 
 	job.save().then(result => {
-		if (org.followers) {
-			accounts = org.followers;
-		}
-		let newNoti = new Notification({
-			_id: new mongoose.Types.ObjectId(),
-			created_at: new Date(),
-			updated_at: new Date(),
-			title: org_name + ' just editited their job position!',
-			body: org_name + ' made an edit to ' + job.name,
-			image: 'job',
-			accounts: accounts
-		});
+		// if (org.followers) {
+		// 	accounts = org.followers;
+		// }
+		// let newNoti = new Notification({
+		// 	_id: new mongoose.Types.ObjectId(),
+		// 	created_at: new Date(),
+		// 	updated_at: new Date(),
+		// 	title: org_name + ' just editited their job position!',
+		// 	body: org_name + ' made an edit to ' + job.name,
+		// 	image: 'job',
+		// 	accounts: accounts
+		// });
 
-		newNoti.save().then(noti => {
-			console.log(noti);
-			User.find({ 'username': { $in: accounts } }, (err, users) => {
-				users.forEach(user => {
-					user.new_notis.push(noti._id);
-					user.save().then().catch(err => {
-						res.send(err);
-					});
-				});
-				res.redirect("/jobs/manage");
-				return;
-			}).catch(err => { throw (err); });
-		}).catch(err => { throw (err); });
-	}).catch(err => { throw (err); });
+		// newNoti.save().then(noti => {
+		// 	console.log(noti);
+		// 	User.find({ 'username': { $in: accounts } }, (err, users) => {
+		// 		users.forEach(user => {
+		// 			user.new_notis.push(noti._id);
+		// 			user.save().then().catch(err => {
+		// 				res.send(err);
+		// 			});
+		// 		});
+		// 		res.redirect("/jobs/manage");
+		// 		return;
+		// 	}).catch(err => { throw (err); });
+		// }).catch(err => { throw (err); });
+		res.redirect("jobs/manage");
+	});
 });
 
 //Delete a job when requested
@@ -373,35 +390,41 @@ router.post('/delete', upload.single(), (req, res) => {
 				console.log(err);
 				return;
 			}
+			console.log('JOB REMOVED!');
 			Org.findOne({ '_id': job.org_id }, (err, org) => {
 				if (err) {
 					console.log(err);
 					return;
 				}
+
+				org.jobs.splice(org.jobs.indexOf(data.JobID), 1);
+				org.save();
+
 				if (org.followers.length > 0) {
 
-					let newNoti = new Notification({
-						_id: new mongoose.Types.ObjectId(),
-						created_at: new Date(),
-						updated_at: new Date(),
-						title: org.name + ' just removed a job position!',
-						body: org.name + ' removed ' + job.name,
-						image: 'job',
-						accounts: org.followers
-					});
+					// let newNoti = new Notification({
+					// 	_id: new mongoose.Types.ObjectId(),
+					// 	created_at: new Date(),
+					// 	updated_at: new Date(),
+					// 	title: org.name + ' just removed a job position!',
+					// 	body: org.name + ' removed ' + job.name,
+					// 	image: 'job',
+					// 	accounts: org.followers
+					// });
 
-					newNoti.save().then(noti => {
-						User.find({ 'username': { $in: org.followers } }, (err, users) => {
-							users.forEach(user => {
-								user.new_notis.push(noti._id);
-								user.save().then(result => {
-								}).catch(err => {
-									throw (err);
-								});
-							});
-							res.redirect('jobs/manage');
-						});
-					}).catch(err => { throw (err); });
+					// newNoti.save().then(noti => {
+					// 	User.find({ 'username': { $in: org.followers } }, (err, users) => {
+					// 		users.forEach(user => {
+					// 			user.new_notis.push(noti._id);
+					// 			user.save().then(result => {
+					// 			}).catch(err => {
+					// 				throw (err);
+					// 			});
+					// 		});
+					// 		res.redirect('jobs/manage');
+					// 	});
+					// }).catch(err => { throw (err); });
+					res.redirect('jobs/manage');
 				} else {
 					res.redirect('jobs/manage');
 				}

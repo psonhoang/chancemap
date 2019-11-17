@@ -39,6 +39,9 @@
 										name="org_name" value="<%=currentAcc.name; %>">
 									<% } else if (account_type == 2) { %>
 									<input type="text" id="timesheetinput1" class="form-control" name="org_name">
+									<% if(title == "ChanceMap | Add a new Job (ERROR)") { %>
+										<div class="alert alert-danger text-center" style="margin-top: 0.75rem; margin-bottom: 0">NO ORGANIZATION FOUND WITH THAT NAME</div>
+									<% } %>
 									<% } %>
 									<div class="form-control-position">
 										<i class="ft-user"></i>

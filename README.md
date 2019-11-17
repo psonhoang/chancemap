@@ -6,4 +6,3 @@ const founders = ['Pham Son Hoang', 'Nguyen Minh Dang', 'Dang Hoang Long', 'Nguy
 
 let developers = ['Bao Bu', 'Minh Pham', 'Van Huynh', 'Huan Pham'];
 
-THIS IS A TEST COMMIT 

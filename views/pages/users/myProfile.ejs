@@ -25,7 +25,7 @@
                     <img id="ava_preview" src="<%= currentAcc.avatar; %>" class="rounded-circle width-150 height-150"
                       alt="Card image">
                   </div>
-                  <input id="avatar" type="file" accept="image/*" name="avatar" onchange="previewImage(event)">
+                  <input id="avatar_input" type="file" accept="image/*" name="avatar" onchange="previewImage(event)">
                 </div>
               </fieldset>
               <!-- Name -->
@@ -99,7 +99,7 @@
               <br>
               <!-- submit button -->
               <div style="margin-left: 40%">
-                <button id="submitBtn" onclick="freezeBtn();" type="submit"
+                <button id="submitBtn" onclick="freezeBtn();" type="button"
                   class="btn btn-lg btn-outline-info">Submit</button>
               </div>
             </div>
@@ -251,7 +251,7 @@
         <div class="col-xl-4">
           <div class="card">
             <div style="color: white" class="card-header bg-amber bg-darken-1">
-              <h4 class="card-title"><i class="ft-user"></i> Events attended</h4>
+              <h4 class="card-title"><i class="ft-user"></i> Interested Events</h4>
               <a class="heading-elements-toggle">
                 <i class="fa fa-ellipsis-v font-medium-3"></i>
               </a>
@@ -296,7 +296,7 @@
         <div class="col-xl-4">
           <div class="card">
             <div style="color: white" class="card-header bg-blue bg-lighten-1">
-              <h4 class="card-title"><i class="ft-user"></i> Past jobs</h4>
+              <h4 class="card-title"><i class="ft-user"></i> Interested jobs</h4>
               <a class="heading-elements-toggle">
                 <i class="fa fa-ellipsis-v font-medium-3"></i>
               </a>
@@ -326,7 +326,7 @@
         <div class="col-xl-4">
           <div class="card">
             <div style="color: white" class="card-header bg-red bg-accent-2">
-              <h4 class="card-title"><i class="ft-user"></i> Opportunities taken</h4>
+              <h4 class="card-title"><i class="ft-user"></i> Interested Opportunities</h4>
               <a class="heading-elements-toggle">
                 <i class="fa fa-ellipsis-v font-medium-3"></i>
               </a>
@@ -508,7 +508,21 @@
         url: '/search/orgs',
         method: 'GET',
         beforeSend: (req) => {
-          $.blockUI();
+          $.blockUI({            
+            message: '<h1 style="margin-top: 0.5rem; margin-bottom: 0.5rem;">Saving...</h1>',
+            css: {
+              padding: 0,
+              margin: 0,
+              width: "20%",
+              top: "40%",
+              left: "40%",
+              textAlign: 'center',
+              color: 'rgb(0, 0, 0)',
+              border: 'none',
+              backgroundColor: 'rgb(255, 255, 255)',
+              cursor: 'wait'
+            }
+          });
         },
         data: {
           criteriaList: criteriaList,
@@ -527,18 +541,107 @@
     }
   }
 
+  //given a dataURL of an image, compress it and return a blob
+  function compressImage (image, type, quality, width, height, filename, callback) {
+    const img = new Image();
+    img.src = image;
+    var file;
+    img.onload = function () {
+      const elem = document.createElement('canvas');
+      elem.width = width;
+      elem.height = height;
+      const ctx = elem.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      ctx.canvas.toBlob((blob) => {
+        file = new File([blob], filename, {
+          type: type,
+          lastModified: Date.now()
+        });   
+        callback(file);      
+      }, type, quality);
+    }
+  }
+
   function previewImage(event) {
     let reader = new FileReader();
-    reader.onload = function () {
-      let output = document.getElementById('ava_preview');
-      output.src = reader.result;
-    }
+
+    var avatar = document.getElementById('avatar_input');
+    var output = document.getElementById('ava_preview');
+
+    const filename = 'compressed_' + event.target.files[0].name;
+    const type = 'image/' + filename.split('.')[1];
+
     reader.readAsDataURL(event.target.files[0]);
+    reader.onload = async function () {
+      compressImage(reader.result, type, 0.7, 100, 100, filename, function(compressed_image) {
+        console.log(compressed_image);
+        var dataURL = URL.createObjectURL(compressed_image);
+        output.src = dataURL;
+      });
+    }
   }
 
   function freezeBtn() {
-    document.getElementById('submitBtn').disabled = true;
-    $('form').submit();
+    // document.getElementById('submitBtn').disabled = true;
+    
+    var form = document.getElementsByTagName("form")[0];
+    var avatar_input = document.getElementById('avatar_input');
+
+    if (avatar_input.files.length != 0) {
+      var filename = 'compressed_' + avatar_input.files[0].name;
+      var type = 'image/' + filename.split('.')[1];
+      let reader = new FileReader();
+      reader.readAsDataURL(avatar_input.files[0]);
+      reader.onload = function () {
+        file = compressImage(reader.result, type, 0.7, 100, 100, filename, function(compressed_image) {
+          var formData = new FormData(form);
+          formData.delete("avatar");
+          formData.append("avatar", compressed_image, filename);
+          // var xhr = new XMLHttpRequest();
+          // xhr.open('POST', '/profile/user', true);
+          // xhr.onload = function () {
+          //   console.log("Submitting...");
+          // }
+          // xhr.send(formData);
+          $.ajax({
+            async: true,
+            url: '/profile/user',
+            method: 'POST',
+            beforeSend: (req) => {
+              $.blockUI({            
+                message: '<h1 style="margin-top: 0.5rem; margin-bottom: 0.5rem;">Saving...</h1>',
+                css: {
+                  padding: 0,
+                  margin: 0,
+                  width: "20%",
+                  top: "40%",
+                  left: "40%",
+                  textAlign: 'center',
+                  color: 'rgb(0, 0, 0)',
+                  border: 'none',
+                  backgroundColor: 'rgb(255, 255, 255)',
+                  cursor: 'wait'
+                }
+              });
+            },
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: (data) => {
+              $.unblockUI();
+              window.location.reload();
+            }
+          });
+        });
+      }
+    } else {
+      document.getElementById('submitBtn').disabled = true;
+      form.submit();
+    }
+    // formData.delete("avatar");
+    // formData.append("avatar", file, filename);
+
+    // $('form');
   }
 </script>
 <!-- END -->

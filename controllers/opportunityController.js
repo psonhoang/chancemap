@@ -169,11 +169,17 @@ router.get('/delete/:id', (req, res) => {
 	let opportunity_id = req.params.id;
 
 	if (account_type == 2 && req.user.username != "Guest") {
-		Opportunity.findOneAndRemove({ _id: opportunity_id }, (err, opportunity) => {
+		Opportunity.findOneAndRemove({ _id: opportunity_id }, async (err, opportunity) => {
 			if (err) {
 				console.log(err);
 			}
-			console.log(opportunity);
+			console.log("Opportunity " + opportunity_id + " has been removed!");
+			let users = await User.find();
+			users = users.filter(user => user.opps.indexOf(opportunity_id) >= 0);
+			users.forEach(user => {
+				user.opps.splice(user.opps.indexOf(opportunity_id), 1);
+				user.save();
+			});
 			res.redirect('/opportunities/manage');
 		});
 	} else {

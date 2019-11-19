@@ -180,13 +180,19 @@ router.post('/manage', upload.single(), async (req, res) => {
             console.log("Event Removed!");
 
             let org = await Org.findOne({ '_id': data.account_id });
+            let users = await User.find();
+            users = users.filter(user => user.events.indexOf(data.event_id) >= 0);
+            users.forEach(user => {
+                user.events.splice(user.events.indexOf(data.event_id), 1);
+                user.save();
+            });
             org.events.splice(org.events.indexOf(data.event_id), 1);
             org.save().then(noti => {
                 let accounts = [];
                 if (org.followers) {
                     accounts = org.followers;
                 }
-                // if (accounts.length > 0) {
+                if (accounts.length > 0) {
     
                 //     let newNoti = new Notification({
                 //         _id: new mongoose.Types.ObjectId(),
@@ -209,7 +215,8 @@ router.post('/manage', upload.single(), async (req, res) => {
                 //         });
                 //         res.redirect('/events/manage');
                 //     });
-                // }
+                
+                }
                 res.redirect('/events/manage');
             });  
         });

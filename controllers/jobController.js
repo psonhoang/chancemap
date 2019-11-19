@@ -181,7 +181,7 @@ router.get('/create', async (req, res) => {
 });
 
 // Process edit information
-router.post('/create', upload.single(), async (req, res) => {
+router.post('/create', upload.none(), async (req, res) => {
 
 	let data = req.body;
 	let account_id = req.user.account_id;
@@ -307,7 +307,7 @@ router.get('/manage/edit/:ID', async (req, res) => {
 });
 
 //Process edited information
-router.post('/edit/:id', upload.single(), async (req, res) => {
+router.post('/edit/:id', upload.none(), async (req, res) => {
 
 	let job = await Job.findOne({ '_id': req.params.id });
 	let data = req.body;
@@ -374,7 +374,7 @@ router.post('/edit/:id', upload.single(), async (req, res) => {
 });
 
 //Delete a job when requested
-router.post('/delete', upload.single(), (req, res) => {
+router.post('/delete', upload.none(), (req, res) => {
 
 	let account_type = req.user.account_type;
 	let data = req.body;
@@ -391,12 +391,17 @@ router.post('/delete', upload.single(), (req, res) => {
 				return;
 			}
 			console.log('JOB REMOVED!');
-			Org.findOne({ '_id': job.org_id }, (err, org) => {
+			Org.findOne({ '_id': job.org_id }, async (err, org) => {
 				if (err) {
 					console.log(err);
 					return;
 				}
-
+				let users = await User.find();
+				users = users.filter(user => user.jobs.indexOf(data.JobID) >= 0);
+				users.forEach(user => {
+					user.jobs.splice(user.jobs.indexOf(data.JobID), 1);
+					user.save();
+				});
 				org.jobs.splice(org.jobs.indexOf(data.JobID), 1);
 				org.save();
 
@@ -424,6 +429,7 @@ router.post('/delete', upload.single(), (req, res) => {
 					// 		res.redirect('jobs/manage');
 					// 	});
 					// }).catch(err => { throw (err); });
+
 					res.redirect('jobs/manage');
 				} else {
 					res.redirect('jobs/manage');

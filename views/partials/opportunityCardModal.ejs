@@ -29,7 +29,7 @@
                                 <p style="font-size: 14px" class="tag tag-pill tag-info"><%= hashtag; %></p>
                                 <% } %>
                             <% }); %></p>
-                            <p><label>Registration form:</label>  <a><strong><%= opportunity.app_form %></strong></a></p>
+                            <p><label>Registration form:</label>  <a><%= opportunity.app_form %></a></p>
                             <p><label>Registration deadline:</label>
                             <% if(opportunity.app_deadline) { %>
                             <strong><%= months[opportunity.app_deadline.getMonth()] + ' ' + opportunity.app_deadline.getDate() + ', ' + opportunity.app_deadline.getFullYear() %></strong>

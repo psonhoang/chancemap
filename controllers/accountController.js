@@ -392,7 +392,7 @@ router.get('/profile', async (req, res) => {
 			});
 
 		} else if (account_type == 1) {
-			currentAcc = orgs.filter(org => JSON.stringify(org._id) == JSON.stringify(account_id));
+			currentAcc = orgs.filter(org => JSON.stringify(org._id) == JSON.stringify(account_id))[0];
 			const profile = await OrgProfile.findOne({ 'org_id': account_id });
 
 			let followers = users.filter(user => currentAcc.followers.indexOf(user.username) >= 0);

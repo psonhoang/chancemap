@@ -573,7 +573,7 @@
 
     reader.readAsDataURL(event.target.files[0]);
     reader.onload = async function () {
-      compressImage(reader.result, type, 0.7, 100, 100, filename, function(compressed_image) {
+      compressImage(reader.result, type, 0.7, 200, 200, filename, function(compressed_image) {
         console.log(compressed_image);
         var dataURL = URL.createObjectURL(compressed_image);
         output.src = dataURL;
@@ -593,16 +593,10 @@
       let reader = new FileReader();
       reader.readAsDataURL(avatar_input.files[0]);
       reader.onload = function () {
-        file = compressImage(reader.result, type, 0.7, 100, 100, filename, function(compressed_image) {
+        file = compressImage(reader.result, type, 0.7, 200, 200, filename, function(compressed_image) {
           var formData = new FormData(form);
           formData.delete("avatar");
           formData.append("avatar", compressed_image, filename);
-          // var xhr = new XMLHttpRequest();
-          // xhr.open('POST', '/profile/user', true);
-          // xhr.onload = function () {
-          //   console.log("Submitting...");
-          // }
-          // xhr.send(formData);
           $.ajax({
             async: true,
             url: '/profile/user',
@@ -638,10 +632,6 @@
       document.getElementById('submitBtn').disabled = true;
       form.submit();
     }
-    // formData.delete("avatar");
-    // formData.append("avatar", file, filename);
-
-    // $('form');
   }
 </script>
 <!-- END -->

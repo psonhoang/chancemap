@@ -634,7 +634,7 @@
         reader.readAsDataURL(event.target.files[0]);
 
         reader.onload = async function () {
-            let compressed_image = await compressImage(reader.result, 0.5);
+            let compressed_image = await compressImage(reader.result, 0.1);
             console.log("Image compressed");
             var url = URL.createObjectURL(compressed_image);
             output.src = url;
@@ -678,7 +678,7 @@
                 var filename = 'compressed_' + picture.name;
 
                 var dataURL = await readAsDataURLawait(picture);
-                let compressed_image = await compressImage(dataURL, 0.5);
+                let compressed_image = await compressImage(dataURL, 0.1);
                 formData.delete(pair[0]);
                 var file = new File([compressed_image], filename, {
                     type: 'image/jpeg',

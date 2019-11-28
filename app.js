@@ -150,18 +150,16 @@ app.get('/', async (req, res) => {
 
     //find appropriate account, set the right criterial list and connected list
     if (account_type == 0) {
-      await User.findOne({ '_id': account_id }).exec().then(user => {
-        currentAcc = user;
-        connected = users.filter(client => user.connected.indexOf(client.username) >= 0);
-        criteriaList = user.interests.concat(user.skills);
-      }).catch(err => { throw (err); });
+      var user = users.filter(user => user._id == account_id)[0];
+      currentAcc = user;
+      connected = users.filter(client => user.connected.indexOf(client.username) >= 0);
+      criteriaList = user.interests.concat(user.skills);
     }
     else if (account_type == 1) {
-      await Org.findOne({ '_id': account_id }).exec().then(org => {
-        currentAcc = org;
-        connected = users.filter(user => org.followers.indexOf(user.username) >= 0);
-        criteriaList = org.hashtags;
-      }).catch(err => { throw (err); });
+      var org = await Org.findOne({ '_id': account_id });
+      currentAcc = org;
+      connected = users.filter(user => org.followers.indexOf(user.username) >= 0);
+      criteriaList = org.hashtags;
     }
     else {
       if (req.user.username == 'Guest') {
@@ -169,11 +167,10 @@ app.get('/', async (req, res) => {
         connected =[];
         criteriaList = [];
       } else {
-        await Admin.findOne({ '_id': account_id }).exec().then(admin => {
-          currentAcc = admin;
-          connected = [];
-          criteriaList = [];
-        }).catch(err => { throw (err); });
+        var admin = await Admin.findOne({ '_id': account_id });
+        currentAcc = admin;
+        connected = [];
+        criteriaList = [];
       }
     }
 

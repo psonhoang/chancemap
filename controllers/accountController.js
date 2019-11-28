@@ -65,18 +65,6 @@ const storage = new GridFsStorage({
 });
 const upload = multer({ storage });
 
-//Testing
-// router.get('/test', async (req, res) => {
-// 	const Chunks = conn.db.collection('uploads.chunks');
-// 	const Files = conn.db.collection('uploads.files');
-
-// 	let files = await Files.find({}).toArray();
-// 	let chunks = await Chunks.find({}).toArray();
-
-// 	console.log(files[0]);
-// });
-// Testing ends
-
 // ***** ROUTES *****
 // Login
 router.get('/login', (req, res) => {

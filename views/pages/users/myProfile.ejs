@@ -542,92 +542,95 @@
   }
 
   //given a dataURL of an image, compress it and return a blob
-  function compressImage (image, type, quality, width, height, filename, callback) {
-    const img = new Image();
-    img.src = image;
-    var file;
-    img.onload = function () {
-      const elem = document.createElement('canvas');
-      elem.width = width;
-      elem.height = height;
-      const ctx = elem.getContext('2d');
-      ctx.drawImage(img, 0, 0, width, height);
-      ctx.canvas.toBlob((blob) => {
-        file = new File([blob], filename, {
-          type: type,
-          lastModified: Date.now()
-        });   
-        callback(file);      
-      }, type, quality);
-    }
+  function compressImage (image, quality) {
+      return compressed_image = new Promise((resolve, reject) => {
+          let img = new Image();
+          img.src = image;
+          img.onload = function () {
+              const elem = document.createElement('canvas');
+              elem.width = img.width;
+              elem.height = img.height;
+              const ctx = elem.getContext('2d');
+              ctx.drawImage(img, 0, 0, img.width, img.height);
+              ctx.canvas.toBlob((blob) => {
+                  resolve(blob);
+              }, 'image/jpeg', quality);
+          }
+      });
   }
 
-  function previewImage(event) {
-    let reader = new FileReader();
+  function readAsDataURLawait(file) {
+      let reader = new FileReader;
+      reader.readAsDataURL(file);
+      return new Promise((resolve, reject) => {
+          reader.onload = function () {
+              resolve(reader.result);
+          }
+      });  
+  }
 
-    var avatar = document.getElementById('avatar_input');
+  async function previewImage(event) {
     var output = document.getElementById('ava_preview');
 
-    const filename = 'compressed_' + event.target.files[0].name;
-    const type = 'image/' + filename.split('.')[1];
-
-    reader.readAsDataURL(event.target.files[0]);
-    reader.onload = async function () {
-      compressImage(reader.result, type, 0.7, 200, 200, filename, function(compressed_image) {
-        console.log(compressed_image);
-        var dataURL = URL.createObjectURL(compressed_image);
-        output.src = dataURL;
-      });
-    }
+    let result = await readAsDataURLawait(event.target.files[0]);
+    let compressed_image = await compressImage(result, 0.1);
+    console.log(compressed_image);
+    let dataURL = URL.createObjectURL(compressed_image);
+    output.src = dataURL;
   }
 
-  function freezeBtn() {
-    // document.getElementById('submitBtn').disabled = true;
+  async function freezeBtn() {
+    document.getElementById('submitBtn').disabled = true;
     
     var form = document.getElementsByTagName("form")[0];
     var avatar_input = document.getElementById('avatar_input');
 
     if (avatar_input.files.length != 0) {
-      var filename = 'compressed_' + avatar_input.files[0].name;
-      var type = 'image/' + filename.split('.')[1];
-      let reader = new FileReader();
-      reader.readAsDataURL(avatar_input.files[0]);
-      reader.onload = function () {
-        file = compressImage(reader.result, type, 0.7, 200, 200, filename, function(compressed_image) {
-          var formData = new FormData(form);
-          formData.delete("avatar");
-          formData.append("avatar", compressed_image, filename);
-          $.ajax({
-            async: true,
-            url: '/profile/user',
-            method: 'POST',
-            beforeSend: (req) => {
-              $.blockUI({            
-                message: '<h1 style="margin-top: 0.5rem; margin-bottom: 0.5rem;">Saving...</h1>',
-                css: {
-                  padding: 0,
-                  margin: 0,
-                  width: "20%",
-                  top: "40%",
-                  left: "40%",
-                  textAlign: 'center',
-                  color: 'rgb(0, 0, 0)',
-                  border: 'none',
-                  backgroundColor: 'rgb(255, 255, 255)',
-                  cursor: 'wait'
-                }
-              });
-            },
-            contentType: false,
-            processData: false,
-            data: formData,
-            success: (data) => {
-              $.unblockUI();
-              window.location.reload();
+      const filename = 'compressed_' + avatar_input.files[0].name;
+
+      var result = await readAsDataURLawait(avatar_input.files[0]);
+      let compressed_image = await compressImage(result, 0.1); 
+      var file = new File([compressed_image], filename, {
+        type: 'image/jpeg',
+        lastModified: Date.now()
+      });   
+
+      var formData = new FormData(form);
+      formData.delete("avatar");
+      formData.append("avatar", file, filename);
+
+      console.log(file);
+
+      $.ajax({
+        async: true,
+        url: '/profile/user',
+        method: 'POST',
+        beforeSend: (req) => {
+          $.blockUI({            
+            message: '<h1 style="margin-top: 0.5rem; margin-bottom: 0.5rem;">Saving...</h1>',
+            css: {
+              padding: 0,
+              margin: 0,
+              width: "20%",
+              top: "40%",
+              left: "40%",
+              textAlign: 'center',
+              color: 'rgb(0, 0, 0)',
+              border: 'none',
+              backgroundColor: 'rgb(255, 255, 255)',
+              cursor: 'wait'
             }
           });
-        });
-      }
+        },
+        contentType: false,
+        processData: false,
+        data: formData,
+        success: (data) => {
+          $.unblockUI();
+          window.location.reload();
+        }
+      });
+
     } else {
       document.getElementById('submitBtn').disabled = true;
       form.submit();

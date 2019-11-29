@@ -150,7 +150,7 @@ app.get('/', async (req, res) => {
 
     //find appropriate account, set the right criterial list and connected list
     if (account_type == 0) {
-      var user = users.filter(user => user._id == account_id)[0];
+      var user = users.filter(user => JSON.stringify(user._id) == JSON.stringify(account_id))[0];
       currentAcc = user;
       connected = users.filter(client => user.connected.indexOf(client.username) >= 0);
       criteriaList = user.interests.concat(user.skills);

@@ -73,7 +73,11 @@
                           <li style="margin-bottom: 3px; font-size: small"><i class="ft-globe"></i> <%= org.website %>
                           </li>
                           <% } %>
-                          <li style="font-size: small"><i class="ft-info"></i> <strong>About:</strong> <%= org.desc %>
+                          <li style="font-size: small"><i class="ft-info"></i> <strong>About:</strong> 
+                            <% var desc = org.desc.split('<br>'); %>
+                            <% desc.forEach(para => { %>
+                                <p> <%= para %></p>
+                            <% }); %>
                           </li>
                         </ul>
                       </td>
@@ -426,6 +430,7 @@
     $('.hashes').hide();
   });
 
+  //TODO: Group add, show, remove functions into just 1
   function showUserHashtags(user_id) {
     let button_id = '#' + user_id + '3';
     $(button_id).toggle();
@@ -785,5 +790,6 @@
       toastr.warning("Your search field can't be empty!", 'Error!', { positionClass: 'toast-top-center', containerId: 'toast-top-center' });
     }
   }
+
 </script>
 <!-- END -->

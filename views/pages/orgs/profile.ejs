@@ -85,7 +85,11 @@
                                         <% } %>
                                     </b>
                                 </p>
-                                <p><label>Our story:</label><b> <%= org.desc %></b></p>
+                                <% var desc = org.desc.split('<br>'); %>
+                                <label>Our story:</label>
+                                <% desc.forEach(part => { %>
+                                    <p><b> <%= part %></b></p>
+                                <% }); %>
                             </div>
                         </div>
                     </div>

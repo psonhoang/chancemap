@@ -16,7 +16,11 @@
                     <div class="card-body collapse in">
                         <div class="card-block">
                             <p><label>Organisation name:</label> <strong><%= event.org_name %></strong></p>
-                            <p><label>Description:</label><strong><%= event.desc %></strong></p>
+                            <% var desc = event.desc.split("<br>"); %>
+                            <label>Description:</label>
+                            <% desc.forEach(part => { %>
+                               <p><strong><%= part %></strong></p>
+                            <% }); %>
                             <p><label>Hashtags:</label>
                                 <% event.hashtags.forEach(hashtag => { %>
                                 <% var isMatch = false; %>

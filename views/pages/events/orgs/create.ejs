@@ -168,7 +168,9 @@
 							<div class="form-group col-xs-12 mb-2">
 								<label for="timesheetinput7">Description</label>
 								<div class="position-relative has-icon-left">
-									<input type="text" id="timesheetinput7" rows="5" class="form-control" name="desc" placeholder="Description">
+									<textarea row="8" cols "15" class="form-control"
+											placeholder="Description" id="timesheetinput7"
+											name="desc"></textarea>
 									<div class="form-control-position">
 										<i class="ft-file"></i>
 									</div>
@@ -179,15 +181,15 @@
 						<input type="hidden" name="status" value="create">
 					</div>
 					<!-- buttons -->
-					<div class="form-actions right">
-						<button onclick="location.href='/events/manage'" type="button" class="btn btn-warning mr-1">
-	                            	<i class="ft-x"></i> Cancel
-	                    </button>
-						<button type="submit" class="btn btn-primary">
-							<i class="fa fa-check-square-o"></i> Save
-						</button>
-					</div>
 				</form>
+				<div class="text-xs-right">
+					<button onclick="location.href='/events/manage'" type="button" class="btn btn-warning mr-1">
+								<i class="ft-x"></i> Cancel
+					</button>
+					<button id="submit" class="btn btn-primary" onclick="freezeButton();">
+						<i class="fa fa-check-square-o"></i> Save
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -198,6 +200,25 @@
 <script>
 $(document).ready(function() {
     $('#hashtags-input').tagging('removeAll');
-  });
+});
+
+function freezeButton() {
+	$('#submit').disabled = true;
+
+	//turn new lines into <br>
+	$('#timesheetinput7').val(JSON.parse(newLinesToBr(JSON.stringify($('#timesheetinput7').val()))));
+    $('form').submit();
+}
+
+function newLinesToBr(text) {
+	return text.replace(/<br>/g, "\\n");
+}
+
+function brToNewLines(text) {
+	return text.replace(/\\n/g, "<br>");
+}
+
+
+
 </script>
 <!-- END -->

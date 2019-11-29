@@ -39,7 +39,7 @@
                         </div>
                         <div class="col-lg-9 col-md-9">
                             <div class="card">
-                                <div style="color: white" class="card-header bg-darken bg-teal">
+                                <div style="color: white" class="card-header bg-darken-1 bg-teal">
                                     <!-- Card Header -->
                                     <h4 class="card-title">OVERVIEW</h4>
                                 </div>
@@ -112,7 +112,7 @@
                                             <label class="label-control" for="desc">Short Intro</label>
                                             <div>
                                                 <textarea row="8" cols "15" class="form-control"
-                                                    value="<%= currentAcc.desc %>" id="user-name"
+                                                    value="<%= currentAcc.desc %>" id="desc-content"
                                                     name="desc"><%= currentAcc.desc %></textarea>
                                                 <div class="form-control-position">
                                                     <i class="ft-info" style="position: relative; top: 25px"></i>
@@ -634,7 +634,7 @@
         reader.readAsDataURL(event.target.files[0]);
 
         reader.onload = async function () {
-            let compressed_image = await compressImage(reader.result, 0.1);
+            let compressed_image = await compressImage(reader.result, 0.5);
             console.log("Image compressed");
             var url = URL.createObjectURL(compressed_image);
             output.src = url;
@@ -652,18 +652,13 @@
     }
 
     async function freezeBtn() {
-        // $('#submitBtn').disabled = true;
+        $('#submitBtn').disabled = true;
 
         //turn new lines into <br>
-        var text = JSON.stringify($('#what-we-do-content').val());
-        text = text.replace(/\\n/g, "<br>");
-        $('#what-we-do-content').val(JSON.parse(text));
-        text = JSON.stringify($('#our-team-content').val());
-        text = text.replace(/\\n/g, "<br>");
-        $('#our-team-content').val(JSON.parse(text));
-        text = JSON.stringify($('#past-work-content').val());
-        text = text.replace(/\\n/g, "<br>");
-        $('#past-work-content').val(JSON.parse(text));
+        $('#desc-content').val(JSON.parse(newLinesToBr(JSON.stringify($('#desc-content').val()))));
+        $('#what-we-do-content').val(JSON.parse(newLinesToBr(JSON.stringify($('#what-we-do-content').val()))));
+        $('#our-team-content').val(JSON.parse(newLinesToBr(JSON.stringify($('#our-team-content').val()))));
+        $('#past-work-content').val(JSON.parse(newLinesToBr(JSON.stringify($('#past-work-content').val()))));
         //end
 
         var form = document.getElementsByTagName("form")[0];
@@ -678,7 +673,7 @@
                 var filename = 'compressed_' + picture.name;
 
                 var dataURL = await readAsDataURLawait(picture);
-                let compressed_image = await compressImage(dataURL, 0.1);
+                let compressed_image = await compressImage(dataURL, 0.5);
                 formData.delete(pair[0]);
                 var file = new File([compressed_image], filename, {
                     type: 'image/jpeg',
@@ -721,6 +716,14 @@
           });
     }
 
+    function brToNewLines(text) {
+        return text.replace(/<br>/g, "\\n");
+    }
+
+    function newLinesToBr(text) {
+        return text.replace(/\\n/g, "<br>");
+    }
+
     $(document).ready(function () {
         let hashtags = <%- JSON.stringify(currentAcc.hashtags) %>;
         console.log("hashtags: " + hashtags);
@@ -730,15 +733,10 @@
         });
 
         // Turn text-data new lines (\\n) into html-formatted string for storage
-        var text = JSON.stringify($('#what-we-do-content').val());
-        text = text.replace(/<br>/g, "\\n");
-        $('#what-we-do-content').val(JSON.parse(text));
-        text = JSON.stringify($('#our-team-content').val());
-        text = text.replace(/<br>/g, "\\n");
-        $('#our-team-content').val(JSON.parse(text));
-        text = JSON.stringify($('#past-work-content').val());
-        text = text.replace(/<br>/g, "\\n");
-        $('#past-work-content').val(JSON.parse(text));
+        $('#desc-content').val(JSON.parse(brToNewLines(JSON.stringify($('#desc-content').val()))));
+        $('#what-we-do-content').val(JSON.parse(brToNewLines(JSON.stringify($('#what-we-do-content').val()))));
+        $('#our-team-content').val(JSON.parse(brToNewLines(JSON.stringify($('#our-team-content').val()))));
+        $('#past-work-content').val(JSON.parse(brToNewLines(JSON.stringify($('#past-work-content').val()))));
     });
 
     $(document).ready(function () {

@@ -363,7 +363,7 @@ router.get('/edit/:id', async (req, res) => {
     }
 });
 
-router.post('/edit/:id', upload.single(), (req, res) => {
+router.post('/edit/:id', upload.none(), (req, res) => {
     let data = req.body;
     let event_id = req.params.id;
 

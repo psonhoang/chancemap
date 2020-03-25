@@ -286,31 +286,6 @@
       setTimeout(() => {
         $.unblockUI();
       }, 1500);
-
-      setTimeout(() => {
-        // if (parseInt(getCookie("visitCount"), 10) >= 6 && getCookie("hasShownPopup") == 'false' ) {
-        //   alert("YOU SHALL NOT PASS!!");
-        //   $('#feedback').modal();
-        //   setCookie("hasShownPopup", "true", 21);
-        // }
-      }, 10000);
-
-      console.log("cookie is enabled? : " + navigator.cookieEnabled)
-      if (navigator.cookieEnabled) {
-        console.log(document.cookie);
-        if (getCookie("visitCount") == "") {
-          setCookie("visitCount", 1, 7);
-        } else {
-          let x = parseInt(getCookie("visitCount"), 10);
-          setCookie("visitCount", x + 1, 7);
-        }
-        if (getCookie("hasShownPopup") == "") {
-          setCookie("hasShownPopup", "false", 7);
-        } 
-      }
-
-      // clearCookies(["visitCount", "hasShownPopup"]);
-
     });
 
     $.app.nav.init({speed: 300}); //initialize javascript handling menu-content before page finishes loading

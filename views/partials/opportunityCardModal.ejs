@@ -15,7 +15,11 @@
                     <div class="card-body collapse in">
                         <div class="card-block">
                             <p><label>Organisation name:</label>  <strong><%= opportunity.org_name %></strong></p>
-                            <p><label>Description:</label><strong><%= opportunity.desc %></strong></p>
+                            <label>Description:</label> 
+                            <% var desc = opportunity.desc.split("<br>"); %>
+                            <% desc.forEach(para => { %>
+                                <p><strong><%= para %></strong></p>
+                            <% }); %>
                             <p><label>Hashtags:</label>
                             <% opportunity.hashtags.forEach(hashtag => { %>
                                 <% var isMatch = false; %>

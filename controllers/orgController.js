@@ -105,7 +105,7 @@ router.get('/:username', async (req, res) => {
 
 	var orgToView = orgs.filter(org => JSON.stringify(org.username) == JSON.stringify(orgUsername))[0];
 	if (!orgToView) {
-		redirect('/');
+		res.redirect('/');
 		return;
 	}
 	var similarOrgs = sortByHashtags(orgs, ['hashtags'], orgToView.hashtags).splice(1,5); //Find 4 most similar orgs to the org to viewed

@@ -90,7 +90,6 @@
 			                            </div>
 			                        </div>
 								<!-- event end -->
-								<div class="row">
 									<div class="form-group col-md-6 mb-2">
 			                        	<label for="timesheetinput3">End Date</label>
 			                            <div class="position-relative has-icon-left">
@@ -130,7 +129,7 @@
 									<div class="form-group col-xs-12 mb-2">
 										<label for="timesheetinput7">Description</label>
 										<div class="position-relative has-icon-left">
-			                            	<input type="text" value="<%= opportunity.desc %>" id="timesheetinput7" rows="5" class="form-control" name="desc" placeholder="Description">
+												<textarea row="15" cols="15" id="desc-content" class="form-control" name="desc" placeholder="Description"><%= opportunity.desc %></textarea>
 				                            <div class="form-control-position">
 				                                <i class="ft-file"></i>
 				                            </div>
@@ -138,16 +137,16 @@
 									</div>
 								</div>
 							</div>
-							<!-- buttons -->
-	                        <div class="form-actions right">
-	                        	<button onclick="location.href='/opportunities/manage'" type="button" class="btn btn-warning mr-1">
-	                            	<i class="ft-x"></i> Cancel
-	                    		</button>
-	                            <button type="submit" class="btn btn-primary">
-	                                <i class="fa fa-check-square-o"></i> Save
-	                            </button>
-	                        </div>
-	                    </form>
+						</form>
+						<!-- buttons -->
+						<div class="text-xs-right">
+							<button onclick="location.href='/opportunities/manage'" type="button" class="btn btn-warning mr-1">
+								<i class="ft-x"></i> Cancel
+							</button>
+							<button id="submit" onclick="freezeButton()" class="btn btn-primary">
+								<i class="fa fa-check-square-o"></i> Save
+							</button>
+						</div>
 	                </div>
 	            </div>
 	        </div>
@@ -164,13 +163,14 @@ $(document).ready(function() {
       $('#hashtags-input').tagging('add', hashtag);
     });
 
-		let app_deadline = formatDate(new Date(<%- JSON.stringify(opportunity.app_deadline) %>));
-		let start_date = formatDate(new Date(<%- JSON.stringify(opportunity.start_date) %>));
-		let end_date = formatDate(new Date(<%- JSON.stringify(opportunity.end_date) %>));
-		document.getElementById('appDeadline').defaultValue = app_deadline;
-		document.getElementById('startDate').defaultValue = start_date;
-		document.getElementById('endDate').defaultValue = end_date;
+	$('#desc-content').val(JSON.parse(brToNewLines(JSON.stringify($('#desc-content').val()))));
 
+	let app_deadline = formatDate(new Date(<%- JSON.stringify(opportunity.app_deadline) %>));
+	let start_date = formatDate(new Date(<%- JSON.stringify(opportunity.start_date) %>));
+	let end_date = formatDate(new Date(<%- JSON.stringify(opportunity.end_date) %>));
+	document.getElementById('appDeadline').defaultValue = app_deadline;
+	document.getElementById('startDate').defaultValue = start_date;
+	document.getElementById('endDate').defaultValue = end_date;
 });
 
 function formatDate(d) {
@@ -183,5 +183,22 @@ function formatDate(d) {
 
     return [year, month, day].join('-');
 }
+
+function freezeButton() {
+	$('#submit').disabled = true;
+
+	//turn new lines into <br>
+	$('#desc-content').val(JSON.parse(newLinesToBr(JSON.stringify($('#desc-content').val()))));
+    $('form').submit();
+}
+
+function brToNewLines(text) {
+	return text.replace(/<br>/g, "\\n");
+}
+
+function newLinesToBr(text) {
+	return text.replace(/\\n/g, "<br>");
+}
+
 </script>
 <!-- END -->

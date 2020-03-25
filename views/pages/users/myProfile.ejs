@@ -542,16 +542,16 @@
   }
 
   //given a dataURL of an image, compress it and return a blob
-  function compressImage (image, quality) {
+  function compressImage (image, quality, height) {
       return compressed_image = new Promise((resolve, reject) => {
           let img = new Image();
           img.src = image;
           img.onload = function () {
               const elem = document.createElement('canvas');
-              elem.width = img.width;
-              elem.height = img.height;
+              elem.width = (img.width / img.height) * height;
+              elem.height = height;
               const ctx = elem.getContext('2d');
-              ctx.drawImage(img, 0, 0, img.width, img.height);
+              ctx.drawImage(img, 0, 0, elem.width, elem.height);
               ctx.canvas.toBlob((blob) => {
                   resolve(blob);
               }, 'image/jpeg', quality);
@@ -573,7 +573,7 @@
     var output = document.getElementById('ava_preview');
 
     let result = await readAsDataURLawait(event.target.files[0]);
-    let compressed_image = await compressImage(result, 0.1);
+    let compressed_image = await compressImage(result, 0.9, 200);
     console.log(compressed_image);
     let dataURL = URL.createObjectURL(compressed_image);
     output.src = dataURL;
@@ -589,7 +589,7 @@
       const filename = 'compressed_' + avatar_input.files[0].name;
 
       var result = await readAsDataURLawait(avatar_input.files[0]);
-      let compressed_image = await compressImage(result, 0.1); 
+      let compressed_image = await compressImage(result, 0.9, 200); 
       var file = new File([compressed_image], filename, {
         type: 'image/jpeg',
         lastModified: Date.now()

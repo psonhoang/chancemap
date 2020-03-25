@@ -5,10 +5,6 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
-  <meta property="og:title" content="ChanceMap: find your chances, discover what you love to do">
-  <meta property="og:description" content="Information on student-run ECs and opportunities - all gathered in one place">
-  <meta property="og:image" content="http://www.chancemap.com/images/about_bg.png">
-  <meta property="og:url" content="http://www.chancemap.com">
   <title>
     <%= title %>
   </title>
@@ -124,6 +120,7 @@
   <!-- Jquery -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <!-- END -->
+  <% if (currentAcc.username != 'chancemap_admin') { %>
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149591829-1"></script>
   <script>
@@ -133,6 +130,7 @@
 
     gtag('config', 'UA-149591829-1');
   </script>
+  <% } %>
 </head>
 
 <body data-open="click" data-menu="vertical-menu" data-col="2-columns"
@@ -150,6 +148,9 @@
       </div>
       <div class="navbar-container content container-fluid">
         <div id="navbar-mobile" class="collapse navbar-toggleable-sm">
+          <ul class="nav navbar-nav mr-auto float-left">
+            <li class="nav-item d-xs-none d-md-block"><a class="nav-link nav-menu-main menu-toggle hidden-xs is-active" href=""><i class="ft-menu"></i></a></li>
+          </ul>
           <ul style="margin-right: 50px" class="nav navbar-nav float-xs-right">
 
             <% if(currentAcc.username !== 'chancemap_admin') { %>
@@ -243,7 +244,8 @@
     <% } else { %>
     <%- include('nav_menu_admin'); %>
     <% } %>
-    <%- content %>
+    <%- include('feedbackCardModal', {id: 'feedback'}); %>
+    <%- content %>  
 
   <!-- DEFAULT SCRIPTS -->
   <!-- BEGIN VENDOR JS-->
@@ -284,9 +286,85 @@
       setTimeout(() => {
         $.unblockUI();
       }, 1500);
+
+      setTimeout(() => {
+        // if (parseInt(getCookie("visitCount"), 10) >= 6 && getCookie("hasShownPopup") == 'false' ) {
+        //   alert("YOU SHALL NOT PASS!!");
+        //   $('#feedback').modal();
+        //   setCookie("hasShownPopup", "true", 21);
+        // }
+      }, 10000);
+
+      console.log("cookie is enabled? : " + navigator.cookieEnabled)
+      if (navigator.cookieEnabled) {
+        console.log(document.cookie);
+        if (getCookie("visitCount") == "") {
+          setCookie("visitCount", 1, 7);
+        } else {
+          let x = parseInt(getCookie("visitCount"), 10);
+          setCookie("visitCount", x + 1, 7);
+        }
+        if (getCookie("hasShownPopup") == "") {
+          setCookie("hasShownPopup", "false", 7);
+        } 
+      }
+
+      // clearCookies(["visitCount", "hasShownPopup"]);
+
     });
 
     $.app.nav.init({speed: 300}); //initialize javascript handling menu-content before page finishes loading
+    
+    //cookies code (From w3school.com)
+    function setCookie(cname, cvalue, exdays) {
+      var expires;
+      if (exdays != null) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        expires = "expires="+d.toUTCString();
+      } else {
+        expires = null;
+      }
+      document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    function getCookie(cname) {
+      var name = cname + "=";
+      var ca = document.cookie.split(';');
+      for(var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
+      }
+      return "";
+    }
+
+    function clearCookies(list) {
+      list.forEach(cookie => {
+        document.cookie = cookie + '=1 ; expires=Thu, 18 Dec 1970 12:00:00 UTC; path=/'
+      });
+      console.log(document.cookie);
+    }
+    //end cookies code
+
+    //popup code
+    function showFeedback() {
+      let popup = document.getElementById('embedded_feedback');
+      let prompt = document.getElementById('prompt');
+      console.log(prompt);
+      prompt.style['display'] = 'none';
+      popup.style['display'] = 'block';
+    }
+
+    function close() {
+      $('#feedback').modal();
+    }
+
+    //end popup code
 
   </script>
 

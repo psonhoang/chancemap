@@ -13,7 +13,11 @@
         <div class="card-body collapse in">
             <div class="card-block">
                 <p><label>Organisation name:</label>  <strong><%= cardElement1 %></strong></p>
-                <p><label>Description:</label> <strong> <%= cardElement2 %></strong></p>
+                <label>Description:</label> <strong> 
+                <% var desc = cardElement2.split("<br>"); %>
+                <% desc.forEach(para => { %>
+                    <p><strong><%= para %></strong></p>
+                <% }); %>
                 <label>Hashtags:</label>
                 <% hashtags.forEach(function(tag) { %>
                     <p style="font-size: 13px" class="tag tag-pill tag-warning"><%= tag; %></p>

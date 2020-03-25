@@ -1,170 +1,173 @@
 <% extend('../../defaultLayouts/defaultLayout'); %>
-	    <div class="col-md-7 offset-md-3 col-xs-10 offset-xs-1 box-shadow-2 p-0">
-	        <div class="card">
-	            <div style="color: white" class="card-header bg-red bg-accent-2">
-	                <h4 class="card-title" id="from-actions-top-bottom-right">Opportunity Creator</h4>
-	                <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
-	                <div class="heading-elements">
-	                    <ul class="list-inline mb-0">
-	                        <li><a data-action="collapse"><i class="ft-minus" style="color: white"></i></a></li>
-	                        <li><a data-action="reload"><i class="ft-rotate-cw" style="color: white"></i></a></li>
-	                        <li><a data-action="expand"><i class="ft-maximize" style="color: white"></i></a></li>
-	                        <li><a href="/opportunities/manage" data-action="close"><i class="ft-x" style="color: white"></i></a></li>
-	                    </ul>
-	                </div>
-	            </div>
-	            <div class="card-body collapse in">
-	                <div class="card-block">
-	                    <form class="form" method="POST" action="/opportunities/create">
-	                    	<div class="form-body">
-								<!-- opportunity name -->
-	                    		<div class="row">
-	                    			<div class="form-group col-xs-12 mb-2">
-			                            <label for="timesheetinput1">Opportunity Name</label>
-			                            <div class="position-relative has-icon-left">
-			                            	<input type="text" id="timesheetinput1" class="form-control" name="name">
-				                            <div class="form-control-position">
-				                                <i class="ft-user"></i>
-				                            </div>
-			                            </div>
-			                        </div>
-	                    		</div>
-                                <!-- org name -->
-								<div class="row">
-	                    			<div class="form-group col-xs-12 mb-2">
-			                            <label for="timesheetinput1">Organisation Name</label>
-			                            <div class="position-relative has-icon-left">
-																		<input type="text" id="timesheetinput1" class="form-control" name="org_name">
-																		<div class="form-control-position">
-				                                <i class="ft-user"></i>
-				                            </div>
-			                            </div>
-			                        </div>
-	                    		</div>
-								<!-- hashtags -->
-                                <div class="row">
-	                    			<div class="form-group col-xs-12 mb-2">
-			                            <label for="timesheetinput1">Hashtags</label>
-										<label class="col-md-0 label-control" for="hashtags"></label>
-										<div id="hashtags-input" class="edit-on-delete form-control tagging" data-tags-input-name="hashtags">
-											<input id="hashtags-input" class="type-zone form-control" name="hashtags" contenteditable="true" required>
+	<div class="col-md-7 offset-md-3 col-xs-10 offset-xs-1 box-shadow-2 p-0">
+		<div class="card">
+			<div style="color: white" class="card-header bg-red bg-accent-2">
+				<h4 class="card-title" id="from-actions-top-bottom-right">Opportunity Creator</h4>
+				<a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
+				<div class="heading-elements">
+					<ul class="list-inline mb-0">
+						<li><a data-action="collapse"><i class="ft-minus" style="color: white"></i></a></li>
+						<li><a data-action="reload"><i class="ft-rotate-cw" style="color: white"></i></a></li>
+						<li><a data-action="expand"><i class="ft-maximize" style="color: white"></i></a></li>
+						<li><a href="/opportunities/manage" data-action="close"><i class="ft-x" style="color: white"></i></a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="card-body collapse in">
+				<div class="card-block">
+					<form class="form" method="POST" action="/opportunities/create">
+						<div class="form-body">
+							<!-- opportunity name -->
+							<div class="row">
+								<div class="form-group col-xs-12 mb-2">
+									<label for="timesheetinput1">Opportunity Name</label>
+									<div class="position-relative has-icon-left">
+										<input type="text" id="timesheetinput1" class="form-control" name="name">
+										<div class="form-control-position">
+											<i class="ft-user"></i>
 										</div>
-			                        </div>
-	                    		</div>
-								<!-- Desc -->
-                                <div class="row">
-	                    			<div class="form-group col-xs-12 mb-2">
-			                            <label for="timesheetinput1">Description</label>
-			                            <div class="position-relative has-icon-left">
-			                            	<input type="text" id="timesheetinput1" class="form-control" name="desc">
-				                            <div class="form-control-position">
-				                                <i class="ft-user"></i>
-				                            </div>
-			                            </div>
-			                        </div>
-	                    		</div>
-								<!-- app form -->
-                                <div class="row">
-	                    			<div class="form-group col-xs-12 mb-2">
-			                            <label for="timesheetinput1">Application Form</label>
-			                            <div class="position-relative has-icon-left">
-			                            	<input type="text" id="timesheetinput1" class="form-control" name="app_form">
-				                            <div class="form-control-position">
-				                                <i class="ft-user"></i>
-				                            </div>
-			                            </div>
-			                        </div>
-	                    		</div>
-                                <!-- app deadline -->
-																<div class="row">
-			                       <div class="form-group col-xs-12 mb-2">
-			                        	<label for="timesheetinput3">Application Deadline</label>
-			                            <div class="position-relative has-icon-left">
-			                            	<input type="date" id="timesheetinput3" class="form-control" name="app_deadline" value="2018-11-11">
-				                            <div class="form-control-position">
-				                                <i class="ft-message-square"></i>
-				                            </div>
-			                            </div>
-			                       </div>
-			                   </div>
-													<!-- opportunity start -->
-																	<div class="row">
-														<div class="form-group col-md-6 mb-2">
-																<label for="timesheetinput3">Start Date</label>
-																	<div class="position-relative has-icon-left">
-																		<input required="true" type="date" id="timesheetinput3" class="form-control" name="start_date">
-																		<div class="form-control-position">
-																				<i class="ft-message-square"></i>
-																		</div>
-																	</div>
-														</div>
-												</div>
-													<!-- opportunity end -->
-																	<div class="row">
-														<div class="form-group col-md-6 mb-2">
-																<label for="timesheetinput3">End Date</label>
-																<div class="position-relative has-icon-left">
-																	<input required="true" type="date" id="timesheetinput3" class="form-control" name="end_date">
-																	<div class="form-control-position">
-																		<i class="ft-message-square"></i>
-																	</div>
-																</div>
-														</div>
-												</div>
-								<!-- facebook -->
-                                <div class="row">
-	                    			<div class="form-group col-xs-12 mb-2">
-			                            <label for="timesheetinput1">Facebook</label>
-			                            <div class="position-relative has-icon-left">
-			                            	<input type="text" id="timesheetinput1" class="form-control" name="facebook">
-				                            <div class="form-control-position">
-				                                <i class="ft-user"></i>
-				                            </div>
-			                            </div>
-			                        </div>
-	                    		</div>
-								<!-- website -->
-                                <div class="row">
-	                    			<div class="form-group col-xs-12 mb-2">
-			                            <label for="timesheetinput1">Website</label>
-			                            <div class="position-relative has-icon-left">
-			                            	<input type="text" id="timesheetinput1" class="form-control" name="website">
-				                            <div class="form-control-position">
-				                                <i class="ft-user"></i>
-				                            </div>
-			                            </div>
-			                        </div>
-	                    		</div>
-                            <!-- select image -->
-                            <!-- <div class="row">
-									<div class="form-group col-xs-12 mb-2">
-										<label>Select File</label>
-										<label id="projectinput8" class="file center-block">
-											<input type="file" id="file">
-											<span class="file-custom"></span>
-										</label>
 									</div>
-							</div> -->
-							<!-- buttons -->
-	                        <div class="form-actions right">
-	                            <button onclick="location.href='/opportunities/manage'" type="button" class="btn btn-warning mr-1">
-	                            	<i class="ft-x"></i> Cancel
-	                            </button>
-	                            <button type="submit" class="btn btn-primary">
-	                                <i class="fa fa-check-square-o"></i> Save
-	                            </button>
-	                        </div>
-	                    </form>
-	                </div>
-	            </div>
-	        </div>
-	    </div>
+								</div>
+							</div>
+							<!-- org name -->
+							<div class="row">
+								<div class="form-group col-xs-12 mb-2">
+									<label for="timesheetinput1">Organisation Name</label>
+									<div class="position-relative has-icon-left">
+																	<input type="text" id="timesheetinput1" class="form-control" name="org_name">
+																	<div class="form-control-position">
+											<i class="ft-user"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- hashtags -->
+							<div class="row">
+								<div class="form-group col-xs-12 mb-2">
+									<label for="timesheetinput1">Hashtags</label>
+									<label class="col-md-0 label-control" for="hashtags"></label>
+									<div id="hashtags-input" class="edit-on-delete form-control tagging" data-tags-input-name="hashtags">
+										<input id="hashtags-input" class="type-zone form-control" name="hashtags" contenteditable="true" required>
+									</div>
+								</div>
+							</div>
+							<!-- Desc -->
+							<div class="row">
+								<div class="form-group col-xs-12 mb-2">
+									<label for="timesheetinput1">Description</label>
+									<div class="position-relative has-icon-left">
+										<textarea row="8" cols "15" id="desc-content" class="form-control" name="desc"></textarea>
+										<div class="form-control-position">
+											<i class="ft-user"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- app form -->
+							<div class="row">
+								<div class="form-group col-xs-12 mb-2">
+									<label for="timesheetinput1">Application Form</label>
+									<div class="position-relative has-icon-left">
+										<input type="text" id="timesheetinput1" class="form-control" name="app_form">
+										<div class="form-control-position">
+											<i class="ft-user"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- app deadline -->
+							<div class="row">
+								<div class="form-group col-xs-12 mb-2">
+									<label for="timesheetinput3">Application Deadline</label>
+									<div class="position-relative has-icon-left">
+										<input type="date" id="timesheetinput3" class="form-control" name="app_deadline" value="2018-11-11">
+										<div class="form-control-position">
+											<i class="ft-message-square"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- opportunity start -->
+							<div class="row">
+								<div class="form-group col-md-6 mb-2">
+									<label for="timesheetinput3">Start Date</label>
+									<div class="position-relative has-icon-left">
+									<input required="true" type="date" id="timesheetinput3" class="form-control" name="start_date">
+										<div class="form-control-position">
+											<i class="ft-message-square"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+								<!-- opportunity end -->
+								<div class="row">
+									<div class="form-group col-md-6 mb-2">
+									<label for="timesheetinput3">End Date</label>
+									<div class="position-relative has-icon-left">
+										<input required="true" type="date" id="timesheetinput3" class="form-control" name="end_date">
+										<div class="form-control-position">
+											<i class="ft-message-square"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- facebook -->
+							<div class="row">
+								<div class="form-group col-xs-12 mb-2">
+									<label for="timesheetinput1">Facebook</label>
+									<div class="position-relative has-icon-left">
+										<input type="text" id="timesheetinput1" class="form-control" name="facebook">
+										<div class="form-control-position">
+											<i class="ft-user"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- website -->
+							<div class="row">
+								<div class="form-group col-xs-12 mb-2">
+									<label for="timesheetinput1">Website</label>
+									<div class="position-relative has-icon-left">
+										<input type="text" id="timesheetinput1" class="form-control" name="website">
+										<div class="form-control-position">
+											<i class="ft-user"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+					<!-- buttons -->
+					<div class="text-xs-right">
+						<button onclick="location.href='/opportunities/manage'" type="button" class="btn btn-warning mr-1">
+							<i class="ft-x"></i> Cancel
+						</button>
+						<button onclick="freezeButton()" id="submitBtn" class="btn btn-primary">
+							<i class="fa fa-check-square-o"></i> Save
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
+</div>
 
 <!-- BEGIN CODEDAO'S SCRIPT -->
 <script>
 $(document).ready(function() {
 	$('#hashtags-input').tagging('removeAll');
 });
+
+function newLinesToBr(text) {
+	return text.replace(/\\n/g, "<br>");
+}
+
+function freezeButton() {
+	$('#submitBtn').disabled = true;
+	$('#desc-content').val(JSON.parse(newLinesToBr(JSON.stringify($('#desc-content').val()))));
+
+	$('form').submit();
+}
+
 </script>
 <!-- END -->

@@ -610,16 +610,16 @@
         });
     }
 
-    function compressImage (image, quality) {
+    function compressImage (image, quality, height) {
         return compressed_image = new Promise((resolve, reject) => {
             let img = new Image();
             img.src = image;
             img.onload = function () {
                 const elem = document.createElement('canvas');
-                elem.width = img.width;
-                elem.height = img.height;
+                elem.width = (img.width / img.height) * height;
+                elem.height = height;
                 const ctx = elem.getContext('2d');
-                ctx.drawImage(img, 0, 0, img.width, img.height);
+                ctx.drawImage(img, 0, 0, elem.width, elem.height);
                 ctx.canvas.toBlob((blob) => {
                     resolve(blob);
                 }, 'image/jpeg', quality);
@@ -634,7 +634,7 @@
         reader.readAsDataURL(event.target.files[0]);
 
         reader.onload = async function () {
-            let compressed_image = await compressImage(reader.result, 0.5);
+            let compressed_image = await compressImage(reader.result, 0.5, 360);
             console.log("Image compressed");
             var url = URL.createObjectURL(compressed_image);
             output.src = url;
@@ -673,7 +673,7 @@
                 var filename = 'compressed_' + picture.name;
 
                 var dataURL = await readAsDataURLawait(picture);
-                let compressed_image = await compressImage(dataURL, 0.5);
+                let compressed_image = await compressImage(dataURL, 0.5, 360);
                 formData.delete(pair[0]);
                 var file = new File([compressed_image], filename, {
                     type: 'image/jpeg',

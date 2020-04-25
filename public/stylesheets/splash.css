@@ -1,4 +1,4 @@
-html, body {
+body {
     width: 100%;
     height: 100%;
     background-color: #ffffff;
@@ -6,391 +6,64 @@ html, body {
     color: white;
 }
 
-.carousel-indicators li {
-    display: block; 
-    margin-bottom: 5px;
-    border: 1px solid #fff; 
-}
-.carousel-indicators li.active {
-    margin-bottom: 5px; background:#fff;
-} 
-
-.carousel-inner,.carousel,.item,.container,.fill {
-    height:100%;
-    width:100%;
-    background-position: center center;
+.welcome {
+    background-image: url("/images/splash_index_bg.jpg");
+    background-repeat: no-repeat;
     background-size: cover;
-}
-      
-.slide-wrapper {
-    display: inline;
-}
-        
-.slide-wrapper .container {
-    padding: 0px;
-}
-
-      /*------------------------------ vertical bootstrap slider----------------------------*/
-
-.carousel-inner> .item.next ,  .carousel-inner > .item.active.right {
-    transform: translate3d(0, 100%, 0); 
-    -webkit-transform: translate3d(0, 100%, 0); 
-    -ms-transform: translate3d(0, 100%, 0); 
-    -moz-transform: translate3d(0, 100%, 0); 
-    -o-transform: translate3d(0, 100%, 0);  
-    top: 0;
-}
-      
-.carousel-inner > .item.prev ,.carousel-inner > .item.active.left {
-    transform: translate3d(0,-100%, 0); 
-    -webkit-transform: translate3d(0,-100%, 0);  
-    -moz-transform: translate3d(0,-100%, 0);
-    -ms-transform: translate3d(0,-100%, 0); 
-    -o-transform: translate3d(0,-100%, 0); 
-    top: 0;
-}
-      
-.carousel-inner > .item.next.left , .carousel-inner > .item.prev.right , .carousel-inner > .item.active {
-    transform:translate3d(0,0,0); 
-    -webkit-transform:translate3d(0,0,0);
-    -ms-transform:translate3d(0,0,0);; 
-    -moz-transform:translate3d(0,0,0); 
-    -o-transform:translate3d(0,0,0); 
-    top: 0;
-}
-
-      /*------------------------------- vertical carousel indicators ------------------------------*/
-      .carousel-indicators{
-        position:absolute;
-        top:0;
-        bottom:0;
-        margin:auto;
-        height:20px;
-        right:10px; left:auto;
-        width:auto;
-        color: white;
-      }  
-
-/*------------------------------- 1st Login Page ------------------------------*/
-
-.First {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-}
-
-#particles-js {
-    background: url('/images/splash_bg.jpg') no-repeat;
-    background-size: cover;
-}
-
-.big-logo p {
-    display: block;
     align-content: center;
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 400px;
-    padding-top: 110px;
-    padding-bottom: -5px;
-    color: white;
-    font-size: 68px;
     font-family: 'Josefin Sans', sans-serif;
-    text-align: center;
-    font-weight: normal;
 }
 
-.big-logo h3 {
-    padding-top: -100px;
-    color: white;
-    text-align: center;
-    font-family: 'Josefin Slab', serif;
+.welcome p {
+    font-family: 'Josefin Sans', sans-serif;
     font-size: large;
-    margin-top: -10px;
-    font-weight: bold;
 }
 
-.buttonOne {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #DC4244; 
-    width: 255px;
-    height: 57px;
-    font-size: 24px;
-    color: white;
-    margin-top: 35px;
-    border: none;
-    border-radius: 10px;
-}
-
-.buttonTwo {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #313E50; 
-    width: 255px;
-    height: 57px;
-    font-size: 24px;
-    color: white;
-    border-radius: 10px;
-    margin-top: 10px;
-    border: none;
-    border-radius: 10px;
-}
-
-.footer {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 49px;
-    color: white;
-    text-align: center;
-    line-height: 35px;
+.welcome h1 {
     font-family: 'Josefin Sans', sans-serif;
-    font-size: x-large;
-    font-style: bold;
-    background-color: #1E90FF;
-    /*opacity: 0.75;*/
+    font-size: xx-large
 }
 
-/*------------------------------- Who we are? ------------------------------*/
+.btn {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: large;
+    color: white;
+    width: 50%;
+}
 
-.Second {
-    background: url('/images/bg_image_1.jpg') no-repeat;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
+#aboutUs {
+    color: black;
+}
+
+#aboutUs a {
+    color: red;
+}
+
+.about-icons {
+    font-size: 10em;
+}
+
+.call-to-action {
+    background-image: url("/images/splash_last_bg.jpg");
+    background-repeat: no-repeat;
     background-size: cover;
-}
-
-.navTop {
-    font-size: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 70px;
-    flex: 1;
-    padding-bottom: 0px;
-    margin-left: 80%
-}
-
-.navTop a {
-    text-decoration: none;
-}
-
-.navTop a:last-child {
-    display: inline-block;
-    text-align: center;
-    background-color: #ffffff;
-    color: #1B557D;
-    flex-grow: 0;
-    flex-shrink: 0;
-    flex-basis: 100px;
-    height: 30px; 
-    width: 55px;
-    margin-left: 10px;
-    line-height: 30px;
-    border-radius: 3px;
-}
-
-.navTop a:first-child {
-    display: inline-block;
-    text-align: center;
-    background-color: #0A384D;
-    color: #ffffff;
-    flex-grow: 0;
-    flex-shrink: 0;
-    flex-basis: 100px;
-    height: 30px;
-    line-height: 30px;
-    border-radius: 3px;
-}
-
-.Second .content1 h1 {
-    text-align: center;
-    color: #ffffff;
-    font-weight: normal;
-    padding-top: 80px;
-    padding-bottom: 30px;
-}
-
-.Second .content1 p {
-    color: #ffffff;
-    font-weight: normal;
-    font-size: large;
-    margin: 30px;
-}
-
-.Second .content1 h4 {
-    text-align: center;
-    color: #ffffff;
-    font-weight: normal;
-    margin-top: -30px;
-}
-
-.Second .content1 h3 {
-    color: #ffffff;
-    font-weight: normal;
-    margin: 30px;
-}
-
-/*------------------------------- How it works? ------------------------------*/
-
-.Third {
-    background-color: #1B557D;
-}
-
-.icon a img {
-    display: block;
     align-content: center;
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 630px;
-    padding-top: 100px;
-    padding-bottom: 10px;
+    font-family: 'Josefin Sans', sans-serif;
 }
 
-.content2 h2 {
-    text-align: center;
-    color: #ffffff;
-    font-size: 50px;
-    font-weight: normal;
-    padding-bottom: 30px;
+.call-to-action p {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: large;
 }
 
-.content2 h3 {
-    text-align: center;
-    color: #ffffff;
-    font-size: 18px;
-    font-weight: normal;
-    margin-top: -30px;
+.call-to-action h1 {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: xx-large
 }
 
-/*------------------------------- About ------------------------------*/
-
-.Fourth {
-    background: url('/images/about_bg.png') no-repeat center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-}
-
-.content3 h2 {
-    text-align: center;
-    color: #ffffff;
-    font-size: 36px;
-    padding-top: 50px;
-    font-weight: normal;
-}
-
-.content3 h3 {
-    text-align: center;
-    color: #ffffff;
-    font-size: 18px;
-    font-weight: normal;
-}
-
-/*------------------------------- Last page ------------------------------*/
-
-.Fifth {
-    background: url('/images/last_slide.jpg') no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-}
-
-.nav4 {
-    text-decoration: none;
-    font-size: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: right;
-    height: 70px;
-    flex: 1;
-}
-
-.content4 h1{
-    color: white;
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-    padding-top: 140px;
-    padding-bottom: 0px;
-}
-.content4 h3 {
-    color:white;
-    text-align: center;
-    margin-top: -5px;
-    font-weight: normal;
-}
-
-@media(max-width: 600px) {
-    .navTop {
-        display: none;
-    }
-
-    .carousel-indicators {
-        display: none;
-    }
-
-    .footer {
-        display: none;
-    }
-    
-    .big-logo p {
-        display: block;
-        align-content: center;
-        margin-left: auto;
-        margin-right: auto;
-        max-width: 400px;
-        padding-top: 180px;
-        padding-bottom: -5px;
-        color: white;
-        font-size: 55px;
-        font-family: 'Josefin Sans', sans-serif;
-        text-align: center;
-        font-weight: normal;
-    }
-
-    .big-logo h3 {
-        padding-top: -100px;
-        color: white;
-        text-align: center;
-        font-family: 'Josefin Slab', serif;
-        font-size: large;
-        margin-top: -10px;
-        font-weight: normal;
-    }
-
-    .buttonOne {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-        background-color: #DC4244; 
-        width: 255px;
-        height: 57px;
-        font-size: 24px;
-        color: white;
-        margin-top: 35px;
-        border: none;
-        border-radius: 10px;
-    }
-
-    .buttonTwo {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-        background-color: #313E50; 
-        width: 255px;
-        height: 57px;
-        font-size: 24px;
-        color: white;
-        margin-top: 10px;
-        border: none;
-        border-radius: 10px;
-    }
+.call-to-action h2 {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: x-large
 }

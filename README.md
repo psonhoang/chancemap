@@ -1,8 +1,7 @@
 ### About ###
+- This is the 2018-2020 ChanceMap source code
+- ChanceMap is a professional social platform for high school students to find extracurricular activities and academic/career opportunities that fit their skills and interests
+- Developers: Hoang Pham, Dang Nguyen, Long Dang, Bao Vo, Minh Pham
 
-=> Website build for CodeDao project: a project to connect students with the student-led organizations & extracurricular activities community.
-
-const founders = ['Pham Son Hoang', 'Nguyen Minh Dang', 'Dang Hoang Long', 'Nguyen Hoang Phuong Trinh'];
-
-let developers = ['Bao Bu', 'Minh Pham', 'Van Huynh', 'Huan Pham'];
-
+# Run:
+npm start
